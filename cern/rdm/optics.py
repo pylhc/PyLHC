@@ -288,7 +288,7 @@ def rng(x,a,b):
   return (x<b) & (x>a)
 
 infot=namedtuple('infot','idx betx alfx mux bety alfy muy')
-import tfsdata
+from cern.rdm.data import tfs
 import gzip
 import os
 
@@ -301,12 +301,12 @@ class optics(dataobj):
   def open(cls,fn):
     try:
       if fn.endswith('tfs.gz'):
-        return cls(tfsdata.load(gzip.open(fn)))
+        return cls(tfs.load(gzip.open(fn)))
       elif fn.endswith('tfs'):
         if os.path.exists(fn):
-          return cls(tfsdata.open(fn))
+          return cls(tfs.open(fn))
         elif os.path.exists(fn+'.gz'):
-          return cls(tfsdata.load(gzip.open(fn+'.gz')))
+          return cls(tfs.load(gzip.open(fn+'.gz')))
       raise IOError
     except IOError:
       raise IOError,"%s does not exists or wrong format" % fn
@@ -322,7 +322,7 @@ class optics(dataobj):
     if 'filename' in self._data:
        fdate=os.stat(self.filename).st_ctime
        if fdate>self._fdate:
-         self._data=tfsdata.open(self.filename)
+         self._data=tfs.open(self.filename)
          self._fdate=fdate
          print '%s reload' % self.filename
          return True
