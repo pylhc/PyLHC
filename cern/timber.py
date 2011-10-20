@@ -48,10 +48,9 @@ def get_file_directory():
     '''
      Returns folder path where output files are stored
     '''
-    path=os.path.dirname(__file__)+'/'
-    for l in file(path+'configuration.properties'):
+    for l in file('configuration.properties'):
         if l.split('=')[0]=='FILE_DIRECTORY':
-            return path+l.split('=')[1].strip()
+            return l.split('=')[1].strip()
 
 def cat_files(filelist,filename):
     '''
@@ -73,10 +72,9 @@ def _runCmd(cmd):
      
      Checks that the command returns 0.
     '''
-    path=os.path.dirname(__file__)+'/'
     if sys.flags.debug:
         print( "Running shell command: "+cmd)
-    ret=os.system("cd "+path+";"+cmd)
+    ret=os.system(cmd)
     if ret!=0:
         raise ValueError("Shell command returned %i" % ret)
         
