@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2011 Yngve Inntjore Levinsen
+# Copyright 2011 CERN
 
 #    This file is part of PyLHC.
 #

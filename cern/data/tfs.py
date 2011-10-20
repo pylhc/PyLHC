@@ -1,5 +1,5 @@
 
-# Copyright 2011 Riccardo de Maria
+# Copyright 2011 CERN
 
 #    This file is part of PyLHC.
 #

@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-# Copyright 2011 Yngve Inntjore Levinsen
+# Copyright 2011 CERN
 
 #    This file is part of PyLHC.
 #

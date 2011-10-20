@@ -1,4 +1,4 @@
-# Copyright 2011 Riccardo de Maria
+# Copyright 2011 CERN
 
 #    This file is part of PyLHC.
 #
@@ -14,3 +14,7 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with PyLHC.  If not, see <http://www.gnu.org/licenses/>.
+
+'''
+ Author Riccardo de Maria
+'''
