@@ -26,7 +26,6 @@ import re
 import sys
 from tsvObj import TSVelement
 '''
-
 .. module:: tsv
     :synopsis: Read in and manipulate data in a TSV format. 
     :todo: Not have single value arrays in [[],[]] format anymore (it's dumb!)

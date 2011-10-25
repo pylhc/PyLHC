@@ -14,33 +14,37 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with PyLHC.  If not, see <http://www.gnu.org/licenses/>.
+'''
+.. module:: hdf5
 
-#TODO pages not supported
-#TODO tables not supported
-#TODO multi dimensional array in binary are not supported
+ :todo:  pages not supported
+ :todo:  tables not supported
+ :todo:  multi dimensional array in binary are not supported
 
-# struct format
-#     >: big
-#     <: little
-#     |: machine
-#     x: pad byte (no data);
-#     c:char;
-#     b:signed byte;
-#     B:unsigned byte;
-#     h:short;
-#     H:unsigned short;
-#     i:int;
-#     I:unsigned int;
-#     l:long;
-#     L:unsigned long;
-#     f:float;
-#     d:double.
-#     s:string (array of char);
-#     p:pascal string (with count byte).
-#     P:an integer type that is wide enough to hold a pointer.
-#     q:long long;
-#     Q:unsigned long long
+ struct format
+     >: big
+     <: little
+     |: machine
+     x: pad byte (no data);
+     c:char;
+     b:signed byte;
+     B:unsigned byte;
+     h:short;
+     H:unsigned short;
+     i:int;
+     I:unsigned int;
+     l:long;
+     L:unsigned long;
+     f:float;
+     d:double.
+     s:string (array of char);
+     p:pascal string (with count byte).
+     P:an integer type that is wide enough to hold a pointer.
+     q:long long;
+     Q:unsigned long long
 
+.. moduleauthor Riccardo De Maria
+'''
 import StringIO
 import gzip
 import numpy as n

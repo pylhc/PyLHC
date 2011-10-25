@@ -17,21 +17,25 @@
 #    along with PyLHC.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Serialize and deserialize arbitrary nested python objects, dictionaries, numpy
-arrays in a HDF5 file using h5py.
+.. module:: hdf5
+ 
+    :synopsis: Serialize and deserialize arbitrary nested python objects, dictionaries, numpy
+               arrays in a HDF5 file using h5py.
 
-The correspondence is:
-  scalar -> H5Attr
-  numpy arrays -> H5Dataset
-  dict -> H5Group
-  instance -> H5Group with attribute __class__
-  representable -> H5Attr with name ending with __pyrepr
-  other -> H5Attr with name ending with __pyrepr
+    The correspondence is:
+      scalar -> H5Attr
+      numpy arrays -> H5Dataset
+      dict -> H5Group
+      instance -> H5Group with attribute __class__
+      representable -> H5Attr with name ending with __pyrepr
+      other -> H5Attr with name ending with __pyrepr
+    
+    When loading an instance, if its class is found in the global namespace, an
+    object is created using the static method 'fromdict' if available or
+    bypassing the __init__ method and updating the dictionary with data, otherwise
+    a dictionary is created.
 
-When loading an instance, if its class is found in the global namespace, an
-object is created using the static method 'fromdict' if available or
-bypassing the __init__ method and updating the dictionary with data, otherwise
-a dictionary is created.
+.. moduleauthor Riccardo De Maria
 """
 
 import cPickle as pickle

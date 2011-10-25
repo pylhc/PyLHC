@@ -16,6 +16,9 @@
 #    You should have received a copy of the GNU General Public License
 #    along with PyLHC.  If not, see <http://www.gnu.org/licenses/>.
 
+'''
+..author Yngve Inntjore Levinsen
+'''
 from cern.rdm import optics
 import unittest,os
 import pylab as p

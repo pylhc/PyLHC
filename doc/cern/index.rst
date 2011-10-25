@@ -12,6 +12,15 @@ logging interface.
 .. automodule:: cern.timber
     :members:
 
+Module cern.rdm.optics
+----------------------
+
+Module for loading and plotting a
+generic optics object
+
+.. automodule:: cern.rdm.optics
+    :members:
+
 Module cern.data.tsv
 --------------------
 

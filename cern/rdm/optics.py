@@ -15,6 +15,14 @@
 #    You should have received a copy of the GNU General Public License
 #    along with PyLHC.  If not, see <http://www.gnu.org/licenses/>.
 
+'''
+.. module:: optics
+    :synopsis: Read in a generic optics object
+
+.. moduleauthor Riccardo De Maria
+'''
+
+
 import re
 import os
 import time
@@ -288,11 +296,14 @@ def rng(x,a,b):
   return (x<b) & (x>a)
 
 infot=namedtuple('infot','idx betx alfx mux bety alfy muy')
-from cern.rdm.data import tfs
+from cern.data import tfs
 import gzip
 import os
 
 class optics(dataobj):
+  '''
+   General optics object class.
+  '''
   _is_s_begin=False
   _name_char=16
   _entry_char=12
@@ -405,6 +416,9 @@ class optics(dataobj):
     return out
 
   def plotbeta(self,**nargs):
+    '''
+     Plot beta functions.
+    '''
     return self.plot('betx bety','dx dy',**nargs)
 
   def plotcross(self,**nargs):

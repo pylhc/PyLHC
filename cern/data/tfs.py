@@ -16,11 +16,14 @@
 #    You should have received a copy of the GNU General Public License
 #    along with PyLHC.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Read and write data in the TFS format
-Usage:
-  data=load(fh):  Load data from a file object
-  data=open(fn):  Load data from a file name
-  dump(data,fh):  Dump data in file object
+"""
+.. module:: tfs
+    :synopsis: Read and write data in the TFS format. Usage::
+        data=load(fh)  #Load data from a file object
+        data=open(fn)  #Load data from a file name
+        dump(data,fh)  #Dump data in file object
+
+.. moduleauthor Riccardo De Maria
 """
 
 
@@ -53,8 +56,8 @@ def _frompythonname(n):
 
 
 def load(fh):
-  """Load data encoded in the TFS format from a file object
-  Usage:
+  """
+  Load data encoded in the TFS format from a file object. Usage::
     data=load(fh)
   """
   param={}
@@ -109,8 +112,10 @@ def _totfstypes(i):
     return '%s'
 
 def dump(data,fh):
-  """Dump data encoded in the TFS format in a file object
-  Usage:
+  """
+  Dump data encoded in the TFS format in a file object
+
+  Usage::
     dump(data,fh)
   """
   param=data['param']
@@ -167,8 +172,8 @@ def dump(data,fh):
     fh.write('\n')
 
 def open(fn):
-  """Load data encoded in the TFS format from a file name
-  Usage:
+  """
+  Load data encoded in the TFS format from a file name. Usage::
     data=load(fn)
   """
   t=load(file(fn))

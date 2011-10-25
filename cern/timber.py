@@ -15,6 +15,13 @@
 #    You should have received a copy of the GNU General Public License
 #    along with PyLHC.  If not, see <http://www.gnu.org/licenses/>.
 
+'''
+.. module:: timber
+    :synopsis: Extract data through the TIMBER commandline interface
+
+.. moduleauthor Yngve Inntjore Levinsen
+'''
+
 import os,sys
 
 
