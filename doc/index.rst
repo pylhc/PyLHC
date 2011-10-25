@@ -13,6 +13,16 @@ Currently, this includes handler for tfs, yasp, sdds, tsv (timber), and hdf5 obj
 Further, a very nice plotting library has been developed by Riccardo which makes use of matplotlib
 to give you nice figures.
 
+You also find a TIMBER extraction library here.
+
+Homepage: http://pylhc.github.com
+
+Repository can be found at http://github.com/pylhc/PyLHC
+
+Bugs and wishes can be reported at http://github.com/pylhc/PyLHC/issues
+
+The project is licensed under LGPL v. 3, see the LICENSE file in the project repository.
+
 Contents:
 
 .. toctree::

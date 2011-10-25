@@ -42,7 +42,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'PyLHC'
-copyright = u'2011, Riccardo de Maria, Yngve Inntjore Levinsen'
+copyright = u'2011, Riccardo de Maria, Yngve Inntjore Levinsen (CERN)'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -92,7 +92,8 @@ pygments_style = 'sphinx'
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'default'
+#html_theme = 'default'
+html_theme = 'sphinxdoc'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -154,7 +155,7 @@ html_static_path = ['_static']
 #html_show_sphinx = True
 
 # If true, "(C) Copyright ..." is shown in the HTML footer. Default is True.
-#html_show_copyright = True
+html_show_copyright = True
 
 # If true, an OpenSearch description file will be output, and all pages will
 # contain a <link> tag referring to it.  The value of this option must be the
@@ -221,9 +222,9 @@ man_pages = [
 
 # Bibliographic Dublin Core info.
 epub_title = u'PyLHC'
-epub_author = u'Riccardo de Maria, Yngve Inntjore Levinsen'
-epub_publisher = u'Riccardo de Maria, Yngve Inntjore Levinsen'
-epub_copyright = u'2011, Riccardo de Maria, Yngve Inntjore Levinsen'
+epub_author = u'Riccardo de Maria, Yngve Inntjore Levinsen (CERN)'
+epub_publisher = u'Riccardo de Maria, Yngve Inntjore Levinsen (CERN)'
+epub_copyright = u'2011, Riccardo de Maria, Yngve Inntjore Levinsen (CERN)'
 
 # The language of the text. It defaults to the language option
 # or en if the language is not set.
