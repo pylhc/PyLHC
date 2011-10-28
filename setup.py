@@ -29,5 +29,5 @@ setup(name='cern',
       license='BSD',
       author='Yngve Inntjore Levinsen',
       author_email='Yngve.Inntjore.Levinsen@cern.ch',
-      packages = ['cern', 'cern.rdm','cern.rdm.data']
+      packages = ['cern', 'cern.rdm','cern.data']
      )
