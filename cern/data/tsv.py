@@ -614,7 +614,8 @@ class TSVlist:
             timestamps=self.elementlist[basecolumn].getTimestamps()
         
         thegroup=hfile.create_group(name)
-        thegroup.attrs['Description']=description
+        if description:
+            thegroup.attrs['Description']=description
         if timestamps!=-1:
             ts = numpy.array([timestamps[i].microsecond*1e-6 + timegm(timestamps[i].timetuple()) for i in xrange(len(timestamps))])
             if sys.flags.debug:
@@ -628,8 +629,10 @@ class TSVlist:
             else:
                 myv=self.getValAtTimes(el.getName(),timestamps)
             vals=thegroup.create_dataset(el.getName(),numpy.shape(myv),'=f4',myv,compression='gzip', compression_opts=1)
-            vals.attrs['Units']=el.getUnit()
-            vals.attrs['Description']=el.getDescription()
+            if el.getUnit():
+                vals.attrs['Units']=el.getUnit()
+            if el.getDescription():
+                vals.attrs['Description']=el.getDescription()
         return 0
     
     ##
