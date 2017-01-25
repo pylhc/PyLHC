@@ -101,6 +101,7 @@ def parseheader(l):
 
 sddstypes={
     'short' : 'i2',
+    'boolean' : 'i2',
     'long'  : 'i4',
     'llong' : 'u8',
     'string': 'S',
