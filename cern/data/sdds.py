@@ -151,7 +151,7 @@ class sddsdata(object):
       endian=fendian
     except AssertionError:
       print 'Warning sddsdata: forcing endianess to %s' % endian
-      fh.seek(0)
+      self.fh.seek(0)
       self.version=self.fh.readline()
     self.endian={'little':'<','big':'>'}[endian]
     # read headear
