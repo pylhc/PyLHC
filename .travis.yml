@@ -1,0 +1,20 @@
+env:
+  global:
+    - CC_TEST_REPORTER_ID=0e27bf1c9efa4cf36ab9fcd5398fa2963e197abdb7b9e4bdd93668112809d89a
+language: python
+email:
+    on_success: always
+    on_failure: always
+python:
+ - "3.6"
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
+script:
+ - pytest --cov-report xml --cov=pylhc tests/unit tests/accuracy
+ - travis-sphinx build --source=doc/ --nowarn
+after_script:
+  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
+after_success:
+ - travis-sphinx deploy

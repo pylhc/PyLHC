@@ -1,0 +1,7 @@
+.idea/
+.hypothesis*
+.project
+.pydevproject
+.vscode
+/doc/_*
+*__pycache__*
