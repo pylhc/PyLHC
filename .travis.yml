@@ -12,7 +12,7 @@ before_script:
   - chmod +x ./cc-test-reporter
   - ./cc-test-reporter before-build
 script:
- - pytest --cov-report xml --cov=pylhc tests/unit tests/accuracy
+ - pytest --cov-report xml --cov=PyLHC tests/unit tests/accuracy
  - travis-sphinx build --source=doc/ --nowarn
 after_script:
   - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
