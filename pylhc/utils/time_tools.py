@@ -61,9 +61,12 @@ def utc_string_to_utc(utc_string):
 
 def check_tz(localized_dt, timezone):
     """ Checks if timezone is correct. """
-    if not localized_dt.tzinfo == timezone:
+    if localized_dt.tzinfo is None or localized_dt.tzinfo.utcoffset(localized_dt) is None:
+        raise AssertionError("Datetime object needs to be localized!")
+
+    if not str(localized_dt.tzinfo) == str(timezone):
         raise AssertionError(
-            f"Datetime Timezone should be 'timezone' "
+            f"Datetime Timezone should be '{timezone}' "
             f"but was '{localized_dt.tzinfo}'"
         )
 
