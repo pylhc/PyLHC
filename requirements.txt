@@ -8,6 +8,7 @@ hypothesis>=3.23.0
 matplotlib>=2.2.3
 pjlsa>=0.0.14
 pytimber>=2.6.2
+cmmnbuild-dep-manager>=2.2.2
 Sphinx>=1.7.5
 sphinx-rtd-theme>=0.2.4
 travis-sphinx>=2.1.0
