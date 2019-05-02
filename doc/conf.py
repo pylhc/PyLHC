@@ -186,5 +186,6 @@ texinfo_documents = [
 autodoc_mock_imports = ['PyQt5', 'PyQt5.QtGui', 'PyQt5.QtCore', 'PyQt5.QtWidgets',
                         "matplotlib.backends.backend_qt5agg",
                         "numpy.random",  # caused an error for unused footnote in ADDbpmerror
+                        "pjlsa.LSAClient",
                         ]
 
