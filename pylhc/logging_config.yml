@@ -19,7 +19,7 @@ loggers:
   __main__:
     level: DEBUG
     handlers: [plain]
-    propagate: no
+    propagate: False
 root:
   level: DEBUG
   handlers: [console]
