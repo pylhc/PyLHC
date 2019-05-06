@@ -10,9 +10,12 @@ or the current settings, if no time is given.
 """
 import argparse
 import logging
+import yaml
+import logging.config
 from utils.time_tools import AcceleratorDatetime
 
 from data_extract.pylsa import LSAClient
+
 
 LOG = logging.getLogger(__name__)
 
@@ -49,6 +52,7 @@ def main(time=None, knobs=(), accel='lhc'):
     optics, optics_start = _get_last_optics(optics_table, bp_start, acc_time)
     trims = lsa.get_trims_at_time(beamprocess, knobs, acc_time, accel)
 
+    LOG.info("\n--- Summary -------------------------------")
     LOG.info(f"Given Time:   {acc_time.utc_string()}")
     LOG.info(f"Fill:         {fill_no:d}")
     LOG.info(f"Beamprocess:  {beamprocess}")
@@ -79,5 +83,15 @@ def _get_last_optics(optics_table, bp_start, acc_time):
     return item.name, acc_time.__class__.from_timestamp(item.time + bp_start.timestamp())
 
 
+def _setup_logger():
+    """ Setup logging.
+
+    Might be replaced in the future with logging_tools.
+    """
+    with open('logging_config.yml') as stream:
+        logging.config.dictConfig(yaml.safe_load(stream))
+
+
 if __name__ == '__main__':
+    _setup_logger()
     main(**get_options().__dict__)
