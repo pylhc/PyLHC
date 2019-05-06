@@ -10,7 +10,7 @@ or the current settings, if no time is given.
 """
 import argparse
 import logging
-import yaml
+import ruamel_yaml as yaml
 import logging.config
 from utils.time_tools import AcceleratorDatetime
 
