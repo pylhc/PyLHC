@@ -1,4 +1,5 @@
 version: 1
+disable_existing_loggers: False
 formatters:
   plain:
     format: '%(message)s'
@@ -15,11 +16,6 @@ handlers:
     level: INFO
     formatter: plain
     stream: ext://sys.stdout
-loggers:
-  __main__:
-    level: DEBUG
-    handlers: [plain]
-    propagate: False
 root:
   level: DEBUG
   handlers: [console]
