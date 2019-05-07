@@ -8,17 +8,23 @@ Provides additional functionality for pjlsa.
 :author: jdilly
 
 """
-import pjlsa
-import re
 import logging
+import re
+
+import pjlsa
+
+from utils.time_tools import AccDatetime
 
 LOG = logging.getLogger(__name__)
+
+RELEVANT_BP_CONTEXTS = ("OPERATIONAL", "MD")
+RELEVANT_BP_CATEGORIES = ("DISCRETE",)
 
 
 class LSAClient(pjlsa.LSAClient):
     """ Extension of the LSAClient. """
 
-    def find_knob_names(self, accelerator='lhc', regexp=''):
+    def find_knob_names(self, accelerator:str = 'lhc', regexp: str = '') -> list:
         """ Return knobs for accelerator.
 
         Args:
@@ -36,7 +42,7 @@ class LSAClient(pjlsa.LSAClient):
         reg = re.compile(regexp, re.IGNORECASE)
         return sorted(filter(reg.search, [pp.getName() for pp in lst]))
 
-    def get_last_fill(self, acc_time, accelerator='lhc'):
+    def find_last_fill(self, acc_time: AccDatetime, accelerator: str = 'lhc') -> (str, list):
         """ Return last fill name and content.
 
          Args:
@@ -57,7 +63,7 @@ class LSAClient(pjlsa.LSAClient):
         last_fill = sorted(fills.keys())[-1]
         return last_fill, fills[last_fill]
 
-    def get_trims_at_time(self, beamprocess, knobs, acc_time, accelerator='lhc'):
+    def find_trims_at_time(self, beamprocess: str, knobs: list, acc_time: AccDatetime, accelerator: str = 'lhc') -> dict:
         """ Get trims for knobs at specific time.
 
         Args:
@@ -70,10 +76,43 @@ class LSAClient(pjlsa.LSAClient):
             Dictionary of knob names and their values
 
         """
-        if len(knobs) == 0:
+        if knobs is None or len(knobs) == 0:
             knobs = self.find_knob_names(accelerator)
         trims = self.getTrims(beamprocess, knobs, end=acc_time.timestamp())
         trims_not_found = [k for k in knobs if k not in trims.keys()]
         if len(trims_not_found):
             LOG.warn(f"The following knobs were not found in '{beamprocess}': {trims_not_found}")
         return {trim: trims[trim].data[-1] for trim in trims.keys()}  # return last set value
+
+    def get_beamprocess_info(self, beamprocess: str):
+        """ Get context info of the given beamprocess.
+
+        Args:
+            beamprocess (str): Name of the beamprocess.
+
+        Returns:
+            Dictionary with context info.
+        """
+        bp = self._contextService.findStandAloneBeamProcess(beamprocess)
+        return _beamprocess_to_dict(bp)
+
+    def find_active_beamprocess_at_time(self, acc_time: AccDatetime, accelerator: str = 'lhc') -> str:
+        """ Find the active beam process at the time given.
+
+        Same as what online model extractor (KnobExtractor) does, but returns empty map for some reason.
+        """
+        raise NotImplementedError("This function does not work yet!")
+
+        if accelerator != 'lhc':
+            raise NotImplementedError("Active-Beamprocess retrieval is only implemented for LHC")
+        beamprocessmap = self._lhcService.findResidentStandAloneBeamProcessesByTime(int(acc_time.timestamp()))
+        # print(str(beamprocessmap))
+        beamprocess = beamprocessmap.get("POWERCONVERTERS")
+        LOG.debug(f"Active Beamprocess at time '{acc_time.utc_string()}': {beamprocess}")
+        return beamprocess
+
+
+def _beamprocess_to_dict(bp):
+    """ Converts some fields of the beamprocess (java) to a dictionary """
+    variables = ["category", "contextCategory", "description", "contextFamily", "user"]
+    return {var: str(bp.__getattribute__(var)) for var in variables}
