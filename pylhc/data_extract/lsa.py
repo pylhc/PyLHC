@@ -4,7 +4,8 @@ PyLSA
 
 Provides additional functionality for pjlsa.
 
-:module: data_extract.pylsa
+
+:module: data_extract.lsa
 :author: jdilly
 
 """
@@ -110,6 +111,39 @@ class LSAClient(pjlsa.LSAClient):
         beamprocess = beamprocessmap.get("POWERCONVERTERS")
         LOG.debug(f"Active Beamprocess at time '{acc_time.utc_string()}': {beamprocess}")
         return beamprocess
+
+
+# Single Instance LSAClient ####################################################
+
+
+class LSAMeta(type):
+    """ Metaclass for single instance LSAClient. """
+    _client = None
+
+    def __getattr__(cls, attr):
+        if cls._client is None:
+            LOG.debug("Creating LSA Client (only once).")
+            cls._client = LSAClient()
+
+        client_attr = cls._client.__getattribute__(attr)
+        if callable(client_attr):
+            def hooked(*args, **kwargs):
+                result = client_attr(*args, **kwargs)
+                if result == cls._client:
+                    # prevent client from becoming unwrapped
+                    return cls
+                return result
+            return hooked
+        else:
+            return client_attr
+
+
+class LSA(metaclass=LSAMeta):
+    """ Import this class to use LSA like the client without the need to instantiate it."""
+    pass
+
+
+# Helper Functions #############################################################
 
 
 def _beamprocess_to_dict(bp):

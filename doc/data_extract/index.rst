@@ -1,7 +1,10 @@
 Data Extraction
 **************************
 
-.. automodule:: data_extract.pylsa
+.. automodule:: data_extract.lsa
     :members:
 
+
+.. automodule:: data_extract.timber
+    :members:
 
