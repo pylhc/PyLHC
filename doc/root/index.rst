@@ -1,7 +1,7 @@
 Main Scripts
 **************************
 
-.. automodule:: print_machine_settings_overview
+.. automodule:: machine_settings_info
     :members:
 
 

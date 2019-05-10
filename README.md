@@ -37,7 +37,7 @@ The latter tools can be found in [OMC3](https://github.com/pylhc/omc3) (Python 3
 
 ## Functionality
 
-- *Machine settings overview* - Prints an overview over the machine settings at a given time. ([**print_machine_settings_overview.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/print_machine_settings_overview.py)) 
+- *Machine Settings Info* - Prints an overview over the machine settings at a given time. ([**machine_settings_info.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/machine_settings_info.py)) 
 
 
 ### Tests
