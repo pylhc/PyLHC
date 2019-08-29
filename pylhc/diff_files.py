@@ -1,16 +1,16 @@
 """
-Module tfs_files.diff_files
+Diff Files
 -------------------------------
 
 Functions to get the difference between two tfs files or dataframes.
-This is very general, i.e. not as results oriented as ``getdiff.py``.
 """
 import tfs
+from generic_parser import entrypoint, EntryPointParameters
 import pandas as pd
-import numpy as np
 from utils.diff_tools import df_diff, df_ang_diff, df_ratio, df_rel_diff, df_error_diff
 
-KIND_MAP ={
+
+KIND_MAP = {
     'absolute': df_diff,
     'relative': df_rel_diff,
     'error': df_error_diff,
@@ -19,31 +19,83 @@ KIND_MAP ={
 }
 
 
-def get_diff_two_dataframes(df1, df2, columns, kind=None, prefix="", index=None, keep_columns=(), out_file=None):
-    """ Get the difference of common elements of specific columns between two dataframes.
+def get_params():
+    params = EntryPointParameters()
+    params.add_parameter(flags=["--df1"], name="df1",
+                         required=True,
+                         help="First dataframe, Minuend or Dividend")
+    params.add_parameter(flags=["--df2"], name="df2",
+                         required=True,
+                         help="Second dataframe, Subtrahend or Divisor")
+    params.add_parameter(flags=["--columns"], name="columns",
+                         required=True, nargs="+", type=str,
+                         help="List of columns to get the difference of")
+    params.add_parameter(flags=["--kind"], name="kind",
+                         nargs="+", type=str,
+                         choices=['absolute', 'relative', 'error', 'circular', 'ratio'],
+                         help="Kind of difference. Given per column. Default 'absoulte'")
+    params.add_parameter(flags=["--prefix"], name="prefix",
+                         type=str, default="",
+                         help="Prefix for difference columns.")
+    params.add_parameter(flags=["--index"], name="index",
+                         type=str,
+                         help="Index column - most likely needed when reading/writing files")
+    params.add_parameter(flags=["--keep"], name="keep_columns",
+                         nargs="+", type=str, default=(),
+                         help="Additional columns to keep in the returned dataframe")
+    params.add_parameter(flags=["--out"], name="out_file",
+                         type=str,
+                         help="If given, writes the result into this file")
+    return params
 
+
+@entrypoint(get_params(), strict=True)
+def get_diff_two_dataframes(opt):
+    """ Get the difference of common elements of specific columns between two dataframes.
     Merges on index.
 
-        Args:
-            df1 (DataFrame or Path): First dataframe, Minuend or Dividend
-            df2 (DataFrame or Path): Second dataframe, Subtrahend or Divisor
-            columns (list of stings): List of columns to get the difference of
-            kind (list of strings): defines the kind of difference 'absolute', 'relative', 'error', 'circular', 'ratio'
-            prefix (str): Prefix for difference columns (default: "")
-            index (str): index column - most likely needed when reading/writing files
-            keep_columns (list of strings): additional columns to keep in the returned dataframe
-            out_file (Path): if given, writes the result into this file
+    Keyword Args:
+        *--Required--*
+        - **columns** *(str)*: List of columns to get the difference of
+
+          Flags: **['--columns']**
+        - **df1**: First dataframe, Minuend or Dividend
+
+          Flags: **['--df1']**
+        - **df2**: Second dataframe, Subtrahend or Divisor
+
+          Flags: **['--df2']**
+
+        *--Optional--*
+        - **index** *(str)*: Index column - most likely needed when reading/writing files
+
+          Flags: **['--index']**
+        - **keep_columns** *(str)*: Additional columns to keep in the returned dataframe
+
+          Flags: **['--keep']**
+          Default: ``()``
+        - **kind** *(str)*: Kind of difference. Given per column. Default 'absoulte'
+
+          Flags: **['--kind']**
+          Choices: ``['absolute', 'relative', 'error', 'circular', 'ratio']``
+        - **out_file** *(str)*: If given, writes the result into this file
+
+          Flags: **['--out']**
+        - **prefix** *(str)*: Prefix for difference columns.
+
+          Flags: **['--prefix']**
+          Default: ````
 
         Returns:
             DataFrame containing difference columns and kept columns.
     """
     # convert from files to dataframes
-    df1 = _get_dataframe(df1, index)
-    df2 = _get_dataframe(df2, index)
+    df1 = _get_dataframe(opt.df1, opt.index)
+    df2 = _get_dataframe(opt.df2, opt.index)
 
     # check input
-    _check_for_missing_columns(df1, df2, columns)
-    _check_for_missing_columns(df1, df2, keep_columns)
+    _check_for_missing_columns(df1, df2, opt.columns)
+    _check_for_missing_columns(df1, df2, opt.keep_columns)
 
     # merge dataframes
     merged = pd.merge(df1, df2, how='inner',
@@ -51,31 +103,31 @@ def get_diff_two_dataframes(df1, df2, columns, kind=None, prefix="", index=None,
                       suffixes=('_df1', '_df2'))
 
     # calculate difference
-    if kind is None:
-        kind = ['absolute'] * len(columns)
+    if opt.kind is None:
+        opt.kind = ['absolute'] * len(opt.columns)
     else:
-        if len(kind) != len(columns):
+        if len(opt.kind) != len(opt.columns):
             raise ValueError(
                 "The length of the differece kinds array needs to correspond to the number of columns."
             )
 
-    for idx, col in enumerate(columns):
-        merged[prefix + col] = KIND_MAP[kind[idx]](merged, f'{col}_df1', f'{col}_df2')
+    for idx, col in enumerate(opt.columns):
+        merged[f"{opt.prefix}{col}"] = KIND_MAP[opt.kind[idx]](merged, f'{col}_df1', f'{col}_df2')
 
     # copy columns to be kept
-    for col in keep_columns:
+    for col in opt.keep_columns:
         for suffix in ["", "_df1", "_df2"]:
             try:
-                merged[col] = merged[col + suffix]
+                merged[col] = merged[f"{col}{suffix}"]
             except KeyError:
                 pass
             else:
                 break
 
     # prepare output
-    merged = merged.loc[:, keep_columns + [prefix + c for c in columns]]
-    if out_file:
-        tfs.write(out_file, merged, save_index=index)
+    merged = merged.loc[:, opt.keep_columns + [opt.prefix + c for c in opt.columns]]
+    if opt.out_file:
+        tfs.write(opt.out_file, merged, save_index=opt.index)
     return merged
 
 
@@ -96,3 +148,10 @@ def _check_for_missing_columns(df1, df2, columns):
             "The following columns can not be found in either dataframe: {:}".format(
                 list(set(missing_columns)))
         )
+
+
+# Script #######################################################################
+
+
+if __name__ == '__main__':
+    get_diff_two_dataframes()
