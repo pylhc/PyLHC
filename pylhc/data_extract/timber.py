@@ -17,7 +17,7 @@ from utils.time_tools import AccDatetime
 LOG = logging.getLogger(__name__)
 
 
-def find_exact_time_for_bp(acc_time: AccDatetime) -> AccDatetime:
+def find_exact_time_for_beamprocess(acc_time: AccDatetime) -> AccDatetime:
     """ Finds the last entry where HX:SRMP-POW equals 123.
 
     Which is, according to the online model KnobExtractor, the timing event for SQUEEZE or RAMP.
