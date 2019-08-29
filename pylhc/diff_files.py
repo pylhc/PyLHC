@@ -41,7 +41,7 @@ def get_params():
                          type=str,
                          help="Index column - most likely needed when reading/writing files")
     params.add_parameter(flags=["--keep"], name="keep_columns",
-                         nargs="+", type=str, default=(),
+                         nargs="+", type=str, default=[],
                          help="Additional columns to keep in the returned dataframe")
     params.add_parameter(flags=["--out"], name="out_file",
                          type=str,
@@ -73,7 +73,7 @@ def get_diff_two_dataframes(opt):
         - **keep_columns** *(str)*: Additional columns to keep in the returned dataframe
 
           Flags: **['--keep']**
-          Default: ``()``
+          Default: ``[]``
         - **kind** *(str)*: Kind of difference. Given per column. Default 'absoulte'
 
           Flags: **['--kind']**
@@ -145,7 +145,7 @@ def _check_for_missing_columns(df1, df2, columns):
     missing_columns = [col for col in columns for df in [df1, df2] if col not in df.columns]
     if any(missing_columns):
         raise KeyError(
-            "The following columns can not be found in either dataframe: {:}".format(
+            "The following columns can not be found in one or both of the dataframes: {:}".format(
                 list(set(missing_columns)))
         )
 
