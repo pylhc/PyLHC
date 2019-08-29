@@ -12,3 +12,6 @@ Utilities
 .. automodule:: utils.time_tools
     :members:
 
+
+.. automodule:: utils.diff_tools
+    :members:
