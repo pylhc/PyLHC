@@ -14,7 +14,7 @@ KIND_MAP = {
     'absolute': df_diff,
     'relative': df_rel_diff,
     'error': df_error_diff,
-    'circular': df_ang_diff,
+    'angle': df_ang_diff,
     'ratio': df_ratio,
 }
 
@@ -32,8 +32,8 @@ def get_params():
                          help="List of columns to get the difference of")
     params.add_parameter(flags=["--kind"], name="kind",
                          nargs="+", type=str,
-                         choices=['absolute', 'relative', 'error', 'circular', 'ratio'],
-                         help="Kind of difference. Given per column. Default 'absoulte'")
+                         choices=['absolute', 'relative', 'error', 'angle', 'ratio'],
+                         help="Kind of difference. Can be given per column. Defaults to 'absoulte'.")
     params.add_parameter(flags=["--prefix"], name="prefix",
                          type=str, default="",
                          help="Prefix for difference columns.")
@@ -74,10 +74,10 @@ def get_diff_two_dataframes(opt):
 
           Flags: **['--keep']**
           Default: ``[]``
-        - **kind** *(str)*: Kind of difference. Given per column. Default 'absoulte'
+        - **kind** *(str)*: Kind of difference. Can be given per column. Defaults to 'absoulte'.
 
           Flags: **['--kind']**
-          Choices: ``['absolute', 'relative', 'error', 'circular', 'ratio']``
+          Choices: ``['absolute', 'relative', 'error', 'angle', 'ratio']``
         - **out_file** *(str)*: If given, writes the result into this file
 
           Flags: **['--out']**
@@ -105,11 +105,12 @@ def get_diff_two_dataframes(opt):
     # calculate difference
     if opt.kind is None:
         opt.kind = ['absolute'] * len(opt.columns)
-    else:
-        if len(opt.kind) != len(opt.columns):
-            raise ValueError(
-                "The length of the differece kinds array needs to correspond to the number of columns."
-            )
+    elif len(opt.kind) == 1 and len(opt.columns > 1):
+        opt.kind = [opt.kind] * len(opt.columns)
+    elif len(opt.kind) != len(opt.columns):
+        raise ValueError(
+            "The length of the differece kinds array needs to correspond to the number of columns."
+        )
 
     for idx, col in enumerate(opt.columns):
         merged[f"{opt.prefix}{col}"] = KIND_MAP[opt.kind[idx]](merged, f'{col}_df1', f'{col}_df2')
