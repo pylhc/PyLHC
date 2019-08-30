@@ -60,7 +60,7 @@ class LSAClient(pjlsa.LSAClient):
                                                 t2=acc_time.local_string(),
                                                 accelerator=accelerator)
         except TypeError:
-            raise ValueError(f"No beamprocesses found in the day before {acc_time.utc_string()}")
+            raise ValueError(f"No beamprocesses found in the day before {acc_time.cern_utc_string()}")
         last_fill = sorted(fills.keys())[-1]
         return last_fill, fills[last_fill]
 
@@ -109,7 +109,7 @@ class LSAClient(pjlsa.LSAClient):
         beamprocessmap = self._lhcService.findResidentStandAloneBeamProcessesByTime(int(acc_time.timestamp()))
         # print(str(beamprocessmap))
         beamprocess = beamprocessmap.get("POWERCONVERTERS")
-        LOG.debug(f"Active Beamprocess at time '{acc_time.utc_string()}': {beamprocess}")
+        LOG.debug(f"Active Beamprocess at time '{acc_time.cern_utc_string()}': {beamprocess}")
         return beamprocess
 
 

@@ -32,19 +32,18 @@ Can be run from command line, parameters as given in :meth:`print_machine_settin
 
 """
 import argparse
-import logging
 import re
 import tfs
 from typing import Iterable
 
 from data_extract.lsa import LSA
-from utils.dict_tools import DotDict
-from utils.logging_tools import setup_logger
+from generic_parser import DotDict
+from omc3.omc3.utils import logging_tools
 from utils.time_tools import AcceleratorDatetime, AccDatetime
 from constants import machine_settings_info as const
 from collections import OrderedDict
 
-LOG = logging.getLogger(__name__)
+LOG = logging_tools.get_logger(__name__)
 
 
 DEFAULT_BP_RE = '^(RAMP|SQUEEZE)[_-]'
@@ -69,7 +68,7 @@ def get_info(time: str = None, knobs: Iterable[str] = (), bp_regexp: str = DEFAU
 
     """
     AccDT = AcceleratorDatetime[accel]
-    acc_time = AccDT.now() if time is None else AccDT.from_utc_string(time)
+    acc_time = AccDT.now() if time is None else AccDT.from_cern_utc_string(time)
 
     beamprocess_info = _get_beamprocess(acc_time, bp_regexp, accel)
     optics_info = _get_optics(acc_time, beamprocess_info.name, beamprocess_info.start)
@@ -111,14 +110,14 @@ def write_summary(output_path: str, acc_time: AccDatetime, bp_info: DotDict, o_i
     """ Write summary into file. """
     info_tfs = tfs.TfsDataFrame(trims.items(), columns=[const.column_knob, const.column_value])
     info_tfs.headers = OrderedDict([
-        (const.head_time,                   acc_time.utc_string()),
+        (const.head_time,                   acc_time.cern_utc_string()),
         (const.head_beamprocess,            bp_info.name),
         (const.head_fill,                   bp_info.fill),
-        (const.head_beamprocess_start,      bp_info.start.utc_string()),
+        (const.head_beamprocess_start,      bp_info.start.cern_utc_string()),
         (const.head_context_category,       bp_info.contextCategory),
         (const.head_beamprcess_description, bp_info.description),
         (const.head_optics,                 o_info.name),
-        (const.head_optics_start,           o_info.start.utc_string()),
+        (const.head_optics_start,           o_info.start.cern_utc_string()),
         ("Hint:",                           "All times given in UTC.")
     ])
     tfs.write(output_path, info_tfs)
@@ -145,14 +144,14 @@ def _get_last_beamprocess(bps, acc_time: AccDatetime, regexp: str) -> (str, AccD
     Also returns the start time of the beam-process in utc.
     """
     ts = acc_time.timestamp()
-    LOG.debug(f"Looking for beamprocesses before '{acc_time.utc_string()}', matching '{regexp}'")
+    LOG.debug(f"Looking for beamprocesses before '{acc_time.cern_utc_string()}', matching '{regexp}'")
     time, name = None, None
     reg = re.compile(regexp, re.IGNORECASE)
     for time, name in reversed(bps):
         if time <= ts and reg.search(name) is not None:
             break
     if time is None:
-        raise ValueError(f"No relevant beamprocess found in the fill before {acc_time.utc_string()}")
+        raise ValueError(f"No relevant beamprocess found in the fill before {acc_time.cern_utc_string()}")
     return name, acc_time.__class__.from_timestamp(time)
 
 
@@ -196,5 +195,4 @@ def get_options() -> dict:
 
 
 if __name__ == '__main__':
-    setup_logger()
     get_info(**get_options())

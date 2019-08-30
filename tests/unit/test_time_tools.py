@@ -26,11 +26,11 @@ def test_tz_conversions(now):
 
 
 def test_strings(now):
-    utc_str = now.strftime(tt.get_time_format())
-    utc = tt.utc_string_to_utc(utc_str)
+    utc_str = now.strftime(tt.get_cern_time_format())
+    utc = tt.cern_utc_string_to_utc(utc_str)
     assert now.time() == utc.time()
 
-    local_str = tt.utc_to_local(now, tt.get_cern_timezone()).strftime(tt.get_time_format())
+    local_str = tt.utc_to_local(now, tt.get_cern_timezone()).strftime(tt.get_readable_time_format())
     utc = tt.local_string_to_utc(local_str, tt.get_cern_timezone())
     assert now.time() == utc.time()
 

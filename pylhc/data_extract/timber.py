@@ -31,9 +31,9 @@ def find_exact_time_for_beamprocess(acc_time: AccDatetime) -> AccDatetime:
 
     if len(event_ts) == 0:
         raise ValueError(
-            f"No valid beamprocess found in the 24h before {acc_time.utc_string()}"
+            f"No valid beamprocess found in the 24h before {acc_time.cern_utc_string()}"
         )
 
     exact_time = acc_time.__class__.from_timestamp(event_ts[-1])
-    LOG.debug(f"Exact time for beamprocess found: {exact_time.utc_string()}")
+    LOG.debug(f"Exact time for beamprocess found: {exact_time.cern_utc_string()}")
     return exact_time

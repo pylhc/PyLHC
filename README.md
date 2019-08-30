@@ -22,11 +22,18 @@ Feel free to use them anyway, if you wish!
 
 The codes use a multitude of packages as can be found in the [requirements.txt](requirements.txt).
 
-Important ones are: ``numpy``, ``pandas`` and ``scipy``.
+Important ones are: ``tfs-pandas``,  ``generic_parser``, ``numpy``, ``pandas`` and ``scipy``.
 
 ### Installing
 
 This package is not deployed, hence you need to use the standard git-commands to get a local copy.
+
+As [OMC3](https://github.com/pylhc/omc3) is used as a submodule I recommend cloning with:
+
+```
+git clone --recurse-submodules https://github.com/pylhc/PyLHC.git
+```
+
 
 ## Description
 
@@ -37,8 +44,19 @@ The latter tools can be found in [OMC3](https://github.com/pylhc/omc3) (Python 3
 
 ## Functionality
 
-- *Machine Settings Info* - Prints an overview over the machine settings at a given time. ([**machine_settings_info.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/machine_settings_info.py)) 
+##### Analysis:
 
+- *Forced DA Analysis* - Script to analyse forced DA. ([**forced_da_analysis.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/forced_da_analysis.py))
+
+
+##### Quick Scripts
+
+- *Machine Settings Info* - Prints an overview over the machine settings at a given time. ([**machine_settings_info.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/machine_settings_info.py)) 
+- *Plot Tfs* - Provides easy plotting fucntionality for tfs files. ([**plot_tfs.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/plot_tfs.py))
+
+##### Helper Functionality:
+
+- *Some plotting helpers* - found in [**post_processing.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/plotshop/post_processing.py) and [**plot_style.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/plotshop/plot_style.py) 
 
 ### Tests
 

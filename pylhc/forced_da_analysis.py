@@ -8,24 +8,205 @@ from pytimber import pagestore
 import datetime
 import scipy.odr
 import scipy
+from contextlib import suppress
+
 from constants.general import PLANES, PLANE_TO_HV, PROTON_MASS, LHC_NORM_EMITTANCE
 from constants.forced_da_analysis import *
+from utils.time_tools import CERNDatetime
+from omc3.omc3.utils import logging_tools
+from plotshop import style, lines, annotations, colors
+import matplotlib.dates as mdates
+
+LOG = logging_tools.get_logger(__name__)
 
 
+BWS_DIRECTIONS = ("IN", "OUT")
 
 
-
-def main(directory:str, fill:int, beam:int, plane:str, energy:int = 6500, bunch_id:int = None):
+def main(directory: str, fill: int, beam: int, plane: str, energy: int = 6500, bunch_id: int = None):
+    out_dir = get_output_dir(directory)
     gamma = energy / PROTON_MASS  # E = gamma * m0 * c^2
     beta = np.sqrt(1 - (1 / gamma**2))
     emittance = LHC_NORM_EMITTANCE / (beta * gamma)
 
+    kick_df = get_kick_df(directory, plane)
+    intensity_df, emittance_df, emittance_bws_df = get_dfs_from_timber(fill, beam, bunch_id, plane)
+
+    _check_all_times_in(kick_df.index, intensity_df.index[0], intensity_df.index[-1])
+    _plot_emittances(out_dir, beam, plane, emittance_df, emittance_bws_df, kick_df.index)
 
 
+def _check_all_times_in(series, start, end):
+    if any(s for s in series if s < start or s > end):
+        raise ValueError("Some of the kick-times are outside of the fill times! "
+                         "Check if correct kick-file or fill number are used.")
 
 
+# Timber Data ------------------------------------------------------------------
 
 
+def _get_bctrf_beam_intensity(beam, db, timespan):
+    LOG.debug(f"Getting beam intensity from bctfr for beam {beam}.")
+    intensity_key = INTENSITY_KEY.format(beam=beam)
+    LOG.debug(f"  Key: {intensity_key}")
+    x, y = db.get(intensity_key, *timespan)[intensity_key]
+    time_index = pd.Index(CERNDatetime.from_timestamp(t) for t in x)
+    df = pd.DataFrame(data=y, index=time_index, columns=[INTENSITY])
+    LOG.debug(f"  Returning dataframe of shape {df.shape}")
+    return df
+
+
+def _get_bsrt_bunch_emittances(beam, bunch, plane, db, timespan):
+    LOG.debug(f"Getting emittance from BSRT for beam {beam}, bunch {bunch} and plane {plane}.")
+    bunch_emittance_key = BUNCH_EMITTANCE_KEY.format(beam=beam, plane=PLANE_TO_HV[plane])
+    LOG.debug(f"  Key: {bunch_emittance_key}")
+    col_norm_emittance = f"{NORM_EMITTANCE}{plane}"
+    all_columns = [f"{prefix}{col_norm_emittance}" for prefix in ("", f"{MEAN}", f"{ERR}")]
+
+    x, y = db.get(bunch_emittance_key, *timespan)[bunch_emittance_key]
+    time_index = pd.Index(CERNDatetime.from_timestamp(t) for t in x)
+    df = pd.DataFrame(index=time_index, columns=all_columns)
+
+    if bunch is None:
+        bunch = y.sum(axis=0).argmax()  # first not-all-zero column
+        LOG.debug(f"  Found bunch: {bunch}")
+    df[col_norm_emittance] = y[:, bunch]
+
+    # remove entries with zero emittance as unphysical
+    df = df[df[col_norm_emittance] != 0]
+    rolling = df[col_norm_emittance].rolling(window=ROLLING_AVERAGE_WINDOW, center=True)
+
+    df[f'{MEAN}{col_norm_emittance}'] = rolling.mean()
+    df[f'{ERR}{col_norm_emittance}'] = rolling.std()
+    LOG.debug(f"  Returning dataframe of shape {df.shape}")
+    return df
+
+
+def _get_bws_emittances(beam, plane, db, timespan):
+    LOG.debug(f"Getting emittance from BWS for beam {beam} and plane {plane}.")
+    all_columns = [f"{NORM_EMITTANCE}{plane}_{direction}" for direction in BWS_DIRECTIONS]
+    df = None
+    for direction in BWS_DIRECTIONS:
+        emittance_key = BWS_EMITTANCE_KEY.format(beam=beam, plane=PLANE_TO_HV[plane], direction=direction)
+        LOG.debug(f"  Key: {emittance_key}")
+        col_norm_emittance = f"{NORM_EMITTANCE}{plane}_{direction}"
+
+        x, y = db.get(emittance_key, *timespan)[emittance_key]
+        time_index = pd.Index(CERNDatetime.from_timestamp(t) for t in x)
+        if df is None:
+            df = pd.DataFrame(index=time_index, columns=all_columns)
+
+        df[col_norm_emittance] = np.mean(y)
+        df[f'{ERR}{col_norm_emittance}'] = np.std(y)
+    LOG.debug(f"  Returning dataframe of shape {df.shape}")
+    return df
+
+
+def _plot_emittances(directory, beam, plane, emittance_df, emittance_bws_df, kick_times):
+    style.set_style("standard")
+    fig, ax = plt.subplots(ncols=1, nrows=1, sharex=True, sharey=False, figsize=(10, 7))
+
+    col_norm_emittance = f"{NORM_EMITTANCE}{plane}"
+
+    bsrt_color = colors.get_mpl_color(0)
+    bws_color = colors.get_mpl_color(1)
+
+    ax.plot(emittance_df[col_norm_emittance],  # Actual BSRT measurement
+            color=bsrt_color,
+            marker='o',
+            markeredgewidth=2,
+            linestyle='None',
+            label=f'From BSRT')
+
+    ax.errorbar(emittance_df.index,  # Averaged measurement
+                emittance_df[f"{MEAN}{col_norm_emittance}"],
+                yerr=emittance_df[f"{ERR}{col_norm_emittance}"],
+                color=colors.change_color_brightness(bsrt_color, 0.7),
+                marker='',
+                label=f'Moving Average (window = {ROLLING_AVERAGE_WINDOW})')
+
+    if len(emittance_bws_df.index):
+        for d in BWS_DIRECTIONS:
+            label = "__nolegend__" if d == BWS_DIRECTIONS[1] else f"From BWS"
+            color = bws_color if d == BWS_DIRECTIONS[1] else colors.change_color_brightness(bws_color, 0.5)
+
+            ax.errorbar(emittance_bws_df.index,   # Wire Scanner
+                        emittance_bws_df[f"{col_norm_emittance}_{d}"],
+                        yerr=emittance_bws_df[f"{ERR}{col_norm_emittance}_{d}"],
+                        color=color,
+                        label=label,
+                        markersize=15,
+                        fmt='o'
+                        )
+
+    lines.vertical_lines(ax, kick_times, color='grey', linestyle='--', alpha=0.8, marker='', label="Kicks")
+
+    first_kick, last_kick = min(kick_times), max(kick_times)
+
+    time_delta = pd.Timedelta(seconds=20)
+    ax.set_xlim([first_kick - time_delta, last_kick + time_delta])
+    ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M:%S'))
+
+    ax.set_xlabel('Time')
+    ax.set_ylabel(r'$\epsilon_{n}$ $[\mu m]$')
+    # annotations.figure_title(f"Emittance Beam {beam}, {plane}-Plane", ax, position="bottom", pad=0.015, fontweight="bold")
+    annotations.make_top_legend(ax, ncol=2)
+    annotations.set_annotation(f"Date: {first_kick.strftime('%Y-%m-%d')}", ax, "left")
+    plt.tight_layout()
+    try:
+        fig.savefig(os.path.join(directory, f"emittance_b{beam}_{plane.lower()}.pdf"))
+        fig.savefig(os.path.join(directory, f"emittance_b{beam}_{plane.lower()}.png"))
+    except IOError:
+        LOG.error("Couldn't create output files for emittance plots!")
+    plt.show()
+
+
+def get_dfs_from_timber(fill: int, beam: int, bunch: int, plane: str):
+    # open Logging DB for specific fill and db for storing data
+    db = pytimber.LoggingDB()
+    filldata = db.getLHCFillData(fill)
+    timespan = filldata['startTime'], filldata['endTime']
+    intensity_df = _get_bctrf_beam_intensity(beam, db, timespan)
+    emittance_bws_df = _get_bws_emittances(beam, plane, db, timespan)
+    emittance_df = _get_bsrt_bunch_emittances(beam, bunch, plane,  db, timespan)
+    return intensity_df, emittance_df, emittance_bws_df
+
+
+# Kick Data --------------------------------------------------------------------
+
+
+def get_kick_df(directory, plane):
+    try:
+        df = _get_new_kick_file(directory, plane)
+    except FileNotFoundError:
+        LOG.debug("Reading of kickfile failed. Looking for old kickfile.")
+        df = _get_old_kick_file(directory, plane)
+    return df[[f"2J{plane}RES", f"ERR2J{plane}RES"]]  # TODO: get from omc3
+
+
+def _get_old_kick_file(directory, plane):
+    path = os.path.join(directory, "getkickac.out")
+    LOG.debug(f"Reading kickfile '{path}'.'")
+    df = tfs.read(path)
+    df = df.rename({f"2J{plane}STDRES": f"ERR2J{plane}RES"}, axis="columns")
+    df = df.set_index("TIME")
+    df.index = pd.Index(CERNDatetime.from_timestamp(t) for t in df.index)
+    return df
+
+
+def _get_new_kick_file(directory, plane):
+    path = os.path.join(directory, f"{KICKFILE}_{plane.lower()}{TFS_SUFFIX}")
+    LOG.debug(f"Reading kickfile '{path}'.'")
+    df = tfs.read(path, index=TIME)
+    df.index = pd.Index(CERNDatetime.from_cern_utc_string(t) for t in df.index)
+    return df
+
+
+def get_output_dir(directory):
+    path = os.path.join(directory, RESULTS_DIR)
+    with suppress(IOError):
+        os.mkdir(path)
+    return path
 
 
 if __name__ == '__main__':
@@ -37,195 +218,7 @@ if __name__ == '__main__':
     PLANE = PLANES[0]
     main(directory=ANALYSISDIR, fill=FILL_NUMBER, beam=BEAM, plane=PLANE)
 
-
-
-
-
-
-def get_dfs_from_timber(fill: int, beam: int, bunch: int):
-    # open Logging DB for specific fill and db for storing data
-    db = pytimber.LoggingDB()
-    filldata = db.getLHCFillData(fill)
-    t1 = filldata['startTime']
-    t2 = filldata['endTime']
-
-    intensity_key = f'LHC.BCTFR.A6R4.B{beam:d}:BEAM_INTENSITY'
-    x, y = db.get(intensity_key, t1, t2)[intensity_key]
-    fbct_df = pd.DataFrame(data=y, index=x, columns=[INTENSITY])
-    bsrt_df = {p:None for p in PLANES}
-
-    for plane in PLANES:
-        plane_hv = PLANE_TO_HV[plane]
-        bunch_emittance_key = f'LHC.BSRT.5R4.B{beam:d}:BUNCH_EMITTANCE_{plane_hv}'
-        col_emittance = f"{EMITTANCE}{plane}"
-        col_norm_emittance = f"{NORM_EMITTANCE}{plane}"
-
-        x, y = db.get(bunch_emittance_key, t1, t2)[bunch_emittance_key]
-        if bunch is None:
-            bunch = y.sum(axis=0).argmax()  # first not-all-zero column
-
-        df = pd.DataFrame(index=x, columns=[f"{emittance}{suff}"
-                                            for emittance in (col_emittance, col_norm_emittance)
-                                            for suff in ("", f"_{CLEAN}", f"_{MEAN}", f"_{RMS}")])
-
-        df[col_norm_emittance] = y[:, bunch]
-
-        # remove entries with zero emittance as unphysical
-        df = df[df[f"{col_norm_emittance}_{CLEAN}"] != 0
-
-        bsrt_h_df['EMITTANCE_H_AV7'] = bsrt_h_df['EMITTANCE_H_CLEAN'].rolling(window=7, center=True).mean()
-        bsrt_h_df['EMITTANCE_H_STD7'] = bsrt_h_df['EMITTANCE_H_CLEAN'].rolling(window=7, center=True).std()
-
-        bsrt_h_df['NEMITTANCE_H_AV7'] = bsrt_h_df['EMITTANCE_H_CLEAN'].rolling(window=7, center=True).mean()*10**-6/(beta*gamma)
-        bsrt_h_df['NEMITTANCE_H_STD7'] = bsrt_h_df['EMITTANCE_H_CLEAN'].rolling(window=7, center=True).std()*10**-6/(beta*gamma)
-
-        bsrt_h_df['NEMITTANCE_H'] = bsrt_h_df['EMITTANCE_H_CLEAN']*10**-6/(beta*gamma)
-
-
-    x , y = database.get( 'LHC.BSRT.5R4.B1:BUNCH_EMITTANCE_V', t1, t2 )[ 'LHC.BSRT.5R4.B1:BUNCH_EMITTANCE_V' ]
-    bsrt_v_df = pd.DataFrame( data=y[:,BUNCH_ID], index=x, columns = ['EMITTANCE_V'] )
-
-    # remove entries with zero emittance as unphysical
-    bsrt_v_df['EMITTANCE_V_CLEAN'] = np.where( bsrt_v_df['EMITTANCE_V'] < 1., bsrt_v_df['EMITTANCE_V'].shift(1), bsrt_v_df['EMITTANCE_V'] )
-
-    bsrt_v_df['EMITTANCE_V_AV7'] = bsrt_v_df['EMITTANCE_V_CLEAN'].rolling(window=7, center=True).mean()
-    bsrt_v_df['EMITTANCE_V_STD7'] = bsrt_v_df['EMITTANCE_V_CLEAN'].rolling(window=7, center=True).std()
-
-    bsrt_v_df['NEMITTANCE_V_AV7'] = bsrt_v_df['EMITTANCE_V_CLEAN'].rolling(window=7, center=True).mean()*10**-6/(beta*gamma)
-    bsrt_v_df['NEMITTANCE_V_STD7'] = bsrt_v_df['EMITTANCE_V_CLEAN'].rolling(window=7, center=True).std()*10**-6/(beta*gamma)
-
-    bsrt_v_df['NEMITTANCE_V'] = bsrt_v_df['EMITTANCE_V_CLEAN']*10**-6/(beta*gamma)
-    x , y = database.get( 'LHC.BSRT.5R4.B1:FIT_SIGMA_H', t1, t2 )[ 'LHC.BSRT.5R4.B1:FIT_SIGMA_H' ]
-    y = [ [np.mean(a),np.std(a)] for a in y]
-    bsrt_h_sigma_df = pd.DataFrame( data=y, index=x, columns = ['EMITTANCE_H', 'EMITTANCE_H_STD'] )
-
-    x , y = database.get( 'LHC.BSRT.5R4.B1:FIT_SIGMA_V', t1, t2 )[ 'LHC.BSRT.5R4.B1:FIT_SIGMA_V' ]
-    y = [ [np.mean(a),np.std(a)] for a in y]
-    bsrt_v_sigma_df = pd.DataFrame( data=y, index=x, columns = ['EMITTANCE_V', 'EMITTANCE_V_STD'] )
-
-    bsrt_v_sigma_df['NEMITTANCE_V'] = bsrt_v_sigma_df['EMITTANCE_V'].rolling(window=3, center=True).mean()*10**-6/(beta*gamma)
-    bsrt_v_sigma_df['NEMITTANCE_V_STD'] = bsrt_v_sigma_df['EMITTANCE_V'].rolling(window=3, center=True).std()*10**-6/(beta*gamma)
-
-    x, yI = database.get( 'LHC.BWS.5R4.B1H.APP.IN:EMITTANCE_NORM', t1, t2 )[ 'LHC.BWS.5R4.B1H.APP.IN:EMITTANCE_NORM' ]
-    x, yO = database.get( 'LHC.BWS.5R4.B1H.APP.OUT:EMITTANCE_NORM', t1, t2 )[ 'LHC.BWS.5R4.B1H.APP.OUT:EMITTANCE_NORM' ]
-    yI = np.array([ [np.mean(a), np.std(a)] for a in yI ])
-    yO = np.array([ [np.mean(a), np.std(a)] for a in yO ])
-    y = np.array([yI[:,0] ,yI[:,1] ,yO[:,0] ,yO[:,1] ]).transpose()
-    bws_h_df = pd.DataFrame( index=x, data=y, columns=['EMITTANCE_IN_H', 'EMITTANCE_IN_H_STD', 'EMITTANCE_OUT_H', 'EMITTANCE_OUT_H_STD'] )
-
-
-    x, yI = database.get( 'LHC.BWS.5R4.B1V.APP.IN:EMITTANCE_NORM', t1, t2 )[ 'LHC.BWS.5R4.B1V.APP.IN:EMITTANCE_NORM' ]
-    x, yO = database.get( 'LHC.BWS.5R4.B1V.APP.OUT:EMITTANCE_NORM', t1, t2 )[ 'LHC.BWS.5R4.B1V.APP.OUT:EMITTANCE_NORM' ]
-    yI = np.array([ [np.mean(a), np.std(a)] for a in yI ])
-    yO = np.array([ [np.mean(a), np.std(a)] for a in yO ])
-    y = np.array([yI[:,0] ,yI[:,1] ,yO[:,0] ,yO[:,1] ]).transpose()
-    bws_v_df = pd.DataFrame( index=x, data=y, columns=['EMITTANCE_IN_V', 'EMITTANCE_IN_V_STD', 'EMITTANCE_OUT_V', 'EMITTANCE_OUT_V_STD'])
-# load kicks
-
-kicks_df = tfs.read( ANALYSISDIR+'/getkickac.out' )
-kicks_df.drop(columns=['DPP', 'QX', 'QXRMS', 'QY', 'QYRMS', 'NATQX', 'NATQXRMS', 'NATQY', 'NATQYRMS'] ,inplace=True )
-
-print( kicks_df.tail(5))
-
-
-def timetonms(timestamp):
-    timeformat = '%Y-%m-%d %H:%M:%S.%f'
-    dtobject = datetime.datetime.strptime(timestamp, timeformat)
-    time = int(dtobject.strftime('%s'))*1000  + dtobject.microsecond/1000
-    return time
-
-kicks_df["timestamp"] = [ datetime.datetime.utcfromtimestamp(t) for t in kicks_df['TIME'] ]
-
-# plot Beam intensity for both Beams
-fig, ax = plt.subplots( ncols=1, nrows=1, sharex=True, sharey=False, figsize=(10,10) )
-
-ax.plot(bsrt_v_df['EMITTANCE_V'],  # Actual BSRT measurement
-        color='red',
-        marker='o',
-        linestyle='None',
-        markersize=10,
-        label='__nolegend__')
-
-ax.errorbar(bsrt_v_df.index,   # Averaged measurement
-            bsrt_v_df['EMITTANCE_V_AV7'],
-            yerr = bsrt_v_df['EMITTANCE_V_STD7'],
-            color='darkred',
-            linewidth=4,
-            label='Vertical emittance from BSRT')
-
-ax.errorbar(bws_v_df.index,   # Wire Scanner (In)
-            bws_v_df['EMITTANCE_IN_V'],
-            color='darkorange',
-            label='Vertical emittance from BWS',
-            markersize=15,
-            fmt='o'
-            )
-
-ax.errorbar(bws_v_df.index,  # Wire Scanner (Out)
-            bws_v_df['EMITTANCE_OUT_V'],
-            color='darkorange',
-            label='__nolegend__',
-            markersize=15,
-            fmt='o'
-            )
-
-ax.plot(bsrt_h_df['EMITTANCE_H'],
-        color='lime',
-        marker='o',
-        linestyle='None',
-        markersize=10,
-        label='__nolegend__')
-
-ax.errorbar(bsrt_h_df.index,
-            bsrt_h_df['EMITTANCE_H_AV7'],
-            yerr = bsrt_h_df['EMITTANCE_H_STD7'],
-            color='darkgreen',
-            linewidth=4,
-            label='Horizontal emittance from BSRT')
-
-ax.errorbar(bws_h_df.index,
-            bws_h_df['EMITTANCE_IN_H'],
-            color='darkslategrey',
-            label='Horizontal emittance from BWS',
-            markersize=15,
-            fmt='o'
-            )
-
-ax.errorbar(bws_h_df.index,
-            bws_h_df['EMITTANCE_OUT_H'],
-            color='darkslategrey',
-            label='__nolegend__',
-            markersize=15,
-            fmt='o'
-            )
-
-for i, time in enumerate(kicks_df['TIME']):
-    ax.axvline(x=time,
-               color='grey',
-               linestyle='--',
-               alpha=0.8)
-
-
-ax.set_xlim([min(kicks_df["TIME"]) - 20, max(kicks_df["TIME"]) + 20])
-# ax.set_ylim([0, 5])
-
-# timems = np.linspace( 1532433900, 1532435100, num=5 )
-# timeticks = ['14:05', '14:10', '14:15', '14:20', '14:25']
-
-# ax.set_xticks( timems )
-# ax.set_xticklabels( timeticks , rotation=0 , ha='center' , fontsize = 15)
-
-ax.set_xlabel('Time', fontsize=25)
-ax.set_ylabel(r'$\epsilon_{n}$ $[\mu m]$', fontsize=25)
-ax.tick_params(axis='x', pad=10)
-ax.tick_params(axis='both', which='major', labelsize=20)
-ax.legend(loc='lower left', fontsize=25)
-plt.tight_layout()
-# plt.savefig( 'emittance_evolution.eps' )
-# plt.savefig( 'emittance_evolution.png' )
-# plt.savefig( 'emittance_evolution.pdf' )
-plt.show()
-
+exit()
 
 
 ### get intensity at kicktime for vertical kicks

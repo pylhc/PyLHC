@@ -1,0 +1,3 @@
+[submodule "pylhc/omc3"]
+	path = pylhc/omc3
+	url = https://github.com/pylhc/omc3.git
