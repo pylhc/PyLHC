@@ -68,7 +68,7 @@ def get_info(time: str = None, knobs: Iterable[str] = (), bp_regexp: str = DEFAU
 
     """
     AccDT = AcceleratorDatetime[accel]
-    acc_time = AccDT.now() if time is None else AccDT.from_cern_utc_string(time)
+    acc_time = AccDT.now() if time is None else AccDT.from_utc_string(time)
 
     beamprocess_info = _get_beamprocess(acc_time, bp_regexp, accel)
     optics_info = _get_optics(acc_time, beamprocess_info.name, beamprocess_info.start)

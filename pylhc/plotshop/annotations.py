@@ -79,7 +79,7 @@ def show_ir(ip_dict, ax=None, mode='inside'):
         ax:  Axes to put the irs on (default: gca())
         mode: 'inside', 'outside' + 'nolines' or just 'lines'
     """
-    if not ax:
+    if ax is None:
         ax = plt.gca()
 
     xlim = ax.get_xlim()
@@ -113,8 +113,11 @@ def show_ir(ip_dict, ax=None, mode='inside'):
     ax.set_ylim(ylim)
 
 
-def move_ip_labels(ax, value):
+def move_ip_labels(value, ax=None):
     """ Moves IP labels according to max y * value."""
+    if ax is None:
+        ax = plt.gca()
+
     y_max = ax.get_ylim()[1]
     for t in ax.texts:
         if re.match(r"^IP\s*\d$", t.get_text()):
@@ -165,14 +168,16 @@ def get_name(fig_or_ax=None):
         return fig_or_ax.canvas.get_window_title()
 
 
-def set_annotation(text, ax=None, position='right'):
+def set_annotation(text, ax=None, position='right', pad=0.02):
     """ Writes an annotation on the top right of the axes
 
     Args:
         text: The annotation
         ax: Axes to set annotation on. If 'None' takes current Axes. (Default: None)
+        position: 'left' or 'right'
+        pad: padding to the axes
     """
-    if not ax:
+    if ax is None:
         ax = plt.gca()
 
     annotation = get_annotation(ax, by_reference=True)
@@ -180,14 +185,14 @@ def set_annotation(text, ax=None, position='right'):
     xpos = float(position == 'right')
 
     if annotation is None:
-        ax.text(xpos, 1.0, text,
+        ax.text(xpos, 1.0 + pad, text,
                 ha=position,
                 va='bottom',
                 transform=ax.transAxes,
                 label='plot_style_annotation')
     else:
         annotation.set_text(text)
-        plt.setp(annotation, ha=position, x=xpos)
+        plt.setp(annotation, ha=position, x=xpos, y=1.0+pad)
 
 
 def get_annotation(ax=None, by_reference=True):

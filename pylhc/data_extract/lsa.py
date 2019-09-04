@@ -11,6 +11,7 @@ Provides additional functionality for pjlsa.
 """
 import logging
 import re
+LOG = logging.getLogger(__name__)
 
 import pjlsa
 

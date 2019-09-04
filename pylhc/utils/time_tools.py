@@ -104,25 +104,6 @@ class AccDatetime(datetime):
                                 dt.hour, dt.minute, dt.second, dt.microsecond,
                                 tzinfo=pytz.utc)
 
-
-    # def __eq__(self, other):
-    #     self.datetime.__eq__(other.datetime)
-    #
-    # def __ne__(self, other):
-    #     self.datetime.__ne__(other.datetime)
-    #
-    # def __ge__(self, other):
-    #     self.datetime.__ge__(other.datetime)
-    #
-    # def __le__(self, other):
-    #     self.datetime.__le__(other.datetime)
-    #
-    # def __gt__(self, other):
-    #     self.datetime.__gt__(other.datetime)
-    #
-    # def __lt__(self, other):
-    #     self.datetime.__lt__(other.datetime)
-
     def get_local_timezone(self):
         return self._LOCAL_TIMEZONE
 
@@ -156,11 +137,11 @@ class AccDatetime(datetime):
 
     def __add__(self, td):
         """ Add timedelta and return as new object """
-        return self.__class__(self + td)
+        return self.__class__(super().__add__(td))
 
     def __sub__(self, td):
         """ Subtract timedelta and return as new object """
-        return self.__class__(self - td)
+        return self.__class__(super().__sub__(td))
 
     @classmethod
     def from_local_string(cls, s):
