@@ -69,6 +69,7 @@ bsrt_v_df = pd.DataFrame( data=y[:,BUNCH_ID], index=x, columns = ['EMITTANCE_V']
 
 # remove entries with zero emittance as unphysical
 bsrt_v_df['EMITTANCE_V_CLEAN'] = np.where( bsrt_v_df['EMITTANCE_V'] < 1., bsrt_v_df['EMITTANCE_V'].shift(1), bsrt_v_df['EMITTANCE_V'] )
+bsrt_v_df['EMITTANCE_V_CLEAN'] = bsrt_v_df['EMITTANCE_V']
 
 bsrt_v_df['EMITTANCE_V_AV7'] = bsrt_v_df['EMITTANCE_V_CLEAN'].rolling(window=7, center=True).mean()
 bsrt_v_df['EMITTANCE_V_STD7'] = bsrt_v_df['EMITTANCE_V_CLEAN'].rolling(window=7, center=True).std()
@@ -206,7 +207,7 @@ plt.tight_layout()
 # plt.savefig( 'emittance_evolution.eps' )
 # plt.savefig( 'emittance_evolution.png' )
 # plt.savefig( 'emittance_evolution.pdf' )
-plt.show()
+
 
 
 
@@ -286,7 +287,7 @@ ax.set_ylabel(r'Losses in %')
 ax.legend()
 
 plt.tight_layout()
-plt.show()
+
 
 
 #%%
@@ -363,9 +364,9 @@ ax.legend(loc='upper left', fontsize=25)
 # ax.set_xlim([0,12])
 # ax_doub.set_xlim([0,6])
 plt.tight_layout()
-plt.savefig( 'ac_dipole_losses_sigma.eps' )
-plt.show()
+# plt.savefig( 'ac_dipole_losses_sigma.eps' )
 
+plt.show()
 exit()
 
 

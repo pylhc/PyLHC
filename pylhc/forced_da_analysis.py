@@ -10,9 +10,10 @@ import pandas as pd
 import pytimber
 import scipy.odr
 import tfs
+from tfs.tools import significant_digits
 
 from constants.forced_da_analysis import *  # I am using all that there is!
-from constants.general import PLANES, PLANE_TO_HV
+from constants.general import PLANE_TO_HV, get_proton_gamma, get_proton_beta, LHC_NOMINAL_EMITTANCE
 from omc3.omc3.utils import logging_tools
 from plotshop import style, lines, annotations, colors
 from utils.time_tools import CERNDatetime, get_cern_time_format
@@ -20,26 +21,24 @@ from utils.time_tools import CERNDatetime, get_cern_time_format
 LOG = logging_tools.get_logger(__name__)
 
 
-BWS_DIRECTIONS = ("IN", "OUT")
-
-
-def main(directory: str, beam: int, plane: str, fill: int = None,  bunch_id: int = None):
+def main(directory: str, energy: float, beam: int, plane: str, fill: int = None,  bunch_id: int = None):
     out_dir = _get_output_dir(directory)
 
     kick_df = _get_kick_df(directory, plane)
     intensity_df, emittance_df, emittance_bws_df = _get_dfs_from_timber(fill, beam, bunch_id, plane, kick_df)
-
     _check_all_times_in(kick_df.index, intensity_df.index[0], intensity_df.index[-1])
     _plot_emittances(out_dir, beam, plane, emittance_df, emittance_bws_df, kick_df.index)
 
     kick_df = _add_intensity_and_losses_to_kicks(kick_df, intensity_df)
     _plot_intensity(out_dir, beam, plane, kick_df, intensity_df)
-
     _plot_losses(out_dir, beam, plane, kick_df)
-    kick_df = _add_emittance_and_sigmas_to_kicks(plane, kick_df, emittance_df)
+
+    kick_df = _add_emittance_to_kicks(plane, kick_df, emittance_df, energy)
 
     kick_df = _fit_exponential(plane, kick_df)
+    kick_df = _convert_to_sigmas(plane, kick_df)
     _plot_da_fit(out_dir, beam, plane, kick_df)
+    _plot_da_fit_normalized(directory, beam, plane, kick_df)
 
     _write_tfs(out_dir, plane, kick_df, emittance_df, emittance_bws_df)
     plt.show()
@@ -53,10 +52,12 @@ def _write_tfs(directory, plane, kick_df, emittance_df, emittance_bws_df):
     LOG.debug("Writing tfs files.")
     for df in (kick_df, emittance_df, emittance_bws_df):
         df.insert(0, TIME, [CERNDatetime(dt).cern_utc_string() for dt in df.index])
-
-    tfs.write(os.path.join(directory, get_kick_outfile(plane)), kick_df)
-    tfs.write(os.path.join(directory, get_emittance_outfile(plane)), emittance_df)
-    tfs.write(os.path.join(directory, get_emittance_bws_outfile(plane)), emittance_bws_df)
+    try:
+        tfs.write(os.path.join(directory, get_kick_outfile(plane)), kick_df)
+        tfs.write(os.path.join(directory, get_emittance_outfile(plane)), emittance_df)
+        tfs.write(os.path.join(directory, get_emittance_bws_outfile(plane)), emittance_bws_df)
+    except (FileNotFoundError, IOError):
+        LOG.error(f"Cannot write into directory: {directory} ")
 
 
 def _check_all_times_in(series, start, end):
@@ -93,10 +94,11 @@ def _get_bsrt_bunch_emittances(beam, bunch, plane, db, timespan):
                           columns=all_columns, dtype=float,
                           headers={HEADER_EMITTANCE_AVERAGE: ROLLING_AVERAGE_WINDOW})
 
-    if bunch is None:
-        bunch = y.sum(axis=0).argmax()  # first not-all-zero column
-        LOG.debug(f"  Found bunch: {bunch}")
-    df[col_nemittance] = y[:, bunch]
+    # if bunch is None:
+    #     bunch = y.sum(axis=0).argmax()  # first not-all-zero column
+    #     LOG.debug(f"  Found bunch: {bunch}")
+    # df[col_nemittance] = y[:, bunch] * BUNCH_EMITTANCE_TO_METER
+    df[col_nemittance] = y * BUNCH_EMITTANCE_TO_METER
 
     # remove entries with zero emittance as unphysical
     df = df.loc[df[col_nemittance] != 0, :].copy()  # copy to avoid SettingsWithCopyWarning
@@ -124,7 +126,8 @@ def _get_bws_emittances(beam, plane, db, timespan):
         time_index = pd.Index(CERNDatetime.from_timestamp(t) for t in x)
         if df is None:
             df = tfs.TfsDataFrame(index=time_index, columns=all_columns, dtype=float)
-        df[column_nemittance] = y
+        df[column_nemittance] = y * BWS_EMITTANCE_TO_METER
+        df[column_nemittance] = df[column_nemittance].apply(np.mean)  # BWS can give multiple values
 
     LOG.debug(f"  Returning dataframe of shape {df.shape}")
     return df
@@ -190,44 +193,6 @@ def _get_output_dir(directory):
     return path
 
 
-# Emittance at Kicks -----------------------------------------------------------
-
-
-def _add_emittance_and_sigmas_to_kicks(plane, kick_df, emittance_df):
-    LOG.debug("Retrieving adding emittance and sigmas to the kick files.")
-    kick_df = _get_emittance_at_kicks(plane, kick_df, emittance_df)
-    kick_df = _calculate_sigmas_at_kicks(plane, kick_df)
-    return kick_df
-
-
-def _get_emittance_at_kicks(plane, kick_df, emittance_df):
-    LOG.debug("Retrieving normalized emittance at the kicks.")
-    kick_df.headers[HEADER_EMITTANCE_AVERAGE] = ROLLING_AVERAGE_WINDOW
-    column_nemittance = column_norm_emittance(plane)
-    columns_emitt = [mean_col(column_nemittance), err_col(column_nemittance)]
-    columns_kick = [column_nemittance, err_col(column_nemittance)]
-
-    kick_df = kick_df.reindex(columns=kick_df.columns.tolist() + columns_kick)
-    for time in kick_df.index:
-        idx_kick = emittance_df.index.get_loc(time, method="nearest")
-        idx_emitt = [emittance_df.columns.get_loc(c) for c in columns_emitt]
-        kick_df.loc[time, columns_kick] = emittance_df.iloc[idx_kick, idx_emitt].values
-
-    return kick_df
-
-
-def _calculate_sigmas_at_kicks(plane, kick_df):
-    LOG.debug("Calculating sigmas at the kicks.")
-    col_sigma, col_action, col_nemittance = column_sigma(plane), column_action(plane), column_norm_emittance(plane)
-
-    kick_df[col_sigma] = np.sqrt(kick_df[col_action] / kick_df[col_nemittance])
-    kick_df[err_col(col_sigma)] = 0.5 * np.abs(kick_df[col_action] / kick_df[col_nemittance]) * np.sqrt(
-       np.square(kick_df[err_col(col_action)] / kick_df[col_action]) +
-       np.square(kick_df[err_col(col_nemittance)] / kick_df[col_nemittance])
-    )
-    return kick_df
-
-
 # Intensity at Kicks -----------------------------------------------------------
 
 
@@ -271,29 +236,112 @@ def _calculate_intensity_losses_at_kicks(kick_df):
     return kick_df
 
 
+# Emittance at Kicks -----------------------------------------------------------
+
+
+def _add_emittance_to_kicks(plane, kick_df, emittance_df, energy):
+    LOG.debug("Retrieving normalized emittance at the kicks.")
+    kick_df.headers[HEADER_ENERGY] = energy
+    kick_df.headers[HEADER_EMITTANCE_AVERAGE] = ROLLING_AVERAGE_WINDOW
+    col_nemittance = column_norm_emittance(plane)
+    cols_emitt = [mean_col(col_nemittance), err_col(col_nemittance)]
+    cols_kick = [col_nemittance, err_col(col_nemittance)]
+
+    kick_df = kick_df.reindex(columns=kick_df.columns.tolist() + cols_kick)
+    idx_emitt = [emittance_df.columns.get_loc(c) for c in cols_emitt]
+    for time in kick_df.index:
+        idx_kick = emittance_df.index.get_loc(time, method="nearest")
+        kick_df.loc[time, cols_kick] = emittance_df.iloc[idx_kick, idx_emitt].values
+
+    # add de-normalized emittance
+    normalization = get_proton_gamma(energy) * get_proton_beta(energy)  # norm emittance to emittance
+    col_emittance = column_emittance(plane)
+
+    kick_df.headers[header_norm_nominal_emittance(plane)] = LHC_NOMINAL_EMITTANCE
+    kick_df.headers[header_nominal_emittance(plane)] = LHC_NOMINAL_EMITTANCE / normalization
+    kick_df[col_emittance] = kick_df[col_nemittance] / normalization
+    kick_df[err_col(col_emittance)] = kick_df[err_col(col_nemittance)] / normalization
+    return kick_df
+
+
 # Forced DA Fitting ------------------------------------------------------------
 
 
-def exp_decay_normalized(p, x):
-    return np.exp(.5 * (x - p))
+def fun_exp_decay(p, x):
+    """ p = DA, x[0] = action, x[1] = emittance"""
+    return np.exp(-(p - x[0]/2) / x[1])
 
 
 def _fit_exponential(plane, kick_df):
     LOG.debug("Fitting forced da to exponential. ")
-    col_sigma = column_sigma(plane)
-    exp_decay_sigma_model = scipy.odr.Model(exp_decay_normalized)
-    data_model_sigma = scipy.odr.RealData(x=kick_df[col_sigma],
-                                          y=kick_df[INTENSITY_LOSSES],
-                                          sx=kick_df[err_col(col_sigma)],
-                                          sy=kick_df[err_col(INTENSITY_LOSSES)]
-                                          )
-    da_odr = scipy.odr.ODR(data_model_sigma, exp_decay_sigma_model, beta0=[4.])
-    # da_odr.set_job( fit_type=2 )
+    col_action = column_action(plane)
+    col_emittance = column_emittance(plane)
+    col_losses = rel_col(INTENSITY_LOSSES)
+
+    # fill zero errors with the minimum error - otherwise fit will not work
+    err_action = _no_nonzero_errors(kick_df[err_col(col_action)])
+    err_emittance = _no_nonzero_errors(kick_df[err_col(col_emittance)])
+    err_losses = _no_nonzero_errors(kick_df[err_col(col_losses)])
+
+    exp_decay_sigma_model = scipy.odr.Model(fun_exp_decay)
+    data_model_sigma = scipy.odr.RealData(
+        x=[kick_df[col_action], kick_df[col_emittance]],
+        y=kick_df[col_losses],
+        sx=[err_action, err_emittance],
+        sy=err_losses
+    )
+    da_odr = scipy.odr.ODR(data_model_sigma, exp_decay_sigma_model,
+                           beta0=[INITIAL_DA_FIT*kick_df.headers[header_nominal_emittance(plane)]])
+    # da_odr.set_job(fit_type=2)
     odr_output = da_odr.run()
-    odr_output.pprint()
-    da = odr_output.beta[0], odr_output.sd_beta[0]  # DA and DA-Error
+    _odr_pprint(LOG.info, odr_output)
+
+    # Add DA to kick
+    da = odr_output.beta[0], odr_output.sd_beta[0]
     kick_df.headers[header_da(plane)], kick_df.headers[header_da_error(plane)] = da
-    LOG.info(f"Forced DA in {plane}: {da[0]} ± {da[1]}")
+    LOG.info(f"Forced DA in {plane} [m]: {da[0]} ± {da[1]}")
+    return kick_df
+
+
+def _no_nonzero_errors(series):
+    series = series.copy()
+    series[series == 0] = np.abs(series[series != 0]).min()
+    return series
+
+
+def _odr_pprint(printer, odr_out):
+    """ Logs the odr output results.
+
+    Adapted from odr_output pretty print.
+    """
+    printer('ODR-Summary:')
+    printer(f'  Beta: {odr_out.beta}')
+    printer(f'  Beta Std Error: {odr_out.sd_beta}')
+    printer(f'  Beta Covariance: {odr_out.cov_beta}')
+    if hasattr(odr_out, 'info'):
+        printer(f'  Residual Variance: {odr_out.res_var}')
+        printer(f'  Inverse Condition #: {odr_out.inv_condnum}')
+        printer(f'  Reason(s) for Halting:')
+        for r in odr_out.stopreason:
+            printer(f'    {r}')
+
+
+def _convert_to_sigmas(plane, kick_df):
+    LOG.debug("Calculating action and da in sigmas.")
+    nominal_emittance = kick_df.headers[header_nominal_emittance(plane)]
+
+    # DA
+    da, da_err = kick_df.headers[header_da(plane)], kick_df.headers[header_da_error(plane)]
+    da_sigma = np.sqrt(da/nominal_emittance), .5 * da_err / np.sqrt(da * nominal_emittance)
+    kick_df.headers[header_da(plane, unit="sigma")], kick_df.headers[header_da_error(plane, unit="sigma")] = da_sigma
+    LOG.info(f"Forced DA {plane} in N-sigma: {da_sigma[0]} ± {da_sigma[1]}")
+
+    # Action
+    col_action = column_action(plane)
+    kick_df[sigma_col(col_action)] = np.sqrt(kick_df[col_action] / nominal_emittance)
+    kick_df[err_col(sigma_col(col_action))] = (
+            0.5 * kick_df[err_col(col_action)] / np.sqrt(kick_df[col_action] * nominal_emittance)
+    )
     return kick_df
 
 
@@ -316,7 +364,9 @@ def _plot_intensity(directory, beam, plane, kick_df, intensity_df):
 
     # plot intensity
     ax.plot(intensity_df[INTENSITY]/norm,
-            marker="",
+            marker=".",
+            markersize=mpl.rcParams["lines.markersize"] * 0.5,
+            fillstyle="full",
             color=colors.get_mpl_color(0),
             label=f'Intensity')
 
@@ -362,9 +412,9 @@ def _plot_losses(directory, beam, plane, kick_df):
         yerr=kick_df[err_col(rel_col(INTENSITY_LOSSES))] * 100,
         marker=".",
         color=colors.get_mpl_color(0),
-        label=f'Losses')
+        label=f'Kicks')
 
-    ax.set_xlabel(f"Action $2J_{plane}$ [$\mu$m]")
+    ax.set_xlabel(f"$2J_{plane}$ [$\mu$m]")
     ax.set_ylabel(r'Beam Losses [%]')
     annotations.make_top_legend(ax, ncol=3)
     plt.tight_layout()
@@ -382,7 +432,7 @@ def _plot_emittances(directory, beam, plane, emittance_df, emittance_bws_df, kic
     bsrt_color = colors.get_mpl_color(0)
     bws_color = colors.get_mpl_color(1)
 
-    ax.plot(emittance_df[col_norm_emittance],  # Actual BSRT measurement
+    ax.plot(emittance_df[col_norm_emittance] * 1e6,  # Actual BSRT measurement
             color=bsrt_color,
             marker='o',
             markeredgewidth=2,
@@ -390,7 +440,7 @@ def _plot_emittances(directory, beam, plane, emittance_df, emittance_bws_df, kic
             label=f'From BSRT')
 
     ax.errorbar(emittance_df.index,
-                emittance_df[mean_col(col_norm_emittance)],
+                emittance_df[mean_col(col_norm_emittance)] * 1e6,
                 yerr=emittance_df[err_col(col_norm_emittance)],
                 color=colors.change_color_brightness(bsrt_color, 0.7),
                 marker='',
@@ -401,8 +451,9 @@ def _plot_emittances(directory, beam, plane, emittance_df, emittance_bws_df, kic
             label = "__nolegend__" if d == BWS_DIRECTIONS[1] else f"From BWS"
             color = bws_color if d == BWS_DIRECTIONS[1] else colors.change_color_brightness(bws_color, 0.5)
 
-            ax.plot(emittance_bws_df[f"{col_norm_emittance}_{d}"], 'o',
-                    color=color, label=label, markersize=15,
+            ax.plot(emittance_bws_df[f"{col_norm_emittance}_{d}"] * 1e6,
+                    linestyle='None', marker='o', color=color, label=label,
+                    markersize=mpl.rcParams['lines.markersize']*1.5,
                     )
 
     _plot_kicks_and_scale_x(ax, kick_times)
@@ -414,43 +465,94 @@ def _plot_emittances(directory, beam, plane, emittance_df, emittance_bws_df, kic
 
 
 def _plot_da_fit(directory, beam, plane, kick_df):
+    """ Plot the Forced Dynamic Aperture fit. """
     LOG.debug("Plotting Dynamic Aperture Fit")
     style.set_style("standard")
-    sigma_data = kick_df[column_sigma(plane)]
-    sigma_error = kick_df[err_col(column_sigma(plane))]
-
+    col_action = column_action(plane)
+    col_emittance = column_emittance(plane)
     col_intensity = rel_col(INTENSITY_LOSSES)
-    da = kick_df.headers[header_da(plane)]
-    da_err = kick_df.headers[header_da_error(plane)]
 
     fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(10.24, 7.68))
     ax.errorbar(
-        sigma_data,
+        kick_df[col_action] * 1e6,
         kick_df[col_intensity] * 100,
-        xerr=sigma_error,
+        xerr=kick_df[err_col(col_action)],
         yerr=kick_df[err_col(col_intensity)] * 100,
         marker=".",
         color=colors.get_mpl_color(0),
-        label=f'Losses'
+        label=f'Kicks'
     )
 
     color = colors.get_mpl_color(1)
-    exp_mean = exp_decay_normalized(da, sigma_data)*100
-    exp_min = exp_decay_normalized(da-da_err, sigma_data)*100
-    exp_max = exp_decay_normalized(da+da_err, sigma_data)*100
-    ax.fill_between(sigma_data, exp_min, exp_max,
+    data = kick_df[col_action], kick_df[col_emittance]
+    # data = kick_df[col_action], kick_df.headers[header_nominal_emittance(plane)]
+    da, da_err = kick_df.headers[header_da(plane)], kick_df.headers[header_da_error(plane)]
+    exp_mean = fun_exp_decay(da, data) * 100
+    exp_min = fun_exp_decay(da - da_err, data) * 100
+    exp_max = fun_exp_decay(da + da_err, data) * 100
+
+    ax.fill_between(data[0]*1e6, exp_min, exp_max,
                     facecolor=mcolors.to_rgba(color, .3))
 
-    ax.plot(sigma_data, exp_mean, ls="--", c=color,
-            label=f'Fit: DA= ${da:.1f} \pm {da_err:.1f} \sigma_{{measured}}$'
+    da_mu, da_err_mu = significant_digits(da*1e6, da_err*1e6)
+    ax.plot(data[0]*1e6, exp_mean, ls="--", c=color,
+            label=f'Fit: DA= ${da_mu} \pm {da_err_mu} \mu m$'
             )
 
-    ax.set_xlabel(f"$\sqrt{{2J_{plane}/\epsilon_n}}$")
+    ax.set_xlabel(f"$2J_{plane} [\mu m]$")
     ax.set_ylabel(r'Beam Losses [%]')
     annotations.make_top_legend(ax, ncol=3)
     plt.tight_layout()
     annotations.set_name(f"Losses Beam {beam}, Plane {plane}", fig)
     _save_fig(directory, plane, fig, 'dafit')
+
+
+def _plot_da_fit_normalized(directory, beam, plane, kick_df):
+    """ Plot the Forced Dynamic Aperture fit. """
+    LOG.debug("Plotting Dynamic Aperture Fit")
+    style.set_style("standard")
+    col_action = column_action(plane)
+    col_emittance = column_emittance(plane)
+    col_action_sigma = sigma_col(col_action)
+    col_intensity = rel_col(INTENSITY_LOSSES)
+
+    fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(10.24, 7.68))
+    ax.errorbar(
+        kick_df[col_action_sigma],
+        kick_df[col_intensity] * 100,
+        xerr=kick_df[err_col(col_action_sigma)],
+        yerr=kick_df[err_col(col_intensity)] * 100,
+        marker=".",
+        color=colors.get_mpl_color(0),
+        label=f'Kicks'
+    )
+
+    color = colors.get_mpl_color(1)
+    data = kick_df[col_action].sort_values(), np.mean(kick_df[col_emittance])
+    da, da_err = kick_df.headers[header_da(plane)], kick_df.headers[header_da_error(plane)]
+    da_sigma, da_err_sigma = (kick_df.headers[header_da(plane, unit="sigma")],
+                              kick_df.headers[header_da_error(plane, unit="sigma")])
+
+    exp_mean = fun_exp_decay(da, data) * 100
+    exp_min = fun_exp_decay(da - da_err, data) * 100
+    exp_max = fun_exp_decay(da + da_err, data) * 100
+
+    ax.fill_between(kick_df[col_action_sigma].sort_values(), exp_min, exp_max,
+                    facecolor=mcolors.to_rgba(color, .3))
+
+    da_significant = significant_digits(da_sigma, da_err_sigma)
+    ax.plot(kick_df[col_action_sigma].sort_values(), exp_mean, ls="--", c=color,
+            label=f'Fit: DA= ${da_significant[0]} \pm {da_significant[1]} N_{{\sigma}}$'
+            )
+
+    ax.set_xlabel(f"$N_{{\sigma}} = \sqrt{{2J_{plane}/\epsilon_{{nominal}}}}$")
+    ax.set_ylabel(r'Beam Losses [%]')
+    annotations.make_top_legend(ax, ncol=3)
+    plt.tight_layout()
+    annotations.set_name(f"Losses Beam {beam}, Plane {plane}", fig)
+    _save_fig(directory, plane, fig, 'dafitnorm')
+
+# Helper ---
 
 
 def _plot_kicks_and_scale_x(ax, kick_times, pad=20):
@@ -470,7 +572,7 @@ def _plot_kicks_and_scale_x(ax, kick_times, pad=20):
 def _save_fig(directory, plane, fig, ptype):
     try:
         for ftype in PLOT_FILETYPES:
-            fig.savefig(os.path.join(directory, PLOT_NAMEMAP[ptype](plane, ftype)))
+            fig.savefig(os.path.join(directory, get_plot_filename(ptype, plane, ftype)))
     except IOError:
         LOG.error(f"Couldn't create output files for {ptype} plots.")
 
@@ -478,8 +580,17 @@ def _save_fig(directory, plane, fig, ptype):
 
 
 if __name__ == '__main__':
-    setup = dict(plane="Y", beam=1, bunch_id=0,
-                 directory='/media/jdilly/Storage/Repositories/Gui_Output/2019-08-09/LHCB1/Results/b1_amplitude_det_vertical_all',
-                 fill=7391
-                 )
+    setup = dict(
+        energy=6500,
+        plane="Y", beam=1, bunch_id=0,
+        directory='/media/jdilly/Storage/Repositories/Gui_Output/2019-08-09/LHCB1/Results/b1_amplitude_det_vertical_all',
+        fill=7391
+    )
+
+    # setup = dict(
+    #     energy=450,
+    #     plane="Y", beam=1,
+    #     directory='/afs/cern.ch/work/m/mihofer2/public/MDs/MD3603/BBeatGui/2018-10-23/LHCB1/Results/ver_ACkicks_0.002QWind',
+    #     fill=6971
+    # )
     main(**setup)
