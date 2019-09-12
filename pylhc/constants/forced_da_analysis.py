@@ -1,15 +1,17 @@
-from tfs.tools import DotDict
+from constants.general import PLANE_TO_HV
 
 RESULTS_DIR = "forced_da_analysis"
 
-ROLLING_AVERAGE_WINDOW = 7
+ROLLING_AVERAGE_WINDOW = 100
 FILL_TIME_AROUND_KICKS_MIN = 10
 TIME_BEFORE_KICK_S = (-30, -5)
 TIME_AFTER_KICK_S = (5, 30)
+YPAD = 0.05  # additional padding of the y axis for DA plots
 
-INITIAL_DA_FIT = 4  # initial DA for fitting in values of nominal emittance
+INITIAL_DA_FIT = 12  # initial DA for fitting in values of nominal emittance
 
 BWS_DIRECTIONS = ("IN", "OUT")
+
 
 # Kick File Definitions --------------------------------------------------------
 
@@ -18,15 +20,15 @@ TFS_SUFFIX = ".tfs"
 TIME = "TIME"
 
 
-def get_kick_outfile(plane):
+def outfile_kick(plane):
     return f'{KICKFILE}_fda_{plane.lower()}{TFS_SUFFIX}'
 
 
-def get_emittance_outfile(plane):
+def outfile_emittance(plane):
     return f'emittance_{plane.lower()}{TFS_SUFFIX}'
 
 
-def get_emittance_bws_outfile(plane):
+def outfile_emittance_bws(plane):
     return f'emittance_bws_{plane.lower()}{TFS_SUFFIX}'
 
 
@@ -35,7 +37,7 @@ def get_emittance_bws_outfile(plane):
 PLOT_FILETYPES = (".pdf", ".png")
 
 
-def get_plot_filename(ptype, plane, ftype):
+def outfile_plot(ptype, plane, ftype):
     return f"{ptype}_{plane.lower()}{ftype}"
 
 
@@ -43,11 +45,22 @@ def get_plot_filename(ptype, plane, ftype):
 
 INTENSITY_KEY = 'LHC.BCTFR.A6R4.B{beam:d}:BEAM_INTENSITY'
 
-BUNCH_EMITTANCE_KEY = 'LHC.BSRT.5R4.B{beam:d}:AVERAGE_EMITTANCE_{plane:s}'
-BUNCH_EMITTANCE_TO_METER = 1e-6  # Emittance is normalized an in um
+BSRT_EMITTANCE_KEY = 'LHC.BSRT.5{side:s}4.B{beam:d}:AVERAGE_EMITTANCE_{plane:s}'
+BSRT_EMITTANCE_TO_METER = 1e-6  # Emittance is normalized an in um
 
-BWS_EMITTANCE_KEY = 'LHC.BWS.5R4.B{beam:d}{plane:s}.APP.{direction:s}:EMITTANCE_NORM'
+BWS_EMITTANCE_KEY = 'LHC.BWS.5{side:s}4.B{beam:d}{plane:s}.APP.{direction:s}:EMITTANCE_NORM'
 BWS_EMITTANCE_TO_METER = 1e-6  # Emittance is normalized an in um
+
+
+LR_MAP = {1: "R", 2: "L"}
+
+
+def bsrt_emittance_key(beam, plane):
+    return BSRT_EMITTANCE_KEY.format(side=LR_MAP[beam], beam=beam, plane=PLANE_TO_HV[plane])
+
+
+def bws_emittance_key(beam, plane, direction):
+    return BWS_EMITTANCE_KEY.format(side=LR_MAP[beam], beam=beam, plane=PLANE_TO_HV[plane], direction=direction)
 
 # Headers ----------------------------------------------------------------------
 

@@ -1,50 +1,102 @@
 import os
 from contextlib import suppress
 
-import matplotlib.dates as mdates
-import matplotlib.colors as mcolors
-import matplotlib.pyplot as plt
 import matplotlib as mpl
+import matplotlib.colors as mcolors
+import matplotlib.dates as mdates
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import pytimber
 import scipy.odr
 import tfs
 from tfs.tools import significant_digits
+from generic_parser import EntryPointParameters, entrypoint
 
 from constants.forced_da_analysis import *  # I am using all that there is!
-from constants.general import PLANE_TO_HV, get_proton_gamma, get_proton_beta, LHC_NOMINAL_EMITTANCE
+from constants.general import get_proton_gamma, get_proton_beta, LHC_NOMINAL_EMITTANCE
 from omc3.omc3.utils import logging_tools
 from plotshop import style, lines, annotations, colors
-from utils.time_tools import CERNDatetime, get_cern_time_format
+from utils.time_tools import CERNDatetime
 
 LOG = logging_tools.get_logger(__name__)
 
 
-def main(directory: str, energy: float, beam: int, plane: str, fill: int = None,  bunch_id: int = None):
-    out_dir = _get_output_dir(directory)
+def get_parameters():
+    return EntryPointParameters(
+        directory=dict(
+            flags=['-d', "--dir"],
+            required=True,
+            type=str,
+            help="Analysis directory containing kick files."
+        ),
+        energy=dict(
+            flags=['-e', "--energy"],
+            required=True,
+            type=float,
+            help="Beam energy in GeV."
+        ),
+        fill=dict(
+            flags=['-f', "--fill"],
+            type=int,
+            help="Fill that was used. If not given, check out time_around_kicks."
+        ),
+        beam=dict(
+            flags=["-b", "--beam"],
+            required=True,
+            choices=[1, 2],
+            type=int,
+            help="Beam to use."
+        ),
+        plane=dict(
+            flags=["-p", "--plane"],
+            choices=["X", "Y"],
+            type=str,
+            help="Plane of the kicks. If not given, the code assumes kicks in both planes."
+        ),
+    )
 
-    kick_df = _get_kick_df(directory, plane)
-    intensity_df, emittance_df, emittance_bws_df = _get_dfs_from_timber(fill, beam, bunch_id, plane, kick_df)
+
+@entrypoint(get_parameters(), strict=True)
+def main(opt):
+    LOG.debug("Starting Forced DA analysis.")
+    _log_opt(opt)
+
+    # get data
+    out_dir = _get_output_dir(opt.directory)
+    kick_df = _get_kick_df(opt.directory, opt.plane)
+    intensity_df, emittance_df, emittance_bws_df = _get_dfs_from_timber(opt.fill, opt.beam, opt.plane, kick_df)
     _check_all_times_in(kick_df.index, intensity_df.index[0], intensity_df.index[-1])
-    _plot_emittances(out_dir, beam, plane, emittance_df, emittance_bws_df, kick_df.index)
 
+    # add data to kicks
     kick_df = _add_intensity_and_losses_to_kicks(kick_df, intensity_df)
-    _plot_intensity(out_dir, beam, plane, kick_df, intensity_df)
-    _plot_losses(out_dir, beam, plane, kick_df)
+    kick_df = _add_emittance_to_kicks(opt.plane, opt.energy, kick_df, emittance_df)
+    kick_df = _fit_exponential(opt.plane, kick_df)
+    kick_df = _convert_to_sigmas(opt.plane, kick_df)
 
-    kick_df = _add_emittance_to_kicks(plane, kick_df, emittance_df, energy)
+    # output
+    _write_tfs(out_dir, opt.plane, kick_df, emittance_df, emittance_bws_df)
 
-    kick_df = _fit_exponential(plane, kick_df)
-    kick_df = _convert_to_sigmas(plane, kick_df)
-    _plot_da_fit(out_dir, beam, plane, kick_df)
-    _plot_da_fit_normalized(directory, beam, plane, kick_df)
+    # plotting
+    _plot_emittances(out_dir, opt.beam, opt.plane, emittance_df, emittance_bws_df, kick_df.index)
+    _plot_intensity(out_dir, opt.beam, opt.plane, kick_df, intensity_df)
+    # _plot_losses(out_dir, beam, plane, kick_df)
+    _plot_da_fit(out_dir, opt.beam, opt.plane, kick_df)
+    _plot_da_fit_normalized(out_dir, opt.beam, opt.plane, kick_df)
 
-    _write_tfs(out_dir, plane, kick_df, emittance_df, emittance_bws_df)
     plt.show()
 
 
 # Helper ---
+
+def _log_opt(opt):
+    LOG.info("Performing ForcedDA Analysis for:")
+    if opt.fill is not None:
+        LOG.info(f"  Fill: {opt.fill}")
+    LOG.info(f"  Energy: {opt.energy} GeV")
+    LOG.info(f"  Beam: {opt.beam}")
+    LOG.info(f"  Plane: {opt.plane}")
+    LOG.info(f"  Analysis Directory: '{opt.directory}'")
 
 
 def _write_tfs(directory, plane, kick_df, emittance_df, emittance_bws_df):
@@ -53,9 +105,9 @@ def _write_tfs(directory, plane, kick_df, emittance_df, emittance_bws_df):
     for df in (kick_df, emittance_df, emittance_bws_df):
         df.insert(0, TIME, [CERNDatetime(dt).cern_utc_string() for dt in df.index])
     try:
-        tfs.write(os.path.join(directory, get_kick_outfile(plane)), kick_df)
-        tfs.write(os.path.join(directory, get_emittance_outfile(plane)), emittance_df)
-        tfs.write(os.path.join(directory, get_emittance_bws_outfile(plane)), emittance_bws_df)
+        tfs.write(os.path.join(directory, outfile_kick(plane)), kick_df)
+        tfs.write(os.path.join(directory, outfile_emittance(plane)), emittance_df)
+        tfs.write(os.path.join(directory, outfile_emittance_bws(plane)), emittance_bws_df)
     except (FileNotFoundError, IOError):
         LOG.error(f"Cannot write into directory: {directory} ")
 
@@ -81,27 +133,23 @@ def _get_bctrf_beam_intensity(beam, db, timespan):
     return df
 
 
-def _get_bsrt_bunch_emittances(beam, bunch, plane, db, timespan):
-    LOG.debug(f"Getting emittance from BSRT for beam {beam}, bunch {bunch} and plane {plane}.")
-    bunch_emittance_key = BUNCH_EMITTANCE_KEY.format(beam=beam, plane=PLANE_TO_HV[plane])
+def _get_bsrt_bunch_emittances(beam, plane, db, timespan):
+    LOG.debug(f"Getting emittance from BSRT for beam {beam}  and plane {plane}.")
+    bunch_emittance_key = bsrt_emittance_key(beam, plane)
     LOG.debug(f"  Key: {bunch_emittance_key}")
     col_nemittance = column_norm_emittance(plane)
     all_columns = [f(col_nemittance) for f in (lambda s: s, mean_col, err_col)]
 
     x, y = db.get(bunch_emittance_key, *timespan)[bunch_emittance_key]
+
+    # remove entries with zero emittance as unphysical
+    x, y = x[y != 0], y[y != 0]
+
     time_index = pd.Index(CERNDatetime.from_timestamp(t) for t in x)
     df = tfs.TfsDataFrame(index=time_index,
                           columns=all_columns, dtype=float,
                           headers={HEADER_EMITTANCE_AVERAGE: ROLLING_AVERAGE_WINDOW})
-
-    # if bunch is None:
-    #     bunch = y.sum(axis=0).argmax()  # first not-all-zero column
-    #     LOG.debug(f"  Found bunch: {bunch}")
-    # df[col_nemittance] = y[:, bunch] * BUNCH_EMITTANCE_TO_METER
-    df[col_nemittance] = y * BUNCH_EMITTANCE_TO_METER
-
-    # remove entries with zero emittance as unphysical
-    df = df.loc[df[col_nemittance] != 0, :].copy()  # copy to avoid SettingsWithCopyWarning
+    df[col_nemittance] = y * BSRT_EMITTANCE_TO_METER
 
     rolling = df[col_nemittance].rolling(window=ROLLING_AVERAGE_WINDOW, center=True)
     df[mean_col(col_nemittance)] = rolling.mean()
@@ -118,7 +166,7 @@ def _get_bws_emittances(beam, plane, db, timespan):
     all_columns = [f"{column_norm_emittance(plane)}_{direction}" for direction in BWS_DIRECTIONS]
     df = None
     for direction in BWS_DIRECTIONS:
-        emittance_key = BWS_EMITTANCE_KEY.format(beam=beam, plane=PLANE_TO_HV[plane], direction=direction)
+        emittance_key = bws_emittance_key(beam, plane, direction)
         LOG.debug(f"  Key: {emittance_key}")
         column_nemittance = f"{column_norm_emittance(plane)}_{direction}"
 
@@ -133,7 +181,7 @@ def _get_bws_emittances(beam, plane, db, timespan):
     return df
 
 
-def _get_dfs_from_timber(fill: int, beam: int, bunch: int, plane: str, kick_df: tfs.TfsDataFrame):
+def _get_dfs_from_timber(fill: int, beam: int, plane: str, kick_df: tfs.TfsDataFrame):
     LOG.debug("Getting data from timber.")
     db = pytimber.LoggingDB()
     if fill is not None:
@@ -147,7 +195,7 @@ def _get_dfs_from_timber(fill: int, beam: int, bunch: int, plane: str, kick_df: 
 
     intensity_df = _get_bctrf_beam_intensity(beam, db, timespan)
     emittance_bws_df = _get_bws_emittances(beam, plane, db, timespan)
-    emittance_df = _get_bsrt_bunch_emittances(beam, bunch, plane,  db, timespan)
+    emittance_df = _get_bsrt_bunch_emittances(beam, plane,  db, timespan)
     return intensity_df, emittance_df, emittance_bws_df
 
 
@@ -239,7 +287,7 @@ def _calculate_intensity_losses_at_kicks(kick_df):
 # Emittance at Kicks -----------------------------------------------------------
 
 
-def _add_emittance_to_kicks(plane, kick_df, emittance_df, energy):
+def _add_emittance_to_kicks(plane, energy, kick_df, emittance_df):
     LOG.debug("Retrieving normalized emittance at the kicks.")
     kick_df.headers[HEADER_ENERGY] = energy
     kick_df.headers[HEADER_EMITTANCE_AVERAGE] = ROLLING_AVERAGE_WINDOW
@@ -268,7 +316,7 @@ def _add_emittance_to_kicks(plane, kick_df, emittance_df, energy):
 
 
 def fun_exp_decay(p, x):
-    """ p = DA, x[0] = action, x[1] = emittance"""
+    """ p = DA, x[0] = action (2J res), x[1] = emittance"""
     return np.exp(-(p - x[0]/2) / x[1])
 
 
@@ -501,9 +549,11 @@ def _plot_da_fit(directory, beam, plane, kick_df):
 
     ax.set_xlabel(f"$2J_{plane} [\mu m]$")
     ax.set_ylabel(r'Beam Losses [%]')
+    ax.set_xlim([0, None])
+    ax.set_ylim([0, kick_df[col_intensity].max() * 100 * (1 + YPAD)])
     annotations.make_top_legend(ax, ncol=3)
     plt.tight_layout()
-    annotations.set_name(f"Losses Beam {beam}, Plane {plane}", fig)
+    annotations.set_name(f"DA Fit {beam}, Plane {plane}", fig)
     _save_fig(directory, plane, fig, 'dafit')
 
 
@@ -547,10 +597,13 @@ def _plot_da_fit_normalized(directory, beam, plane, kick_df):
 
     ax.set_xlabel(f"$N_{{\sigma}} = \sqrt{{2J_{plane}/\epsilon_{{nominal}}}}$")
     ax.set_ylabel(r'Beam Losses [%]')
+    ax.set_xlim([0, None])
+    ax.set_ylim([0, kick_df[col_intensity].max() * 100 * (1 + YPAD)])
     annotations.make_top_legend(ax, ncol=3)
     plt.tight_layout()
-    annotations.set_name(f"Losses Beam {beam}, Plane {plane}", fig)
-    _save_fig(directory, plane, fig, 'dafitnorm')
+    annotations.set_name(f"DA Fit Normalized {beam}, Plane {plane}", fig)
+    _save_fig(directory, plane, fig, 'dafit_norm')
+
 
 # Helper ---
 
@@ -572,7 +625,9 @@ def _plot_kicks_and_scale_x(ax, kick_times, pad=20):
 def _save_fig(directory, plane, fig, ptype):
     try:
         for ftype in PLOT_FILETYPES:
-            fig.savefig(os.path.join(directory, get_plot_filename(ptype, plane, ftype)))
+            path = os.path.join(directory, outfile_plot(ptype, plane, ftype))
+            LOG.debug(f"Saving Figure to {path}")
+            fig.savefig(path)
     except IOError:
         LOG.error(f"Couldn't create output files for {ptype} plots.")
 
@@ -581,8 +636,8 @@ def _save_fig(directory, plane, fig, ptype):
 
 if __name__ == '__main__':
     setup = dict(
-        energy=6500,
-        plane="Y", beam=1, bunch_id=0,
+        energy=6500.,
+        plane="Y", beam=1,
         directory='/media/jdilly/Storage/Repositories/Gui_Output/2019-08-09/LHCB1/Results/b1_amplitude_det_vertical_all',
         fill=7391
     )
