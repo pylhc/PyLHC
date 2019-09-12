@@ -3,9 +3,9 @@ from constants.general import PLANE_TO_HV
 RESULTS_DIR = "forced_da_analysis"
 
 ROLLING_AVERAGE_WINDOW = 100
-FILL_TIME_AROUND_KICKS_MIN = 10
-TIME_BEFORE_KICK_S = (-30, -5)
-TIME_AFTER_KICK_S = (5, 30)
+TIME_AROUND_KICKS_MIN = 10
+TIME_BEFORE_KICK_S = [30, 5]
+TIME_AFTER_KICK_S = [5, 30]
 YPAD = 0.05  # additional padding of the y axis for DA plots
 
 INITIAL_DA_FIT = 12  # initial DA for fitting in values of nominal emittance

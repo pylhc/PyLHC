@@ -54,6 +54,29 @@ def get_parameters():
             type=str,
             help="Plane of the kicks. If not given, the code assumes kicks in both planes."
         ),
+        time_around_kicks=dict(
+            flags=["--taround"],
+            type=int,
+            default=TIME_AROUND_KICKS_MIN,
+            help=("If no fill is given, this defines the time (in minutes) "
+                  "when data before the first and after the last kick is extracted.")
+        ),
+        intensity_time_before_kick=dict(
+            flags=["--tbefore"],
+            type=int,
+            nargs=2,
+            default=TIME_BEFORE_KICK_S,
+            help=("Defines the times before the kicks (in seconds) "
+                  "which is used for intensity averaging to calculate the losses.")
+        ),
+        intensity_time_after_kick=dict(
+            flags=["--tafter"],
+            type=int,
+            nargs=2,
+            default=TIME_AFTER_KICK_S,
+            help=("Defines the times after the kicks (in seconds) "
+                  "which is used for intensity averaging to calculate the losses.")
+        ),
     )
 
 
@@ -65,11 +88,13 @@ def main(opt):
     # get data
     out_dir = _get_output_dir(opt.directory)
     kick_df = _get_kick_df(opt.directory, opt.plane)
-    intensity_df, emittance_df, emittance_bws_df = _get_dfs_from_timber(opt.fill, opt.beam, opt.plane, kick_df)
+    intensity_df, emittance_df, emittance_bws_df = _get_dfs_from_timber(opt.fill, opt.beam, opt.plane, kick_df,
+                                                                        opt.time_around_kicks)
     _check_all_times_in(kick_df.index, intensity_df.index[0], intensity_df.index[-1])
 
     # add data to kicks
-    kick_df = _add_intensity_and_losses_to_kicks(kick_df, intensity_df)
+    kick_df = _add_intensity_and_losses_to_kicks(kick_df, intensity_df,
+                                                 opt.intensity_time_before_kick, opt.intensity_time_after_kick)
     kick_df = _add_emittance_to_kicks(opt.plane, opt.energy, kick_df, emittance_df)
     kick_df = _fit_exponential(opt.plane, kick_df)
     kick_df = _convert_to_sigmas(opt.plane, kick_df)
@@ -181,7 +206,7 @@ def _get_bws_emittances(beam, plane, db, timespan):
     return df
 
 
-def _get_dfs_from_timber(fill: int, beam: int, plane: str, kick_df: tfs.TfsDataFrame):
+def _get_dfs_from_timber(fill, beam, plane, kick_df, time_around_kicks):
     LOG.debug("Getting data from timber.")
     db = pytimber.LoggingDB()
     if fill is not None:
@@ -189,7 +214,7 @@ def _get_dfs_from_timber(fill: int, beam: int, plane: str, kick_df: tfs.TfsDataF
         filldata = db.getLHCFillData(fill)
         timespan = filldata['startTime'], filldata['endTime']
     else:
-        td = pd.Timedelta(minutes=FILL_TIME_AROUND_KICKS_MIN)
+        td = pd.Timedelta(minutes=time_around_kicks)
         timespan = (kick_df.index.min() - td, kick_df.index.max() + td)
         timespan = tuple(t.timestamp() for t in timespan)
 
@@ -244,23 +269,27 @@ def _get_output_dir(directory):
 # Intensity at Kicks -----------------------------------------------------------
 
 
-def _add_intensity_and_losses_to_kicks(kick_df, intensity_df):
+def _add_intensity_and_losses_to_kicks(kick_df, intensity_df, time_before, time_after):
     LOG.debug("Calculating intensity and losses for the kicks.")
     col_list = [INTENSITY_BEFORE, INTENSITY_AFTER, INTENSITY_LOSSES]
     new_columns = [col for col in col_list + [err_col(c) for c in col_list]]
     kick_df = kick_df.reindex(columns=kick_df.columns.tolist() + new_columns)
-    kick_df = _get_intensities_around_kicks(kick_df, intensity_df)
+    kick_df = _get_intensities_around_kicks(kick_df, intensity_df, time_before, time_after)
     kick_df = _calculate_intensity_losses_at_kicks(kick_df)
     return kick_df
 
 
-def _get_intensities_around_kicks(kick_df, intensity_df):
+def _get_intensities_around_kicks(kick_df, intensity_df, time_before, time_after):
     LOG.debug("Calculating beam intensity before and after kicks.")
-    kick_df.headers[HEADER_TIME_BEFORE] = str(TIME_BEFORE_KICK_S)
-    kick_df.headers[HEADER_TIME_AFTER] = str(TIME_AFTER_KICK_S)
+    # input signs and order does not matter
+    time_before = sorted(-np.abs(t) for t in time_before)
+    time_after = sorted(np.abs(t) for t in time_after)
+
+    kick_df.headers[HEADER_TIME_BEFORE] = str(time_before)
+    kick_df.headers[HEADER_TIME_AFTER] = str(time_after)
     for i, time in enumerate(kick_df.index):
         # calculate intensity before and after kicks (with error)
-        for column, time_delta in ((INTENSITY_BEFORE, TIME_BEFORE_KICK_S), (INTENSITY_AFTER, TIME_AFTER_KICK_S)):
+        for column, time_delta in ((INTENSITY_BEFORE, time_before), (INTENSITY_AFTER, time_after)):
             t_from, t_to = time + pd.Timedelta(seconds=time_delta[0]), time + pd.Timedelta(seconds=time_delta[1]),
             data = intensity_df.loc[t_from:t_to, INTENSITY]  # awesome pandas can handle time intervals!
             kick_df.loc[time, [column, err_col(column)]] = data.mean(), data.std()
