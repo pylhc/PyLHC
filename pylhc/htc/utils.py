@@ -58,7 +58,7 @@ def create_multijob_for_bashfiles(folder, n_files, duration="workday"):
     job = htcondor.Submit({
         "MyId": "htcondor",
         "universe": "vanilla",
-        "executable": os.path.join(folder, 'Job.$(Process)', f'{BASH_FILENAME}.$(Process).sh'),
+        "executable": os.path.join(folder, f'{JOBDIRECTORY_NAME}.$(Process)', f'{BASH_FILENAME}.$(Process).sh'),
         "arguments": "$(ClusterId) $(ProcId)",
         "initialdir": os.path.join(folder, f'{JOBDIRECTORY_NAME}.$(Process)'),
         "transfer_output_files": OUTPUT_DIR,
@@ -82,7 +82,7 @@ def make_subfile(folder, n_files, duration):
 # For bash #####################################################################
 
 
-def write_bash(cwd, job_files, jobtype='madx'):
+def write_bash(cwd, job_files, jobtype='madx', cmdline_arguments={}):
     shell_scripts = []
     if len(job_files) > HTCONDOR_JOBLIMIT:
         raise AttributeError('Submitting too many jobs for HTCONDOR')
@@ -92,7 +92,8 @@ def write_bash(cwd, job_files, jobtype='madx'):
 
             f.write(SHEBANG + "\n")
             f.write(f'mkdir {OUTPUT_DIR}\n')
-            f.write(f'{EXECUTEABLEPATH[jobtype]} {job}  \n')
+            cmds = ' '.join([f'--{param} {val}' for param, val in cmdline_arguments.items()])
+            f.write(f'{EXECUTEABLEPATH[jobtype]} {job} {cmds}\n')
         shell_scripts.append(jobfile)
     return shell_scripts
 
