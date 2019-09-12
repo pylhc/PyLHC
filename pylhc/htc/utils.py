@@ -4,17 +4,15 @@ import htcondor
 
 SHEBANG = "#!/bin/bash"
 SUBFILE = "queuehtc.sub"
+BASH_FILENAME = 'Job'
+JOBDIRECTORY_NAME = 'Job'
+HTCONDOR_JOBLIMIT = 100000
 
-MADX_PATH = '/afs/cern.ch/user/m/mad/bin/madx'
-PYTHON_PATH = '/afs/cern.ch/eng/sl/lintrack/anaconda3/bin/python'
-SAD_PATH = 'Road to nowhere'
-
-EXECUTEABLEPATH = {'madx': MADX_PATH,
-                   'python': PYTHON_PATH,
-                   'sad': SAD_PATH}
-
+EXECUTEABLEPATH = {'madx': '/afs/cern.ch/user/m/mad/bin/madx',
+                   'python': '/afs/cern.ch/eng/sl/lintrack/anaconda3/bin/python',
+                   'sad': 'Road to nowhere'}
 CMD_SUBMIT = "condor_submit"
-
+OUTPUT_DIR = 'Outputdata'
 JOBFLAVOURS = ('espresso',  # 20 min
                'microcentury',  # 1 h
                'longlunch',  # 2 h
@@ -53,42 +51,47 @@ def _start_subprocess(command):
 # Job Creation #################################################################
 
 
-def create_multijob_for_bashfiles(folder, n_files, mask, duration="workday"):
+def create_multijob_for_bashfiles(folder, n_files, duration="workday"):
     """ Function to create a HTCondor job assuming n_files bash-files. """
     dura_key, dura_val = _get_duration(duration)
 
     job = htcondor.Submit({
         "MyId": "htcondor",
         "universe": "vanilla",
-        "executable": os.path.join(folder, f'{mask}.$(Process).sh'),
+        "executable": os.path.join(folder, 'Job.$(Process)', f'{BASH_FILENAME}.$(Process).sh'),
         "arguments": "$(ClusterId) $(ProcId)",
-        "initialdir": os.path.join(folder),
-        "transfer_output_files": "Data",
+        "initialdir": os.path.join(folder, f'{JOBDIRECTORY_NAME}.$(Process)'),
+        "transfer_output_files": OUTPUT_DIR,
         "notification": "error",
         "output": os.path.join("$(initialdir)", "$(MyId).$(ClusterId).$(ProcId).out"),
         "error": os.path.join("$(initialdir)", "$(MyId).$(ClusterId).$(ProcId).err"),
         "log": os.path.join("$(initialdir)", "$(MyId).$(ClusterId).$(ProcId).log"),
+        "on_exit_remove": '(ExitBySignal == False) && (ExitCode == 0)',
+        "max_retries": '3',
+        "requirements": 'Machine =!= LastRemoteHost',
         dura_key: dura_val,
     })
     job.setQArgs(f"{n_files}")
     return job
 
 
-def make_subfile(folder, n_files, mask, duration):
-    job = create_multijob_for_bashfiles(folder, n_files, mask, duration)
+def make_subfile(folder, n_files, duration):
+    job = create_multijob_for_bashfiles(folder, n_files, duration)
     return create_subfile_from_job(folder, job)
 
 # For bash #####################################################################
 
 
-def write_bash(job_files, jobtype='madx'):
-    shell_scripts=[]
+def write_bash(cwd, job_files, jobtype='madx'):
+    shell_scripts = []
+    if len(job_files) > HTCONDOR_JOBLIMIT:
+        raise AttributeError('Submitting too many jobs for HTCONDOR')
     for idx, job in enumerate(job_files):
-        jobfile = f'{job}.sh'
+        jobfile = os.path.join(cwd, f'{JOBDIRECTORY_NAME}.{idx}', f'{BASH_FILENAME}.{idx}.sh')
         with open(jobfile, 'w') as f:
 
             f.write(SHEBANG + "\n")
-            f.write('mkdir Data\n')
+            f.write(f'mkdir {OUTPUT_DIR}\n')
             f.write(f'{EXECUTEABLEPATH[jobtype]} {job}  \n')
         shell_scripts.append(jobfile)
     return shell_scripts
@@ -99,12 +102,10 @@ def write_bash(job_files, jobtype='madx'):
 
 def _get_duration(duration):
     if duration in JOBFLAVOURS:
-        return "+JobFlavour", 'f"{duration}"'
-    if isinstance(duration, int):  # for the moment this option is excluded in entrypoint
-        return "+MaxRuntime", f'duration'
+        return "+JobFlavour", f"{duration}"
     else:
         raise TypeError(
-            f"Duration is not given in correct format, provide either seconds as int or str from list {JOBFLAVOURS}")
+            f"Duration is not given in correct format, provide str from list {JOBFLAVOURS}")
 
 # Script Mode ##################################################################
 

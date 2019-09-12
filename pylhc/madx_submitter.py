@@ -1,12 +1,15 @@
 import os
 import re
+import tfs
 import itertools
 import subprocess
+import numpy as np
+import pandas as pd
 import multiprocessing
 from generic_parser import entrypoint, EntryPointParameters
 from generic_parser.entry_datatypes import DictAsString
 import htc.utils
-from htc.utils import JOBFLAVOURS
+from htc.utils import JOBFLAVOURS, JOBDIRECTORY_NAME, HTCONDOR_JOBLIMIT
 from madx import mask
 from madx.mask import MASK_ENDING
 
@@ -54,6 +57,13 @@ def get_params():
         type=DictAsString,
         required=True
     )
+    params.add_parameter(
+        flags="--num_processes",
+        name="num_processes",
+        help="number of processes to be used if run locally",
+        type=int,
+        default=4
+    )
     return params
 
 
@@ -64,42 +74,59 @@ def main(opt):
     values_grid = list(itertools.product(*opt.replace_dict.values()))
     njobs = len(values_grid)
 
-    if njobs > 10000:
+    if njobs > HTCONDOR_JOBLIMIT:
         print('Submitting too many jobs')
         exit()
-
+    setup_folders(njobs, opt.working_directory)
     # creating all madx jobs
-    jobs = mask.create_madx_from_mask(
-                                      os.path.join(opt.working_directory, opt.mask),
+    jobs = mask.create_madx_from_mask(opt.working_directory,
+                                      opt.mask,
                                       opt.replace_dict.keys(),
                                       values_grid
-                                     )
+                                      )
     # creating all shell scripts
-    shell_scripts = htc.utils.write_bash(jobs, 'madx')
+    shell_scripts = htc.utils.write_bash(opt.working_directory, jobs, 'madx')
+
+    job_df = pd.DataFrame({'JobId': range(njobs), 'Shell_script': shell_scripts})
+    job_df = job_df.join(pd.DataFrame(columns=list(opt.replace_dict.keys()),
+                                      data=values_grid))
+    tfs.write(os.path.join(opt.working_directory, 'Jobs.tfs'), job_df)
 
     if opt.run_local:
-        pool = multiprocessing.Pool(processes=4)
-        pool.map(execute_shells, shell_scripts)
+        pool = multiprocessing.Pool(processes=opt.num_processes)
+        pool.map(execute_shell, shell_scripts)
     else:
-        # create submission file 
+        # create submission file
         subfile = htc.utils.make_subfile(opt.working_directory,
                                          njobs,
-                                         re.sub(MASK_ENDING, '', opt.mask),
                                          opt.jobflavour)
         # submit to htcondor
         htc.utils.submit_jobfile(subfile)
 
 
-def execute_shells(shell_script):
-    os.chmod(shell_script, 477)
-    job_dir = re.sub('.sh', '', shell_script)
+def setup_folders(njobs, working_directory):
+    os.chdir(working_directory)
+    for idx in range(njobs):
+        try:
+            os.mkdir(f'{JOBDIRECTORY_NAME}.{idx}')
+        except:
+            pass
+
+
+def execute_shell(shell_script):
+
+    job_dir = os.path.dirname(shell_script)
     try:
-        os.mkdir(f'{job_dir}_dir')
+        os.mkdir(job_dir)
     except:
         pass
-    os.chdir(f'{job_dir}_dir')
-    process = subprocess.Popen(shell_script, shell=False,
-                               stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+
+    with open(os.path.join(job_dir, 'log.tmp'), 'w') as logfile:
+        process = subprocess.Popen(['sh', shell_script],
+                                   shell=False,
+                                   stdout=logfile,
+                                   stderr=subprocess.STDOUT,
+                                   cwd=job_dir)
 
     status = process.wait()
     return status
@@ -108,13 +135,11 @@ def execute_shells(shell_script):
 def check_opts(opt):
 
     with open(os.path.join(opt.working_directory, opt.mask)) as inputmask:  # checks that mask and dir are there
-        keys_not_found = []
+
         mask = inputmask.read()
-        for key in opt.replace_dict.keys():
-            if key not in mask:
-                keys_not_found.append(key)
+        keys_not_found = [k for k in opt.replace_dict.keys() if f'%({k})s' not in mask]
         # log.info (keys not found in mask)
-        [opt.replace_dict.pop(key) for key in keys_not_found]  # removes all keys whihc are not present in mask
+        [opt.replace_dict.pop(key) for key in keys_not_found]  # removes all keys which are not present in mask
         if opt.replace_dict == {}:
             raise AttributeError('Empty replacedictionary')
 
@@ -125,7 +150,7 @@ if __name__ == '__main__':
     main(
         mask='jobB1inj.2negCorr.BBeat.mask',
         working_directory='/afs/cern.ch/work/m/mihofer2/public/MDs/MD3603/Simulations/ForcedDA',
-        jobflavour='workday',
-        run_local=True,
-        replace_dict={"%SEEDRAN": [0, 1, 2, 3]}
+        jobflavour='espresso',
+        run_local=False,
+        replace_dict={"SEEDRAN": [0, 1]}
         )
