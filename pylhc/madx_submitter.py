@@ -84,20 +84,19 @@ def main(opt):
         exit()
     setup_folders(njobs, opt.working_directory)
 
-    # creating all madx jobs
-    jobs = mask.create_madx_from_mask(opt.working_directory,
-                                      opt.mask,
-                                      opt.replace_dict.keys(),
-                                      values_grid
-                                      )
-    # creating all shell scripts
-    shell_scripts = htc.utils.write_bash(opt.working_directory, jobs, 'madx')
-
-    job_df = pd.DataFrame({'JobId': range(njobs),
-                           'Shell_script': shell_scripts,
-                           'Job_directory': list(map(os.path.dirname, shell_scripts))})
+    job_df = pd.DataFrame({'JobId': range(njobs)})
     job_df = job_df.join(pd.DataFrame(columns=list(opt.replace_dict.keys()),
                                       data=values_grid))
+    # creating all madx jobs
+    job_df['Jobs'] = mask.create_madx_from_mask(opt.working_directory,
+                                                opt.mask,
+                                                opt.replace_dict.keys(),
+                                                values_grid
+                                                )
+    # creating all shell scripts
+    job_df['Shell_script'] = htc.utils.write_bash(opt.working_directory, job_df['Jobs'], 'madx')
+    job_df['Job_directory'] = list(map(os.path.dirname, job_df['Shell_script']))
+
     tfs.write(os.path.join(opt.working_directory, JOBSUMMARY_FILE), job_df)
 
     if opt.resume_jobs:
@@ -107,7 +106,8 @@ def main(opt):
 
     if opt.run_local:
         pool = multiprocessing.Pool(processes=opt.num_processes)
-        pool.map(execute_shell, job_df['Shell_script'])
+        pool.map(execute_shell, job_df.iterrows())
+
     else:
         # create submission file
         subfile = htc.utils.make_subfile(opt.working_directory,
@@ -126,15 +126,14 @@ def setup_folders(njobs, working_directory):
             pass
 
 
-def execute_shell(shell_script):
-
-    job_dir = os.path.dirname(shell_script)
-    with open(os.path.join(job_dir, 'log.tmp'), 'w') as logfile:
-        process = subprocess.Popen(['sh', shell_script],
+def execute_shell(df_row):
+    idx, column = df_row
+    with open(os.path.join(column['Job_directory'], 'log.tmp'), 'w') as logfile:
+        process = subprocess.Popen(['sh', column['Shell_script']],
                                    shell=False,
                                    stdout=logfile,
                                    stderr=subprocess.STDOUT,
-                                   cwd=job_dir)
+                                   cwd=column['Job_directory'])
 
     status = process.wait()
     return status
@@ -155,12 +154,22 @@ def check_opts(opt):
 
 
 if __name__ == '__main__':
+    # main(
+    #     mask='jobB1inj.2negCorr.BBeat_full.mask',
+    #     working_directory='/afs/cern.ch/work/m/mihofer2/public/MDs/MD3603/Simulations/ForcedDA',
+    #     jobflavour='workday',
+    #     run_local=True,
+    #     resume_jobs=False,
+    #     replace_dict={"AMPLITUDEX": np.linspace(0.0, 0.004, 41),
+    #                   "AMPLITUDEY": np.linspace(0.0, 0.004, 41)}
+    #     )
+
     main(
         mask='jobB1inj.2negCorr.BBeat.mask',
         working_directory='/afs/cern.ch/work/m/mihofer2/public/MDs/MD3603/Simulations/ForcedDA',
         jobflavour='workday',
-        run_local=False,
-        resume_jobs=True,
-        replace_dict={"AMPLITUDEX": np.linspace(0.0, 0.004, 41),
-                      "AMPLITUDEY": np.linspace(0.0, 0.004, 41)}
+        run_local=True,
+        resume_jobs=False,
+        replace_dict={"SEEDRAN": [0, 5],
+                      }
         )

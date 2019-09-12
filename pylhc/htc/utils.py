@@ -69,10 +69,10 @@ def create_multijob_for_bashfiles(folder, job_df, duration="workday"):
         "requirements": 'Machine =!= LastRemoteHost',
         dura_key: dura_val,
     })
-    
-    queueArg = f"queue executable, initialdir from (\n{job_df.to_csv(index=False, header=False,  columns=['Shell_script', 'Job_directory'])})"
+
+    queueArg = f"queue executable, initialdir from (\n{job_df.to_csv(index=False, header=False, columns=['Shell_script', 'Job_directory'])})"
     job = str(job) + queueArg
-    
+
     return job
 
 
