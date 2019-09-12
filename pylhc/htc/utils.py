@@ -10,7 +10,7 @@ HTCONDOR_JOBLIMIT = 100000
 
 EXECUTEABLEPATH = {'madx': '/afs/cern.ch/user/m/mad/bin/madx',
                    'python': '/afs/cern.ch/eng/sl/lintrack/anaconda3/bin/python',
-                   'sad': 'Road to nowhere'}
+                   }
 CMD_SUBMIT = "condor_submit"
 OUTPUT_DIR = 'Outputdata'
 JOBFLAVOURS = ('espresso',  # 20 min
@@ -68,8 +68,11 @@ def create_multijob_for_bashfiles(folder, job_df, duration="workday"):
         "max_retries": '3',
         "requirements": 'Machine =!= LastRemoteHost',
         dura_key: dura_val,
-        "queue": f"executeable, initialdir from (\n{job_df.to_csv(index=False, header=False,  columns=['Shell_script', 'Job_directory'])})"
     })
+    
+    queueArg = f"queue executable, initialdir from (\n{job_df.to_csv(index=False, header=False,  columns=['Shell_script', 'Job_directory'])})"
+    job = str(job) + queueArg
+    
     return job
 
 

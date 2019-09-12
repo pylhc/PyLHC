@@ -9,9 +9,11 @@ import multiprocessing
 from generic_parser import entrypoint, EntryPointParameters
 from generic_parser.entry_datatypes import DictAsString
 import htc.utils
-from htc.utils import JOBFLAVOURS, JOBDIRECTORY_NAME, HTCONDOR_JOBLIMIT
+from htc.utils import JOBFLAVOURS, JOBDIRECTORY_NAME, HTCONDOR_JOBLIMIT, OUTPUT_DIR
 from madx import mask
 from madx.mask import MASK_ENDING
+
+JOBSUMMARY_FILE = 'Jobs.tfs'
 
 
 def get_params():
@@ -45,7 +47,7 @@ def get_params():
         help="Flag to run the jobs on the local machine. Not suggested.",
     )
     params.add_parameter(
-        flags="--resume",
+        flags="--resume_jobs",
         name="resume_jobs",
         action="store_true",
         help="Only do jobs that did not work.",
@@ -89,10 +91,15 @@ def main(opt):
 
     job_df = pd.DataFrame({'JobId': range(njobs),
                            'Shell_script': shell_scripts,
-                           'Job_directory': map(os.path.dirname, shell_scripts)})
+                           'Job_directory': list(map(os.path.dirname, shell_scripts))})
     job_df = job_df.join(pd.DataFrame(columns=list(opt.replace_dict.keys()),
                                       data=values_grid))
-    tfs.write(os.path.join(opt.working_directory, 'Jobs.tfs'), job_df)
+    tfs.write(os.path.join(opt.working_directory, JOBSUMMARY_FILE), job_df)
+
+    if opt.resume_jobs:
+        job_df = tfs.read(os.path.join(opt.working_directory, JOBSUMMARY_FILE))
+        unfinished_jobs = [idx for idx, row in job_df.iterrows() if os.path.exists(os.path.join(row['Job_directory'], OUTPUT_DIR))]
+        job_df = job_df.drop(index=unfinished_jobs)
 
     if opt.run_local:
         pool = multiprocessing.Pool(processes=opt.num_processes)
@@ -148,6 +155,7 @@ if __name__ == '__main__':
         mask='jobB1inj.2negCorr.BBeat.mask',
         working_directory='/afs/cern.ch/work/m/mihofer2/public/MDs/MD3603/Simulations/ForcedDA',
         jobflavour='espresso',
-        run_local=False,
+        run_local=True,
+        resume_jobs=True,
         replace_dict={"SEEDRAN": [0, 1, 2, 3]}
         )
