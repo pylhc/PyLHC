@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 import multiprocessing
 from generic_parser import entrypoint, EntryPointParameters
+from generic_parser.entrypoint_parser import save_options_to_config
 from generic_parser.entry_datatypes import DictAsString
 import htc.utils
 from htc.utils import JOBFLAVOURS, JOBDIRECTORY_NAME, HTCONDOR_JOBLIMIT, OUTPUT_DIR
@@ -73,6 +74,8 @@ def get_params():
 def main(opt):
     opt = check_opts(opt)
 
+    save_options_to_config(os.path.join(opt.working_directory, 'config.ini'), opt)
+
     values_grid = list(itertools.product(*opt.replace_dict.values()))
     njobs = len(values_grid)
 
@@ -80,6 +83,7 @@ def main(opt):
         print('Submitting too many jobs')
         exit()
     setup_folders(njobs, opt.working_directory)
+
     # creating all madx jobs
     jobs = mask.create_madx_from_mask(opt.working_directory,
                                       opt.mask,
@@ -154,8 +158,9 @@ if __name__ == '__main__':
     main(
         mask='jobB1inj.2negCorr.BBeat.mask',
         working_directory='/afs/cern.ch/work/m/mihofer2/public/MDs/MD3603/Simulations/ForcedDA',
-        jobflavour='espresso',
-        run_local=True,
+        jobflavour='workday',
+        run_local=False,
         resume_jobs=True,
-        replace_dict={"SEEDRAN": [0, 1, 2, 3]}
+        replace_dict={"AMPLITUDEX": np.linspace(0.0, 0.004, 41),
+                      "AMPLITUDEY": np.linspace(0.0, 0.004, 41)}
         )
