@@ -87,18 +87,20 @@ def main(opt):
     # creating all shell scripts
     shell_scripts = htc.utils.write_bash(opt.working_directory, jobs, 'madx')
 
-    job_df = pd.DataFrame({'JobId': range(njobs), 'Shell_script': shell_scripts})
+    job_df = pd.DataFrame({'JobId': range(njobs),
+                           'Shell_script': shell_scripts,
+                           'Job_directory': map(os.path.dirname, shell_scripts)})
     job_df = job_df.join(pd.DataFrame(columns=list(opt.replace_dict.keys()),
                                       data=values_grid))
     tfs.write(os.path.join(opt.working_directory, 'Jobs.tfs'), job_df)
 
     if opt.run_local:
         pool = multiprocessing.Pool(processes=opt.num_processes)
-        pool.map(execute_shell, shell_scripts)
+        pool.map(execute_shell, job_df['Shell_script'])
     else:
         # create submission file
         subfile = htc.utils.make_subfile(opt.working_directory,
-                                         njobs,
+                                         job_df,
                                          opt.jobflavour)
         # submit to htcondor
         htc.utils.submit_jobfile(subfile)
@@ -116,11 +118,6 @@ def setup_folders(njobs, working_directory):
 def execute_shell(shell_script):
 
     job_dir = os.path.dirname(shell_script)
-    try:
-        os.mkdir(job_dir)
-    except:
-        pass
-
     with open(os.path.join(job_dir, 'log.tmp'), 'w') as logfile:
         process = subprocess.Popen(['sh', shell_script],
                                    shell=False,
@@ -152,5 +149,5 @@ if __name__ == '__main__':
         working_directory='/afs/cern.ch/work/m/mihofer2/public/MDs/MD3603/Simulations/ForcedDA',
         jobflavour='espresso',
         run_local=False,
-        replace_dict={"SEEDRAN": [0, 1]}
+        replace_dict={"SEEDRAN": [0, 1, 2, 3]}
         )

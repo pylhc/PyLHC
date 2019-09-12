@@ -51,16 +51,14 @@ def _start_subprocess(command):
 # Job Creation #################################################################
 
 
-def create_multijob_for_bashfiles(folder, n_files, duration="workday"):
+def create_multijob_for_bashfiles(folder, job_df, duration="workday"):
     """ Function to create a HTCondor job assuming n_files bash-files. """
     dura_key, dura_val = _get_duration(duration)
 
     job = htcondor.Submit({
         "MyId": "htcondor",
         "universe": "vanilla",
-        "executable": os.path.join(folder, f'{JOBDIRECTORY_NAME}.$(Process)', f'{BASH_FILENAME}.$(Process).sh'),
         "arguments": "$(ClusterId) $(ProcId)",
-        "initialdir": os.path.join(folder, f'{JOBDIRECTORY_NAME}.$(Process)'),
         "transfer_output_files": OUTPUT_DIR,
         "notification": "error",
         "output": os.path.join("$(initialdir)", "$(MyId).$(ClusterId).$(ProcId).out"),
@@ -70,8 +68,8 @@ def create_multijob_for_bashfiles(folder, n_files, duration="workday"):
         "max_retries": '3',
         "requirements": 'Machine =!= LastRemoteHost',
         dura_key: dura_val,
+        "queue": f"executeable, initialdir from (\n{job_df.to_csv(index=False, header=False,  columns=['Shell_script', 'Job_directory'])})"
     })
-    job.setQArgs(f"{n_files}")
     return job
 
 
