@@ -11,7 +11,7 @@ from generic_parser.entrypoint_parser import save_options_to_config
 from generic_parser.entry_datatypes import DictAsString
 import htc.utils
 from htc.utils import JOBFLAVOURS, JOBDIRECTORY_NAME, HTCONDOR_JOBLIMIT, OUTPUT_DIR
-from madx import mask
+import madx
 from madx.mask import MASK_ENDING
 
 JOBSUMMARY_FILE = 'Jobs.tfs'
@@ -54,6 +54,12 @@ def get_params():
         help="Only do jobs that did not work.",
     )
     params.add_parameter(
+        flags="--append_jobs",
+        name="append_jobs",
+        action="store_true",
+        help="Flag to rerun job with finer/wider grid, already existing points will not be reexecuted.",
+    )
+    params.add_parameter(
         flags="--replace_dict",
         name="replace_dict",
         help="Dict containing the str to replace as keys and values a list of parameters to replace",
@@ -73,35 +79,44 @@ def get_params():
 @entrypoint(get_params(), strict=True)
 def main(opt):
     opt = check_opts(opt)
-
     save_options_to_config(os.path.join(opt.working_directory, 'config.ini'), opt)
 
-    values_grid = list(itertools.product(*opt.replace_dict.values()))
-    njobs = len(values_grid)
+    values_grid = np.array(list(itertools.product(*opt.replace_dict.values())))
+
+    if opt.append_jobs:
+        job_df = tfs.read(os.path.join(opt.working_directory, JOBSUMMARY_FILE), index='JobId')
+        mask = [elem not in job_df[opt.replace_dict.keys()].values for elem in values_grid]
+        njobs = mask.count(True)
+        values_grid = values_grid[mask]
+
+    else:
+        njobs = len(values_grid)
+        job_df = pd.DataFrame()
 
     if njobs > HTCONDOR_JOBLIMIT:
         print('Submitting too many jobs')
         exit()
-    setup_folders(njobs, opt.working_directory)
 
-    job_df = pd.DataFrame({'JobId': range(njobs)})
-    job_df = job_df.join(pd.DataFrame(columns=list(opt.replace_dict.keys()),
-                                      data=values_grid))
+    job_df = job_df.append(pd.DataFrame(columns=list(opt.replace_dict.keys()),
+                                        data=values_grid), ignore_index=True, sort=False)
+
+    job_df = setup_folders(job_df, opt.working_directory)
+
     # creating all madx jobs
-    job_df['Jobs'] = mask.create_madx_from_mask(opt.working_directory,
-                                                opt.mask,
-                                                opt.replace_dict.keys(),
-                                                values_grid
-                                                )
+    job_df['Jobs'] = madx.mask.create_madx_from_mask(opt.working_directory,
+                                                     opt.mask,
+                                                     opt.replace_dict.keys(),
+                                                     job_df
+                                                     )
+
     # creating all shell scripts
-    job_df['Shell_script'] = htc.utils.write_bash(opt.working_directory, job_df['Jobs'], 'madx')
-    job_df['Job_directory'] = list(map(os.path.dirname, job_df['Shell_script']))
+    job_df['Shell_script'] = htc.utils.write_bash(opt.working_directory, job_df, 'madx')
 
-    tfs.write(os.path.join(opt.working_directory, JOBSUMMARY_FILE), job_df)
+    tfs.write(os.path.join(opt.working_directory, JOBSUMMARY_FILE), job_df, save_index='JobId')
 
-    if opt.resume_jobs:
+    if opt.resume_jobs or opt.append_jobs:
         job_df = tfs.read(os.path.join(opt.working_directory, JOBSUMMARY_FILE))
-        unfinished_jobs = [idx for idx, row in job_df.iterrows() if os.path.exists(os.path.join(row['Job_directory'], OUTPUT_DIR))]
+        unfinished_jobs = [idx for idx, row in job_df.iterrows() if os.path.isdir(os.path.join(row['Job_directory'], OUTPUT_DIR))]
         job_df = job_df.drop(index=unfinished_jobs)
 
     if opt.run_local:
@@ -117,13 +132,18 @@ def main(opt):
         htc.utils.submit_jobfile(subfile)
 
 
-def setup_folders(njobs, working_directory):
-    os.chdir(working_directory)
-    for idx in range(njobs):
+def setup_folders(job_df, working_directory):
+    job_df['Job_directory'] = list(map(return_job_dir, zip([working_directory]*len(job_df), job_df.index)))
+    for job_dir in job_df['Job_directory']:
         try:
-            os.mkdir(f'{JOBDIRECTORY_NAME}.{idx}')
+            os.mkdir(job_dir)
         except:
             pass
+    return job_df
+
+
+def return_job_dir(inp):
+    return os.path.join(inp[0], f'{JOBDIRECTORY_NAME}.{inp[1]}')
 
 
 def execute_shell(df_row):
@@ -141,6 +161,9 @@ def execute_shell(df_row):
 
 def check_opts(opt):
 
+    if opt.resume_jobs and opt.append_jobs:
+        raise AttributeError('Select either Resume jobs or Append jobs')
+
     with open(os.path.join(opt.working_directory, opt.mask)) as inputmask:  # checks that mask and dir are there
 
         mask = inputmask.read()
@@ -154,22 +177,4 @@ def check_opts(opt):
 
 
 if __name__ == '__main__':
-    # main(
-    #     mask='jobB1inj.2negCorr.BBeat_full.mask',
-    #     working_directory='/afs/cern.ch/work/m/mihofer2/public/MDs/MD3603/Simulations/ForcedDA',
-    #     jobflavour='workday',
-    #     run_local=True,
-    #     resume_jobs=False,
-    #     replace_dict={"AMPLITUDEX": np.linspace(0.0, 0.004, 41),
-    #                   "AMPLITUDEY": np.linspace(0.0, 0.004, 41)}
-    #     )
-
-    main(
-        mask='jobB1inj.2negCorr.BBeat.mask',
-        working_directory='/afs/cern.ch/work/m/mihofer2/public/MDs/MD3603/Simulations/ForcedDA',
-        jobflavour='workday',
-        run_local=True,
-        resume_jobs=False,
-        replace_dict={"SEEDRAN": [0, 5],
-                      }
-        )
+    main()

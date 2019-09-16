@@ -69,7 +69,7 @@ def create_multijob_for_bashfiles(folder, job_df, duration="workday"):
         "requirements": 'Machine =!= LastRemoteHost',
         dura_key: dura_val,
     })
-
+    # ugly but job.setQArgs doesn't take string containing \n
     queueArg = f"queue executable, initialdir from (\n{job_df.to_csv(index=False, header=False, columns=['Shell_script', 'Job_directory'])})"
     job = str(job) + queueArg
 
@@ -83,18 +83,19 @@ def make_subfile(folder, n_files, duration):
 # For bash #####################################################################
 
 
-def write_bash(cwd, job_files, jobtype='madx', cmdline_arguments={}):
+def write_bash(cwd, job_df, jobtype='madx', cmdline_arguments={}):
     shell_scripts = []
-    if len(job_files) > HTCONDOR_JOBLIMIT:
+
+    if len(job_df) > HTCONDOR_JOBLIMIT:
         raise AttributeError('Submitting too many jobs for HTCONDOR')
-    for idx, job in enumerate(job_files):
+    for idx, job in job_df.iterrows():
         jobfile = os.path.join(cwd, f'{JOBDIRECTORY_NAME}.{idx}', f'{BASH_FILENAME}.{idx}.sh')
         with open(jobfile, 'w') as f:
 
             f.write(SHEBANG + "\n")
             f.write(f'mkdir {OUTPUT_DIR}\n')
             cmds = ' '.join([f'--{param} {val}' for param, val in cmdline_arguments.items()])
-            f.write(f'{EXECUTEABLEPATH[jobtype]} {job} {cmds}\n')
+            f.write(f'{EXECUTEABLEPATH[jobtype]} {job["Jobs"]} {cmds}\n')
         shell_scripts.append(jobfile)
     return shell_scripts
 
