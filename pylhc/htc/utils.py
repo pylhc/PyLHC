@@ -51,7 +51,7 @@ def _start_subprocess(command):
 # Job Creation #################################################################
 
 
-def create_multijob_for_bashfiles(folder, job_df, duration="workday"):
+def create_multijob_for_bashfiles(job_df, duration="workday"):
     """ Function to create a HTCondor job assuming n_files bash-files. """
     dura_key, dura_val = _get_duration(duration)
 
@@ -76,8 +76,8 @@ def create_multijob_for_bashfiles(folder, job_df, duration="workday"):
     return job
 
 
-def make_subfile(folder, n_files, duration):
-    job = create_multijob_for_bashfiles(folder, n_files, duration)
+def make_subfile(folder, job_df, duration):
+    job = create_multijob_for_bashfiles(job_df, duration)
     return create_subfile_from_job(folder, job)
 
 # For bash #####################################################################
@@ -105,7 +105,7 @@ def write_bash(cwd, job_df, jobtype='madx', cmdline_arguments={}):
 
 def _get_duration(duration):
     if duration in JOBFLAVOURS:
-        return "+JobFlavour", f"{duration}"
+        return "+JobFlavour", f'"{duration}"'
     else:
         raise TypeError(
             f"Duration is not given in correct format, provide str from list {JOBFLAVOURS}")
