@@ -136,5 +136,9 @@ def column_norm_emittance(plane):
     return f"{NORM_EMITTANCE}{plane.upper()}"
 
 
+def column_bws_norm_emittance(plane, direction):
+    return f"{column_norm_emittance(plane)}_{direction}"
+
+
 def column_sigma(plane):
     return f"{SIGMA}{plane.upper()}"

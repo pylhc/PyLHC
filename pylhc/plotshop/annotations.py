@@ -6,8 +6,6 @@ import pandas as pd
 import tfs
 from matplotlib import pyplot as plt
 
-from plotshop.style import ArgumentError
-
 # List of common y-labels. Sorry for the ugly.
 _ylabels = {
     "beta":               r'$\beta_{{{0}}} \quad [m]$',
@@ -46,16 +44,16 @@ def set_yaxis_label(param, plane, ax=None, delta=False, chromcoup=False):  # plo
     try:
         label = _ylabels[param].format(plane)
     except KeyError:
-        raise ArgumentError("Label '" + param + "' not found.")
+        raise ValueError(f"Label '{param}' not found.")
 
     if delta:
         if param.startswith("beta") or param.startswith("norm"):
-            label = r'$\Delta(' + label[1:-1] + ")$"
+            label = fr'$\Delta({label[1:-1]})$'
         else:
-            label = r'$\Delta ' + label[1:]
+            label = fr'$\Delta {label[1:]}'
 
     if chromcoup:
-        label = label[:-1] + r'/\Delta\delta$'
+        label = fr'{label[:-1] }/\Delta\delta$'
 
     ax.set_ylabel(label)
 
@@ -132,7 +130,7 @@ def get_ip_positions(path):
         path (str): Path to the tfs-file containing IP-positions
     """
     df = tfs.read_tfs(path).set_index('NAME')
-    ip_names = ["IP" + str(i) for i in range(1, 9)]
+    ip_names = [f"IP{i:d}" for i in range(1, 9)]
     ip_pos = df.loc[ip_names, 'S'].values
     return dict(zip(ip_names, ip_pos))
 
@@ -248,7 +246,7 @@ def figure_title(text, ax=None, pad=0, **kwargs):
     # could not get set_title() to work properly, so one parameter at a time
     fdict = dict(fontsize=matplotlib.rcParams['font.size'],
                  fontweight=matplotlib.rcParams['font.weight'],
-                 va="top", ha="center" )
+                 va="top", ha="center")
     fdict.update(kwargs)
     ax.set_title(text, transform=ax.figure.transFigure, fontdict=fdict)
 

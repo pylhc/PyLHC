@@ -16,7 +16,8 @@ from generic_parser import EntryPointParameters, entrypoint
 from constants.forced_da_analysis import *  # I am using all that there is!
 from constants.general import get_proton_gamma, get_proton_beta, LHC_NOMINAL_EMITTANCE
 from omc3.omc3.utils import logging_tools
-from plotshop import style, lines, annotations, colors
+from omc3.omc3.optics_measurements import toolbox
+from omc3.omc3.plotshop import style, lines, annotations, colors
 from utils.time_tools import CERNDatetime
 
 LOG = logging_tools.get_logger(__name__)
@@ -50,9 +51,10 @@ def get_parameters():
         ),
         plane=dict(
             flags=["-p", "--plane"],
-            choices=["X", "Y"],
+            choices=["X", "Y", "XY"],
+            default="XY",
             type=str,
-            help="Plane of the kicks. If not given, the code assumes kicks in both planes."
+            help="Plane of the kicks. Give 'XY' for using both planes (e.g. diagonal kicks)."
         ),
         time_around_kicks=dict(
             flags=["--taround"],
@@ -88,8 +90,8 @@ def main(opt):
     # get data
     out_dir = _get_output_dir(opt.directory)
     kick_df = _get_kick_df(opt.directory, opt.plane)
-    intensity_df, emittance_df, emittance_bws_df = _get_dfs_from_timber(opt.fill, opt.beam, opt.plane, kick_df,
-                                                                        opt.time_around_kicks)
+    intensity_df, emittance_df, emittance_bws_df = _get_dfs_from_timber(opt.fill, opt.beam, opt.plane,
+                                                                        kick_df.index, opt.time_around_kicks)
     _check_all_times_in(kick_df.index, intensity_df.index[0], intensity_df.index[-1])
 
     # add data to kicks
@@ -147,6 +149,24 @@ def _check_all_times_in(series, start, end):
 # Timber Data ------------------------------------------------------------------
 
 
+def _get_dfs_from_timber(fill, beam, plane, kick_times, time_around_kicks):
+    LOG.debug("Getting data from timber.")
+    db = pytimber.LoggingDB()
+    if fill is not None:
+        LOG.debug("Getting Timespan from fill")
+        filldata = db.getLHCFillData(fill)
+        timespan = filldata['startTime'], filldata['endTime']
+    else:
+        td = pd.Timedelta(minutes=time_around_kicks)
+        timespan = (kick_times.min() - td, kick_times.max() + td)
+        timespan = tuple(t.timestamp() for t in timespan)
+
+    intensity_df = _get_bctrf_beam_intensity(beam, db, timespan)
+    emittance_bws_df = _get_bws_emittances(beam, plane, db, timespan)
+    emittance_df = _get_bsrt_bunch_emittances(beam, plane,  db, timespan)
+    return intensity_df, emittance_df, emittance_bws_df
+
+
 def _get_bctrf_beam_intensity(beam, db, timespan):
     LOG.debug(f"Getting beam intensity from bctfr for beam {beam}.")
     intensity_key = INTENSITY_KEY.format(beam=beam)
@@ -158,70 +178,71 @@ def _get_bctrf_beam_intensity(beam, db, timespan):
     return df
 
 
-def _get_bsrt_bunch_emittances(beam, plane, db, timespan):
-    LOG.debug(f"Getting emittance from BSRT for beam {beam}  and plane {plane}.")
-    bunch_emittance_key = bsrt_emittance_key(beam, plane)
-    LOG.debug(f"  Key: {bunch_emittance_key}")
-    col_nemittance = column_norm_emittance(plane)
-    all_columns = [f(col_nemittance) for f in (lambda s: s, mean_col, err_col)]
+def _get_bsrt_bunch_emittances(beam, planes, db, timespan):
+    dfs = {p: None for p in planes}
+    for plane in planes:
+        LOG.debug(f"Getting emittance from BSRT for beam {beam}  and plane {plane}.")
+        bunch_emittance_key = bsrt_emittance_key(beam, plane)
+        LOG.debug(f"  Key: {bunch_emittance_key}")
+        col_nemittance = column_norm_emittance(plane)
+        all_columns = [f(col_nemittance) for f in (lambda s: s, mean_col, err_col)]
 
-    x, y = db.get(bunch_emittance_key, *timespan)[bunch_emittance_key]
+        x, y = db.get(bunch_emittance_key, *timespan)[bunch_emittance_key]
 
-    # remove entries with zero emittance as unphysical
-    x, y = x[y != 0], y[y != 0]
+        # remove entries with zero emittance as unphysical
+        x, y = x[y != 0], y[y != 0]
 
-    time_index = pd.Index(CERNDatetime.from_timestamp(t) for t in x)
-    df = tfs.TfsDataFrame(index=time_index,
-                          columns=all_columns, dtype=float,
-                          headers={HEADER_EMITTANCE_AVERAGE: ROLLING_AVERAGE_WINDOW})
-    df[col_nemittance] = y * BSRT_EMITTANCE_TO_METER
-
-    rolling = df[col_nemittance].rolling(window=ROLLING_AVERAGE_WINDOW, center=True)
-    df[mean_col(col_nemittance)] = rolling.mean()
-    df[err_col(col_nemittance)] = rolling.std()
-    df = df.dropna(axis='index')
-    if len(df.index) == 0:
-        raise IndexError("Not enough emittance data extracted. Try to give a fill number.")
-    LOG.debug(f"  Returning dataframe of shape {df.shape}")
-    return df
-
-
-def _get_bws_emittances(beam, plane, db, timespan):
-    LOG.debug(f"Getting emittance from BWS for beam {beam} and plane {plane}.")
-    all_columns = [f"{column_norm_emittance(plane)}_{direction}" for direction in BWS_DIRECTIONS]
-    df = None
-    for direction in BWS_DIRECTIONS:
-        emittance_key = bws_emittance_key(beam, plane, direction)
-        LOG.debug(f"  Key: {emittance_key}")
-        column_nemittance = f"{column_norm_emittance(plane)}_{direction}"
-
-        x, y = db.get(emittance_key, *timespan)[emittance_key]
         time_index = pd.Index(CERNDatetime.from_timestamp(t) for t in x)
-        if df is None:
-            df = tfs.TfsDataFrame(index=time_index, columns=all_columns, dtype=float)
-        df[column_nemittance] = y * BWS_EMITTANCE_TO_METER
-        df[column_nemittance] = df[column_nemittance].apply(np.mean)  # BWS can give multiple values
+        df = tfs.TfsDataFrame(index=time_index,
+                              columns=all_columns, dtype=float,
+                              headers={HEADER_EMITTANCE_AVERAGE: ROLLING_AVERAGE_WINDOW})
+        df[col_nemittance] = y * BSRT_EMITTANCE_TO_METER
 
+        rolling = df[col_nemittance].rolling(window=ROLLING_AVERAGE_WINDOW, center=True)
+        df[mean_col(col_nemittance)] = rolling.mean()
+        df[err_col(col_nemittance)] = rolling.std()
+        df = df.dropna(axis='index')
+        if len(df.index) == 0:
+            raise IndexError("Not enough emittance data extracted. Try to give a fill number.")
+        dfs[plane] = df
+
+    df = _merge_df_planes(dfs, planes)
+    df = _maybe_add_sum_for_planes(df, planes, column_norm_emittance)
+    df = _maybe_add_sum_for_planes(df, planes,
+                                   lambda p: mean_col(column_norm_emittance(p)),
+                                   lambda p: err_col(column_norm_emittance(p)))
     LOG.debug(f"  Returning dataframe of shape {df.shape}")
     return df
 
 
-def _get_dfs_from_timber(fill, beam, plane, kick_df, time_around_kicks):
-    LOG.debug("Getting data from timber.")
-    db = pytimber.LoggingDB()
-    if fill is not None:
-        LOG.debug("Getting Timespan from fill")
-        filldata = db.getLHCFillData(fill)
-        timespan = filldata['startTime'], filldata['endTime']
-    else:
-        td = pd.Timedelta(minutes=time_around_kicks)
-        timespan = (kick_df.index.min() - td, kick_df.index.max() + td)
-        timespan = tuple(t.timestamp() for t in timespan)
+def _get_bws_emittances(beam, planes, db, timespan):
+    dfs = {p: None for p in planes}
+    for plane in planes:
+        LOG.debug(f"Getting emittance from BWS for beam {beam} and plane {plane}.")
+        all_columns = [column_bws_norm_emittance(plane, d) for d in BWS_DIRECTIONS]
+        df = None
+        for direction in BWS_DIRECTIONS:
+            emittance_key = bws_emittance_key(beam, plane, direction)
+            LOG.debug(f"  Key: {emittance_key}")
+            column_nemittance = column_bws_norm_emittance(plane, direction)
 
-    intensity_df = _get_bctrf_beam_intensity(beam, db, timespan)
-    emittance_bws_df = _get_bws_emittances(beam, plane, db, timespan)
-    emittance_df = _get_bsrt_bunch_emittances(beam, plane,  db, timespan)
-    return intensity_df, emittance_df, emittance_bws_df
+            x, y = db.get(emittance_key, *timespan)[emittance_key]
+            time_index = pd.Index(CERNDatetime.from_timestamp(t) for t in x)
+            if df is None:
+                df = tfs.TfsDataFrame(index=time_index, columns=all_columns, dtype=float)
+            df[column_nemittance] = y * BWS_EMITTANCE_TO_METER
+            df[column_nemittance] = df[column_nemittance].apply(np.mean)  # BWS can give multiple values
+            df[err_col(column_nemittance)] = df[column_nemittance].apply(np.std)  # BWS can give multiple values
+            dfs[plane] = df
+
+    df = _merge_df_planes(dfs, planes)
+    for direction in BWS_DIRECTIONS:
+        df = _maybe_add_sum_for_planes(df, planes,
+                                       lambda p: column_bws_norm_emittance(p, direction),
+                                       lambda p: err_col(column_bws_norm_emittance(p, direction))
+                                       )
+    LOG.debug(f"  Returning dataframe of shape {df.shape}")
+    return df
 
 
 # Kick Data --------------------------------------------------------------------
@@ -233,30 +254,37 @@ def _get_kick_df(directory, plane):
     except FileNotFoundError:
         LOG.debug("Reading of kickfile failed. Looking for old kickfile.")
         df = _get_old_kick_file(directory, plane)
-    return df[[column_action(plane), err_col(column_action(plane))]]  # TODO: get from omc3
+
+    column_action_error = lambda x: err_col(column_action(x))
+    df = _maybe_add_sum_for_planes(df, plane, column_action, column_action_error)
+    return df[[column_action(plane), column_action_error(plane)]]
 
 
 def _get_old_kick_file(directory, plane):
     """ Kick files from Beta-Beat.src """
     path = os.path.join(directory, "getkickac.out")
     LOG.debug(f"Reading kickfile '{path}'.'")
-    rename_dict = {f"2J{plane}RES": column_action(plane),
-                   f"2J{plane}STDRES": err_col(column_action(plane))}
     df = tfs.read(path)
-    df = df.rename(rename_dict, axis="columns")
     df = df.set_index("TIME")
     df.index = pd.Index(CERNDatetime.from_timestamp(t) for t in df.index)
+    rename_dict = {}
+    for p in plane:
+        rename_dict.update({f"2J{p}RES": column_action(p), f"2J{p}STDRES": err_col(column_action(p))})
+    df = df.rename(rename_dict, axis="columns")
     df.loc[:, rename_dict.values()] = df.loc[:, rename_dict.values()] * 1e-6
     return df
 
 
-def _get_new_kick_file(directory, plane):
+def _get_new_kick_file(directory, planes):
     """ Kick files from OMC3 """
-    path = os.path.join(directory, f"{KICKFILE}_{plane.lower()}{TFS_SUFFIX}")
-    LOG.debug(f"Reading kickfile '{path}'.'")
-    df = tfs.read(path, index=TIME)
-    df.index = pd.Index(CERNDatetime.from_cern_utc_string(t) for t in df.index)
-    return df
+    dfs = {p: None for p in planes}
+    for plane in planes:
+        path = os.path.join(directory, f"{KICKFILE}_{plane.lower()}{TFS_SUFFIX}")
+        LOG.debug(f"Reading kickfile '{path}'.'")
+        df = tfs.read(path, index=TIME)
+        df.index = pd.Index(CERNDatetime.from_cern_utc_string(t) for t in dfs.index)
+        dfs[plane] = df
+    return _merge_df_planes(dfs, planes)
 
 
 def _get_output_dir(directory):
@@ -371,7 +399,7 @@ def _fit_exponential(plane, kick_df):
                            beta0=[INITIAL_DA_FIT*kick_df.headers[header_nominal_emittance(plane)]])
     # da_odr.set_job(fit_type=2)
     odr_output = da_odr.run()
-    _odr_pprint(LOG.info, odr_output)
+    logging_tools.odr_pprint(LOG.info, odr_output)
 
     # Add DA to kick
     da = odr_output.beta[0], odr_output.sd_beta[0]
@@ -384,23 +412,6 @@ def _no_nonzero_errors(series):
     series = series.copy()
     series[series == 0] = np.abs(series[series != 0]).min()
     return series
-
-
-def _odr_pprint(printer, odr_out):
-    """ Logs the odr output results.
-
-    Adapted from odr_output pretty print.
-    """
-    printer('ODR-Summary:')
-    printer(f'  Beta: {odr_out.beta}')
-    printer(f'  Beta Std Error: {odr_out.sd_beta}')
-    printer(f'  Beta Covariance: {odr_out.cov_beta}')
-    if hasattr(odr_out, 'info'):
-        printer(f'  Residual Variance: {odr_out.res_var}')
-        printer(f'  Inverse Condition #: {odr_out.inv_condnum}')
-        printer(f'  Reason(s) for Halting:')
-        for r in odr_out.stopreason:
-            printer(f'    {r}')
 
 
 def _convert_to_sigmas(plane, kick_df):
@@ -426,8 +437,8 @@ def _convert_to_sigmas(plane, kick_df):
 
 
 def _plot_intensity(directory, beam, plane, kick_df, intensity_df):
-    """ Plots beam intensity. For losses the absoulte values are used and then normalized
-    to the Intensity before the kicks, to get the percentage relative to that value."""
+    """ Plots beam intensity. For losses the absolute values are used and then normalized
+    to the Intensity before the kicks, to get the percentage relative to that (global) value."""
     LOG.debug("Plotting beam intensity")
     style.set_style("standard")
     fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(16.80, 7.68))
@@ -440,7 +451,7 @@ def _plot_intensity(directory, beam, plane, kick_df, intensity_df):
     norm = intensity_df.iloc[idx_before, idx_intensity]/100.
 
     # plot intensity
-    ax.plot(intensity_df[INTENSITY]/norm,
+    ax.plot(intensity_df[INTENSITY] / norm,
             marker=".",
             markersize=mpl.rcParams["lines.markersize"] * 0.5,
             fillstyle="full",
@@ -460,7 +471,7 @@ def _plot_intensity(directory, beam, plane, kick_df, intensity_df):
                     linestyle="-",
                     label='__nolegend__' if idx > 0 else "Losses")
 
-        ax.text(kick, .5*sum(normalized_intensity.loc[kick, :]),
+        ax.text(kick, .5 * sum(normalized_intensity.loc[kick, :]),
                 " -{:.1f}$\pm${:.1f} %".format(*normalized_losses.loc[kick, :]),
                 va="bottom", color=colors.get_mpl_color(1),
                 fontdict=dict(fontsize=mpl.rcParams["font.size"] * 0.8)
@@ -527,11 +538,14 @@ def _plot_emittances(directory, beam, plane, emittance_df, emittance_bws_df, kic
         for d in BWS_DIRECTIONS:
             label = "__nolegend__" if d == BWS_DIRECTIONS[1] else f"From BWS"
             color = bws_color if d == BWS_DIRECTIONS[1] else colors.change_color_brightness(bws_color, 0.5)
-
-            ax.plot(emittance_bws_df[f"{col_norm_emittance}_{d}"] * 1e6,
-                    linestyle='None', marker='o', color=color, label=label,
-                    markersize=mpl.rcParams['lines.markersize']*1.5,
-                    )
+            col_bws_nemittance = column_bws_norm_emittance(plane, d)
+            ax.errorbar(
+                emittance_bws_df.index,
+                emittance_bws_df[col_bws_nemittance] * 1e6,
+                yerr=emittance_bws_df[err_col(col_bws_nemittance)] * 1e6,
+                linestyle='None', marker='o', color=color, label=label,
+                markersize=mpl.rcParams['lines.markersize']*1.5,
+            )
 
     _plot_kicks_and_scale_x(ax, kick_times)
     ax.set_ylabel(r'$\epsilon_{n}$ $[\mu m]$')
@@ -576,7 +590,7 @@ def _plot_da_fit(directory, beam, plane, kick_df):
             label=f'Fit: DA= ${da_mu} \pm {da_err_mu} \mu m$'
             )
 
-    ax.set_xlabel(f"$2J_{plane} [\mu m]$")
+    ax.set_xlabel(f"$2J_{{{plane if len(plane) == 1 else ''}}} [\mu m]$")
     ax.set_ylabel(r'Beam Losses [%]')
     ax.set_xlim([0, None])
     ax.set_ylim([0, kick_df[col_intensity].max() * 100 * (1 + YPAD)])
@@ -587,7 +601,7 @@ def _plot_da_fit(directory, beam, plane, kick_df):
 
 
 def _plot_da_fit_normalized(directory, beam, plane, kick_df):
-    """ Plot the Forced Dynamic Aperture fit. """
+    """ Plot the Forced Dynamic Aperture fit in normalized units (of sigma). """
     LOG.debug("Plotting Dynamic Aperture Fit")
     style.set_style("standard")
     col_action = column_action(plane)
@@ -624,7 +638,7 @@ def _plot_da_fit_normalized(directory, beam, plane, kick_df):
             label=f'Fit: DA= ${da_significant[0]} \pm {da_significant[1]} N_{{\sigma}}$'
             )
 
-    ax.set_xlabel(f"$N_{{\sigma}} = \sqrt{{2J_{plane}/\epsilon_{{nominal}}}}$")
+    ax.set_xlabel(f"$N_{{\sigma}} = \sqrt{{2J_{{{plane if len(plane) == 1 else ''}}}/\epsilon_{{nominal}}}}$")
     ax.set_ylabel(r'Beam Losses [%]')
     ax.set_xlim([0, None])
     ax.set_ylim([0, kick_df[col_intensity].max() * 100 * (1 + YPAD)])
@@ -651,6 +665,28 @@ def _plot_kicks_and_scale_x(ax, kick_times, pad=20):
     annotations.set_annotation(f"Date: {first_kick.strftime('%Y-%m-%d')}", ax, "left")
 
 
+def _merge_df_planes(df_dict, planes):
+    """ In case planes == 'XY' merge the df_dict into one dataframe. """
+    if len(planes) == 1:
+        return df_dict[planes]
+    return pd.merge(*df_dict.values(), how='inner', left_index=True, right_index=True)
+
+
+def _maybe_add_sum_for_planes(df, planes, col_fun, col_err_fun=None):
+    """ In case planes == 'XY' add the two plane columns and their errors """
+    if len(planes) > 1:
+        if col_err_fun is not None:
+            cols = lambda p: [col_fun(p), col_err_fun(p)]
+            x_cols, y_cols = [cols(p) for p in planes]
+            df = df.reindex(columns=df.columns.to_list() + cols(planes))
+            df[cols(planes)] = np.array(toolbox.df_sum_with_err(df, a_col=x_cols[0], b_col=y_cols[0],
+                                                       a_err_col=x_cols[1], b_err_col=y_cols[1])).T
+        else:
+            x_col, y_col = [col_fun(p) for p in planes]
+            df[col_fun(planes)] = toolbox.df_sum(df, a_col=x_col, b_col=y_col)
+    return df
+
+
 def _save_fig(directory, plane, fig, ptype):
     try:
         for ftype in PLOT_FILETYPES:
@@ -666,7 +702,7 @@ def _save_fig(directory, plane, fig, ptype):
 if __name__ == '__main__':
     setup = dict(
         energy=6500.,
-        plane="Y", beam=1,
+        plane="XY", beam=1,
         directory='/media/jdilly/Storage/Repositories/Gui_Output/2019-08-09/LHCB1/Results/b1_amplitude_det_vertical_all',
         fill=7391
     )

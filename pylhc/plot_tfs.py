@@ -4,14 +4,15 @@ Plot TFS
 
 Wrapper to easily plot tfs-files. With entrypoint functionality.
 """
+from contextlib import suppress
+
 import tfs
 from generic_parser import EntryPointParameters, entrypoint
 from matplotlib import pyplot as plt, rcParams
-from matplotlib.backends.backend_pdf import PdfPages
 
 from constants.plot_tfs import IR_POS_DEFAULT, MANUAL_STYLE, ERROR_ALPHA, MAX_LEGENDLENGTH, COMPLEX_NAMES
-from omc3.omc3.utils import logging_tools
-from plotshop import style, annotations, lines
+from omc3.omc3.utils import logging_tools, plot_style as pstyle
+from plotshop import annotations, lines, post_processing
 
 LOG = logging_tools.get_logger(__name__)
 
@@ -245,7 +246,7 @@ class _LoopGenerator:
             p_title = self.dataframe_labels[idx_file]
             if self.xy:
                 p_title += "_dualPlane"
-            fig.canvas.set_window_title("File '{:s}'".format(p_title))
+            fig.canvas.set_window_title(f"File '{p_title:s}'")
             self.figs[p_title] = fig
             for idx_plot in range(1 + self.xy):
                 ax = self._get_current_axes(axs, idx_plot)
@@ -267,7 +268,7 @@ class _LoopGenerator:
             p_title = self.column_labels[idx_col]
             if self.xy:
                 p_title += "_dualPlane"
-            fig.canvas.set_window_title("Parameter '{:s}'".format(p_title))
+            fig.canvas.set_window_title(f"Parameter '{p_title:s}'")
             self.figs[p_title] = fig
             for idx_plot in range(1 + self.xy):
                 ax = self._get_current_axes(axs, idx_plot)
@@ -295,7 +296,7 @@ class _LoopGenerator:
 def create_plots(dataframes, x_cols, y_cols, e_cols, dataframe_labels, column_labels, y_labels, xy, change_marker,
                  no_legend, auto_scale, figure_per_dataframe=False):
     # create layout
-    style.set_style("standard", MANUAL_STYLE)
+    pstyle.set_style("standard", MANUAL_STYLE)
     ir_positions, x_is_position = _get_ir_positions(dataframes, x_cols)
 
     y_lims = None
@@ -337,15 +338,13 @@ def create_plots(dataframes, x_cols, y_cols, e_cols, dataframe_labels, column_la
                     y_label_from_label, y_plane, _, _, chromatic = _get_names_and_columns(
                         idx_plot, xy, y_label, "")
                 if xy:
-                    y_label = "{:s} {:s}".format(y_label, y_plane)
+                    y_label = f"{y_label:s} {y_plane:s}"
                 _set_ylabel(ax, y_label, y_label_from_label, y_plane, chromatic)
 
             # setting x limits
             if x_is_position:
-                try:
-                    style.set_xLimits(data.SEQUENCE, ax)
-                except (AttributeError, style.ArgumentError):
-                    pass
+                with suppress(AttributeError, ValueError):
+                    post_processing.set_xlimits(data.SEQUENCE, ax)
 
             # setting visibility, ir-markers and label
             if xy and idx_plot == 0:
@@ -367,15 +366,9 @@ def create_plots(dataframes, x_cols, y_cols, e_cols, dataframe_labels, column_la
 def export_plots(figs, output):
     """ Export all created figures to PDF """
     for param in figs:
-        fig = figs[param]
-        pdf_path = "{:s}_{:s}.pdf".format(output, param)
-        mpdf = PdfPages(pdf_path)
-
-        try:
-            mpdf.savefig(fig, bbox_inches='tight')
-            LOG.debug("Exported tfs-contents to PDF '{:s}'".format(pdf_path))
-        finally:
-            mpdf.close()
+        pdf_path = f"{output:s}_{param:s}.pdf"
+        figs[param].savefig(pdf_path, bbox_inches='tight')
+        LOG.debug(f"Exported tfs-contents to PDF '{pdf_path:s}'")
 
 
 # Helper #####################################################################
@@ -519,7 +512,7 @@ def _set_ylabel(ax, default, y_label, y_plane, chromatic):
     try:
         annotations.set_yaxis_label(_map_proper_name(y_label),
                                              y_plane, ax, chromcoup=chromatic)
-    except (KeyError, style.ArgumentError):
+    except (KeyError, ValueError):
         ax.set_ylabel(default)
 
 

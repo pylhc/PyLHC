@@ -7,7 +7,8 @@ Functions for plot post-processing.
 import numpy as np
 from matplotlib import pyplot as plt
 import matplotlib as mpl
-
+import matplotlib.ticker as mtick
+import numpy as np
 
 # Public Functions #############################################################
 
@@ -43,6 +44,70 @@ def transpose_legend(leg):
     new_leg = leg.axes.legend(handles, [h.get_label() for h in handles], ncol=ncol)
     new_leg._set_loc(loc)
     return new_leg
+
+
+def sync2d(axs, ax_str='xy', ax_lim=()):
+    """
+    Synchronizes the limits for the given axes
+
+    Args:
+        axs: list of axes or figures, or figure with multiple axes
+        ax_lim: predefined limits (list or list of lists)
+        ax_str: string 'x','y' or 'xy' defining the axes to sync
+    """
+    if isinstance(axs, (list, np.ndarray)):
+        if isinstance(axs[0], mpl.figure.Figure):
+            # axs is list of figures: get all axes and call sync2D
+            sync2d([ax for fig in axs for ax in fig.axes], ax_str)
+
+        elif isinstance(axs[0], mpl.axes.Axes) and len(axs) > 1:
+            # axs is list of axes
+            for idx, axis in enumerate(ax_str):
+                get_lim, set_lim = f"get_{axis}lim", f"set_{axis}lim"
+                if len(ax_lim) == 0:
+                    # find limits
+                    all_lim = np.array([getattr(ax, get_lim)() for ax in axs])
+                    lim = [np.min(all_lim[:, 0]), np.max(all_lim[:, 1])]
+                else:
+                    # use defined limits
+                    if len(ax_lim[0]) == 1:
+                        lim = ax_lim
+                    else:
+                        lim = ax_lim[idx]
+
+                for ax in axs:
+                    getattr(ax, set_lim)(lim)
+
+    elif isinstance(axs, mpl.figure.Figure):
+        # axs is one figure: call sync2D with axes from figure
+        sync2d(axs.axes, ax_str)
+
+    else:
+        raise TypeError(f'{__file__[:-3]}.sync2d input is of unknown type ({str(type(axs))})')
+
+
+def set_xlimits(accel, ax=None):
+    """
+    Sets the x-limits to the regularly used ones
+
+    Args:
+        accel: Name of the Accelerator
+        ax:  Axes to put the label on (default: gca())
+    """
+    if not ax:
+        ax = plt.gca()
+
+    if accel.startswith("LHCB"):
+        ax.set_xlim(-200, 27000)
+        ax.xaxis.set_minor_locator(mtick.MultipleLocator(base=1000.0))
+        ax.xaxis.set_major_locator(mtick.MultipleLocator(base=5000.0))
+    elif accel.startswith("ESRF"):
+        ax.set_xlim(-5, 850)
+        ax.xaxis.set_minor_locator(mtick.MultipleLocator(base=50.0))
+        ax.xaxis.set_major_locator(mtick.MultipleLocator(base=100.0))
+    else:
+        raise ValueError(f"Accelerator '{accel}' unknown.")
+
 
 
 # Data Extraction ##############################################################
