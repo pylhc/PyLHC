@@ -14,7 +14,10 @@ Contents:
    root/index
    constants/index
    data_extract/index
+   htc/index
+   madx/index
    utils/index
+
 
 
 Indices and tables

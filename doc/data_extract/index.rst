@@ -1,10 +1,10 @@
 Data Extraction
 **************************
 
-.. automodule:: data_extract.lsa
+.. automodule:: pylhc.data_extract.lsa
     :members:
 
 
-.. automodule:: data_extract.timber
+.. automodule:: pylhc.data_extract.timber
     :members:
 

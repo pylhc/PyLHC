@@ -1,14 +1,14 @@
 Utilities
 **************************
 
-.. automodule:: utils.dict_tools
+.. automodule:: pylhc.utils.dict_tools
     :members:
 
 
-.. automodule:: utils.logging_tools
+.. automodule:: pylhc.utils.logging_tools
     :members:
 
 
-.. automodule:: utils.time_tools
+.. automodule:: pylhc.utils.time_tools
     :members:
 

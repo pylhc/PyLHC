@@ -1,17 +1,24 @@
-import os
-import re
-import tfs
+"""
+MADX Job-Submitter
+--------------------
+
+
+"""
 import itertools
+import multiprocessing
+import os
 import subprocess
+
 import numpy as np
 import pandas as pd
-import multiprocessing
+import tfs
 from generic_parser import entrypoint, EntryPointParameters
-from generic_parser.entrypoint_parser import save_options_to_config
 from generic_parser.entry_datatypes import DictAsString
+from generic_parser.entrypoint_parser import save_options_to_config
+
 import htc.utils
-from htc.utils import JOBFLAVOURS, JOBDIRECTORY_NAME, HTCONDOR_JOBLIMIT, OUTPUT_DIR
 import madx
+from htc.utils import JOBFLAVOURS, JOBDIRECTORY_NAME, HTCONDOR_JOBLIMIT, OUTPUT_DIR
 from madx.mask import MASK_ENDING
 
 JOBSUMMARY_FILE = 'Jobs.tfs'
@@ -137,7 +144,7 @@ def setup_folders(job_df, working_directory):
     for job_dir in job_df['Job_directory']:
         try:
             os.mkdir(job_dir)
-        except:
+        except IOError:
             pass
     return job_df
 
