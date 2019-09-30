@@ -2,6 +2,24 @@
 MADX Job-Submitter
 --------------------
 
+Allows to execute a parametric madx study using a madx mask and a dictionary with parameters to replace. 
+Parameters to be replaced must be present in mask as %(PARAMETER)s.
+When submitting to HTCondor, madx data to be transfered back to job_directory must be written in folder Outputdata.
+Script also allows to check if all htcondor job finished successfully, resubmissions with a different parameter grid, and local excution.
+Jobs.tfs is created in the working directory containing the Job Id, parameter per job and job directory for further post processing.
+
+required arguments:
+    --mask                  name of the madx mask to be used, must end with .mask, e.g. job_lhc_bbeat_misalign.mask
+    --working_directory     directory where job directories will be put and mask is located
+    --replace_dict          dictionary with keys being the parameters to be replaced in the mask and values the parameter values, e.g. {'PARAMETER_A':[1,2], 'PARAMETER_B':['a','b']}
+
+optional arguments:
+    --jobflavour           string giving upper limit on how long job can take, only used when submitting to HTCondor   
+    --local                flag to trigger local processing using the number of processes specified in --num_processes
+    --num_processes        number of processes used when run locally
+    --resume_jobs          flag which enables a check if all htcondor jobs finished successfully and resubmitting failed jobs
+    --append_jobs          flag allowing to resubmit study with different replace_dict, rechecks if datapoints have already been executed in a previous study and only resubmits new jobs
+
 
 """
 import itertools
@@ -110,14 +128,13 @@ def main(opt):
     job_df = setup_folders(job_df, opt.working_directory)
 
     # creating all madx jobs
-    job_df['Jobs'] = madx.mask.create_madx_from_mask(opt.working_directory,
-                                                     opt.mask,
+    job_df['Jobs'] = madx.mask.create_madx_from_mask(os.path.join(opt.working_directory, opt.mask),
                                                      opt.replace_dict.keys(),
                                                      job_df
                                                      )
 
     # creating all shell scripts
-    job_df['Shell_script'] = htc.utils.write_bash(opt.working_directory, job_df, 'madx')
+    job_df['Shell_script'] = htc.utils.write_bash(job_df, 'madx')
 
     tfs.write(os.path.join(opt.working_directory, JOBSUMMARY_FILE), job_df, save_index='JobId')
 

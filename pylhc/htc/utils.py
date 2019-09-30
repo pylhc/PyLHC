@@ -2,6 +2,15 @@
 HTC Utils
 ----------
 
+Functions allowing to create HTCondor jobs and submit them.
+
+write_bash creates bash scripts executing either a python or madx script. 
+Takes dataframe, job type, and optional additional cmd line arguments for script.
+A shell script is created in each job directory in the dataframe.
+
+make_subfile takes the job dataframe and creates the .sub required for submissions to HTCondor.
+The .sub file will be put in the working directory. 
+The maximum runtime of one job can be specified, standard is 8h.
 
 """
 import subprocess
@@ -15,7 +24,8 @@ JOBDIRECTORY_NAME = 'Job'
 HTCONDOR_JOBLIMIT = 100000
 
 EXECUTEABLEPATH = {'madx': '/afs/cern.ch/user/m/mad/bin/madx',
-                   'python': '/afs/cern.ch/eng/sl/lintrack/anaconda3/bin/python',
+                   'python3': '/afs/cern.ch/eng/sl/lintrack/anaconda3/bin/python',
+                   'python2': '/afs/cern.ch/eng/sl/lintrack/miniconda2/bin/python',
                    }
 CMD_SUBMIT = "condor_submit"
 OUTPUT_DIR = 'Outputdata'
@@ -32,9 +42,9 @@ JOBFLAVOURS = ('espresso',  # 20 min
 # Subprocess Methods ###########################################################
 
 
-def create_subfile_from_job(folder, job):
+def create_subfile_from_job(cwd, job):
     """ Write file to submit to htcondor """
-    subfile = os.path.join(folder, SUBFILE)
+    subfile = os.path.join(cwd, SUBFILE)
 
     with open(subfile, "w") as f:
         f.write(str(job))
@@ -81,21 +91,21 @@ def create_multijob_for_bashfiles(job_df, duration="workday"):
 
     return job
 
+# Main functions ###############################################################
 
-def make_subfile(folder, job_df, duration):
+
+def make_subfile(cwd, job_df, duration):
     job = create_multijob_for_bashfiles(job_df, duration)
-    return create_subfile_from_job(folder, job)
-
-# For bash #####################################################################
+    return create_subfile_from_job(cwd, job)
 
 
-def write_bash(cwd, job_df, jobtype='madx', cmdline_arguments={}):
+def write_bash(job_df, jobtype='madx', cmdline_arguments={}):
     shell_scripts = []
 
     if len(job_df) > HTCONDOR_JOBLIMIT:
         raise AttributeError('Submitting too many jobs for HTCONDOR')
     for idx, job in job_df.iterrows():
-        jobfile = os.path.join(cwd, f'{JOBDIRECTORY_NAME}.{idx}', f'{BASH_FILENAME}.{idx}.sh')
+        jobfile = os.path.join(job['Job_directory'], f'{BASH_FILENAME}.{idx}.sh')
         with open(jobfile, 'w') as f:
 
             f.write(SHEBANG + "\n")
