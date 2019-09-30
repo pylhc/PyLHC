@@ -1,6 +1,6 @@
 Constants Definitions
 **************************
 
-.. automodule:: constants.machine_settings_info
+.. automodule:: pylhc.constants.machine_settings_info
     :members:
 
