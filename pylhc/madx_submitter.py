@@ -9,7 +9,7 @@ Script also allows to check if all htcondor job finished successfully, resubmiss
 Jobs.tfs is created in the working directory containing the Job Id, parameter per job and job directory for further post processing.
 
 required arguments:
-    --mask                  name of the madx mask to be used, must end with .mask, e.g. job_lhc_bbeat_misalign.mask
+    --mask                  path to the madx mask to be used e.g. ./job_lhc_bbeat_misalign.mask
     --working_directory     directory where job directories will be put and mask is located
     --replace_dict          dictionary with keys being the parameters to be replaced in the mask and values the parameter values, e.g. {'PARAMETER_A':[1,2], 'PARAMETER_B':['a','b']}
 
@@ -37,7 +37,6 @@ from generic_parser.entrypoint_parser import save_options_to_config
 import htc.utils
 import madx
 from htc.utils import JOBFLAVOURS, JOBDIRECTORY_NAME, HTCONDOR_JOBLIMIT, OUTPUT_DIR
-from madx.mask import MASK_ENDING
 
 JOBSUMMARY_FILE = 'Jobs.tfs'
 
@@ -103,14 +102,23 @@ def get_params():
 
 @entrypoint(get_params(), strict=True)
 def main(opt):
-    opt = check_opts(opt)
+    opt = _check_opts(opt)
     save_options_to_config(os.path.join(opt.working_directory, 'config.ini'), opt)
 
-    values_grid = np.array(list(itertools.product(*opt.replace_dict.values())))
+    job_df = _create_jobs(opt.working_directory, opt.mask, opt.replace_dict, opt.append_jobs)
+    job_df = _drop_already_run_jobs(job_df, opt.working_directory, opt.resume_jobs or opt.append_jobs)
+    _run(job_df, opt.working_directory, opt.jobflavour, opt.num_processes, opt.run_local)
 
-    if opt.append_jobs:
-        job_df = tfs.read(os.path.join(opt.working_directory, JOBSUMMARY_FILE), index='JobId')
-        mask = [elem not in job_df[opt.replace_dict.keys()].values for elem in values_grid]
+
+# Main Functions ---------------------------------------------------------------
+
+
+def _create_jobs(cwd, mask, replace_dict, append_jobs):
+    values_grid = np.array(list(itertools.product(*replace_dict.values())))
+
+    if append_jobs:
+        job_df = tfs.read(os.path.join(cwd, JOBSUMMARY_FILE), index='JobId')
+        mask = [elem not in job_df[replace_dict.keys()].values for elem in values_grid]
         njobs = mask.count(True)
         values_grid = values_grid[mask]
 
@@ -122,42 +130,46 @@ def main(opt):
         print('Submitting too many jobs')
         exit()
 
-    job_df = job_df.append(pd.DataFrame(columns=list(opt.replace_dict.keys()),
+    job_df = job_df.append(pd.DataFrame(columns=list(replace_dict.keys()),
                                         data=values_grid), ignore_index=True, sort=False)
 
-    job_df = setup_folders(job_df, opt.working_directory)
+    job_df = _setup_folders(job_df, cwd)
 
     # creating all madx jobs
-    job_df['Jobs'] = madx.mask.create_madx_from_mask(os.path.join(opt.working_directory, opt.mask),
-                                                     opt.replace_dict.keys(),
-                                                     job_df
-                                                     )
+    job_df = madx.mask.create_madx_jobs_from_mask(job_df, mask, replace_dict.keys())
 
     # creating all shell scripts
-    job_df['Shell_script'] = htc.utils.write_bash(job_df, 'madx')
+    job_df = htc.utils.write_bash(job_df, 'madx')
 
-    tfs.write(os.path.join(opt.working_directory, JOBSUMMARY_FILE), job_df, save_index='JobId')
+    tfs.write(os.path.join(cwd, JOBSUMMARY_FILE), job_df, save_index='JobId')
+    return job_df
 
-    if opt.resume_jobs or opt.append_jobs:
-        job_df = tfs.read(os.path.join(opt.working_directory, JOBSUMMARY_FILE))
+
+def _drop_already_run_jobs(job_df, cwd, extend_jobs):
+    if extend_jobs:
+        job_df = tfs.read(os.path.join(cwd, JOBSUMMARY_FILE))
         unfinished_jobs = [idx for idx, row in job_df.iterrows() if os.path.isdir(os.path.join(row['Job_directory'], OUTPUT_DIR))]
         job_df = job_df.drop(index=unfinished_jobs)
+    return job_df
 
-    if opt.run_local:
-        pool = multiprocessing.Pool(processes=opt.num_processes)
-        pool.map(execute_shell, job_df.iterrows())
+
+def _run(job_df, cwd, flavour, num_processes, run_local):
+    if run_local:
+        pool = multiprocessing.Pool(processes=num_processes)
+        pool.map(_execute_shell, job_df.iterrows())
 
     else:
         # create submission file
-        subfile = htc.utils.make_subfile(opt.working_directory,
-                                         job_df,
-                                         opt.jobflavour)
+        subfile = htc.utils.make_subfile(cwd, job_df, flavour)
         # submit to htcondor
         htc.utils.submit_jobfile(subfile)
 
 
-def setup_folders(job_df, working_directory):
-    job_df['Job_directory'] = list(map(return_job_dir, zip([working_directory]*len(job_df), job_df.index)))
+# Sub Functions ----------------------------------------------------------------
+
+
+def _setup_folders(job_df, working_directory):
+    job_df['Job_directory'] = list(map(_return_job_dir, zip([working_directory] * len(job_df), job_df.index)))
     for job_dir in job_df['Job_directory']:
         try:
             os.mkdir(job_dir)
@@ -166,11 +178,11 @@ def setup_folders(job_df, working_directory):
     return job_df
 
 
-def return_job_dir(inp):
+def _return_job_dir(inp):
     return os.path.join(inp[0], f'{JOBDIRECTORY_NAME}.{inp[1]}')
 
 
-def execute_shell(df_row):
+def _execute_shell(df_row):
     idx, column = df_row
     with open(os.path.join(column['Job_directory'], 'log.tmp'), 'w') as logfile:
         process = subprocess.Popen(['sh', column['Shell_script']],
@@ -183,12 +195,12 @@ def execute_shell(df_row):
     return status
 
 
-def check_opts(opt):
+def _check_opts(opt):
 
     if opt.resume_jobs and opt.append_jobs:
         raise AttributeError('Select either Resume jobs or Append jobs')
 
-    with open(os.path.join(opt.working_directory, opt.mask)) as inputmask:  # checks that mask and dir are there
+    with open(opt.mask, "r") as inputmask:  # checks that mask and dir are there
 
         mask = inputmask.read()
         keys_not_found = [k for k in opt.replace_dict.keys() if f'%({k})s' not in mask]
@@ -198,6 +210,9 @@ def check_opts(opt):
             raise AttributeError('Empty replacedictionary')
 
     return opt
+
+
+# Script Mode ------------------------------------------------------------------
 
 
 if __name__ == '__main__':

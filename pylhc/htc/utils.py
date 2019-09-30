@@ -113,7 +113,8 @@ def write_bash(job_df, jobtype='madx', cmdline_arguments={}):
             cmds = ' '.join([f'--{param} {val}' for param, val in cmdline_arguments.items()])
             f.write(f'{EXECUTEABLEPATH[jobtype]} {job["Jobs"]} {cmds}\n')
         shell_scripts.append(jobfile)
-    return shell_scripts
+    job_df['Shell_script'] = shell_scripts
+    return job_df
 
 
 # Helper #######################################################################

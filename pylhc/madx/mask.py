@@ -10,22 +10,22 @@ Input Dataframe is returned with additonal column containg path to the processed
 """
 import re
 import os
-MASK_ENDING = '.mask'
 
 
-def create_madx_from_mask(maskfile, replace_keys, job_df):
+def create_madx_jobs_from_mask(job_df, maskfile, replace_keys):
 
     with open(maskfile, 'r') as mfile:
         template = mfile.read()
 
-    jobname = re.sub(MASK_ENDING, '', maskfile)
+    jobname = os.path.splitext(maskfile)[0]
     jobs = [None] * len(job_df)
     for idx, values in job_df.iterrows():
         jobdir = os.path.join(values['Job_directory'], f'{jobname}.madx')
         with open(jobdir, 'w') as madxjob:
             madxjob.write(template % dict(zip(replace_keys, values[list(replace_keys)])))
         jobs[idx] = jobdir
-    return jobs
+    job_df['Jobs'] = jobs
+    return job_df
 
 
 if __name__ == '__main__':
