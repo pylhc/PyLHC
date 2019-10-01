@@ -31,17 +31,17 @@ Can be run from command line, parameters as given in :meth:`print_machine_settin
 :author: jdilly
 
 """
-import argparse
+import os
 import re
-import tfs
-from typing import Iterable
+from collections import OrderedDict
 
-from data_extract.lsa import LSA
-from generic_parser import DotDict
+import tfs
+from generic_parser import DotDict, entrypoint, EntryPointParameters
+
+from constants import machine_settings_info as const
+from data_extract.lsa import LSA, COL_NAME as lsa_col_name
 from omc3.omc3.utils import logging_tools
 from utils.time_tools import AcceleratorDatetime, AccDatetime
-from constants import machine_settings_info as const
-from collections import OrderedDict
 
 LOG = logging_tools.get_logger(__name__)
 
@@ -52,35 +52,103 @@ DEFAULT_BP_RE = '^(RAMP|SQUEEZE)[_-]'
 
 # Main #########################################################################
 
+def _get_params() -> dict:
+    """ Parse Commandline Arguments and return them as options. """
+    return EntryPointParameters(
+        time=dict(
+            flags=["--time", "-t"],
+            default=None,
+            type=str,
+            help="Time as 'Y-m-d H:M:S.f' format."),
+        knobs=dict(
+            flags=["--knobs", "-k"],
+            default=(),
+            nargs="+",
+            type=str,
+            help="List of knobnames."),
+        bp_regexp=dict(
+            flags=["--bp_regexp", "-r"],
+            default=DEFAULT_BP_RE,
+            type=str,
+            help="Beamprocess regexp filter."),
+        accel=dict(
+            flags=["--accel", "-a"],
+            default='lhc',
+            type=str,
+            help="Accelerator name."),
+        out=dict(
+            flags=["--out", "-o"],
+            default=None,
+            type=str,
+            help="Output path."),
+        knob_def=dict(
+            flags=["--knob_def", "-d"],
+            action="store_true",
+            help="Set to extract knob definitions."),
+        log=dict(
+            flags=["--log", "-l"],
+            action="store_true",
+            help="Write summary into log (automatically done if no output path is given)."),
+    )
 
-def get_info(time: str = None, knobs: Iterable[str] = (), bp_regexp: str = DEFAULT_BP_RE, accel: str = 'lhc',
-             log: bool = True, out: str = None) -> (AccDatetime, DotDict, DotDict, dict):
+
+@entrypoint(_get_params(), strict=True)
+def get_info(opt) -> (AccDatetime, DotDict, DotDict, dict, dict):
     """
-    Get info about Beamprocess, Optics and Knob-values at given time.
+    Get info about Beamprocess, Optics and Knobs at given time.
 
-    Args:
-        time (str): UTC time as Y-m-d H:M:S.f format. Default: *now*
-        knobs (list): List of knob-names to check. Default: *all available*
-        bp_regexp (str): Regular expression to filter beamprocesses. Default: ``'^(RAMP|SQUEEZE)[_-]'``
-        accel (str): Accelerator name, as used in pjlsa. Default ``'lhc'``
-        log (bool): Activates or Deactivates logging the results. Default: ``True``
-        out (str): Path to the output folder. If not given, no output files. Default: ``None``
+    Keyword Args:
+        *--Optional--*
+        - **accel** *(str)*: Accelerator name.
+
+          Flags: **['--accel', '-a']**
+          Default: ``lhc``
+        - **bp_regexp** *(str)*: Beamprocess regexp filter.
+
+          Flags: **['--bp_regexp', '-r']**
+          Default: ``^(RAMP|SQUEEZE)[_-]``
+        - **knob_def**: Set to extract knob definitions.
+
+          Flags: **['--knob_def', '-d']**
+          Action: ``store_true``
+        - **knobs** *(str)*: List of knobnames.
+
+          Flags: **['--knobs', '-k']**
+          Default: ``()``
+        - **log**: Write summary into log (automatically done if no output path is given).
+
+          Flags: **['--log', '-l']**
+          Action: ``store_true``
+        - **out** *(str)*: Output path.
+
+          Flags: **['--out', '-o']**
+          Default: ``None``
+        - **time** *(str)*: Time as 'Y-m-d H:M:S.f' format.
+
+          Flags: **['--time', '-t']**
+          Default: ``None``
+
 
     """
-    AccDT = AcceleratorDatetime[accel]
-    acc_time = AccDT.now() if time is None else AccDT.from_utc_string(time)
+    if opt.out is None:
+        opt.log = True
 
-    beamprocess_info = _get_beamprocess(acc_time, bp_regexp, accel)
+    AccDT = AcceleratorDatetime[opt.accel]
+    acc_time = AccDT.now() if opt.time is None else AccDT.from_utc_string(opt.time)
+
+    beamprocess_info = _get_beamprocess(acc_time, opt.bp_regexp, opt.accel)
     optics_info = _get_optics(acc_time, beamprocess_info.name, beamprocess_info.start)
-    trims = LSA.find_trims_at_time(beamprocess_info.name, knobs, acc_time, accel)
+    trims = LSA.find_trims_at_time(beamprocess_info.name, opt.knobs, acc_time, opt.accel)
+    knobs_definitions = _get_knob_definitions(opt.knob_def, opt.knobs, optics_info.name)
 
-    if log:
+    if opt.log:
         log_summary(acc_time, beamprocess_info, optics_info, trims)
 
-    if out is not None:
-        write_summary(out, acc_time, beamprocess_info, optics_info, trims)
+    if opt.out is not None:
+        write_summary(opt.out, acc_time, beamprocess_info, optics_info, trims)
+        write_knob_defitions(opt.out, knobs_definitions)
 
-    return acc_time, beamprocess_info, optics_info, trims
+    return acc_time, beamprocess_info, optics_info, trims, knobs_definitions
 
 
 # Output #######################################################################
@@ -120,7 +188,14 @@ def write_summary(output_path: str, acc_time: AccDatetime, bp_info: DotDict, o_i
         (const.head_optics_start,           o_info.start.cern_utc_string()),
         ("Hint:",                           "All times given in UTC.")
     ])
-    tfs.write(output_path, info_tfs)
+    tfs.write(os.path.join(output_path, const.info_name), info_tfs)
+
+
+def write_knob_defitions(output_path:str, definitions: dict):
+    """ Write Knob definitions into file. """
+    for knob, definition in definitions.items():
+        path = os.path.join(output_path, f"{knob.replace('/', '_')}{const.knobdef_suffix}")
+        tfs.write(path, definition, save_index=lsa_col_name)
 
 
 # Beamprocess ##################################################################
@@ -180,19 +255,23 @@ def _get_last_optics(optics_table, bp: str, bp_start: AccDatetime, acc_time: Acc
     return item.name, acc_time.__class__.from_timestamp(item.time + bp_start.timestamp())
 
 
+# Knobs ########################################################################
+
+
+def _get_knob_definitions(active: bool, knobs: list, optics: str):
+    """ Get knob definitions if switch is activated """
+    defs = {}
+    if active:
+        for knob in knobs:
+            try:
+                defs[knob] = LSA.get_knob_circuits(knob, optics)
+            except IOError as e:
+                LOG.warning(e.args[0])
+    return defs
+
+
 # Script Mode ##################################################################
 
 
-def get_options() -> dict:
-    """ Parse Commandline Arguments and return them as options. """
-    args = argparse.ArgumentParser()
-    args.add_argument("--time", "-t",      default=None,          type=str,  help="Time as 'Y-m-d H:M:S.f' format.")
-    args.add_argument("--knobs", "-k",     default=(), nargs="+", type=str,  help="List of knobnames.")
-    args.add_argument("--bp_regexp", "-r", default=DEFAULT_BP_RE, type=str,  help="Beamprocess regexp filter.")
-    args.add_argument("--accel", "-a",     default='lhc',         type=str,  help="Accelerator name.")
-    args.add_argument("--out", "-o",       default=None,          type=str,  help="Output path.")
-    return args.parse_args().__dict__
-
-
 if __name__ == '__main__':
-    get_info(**get_options())
+    get_info()
