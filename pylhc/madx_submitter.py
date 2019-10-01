@@ -2,7 +2,7 @@
 MADX Job-Submitter
 --------------------
 
-Allows to execute a parametric madx study using a madx mask and a dictionary with parameters to replace. 
+Allows to execute a parametric madx study using a madx mask and a dictionary with parameters to replace.
 Parameters to be replaced must be present in mask as %(PARAMETER)s.
 When submitting to HTCondor, madx data to be transfered back to job_directory must be written in folder Outputdata.
 Script also allows to check if all htcondor job finished successfully, resubmissions with a different parameter grid, and local excution.
@@ -14,7 +14,7 @@ required arguments:
     --replace_dict          dictionary with keys being the parameters to be replaced in the mask and values the parameter values, e.g. {'PARAMETER_A':[1,2], 'PARAMETER_B':['a','b']}
 
 optional arguments:
-    --jobflavour           string giving upper limit on how long job can take, only used when submitting to HTCondor   
+    --jobflavour           string giving upper limit on how long job can take, only used when submitting to HTCondor
     --local                flag to trigger local processing using the number of processes specified in --num_processes
     --num_processes        number of processes used when run locally
     --resume_jobs          flag which enables a check if all htcondor jobs finished successfully and resubmitting failed jobs
@@ -35,10 +35,12 @@ from generic_parser.entry_datatypes import DictAsString
 from generic_parser.entrypoint_parser import save_options_to_config
 
 import htc.utils
-import madx
-from htc.utils import JOBFLAVOURS, JOBDIRECTORY_NAME, HTCONDOR_JOBLIMIT, OUTPUT_DIR
+import madx.mask as mask_processing
+from htc.utils import JOBFLAVOURS, HTCONDOR_JOBLIMIT, OUTPUT_DIR
+from htc.utils import COLUMN_SHELL_SCRIPTS, COLUMN_JOB_DIRECTORY, COLUMN_JOBS
 
 JOBSUMMARY_FILE = 'Jobs.tfs'
+JOBDIRECTORY_NAME = 'Job'
 
 
 def get_params():
@@ -113,7 +115,7 @@ def main(opt):
 # Main Functions ---------------------------------------------------------------
 
 
-def _create_jobs(cwd, mask, replace_dict, append_jobs):
+def _create_jobs(cwd, maskfile, replace_dict, append_jobs):
     values_grid = np.array(list(itertools.product(*replace_dict.values())))
 
     if append_jobs:
@@ -136,7 +138,7 @@ def _create_jobs(cwd, mask, replace_dict, append_jobs):
     job_df = _setup_folders(job_df, cwd)
 
     # creating all madx jobs
-    job_df = madx.mask.create_madx_jobs_from_mask(job_df, mask, replace_dict.keys())
+    job_df = mask_processing.create_madx_jobs_from_mask(job_df, maskfile, replace_dict.keys())
 
     # creating all shell scripts
     job_df = htc.utils.write_bash(job_df, 'madx')
@@ -148,9 +150,16 @@ def _create_jobs(cwd, mask, replace_dict, append_jobs):
 def _drop_already_run_jobs(job_df, cwd, extend_jobs):
     if extend_jobs:
         job_df = tfs.read(os.path.join(cwd, JOBSUMMARY_FILE))
-        unfinished_jobs = [idx for idx, row in job_df.iterrows() if os.path.isdir(os.path.join(row['Job_directory'], OUTPUT_DIR))]
+        unfinished_jobs = [idx for idx, row in job_df.iterrows() if _check_if_finished_successfully(row)]
         job_df = job_df.drop(index=unfinished_jobs)
     return job_df
+
+
+def _check_if_finished_successfully(job_row):
+    if os.path.isdir(os.path.join(job_row[COLUMN_JOB_DIRECTORY], OUTPUT_DIR)):
+        return True
+    else:
+        return False
 
 
 def _run(job_df, cwd, flavour, num_processes, run_local):
@@ -169,8 +178,8 @@ def _run(job_df, cwd, flavour, num_processes, run_local):
 
 
 def _setup_folders(job_df, working_directory):
-    job_df['Job_directory'] = list(map(_return_job_dir, zip([working_directory] * len(job_df), job_df.index)))
-    for job_dir in job_df['Job_directory']:
+    job_df[COLUMN_JOB_DIRECTORY] = list(map(_return_job_dir, zip([working_directory] * len(job_df), job_df.index)))
+    for job_dir in job_df[COLUMN_JOB_DIRECTORY]:
         try:
             os.mkdir(job_dir)
         except IOError:
@@ -184,12 +193,12 @@ def _return_job_dir(inp):
 
 def _execute_shell(df_row):
     idx, column = df_row
-    with open(os.path.join(column['Job_directory'], 'log.tmp'), 'w') as logfile:
-        process = subprocess.Popen(['sh', column['Shell_script']],
+    with open(os.path.join(column[COLUMN_JOB_DIRECTORY], 'log.tmp'), 'w') as logfile:
+        process = subprocess.Popen(['sh', column[COLUMN_SHELL_SCRIPTS]],
                                    shell=False,
                                    stdout=logfile,
                                    stderr=subprocess.STDOUT,
-                                   cwd=column['Job_directory'])
+                                   cwd=column[COLUMN_JOB_DIRECTORY])
 
     status = process.wait()
     return status
