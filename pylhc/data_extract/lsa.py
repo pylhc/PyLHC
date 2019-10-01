@@ -137,7 +137,7 @@ class LSAClient(pjlsa.LSAClient):
         df = tfs.TfsDataFrame()
         df.headers[HEAD_KNOB] = knob_name
         df.headers[HEAD_OPTICS] = optics
-        df.headers[HEAD_INFO] = "In MAD-X it should be 'name = name + DELTA_KL * knobValue'"
+        df.headers[HEAD_INFO] = "In MAD-X it should be 'name = name + DELTA * knobValue'"
         knob = self._knobService.findKnob(knob_name)
         if knob is None:
             raise IOError(f"Knob '{knob_name}' does not exist")
