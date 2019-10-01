@@ -20,7 +20,7 @@ import htcondor
 SHEBANG = "#!/bin/bash"
 SUBFILE = "queuehtc.sub"
 BASH_FILENAME = 'Job'
-JOBDIRECTORY_NAME = 'Job'
+
 HTCONDOR_JOBLIMIT = 100000
 
 EXECUTEABLEPATH = {'madx': '/afs/cern.ch/user/m/mad/bin/madx',
@@ -28,7 +28,6 @@ EXECUTEABLEPATH = {'madx': '/afs/cern.ch/user/m/mad/bin/madx',
                    'python2': '/afs/cern.ch/eng/sl/lintrack/miniconda2/bin/python',
                    }
 CMD_SUBMIT = "condor_submit"
-OUTPUT_DIR = 'Outputdata'
 JOBFLAVOURS = ('espresso',  # 20 min
                'microcentury',  # 1 h
                'longlunch',  # 2 h
@@ -37,6 +36,12 @@ JOBFLAVOURS = ('espresso',  # 20 min
                'testmatch',  # 3 d
                'nextweek'  # 1 w
                )
+
+OUTPUT_DIR = 'Outputdata'
+
+COLUMN_SHELL_SCRIPTS = 'Shell_script'
+COLUMN_JOB_DIRECTORY = 'Job_directory'
+COLUMN_JOBS = "Jobs"
 
 
 # Subprocess Methods ###########################################################
@@ -86,7 +91,7 @@ def create_multijob_for_bashfiles(job_df, duration="workday"):
         dura_key: dura_val,
     })
     # ugly but job.setQArgs doesn't take string containing \n
-    queueArg = f"queue executable, initialdir from (\n{job_df.to_csv(index=False, header=False, columns=['Shell_script', 'Job_directory'])})"
+    queueArg = f"queue executable, initialdir from (\n{job_df.to_csv(index=False, header=False, columns=[COLUMN_SHELL_SCRIPTS, COLUMN_JOB_DIRECTORY])})"
     job = str(job) + queueArg
 
     return job
@@ -105,15 +110,15 @@ def write_bash(job_df, jobtype='madx', cmdline_arguments={}):
     if len(job_df) > HTCONDOR_JOBLIMIT:
         raise AttributeError('Submitting too many jobs for HTCONDOR')
     for idx, job in job_df.iterrows():
-        jobfile = os.path.join(job['Job_directory'], f'{BASH_FILENAME}.{idx}.sh')
+        jobfile = os.path.join(job[COLUMN_JOB_DIRECTORY], f'{BASH_FILENAME}.{idx}.sh')
         with open(jobfile, 'w') as f:
 
             f.write(SHEBANG + "\n")
             f.write(f'mkdir {OUTPUT_DIR}\n')
             cmds = ' '.join([f'--{param} {val}' for param, val in cmdline_arguments.items()])
-            f.write(f'{EXECUTEABLEPATH[jobtype]} {job["Jobs"]} {cmds}\n')
+            f.write(f'{EXECUTEABLEPATH[jobtype]} {job[COLUMN_JOBS]} {cmds}\n')
         shell_scripts.append(jobfile)
-    job_df['Shell_script'] = shell_scripts
+    job_df[COLUMN_SHELL_SCRIPTS] = shell_scripts
     return job_df
 
 
