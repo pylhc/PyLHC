@@ -41,7 +41,7 @@ from generic_parser import DotDict, entrypoint, EntryPointParameters
 from constants import machine_settings_info as const
 from data_extract.lsa import LSA, COL_NAME as lsa_col_name
 from omc3.omc3.utils import logging_tools
-from utils.time_tools import AcceleratorDatetime, AccDatetime
+from tools.time_tools import AcceleratorDatetime, AccDatetime
 
 LOG = logging_tools.get_logger(__name__)
 

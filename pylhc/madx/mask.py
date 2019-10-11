@@ -10,7 +10,12 @@ Input Dataframe is returned with additonal column containg path to the processed
 """
 import re
 import os
-from htc.utils import COLUMN_SHELL_SCRIPTS, COLUMN_JOB_DIRECTORY, COLUMN_JOBS
+from htc.utils import COLUMN_SHELL_SCRIPT, COLUMN_JOB_DIRECTORY, COLUMN_JOB_FILE
+
+import logging
+
+
+LOG = logging.getLogger(__name__)
 
 
 def create_madx_jobs_from_mask(job_df, maskfile, replace_keys):
@@ -20,12 +25,14 @@ def create_madx_jobs_from_mask(job_df, maskfile, replace_keys):
 
     jobname = os.path.splitext(os.path.basename(maskfile))[0]
     jobs = [None] * len(job_df)
-    for idx, values in job_df.iterrows():
-        jobdir = os.path.join(values[COLUMN_JOB_DIRECTORY], f'{jobname}.madx')
-        with open(jobdir, 'w') as madxjob:
+    for idx, (jobid, values) in enumerate(job_df.iterrows()):
+        jobfile_name = f'{jobname}.madx'
+        jobfile_fullpath = os.path.join(values[COLUMN_JOB_DIRECTORY], jobfile_name)
+
+        with open(jobfile_fullpath, 'w') as madxjob:
             madxjob.write(template % dict(zip(replace_keys, values[list(replace_keys)])))
-        jobs[idx] = jobdir
-    job_df[COLUMN_JOBS] = jobs
+        jobs[idx] = jobfile_name
+    job_df[COLUMN_JOB_FILE] = jobs
     return job_df
 
 

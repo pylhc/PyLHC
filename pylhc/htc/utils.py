@@ -27,6 +27,7 @@ EXECUTEABLEPATH = {'madx': '/afs/cern.ch/user/m/mad/bin/madx',
                    'python3': '/afs/cern.ch/eng/sl/lintrack/anaconda3/bin/python',
                    'python2': '/afs/cern.ch/eng/sl/lintrack/miniconda2/bin/python',
                    }
+
 CMD_SUBMIT = "condor_submit"
 JOBFLAVOURS = ('espresso',  # 20 min
                'microcentury',  # 1 h
@@ -37,11 +38,10 @@ JOBFLAVOURS = ('espresso',  # 20 min
                'nextweek'  # 1 w
                )
 
-OUTPUT_DIR = 'Outputdata'
 
-COLUMN_SHELL_SCRIPTS = 'Shell_script'
-COLUMN_JOB_DIRECTORY = 'Job_directory'
-COLUMN_JOBS = "Jobs"
+COLUMN_SHELL_SCRIPT = 'ShellScript'
+COLUMN_JOB_DIRECTORY = 'JobDirectory'
+COLUMN_JOB_FILE = "JobFile"
 
 
 # Subprocess Methods ###########################################################
@@ -64,7 +64,6 @@ def submit_jobfile(jobfile):
 def _start_subprocess(command):
     process = subprocess.Popen(command, shell=False,
                                stdout=subprocess.PIPE, stderr=subprocess.STDOUT,)
-
     status = process.wait()
     return status
 
@@ -72,7 +71,7 @@ def _start_subprocess(command):
 # Job Creation #################################################################
 
 
-def create_multijob_for_bashfiles(job_df, duration="workday"):
+def create_multijob_for_bashfiles(job_df, output_dir, duration="workday"):
     """ Function to create a HTCondor job assuming n_files bash-files. """
     dura_key, dura_val = _get_duration(duration)
 
@@ -80,7 +79,7 @@ def create_multijob_for_bashfiles(job_df, duration="workday"):
         "MyId": "htcondor",
         "universe": "vanilla",
         "arguments": "$(ClusterId) $(ProcId)",
-        "transfer_output_files": OUTPUT_DIR,
+        "transfer_output_files": output_dir,
         "notification": "error",
         "output": os.path.join("$(initialdir)", "$(MyId).$(ClusterId).$(ProcId).out"),
         "error": os.path.join("$(initialdir)", "$(MyId).$(ClusterId).$(ProcId).err"),
@@ -91,34 +90,37 @@ def create_multijob_for_bashfiles(job_df, duration="workday"):
         dura_key: dura_val,
     })
     # ugly but job.setQArgs doesn't take string containing \n
-    queueArg = f"queue executable, initialdir from (\n{job_df.to_csv(index=False, header=False, columns=[COLUMN_SHELL_SCRIPTS, COLUMN_JOB_DIRECTORY])})"
+    scripts = [os.path.join(*parts) for parts in zip(job_df[COLUMN_JOB_DIRECTORY], job_df[COLUMN_SHELL_SCRIPT])]
+    args = "\n".join([",".join(parts) for parts in zip(scripts, job_df[COLUMN_JOB_DIRECTORY])])
+    queueArg = f"queue executable, initialdir from (\n{args})"
     job = str(job) + queueArg
-
     return job
 
 # Main functions ###############################################################
 
 
-def make_subfile(cwd, job_df, duration):
-    job = create_multijob_for_bashfiles(job_df, duration)
+def make_subfile(cwd, job_df, output_dir,  duration):
+    job = create_multijob_for_bashfiles(job_df, output_dir, duration)
     return create_subfile_from_job(cwd, job)
 
 
-def write_bash(job_df, jobtype='madx', cmdline_arguments={}):
-    shell_scripts = []
-
-    if len(job_df) > HTCONDOR_JOBLIMIT:
+def write_bash(job_df, output_dir, jobtype='madx', cmdline_arguments={}):
+    if len(job_df.index) > HTCONDOR_JOBLIMIT:
         raise AttributeError('Submitting too many jobs for HTCONDOR')
-    for idx, job in job_df.iterrows():
-        jobfile = os.path.join(job[COLUMN_JOB_DIRECTORY], f'{BASH_FILENAME}.{idx}.sh')
-        with open(jobfile, 'w') as f:
 
-            f.write(SHEBANG + "\n")
-            f.write(f'mkdir {OUTPUT_DIR}\n')
+    shell_scripts = [None] * len(job_df.index)
+    for idx, (jobid, job) in enumerate(job_df.iterrows()):
+        bash_file = f'{BASH_FILENAME}.{jobid}.sh'
+        jobfile = os.path.join(job[COLUMN_JOB_DIRECTORY], bash_file)
+        with open(jobfile, 'w') as f:
+            f.write(f"{SHEBANG}\n")
+            f.write(f'mkdir {output_dir}\n')
             cmds = ' '.join([f'--{param} {val}' for param, val in cmdline_arguments.items()])
-            f.write(f'{EXECUTEABLEPATH[jobtype]} {job[COLUMN_JOBS]} {cmds}\n')
-        shell_scripts.append(jobfile)
-    job_df[COLUMN_SHELL_SCRIPTS] = shell_scripts
+            f.write(
+                f'{EXECUTEABLEPATH[jobtype]} {os.path.join(job[COLUMN_JOB_DIRECTORY], job[COLUMN_JOB_FILE])} {cmds}\n'
+            )
+        shell_scripts[idx] = bash_file
+    job_df[COLUMN_SHELL_SCRIPT] = shell_scripts
     return job_df
 
 

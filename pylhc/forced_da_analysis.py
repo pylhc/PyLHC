@@ -17,8 +17,9 @@ from constants.forced_da_analysis import *  # I am using all that there is!
 from constants.general import get_proton_gamma, get_proton_beta, LHC_NOMINAL_EMITTANCE
 from omc3.omc3.utils import logging_tools
 from omc3.omc3.optics_measurements import toolbox
-from omc3.omc3.plotshop import style, lines, annotations, colors
-from utils.time_tools import CERNDatetime
+from omc3.omc3.utils import plot_style as style
+from plotshop import lines, annotations, colors
+from tools.time_tools import CERNDatetime
 
 LOG = logging_tools.get_logger(__name__)
 
