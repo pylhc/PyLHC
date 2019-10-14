@@ -16,6 +16,9 @@ The maximum runtime of one job can be specified, standard is 8h.
 import subprocess
 import os
 import htcondor
+import logging
+
+LOG = logging.getLogger(__name__)
 
 SHEBANG = "#!/bin/bash"
 SUBFILE = "queuehtc.sub"
@@ -50,7 +53,7 @@ COLUMN_JOB_FILE = "JobFile"
 def create_subfile_from_job(cwd, job):
     """ Write file to submit to htcondor """
     subfile = os.path.join(cwd, SUBFILE)
-
+    LOG.debug(f"Writing sub-file '{subfile}'.")
     with open(subfile, "w") as f:
         f.write(str(job))
     return subfile
@@ -62,6 +65,7 @@ def submit_jobfile(jobfile):
 
 
 def _start_subprocess(command):
+    LOG.debug(f"Executing command '{command}'")
     process = subprocess.Popen(command, shell=False,
                                stdout=subprocess.PIPE, stderr=subprocess.STDOUT,)
     status = process.wait()
@@ -92,8 +96,9 @@ def create_multijob_for_bashfiles(job_df, output_dir, duration="workday"):
     # ugly but job.setQArgs doesn't take string containing \n
     scripts = [os.path.join(*parts) for parts in zip(job_df[COLUMN_JOB_DIRECTORY], job_df[COLUMN_SHELL_SCRIPT])]
     args = "\n".join([",".join(parts) for parts in zip(scripts, job_df[COLUMN_JOB_DIRECTORY])])
-    queueArg = f"queue executable, initialdir from (\n{args})"
+    queueArg = f"queue executable, initialdir from (\n{args}\n)"
     job = str(job) + queueArg
+    LOG.debug(f"Created HTCondor subfile with content: \n{job}")
     return job
 
 # Main functions ###############################################################
@@ -112,6 +117,7 @@ def write_bash(job_df, output_dir, jobtype='madx', cmdline_arguments={}):
     for idx, (jobid, job) in enumerate(job_df.iterrows()):
         bash_file = f'{BASH_FILENAME}.{jobid}.sh'
         jobfile = os.path.join(job[COLUMN_JOB_DIRECTORY], bash_file)
+        LOG.debug(f"Writing bash-file {idx:d} '{jobfile}'.")
         with open(jobfile, 'w') as f:
             f.write(f"{SHEBANG}\n")
             f.write(f'mkdir {output_dir}\n')
