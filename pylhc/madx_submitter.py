@@ -27,6 +27,7 @@ import multiprocessing
 import os
 import subprocess
 import re
+from functools import partial
 
 import numpy as np
 import pandas as pd
@@ -151,7 +152,7 @@ def main(opt):
 
 def _create_jobs(cwd, maskfile, jobid_mask, replace_dict, output_dir, append_jobs):
     LOG.debug("Creating MADX-Jobs")
-    values_grid = np.array(list(itertools.product(*replace_dict.values())))
+    values_grid = np.array(list(itertools.product(*replace_dict.values())), dtype=object)
 
     if append_jobs:
         jobfile_path = os.path.join(cwd, JOBSUMMARY_FILE)
@@ -189,6 +190,7 @@ def _create_jobs(cwd, maskfile, jobid_mask, replace_dict, output_dir, append_job
     # creating all shell scripts
     job_df = htcutils.write_bash(job_df, output_dir, jobtype='madx')
 
+    job_df = _set_auto_tfs_column_types(job_df)
     tfs.write(os.path.join(cwd, JOBSUMMARY_FILE), job_df, save_index=COLUMN_JOBID)
     return job_df
 
@@ -281,11 +283,11 @@ def _check_opts(opt):
 
     if len(not_in_dict):
         raise KeyError("The following keys in the mask were not found in the given replace_dict: "
-                       f"'{str(not_in_dict).strip('{}')}'")
+                       f"{str(not_in_dict).strip('{}')}")
 
     if len(not_in_mask):
         LOG.warning("The following replace_dict keys were not found in the given mask: "
-                    f"'{str(not_in_mask).strip('{}')}'")
+                    f"{str(not_in_mask).strip('{}')}")
 
         # remove all keys which are not present in mask (otherwise unnecessary jobs)
         [opt.replace_dict.pop(key) for key in not_in_mask]
@@ -295,6 +297,10 @@ def _check_opts(opt):
     print_dict_tree(opt, name="Input parameter", print_fun=LOG.debug)
 
     return opt
+
+
+def _set_auto_tfs_column_types(df):
+    return df.apply(partial(pd.to_numeric, errors='ignore'))
 
 
 def _find_named_variables_in_mask(mask):
