@@ -41,6 +41,8 @@ JOBFLAVOURS = ('espresso',  # 20 min
                'nextweek'  # 1 w
                )
 
+NOTIFICATIONS = ('always', 'complete', 'error', 'never')
+
 
 COLUMN_SHELL_SCRIPT = 'ShellScript'
 COLUMN_JOB_DIRECTORY = 'JobDirectory'
@@ -75,41 +77,55 @@ def _start_subprocess(command):
 # Job Creation #################################################################
 
 
-def create_multijob_for_bashfiles(job_df, output_dir, duration="workday"):
-    """ Function to create a HTCondor job assuming n_files bash-files. """
-    dura_key, dura_val = _get_duration(duration)
+def create_multijob_for_bashfiles(job_df, **kwargs):
+    """ Function to create a HTCondor job assuming n_files bash-files.
 
-    job = htcondor.Submit({
+    Keyword Args:
+        output_dir (str): output directory that will be transferred. Default: None
+        duration (str): max duration of the job. Needs to be one of the HTCondor Jobflavours. Default: 'workday'
+        group (str): force use of accounting group. Default: None
+        retries (int): maximum amount of retries. Default: 3
+        notification (str): Notify under certain conditions. Default: 'error'.
+        priority (int): Priority to order your jobs. Default: None
+    """
+    submit_dict = {
         "MyId": "htcondor",
         "universe": "vanilla",
         "arguments": "$(ClusterId) $(ProcId)",
-        "transfer_output_files": output_dir,
-        "notification": "error",
         "output": os.path.join("$(initialdir)", "$(MyId).$(ClusterId).$(ProcId).out"),
         "error": os.path.join("$(initialdir)", "$(MyId).$(ClusterId).$(ProcId).err"),
         "log": os.path.join("$(initialdir)", "$(MyId).$(ClusterId).$(ProcId).log"),
         "on_exit_remove": '(ExitBySignal == False) && (ExitCode == 0)',
-        "max_retries": '3',
         "requirements": 'Machine =!= LastRemoteHost',
-        dura_key: dura_val,
-    })
-    # ugly but job.setQArgs doesn't take string containing \n
+    }
+    submit_dict.update(_map_kwargs(kwargs))
+
+    job = htcondor.Submit(submit_dict)
+
+    # add the multiple bash files
     scripts = [os.path.join(*parts) for parts in zip(job_df[COLUMN_JOB_DIRECTORY], job_df[COLUMN_SHELL_SCRIPT])]
-    args = "\n".join([",".join(parts) for parts in zip(scripts, job_df[COLUMN_JOB_DIRECTORY])])
-    queueArg = f"queue executable, initialdir from (\n{args}\n)"
-    job = str(job) + queueArg
+    args = [",".join(parts) for parts in zip(scripts, job_df[COLUMN_JOB_DIRECTORY])]
+    queueArgs = ["queue executable, initialdir from (", *args, ")"]
+
+    # ugly but job.setQArgs doesn't take string containing \n
+    # job.setQArgs("\n".join(queueArgs))
+    job = str(job) + "\n".join(queueArgs)
     LOG.debug(f"Created HTCondor subfile with content: \n{job}")
     return job
 
 # Main functions ###############################################################
 
 
-def make_subfile(cwd, job_df, output_dir,  duration):
-    job = create_multijob_for_bashfiles(job_df, output_dir, duration)
+def make_subfile(cwd, job_df, **kwargs):
+    """ Creates submit-file for htc.
+
+    For kwargs see create_multijob_for_bashfiles.
+    """
+    job = create_multijob_for_bashfiles(job_df, **kwargs)
     return create_subfile_from_job(cwd, job)
 
 
-def write_bash(job_df, output_dir, jobtype='madx', cmdline_arguments={}):
+def write_bash(job_df, output_dir=None, jobtype='madx', cmdline_arguments={}):
     if len(job_df.index) > HTCONDOR_JOBLIMIT:
         raise AttributeError('Submitting too many jobs for HTCONDOR')
 
@@ -120,7 +136,8 @@ def write_bash(job_df, output_dir, jobtype='madx', cmdline_arguments={}):
         LOG.debug(f"Writing bash-file {idx:d} '{jobfile}'.")
         with open(jobfile, 'w') as f:
             f.write(f"{SHEBANG}\n")
-            f.write(f'mkdir {output_dir}\n')
+            if output_dir is not None:
+                f.write(f'mkdir {output_dir}\n')
             cmds = ' '.join([f'--{param} {val}' for param, val in cmdline_arguments.items()])
             f.write(
                 f'{EXECUTEABLEPATH[jobtype]} {os.path.join(job[COLUMN_JOB_DIRECTORY], job[COLUMN_JOB_FILE])} {cmds}\n'
@@ -133,12 +150,37 @@ def write_bash(job_df, output_dir, jobtype='madx', cmdline_arguments={}):
 # Helper #######################################################################
 
 
-def _get_duration(duration):
-    if duration in JOBFLAVOURS:
-        return "+JobFlavour", f'"{duration}"'
-    else:
-        raise TypeError(
-            f"Duration is not given in correct format, provide str from list {JOBFLAVOURS}")
+def _map_kwargs(add_dict):
+    htc_map = {'duration': ('+JobFlavour', JOBFLAVOURS, "workday"),
+               'output_dir': ('transfer_output_files', None, None),
+               'group': ('+AccountingGroup', None, None),
+               'retries': ('max_retries', None, 3),
+               'notification': ('notification', NOTIFICATIONS, 'error'),
+               'priority': ('priority', None, None),
+               }
+    unknown_options = [k not in htc_map for k in add_dict]
+    if any(unknown_options):
+        raise ValueError(f"Unknown options '{str(unknown_options).strip('[]')}'")
+
+    new = {}
+    for key, (mapped, choices, default) in htc_map.items():
+        try:
+            value = add_dict[key]
+        except KeyError:
+            if default is not None:
+                new[mapped] = default
+        else:
+            if choices is not None and value not in choices:
+                raise TypeError(f"{key} needs to be one of '{str(choices).strip('[]')}' but instead was '{value}'")
+            new[mapped] = _maybe_put_in_quotes(mapped, value)
+    return new
+
+
+def _maybe_put_in_quotes(key, value):
+    if key.startswith("+"):
+        return f'"{value}"'
+    return value
+
 
 # Script Mode ##################################################################
 

@@ -55,21 +55,18 @@ LOG = logging_tools.get_logger(__name__)
 def get_params():
     params = EntryPointParameters()
     params.add_parameter(
-        flags="--mask",
         name="mask",
         type=str,
         required=True,
         help="Madx mask to use",
     )
     params.add_parameter(
-        flags="--working_directory",
         name="working_directory",
         type=str,
         required=True,
         help="Directory where data should be put",
     )
     params.add_parameter(
-        flags="--jobflavour",
         name="jobflavour",
         type=str,
         choices=JOBFLAVOURS,
@@ -77,56 +74,54 @@ def get_params():
         help="Jobflavour to give rough estimate of runtime of one job ",
     )
     params.add_parameter(
-        flags="--local",
         name="run_local",
         action="store_true",
         help="Flag to run the jobs on the local machine. Not suggested.",
     )
     params.add_parameter(
-        flags="--resume_jobs",
         name="resume_jobs",
         action="store_true",
         help="Only do jobs that did not work.",
     )
     params.add_parameter(
-        flags="--append_jobs",
         name="append_jobs",
         action="store_true",
         help="Flag to rerun job with finer/wider grid, already existing points will not be reexecuted.",
     )
     params.add_parameter(
-        flags="--replace_dict",
         name="replace_dict",
         help="Dict containing the str to replace as keys and values a list of parameters to replace",
         type=DictAsString,
         required=True
     )
     params.add_parameter(
-        flags="--num_processes",
         name="num_processes",
         help="number of processes to be used if run locally",
         type=int,
         default=4
     )
     params.add_parameter(
-        flags="--check_files",
         name="check_files",
         help="Files to check to count job as successfull",
         type=str,
         nargs="+",
     )
     params.add_parameter(
-        flags="--jobid_mask",
         name="jobid_mask",
         help="Mask to name jobs from replace_dict",
         type=str,
     )
     params.add_parameter(
-        flags="--job_output_dir",
         name="job_output_dir",
         help="The name of the output dir of the job. (Make sure your script puts its data there!)",
         type=str,
         default="Outputdata"
+    )
+    params.add_parameter(
+        name="additional_parameters",
+        help="Additional parameters for the job, as Dict-String. Choices: group, retries, notification, priority",
+        type=DictAsString,
+        default={}
     )
 
     return params
@@ -144,7 +139,7 @@ def main(opt):
                                     opt.job_output_dir, opt.check_files)
 
     _run(job_df, opt.working_directory, opt.job_output_dir,
-         opt.jobflavour, opt.num_processes, opt.run_local)
+         opt.jobflavour, opt.num_processes, opt.run_local, opt.additional_parameters)
 
 
 # Main Functions ---------------------------------------------------------------
@@ -204,7 +199,7 @@ def _drop_already_run_jobs(job_df, drop_jobs, output_dir, check_files):
     return job_df
 
 
-def _run(job_df, cwd, output_dir, flavour, num_processes, run_local):
+def _run(job_df, cwd, output_dir, flavour, num_processes, run_local, additional_htc_parameters):
     if run_local:
         LOG.info(f"Running {len(job_df.index)} jobs locally in {num_processes:d} processes.")
         pool = multiprocessing.Pool(processes=num_processes)
@@ -213,7 +208,8 @@ def _run(job_df, cwd, output_dir, flavour, num_processes, run_local):
     else:
         LOG.info(f"Submitting {len(job_df.index)} jobs on htcondor, flavour '{flavour}'.")
         # create submission file
-        subfile = htcutils.make_subfile(cwd, job_df, output_dir, flavour)
+        subfile = htcutils.make_subfile(cwd, job_df, output_dir=output_dir, duration=flavour,
+                                        **additional_htc_parameters)
         # submit to htcondor
         htcutils.submit_jobfile(subfile)
 
