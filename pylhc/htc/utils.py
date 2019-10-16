@@ -63,15 +63,22 @@ def create_subfile_from_job(cwd, job):
 
 def submit_jobfile(jobfile):
     """ Submit subfile to htcondor via subprocess """
-    _start_subprocess([CMD_SUBMIT, jobfile])
+    status = _start_subprocess([CMD_SUBMIT, jobfile])
+    if status:
+        raise RuntimeError("Submit to HTCondor was not successful!")
+    else:
+        LOG.info("Jobs successfully submitted.")
 
 
 def _start_subprocess(command):
     LOG.debug(f"Executing command '{command}'")
     process = subprocess.Popen(command, shell=False,
                                stdout=subprocess.PIPE, stderr=subprocess.STDOUT,)
-    status = process.wait()
-    return status
+    for line in process.stdout:
+        htc_line = line.decode("utf-8").strip()
+        if htc_line:
+            LOG.debug(f'{htc_line} (from HTCondor)')
+    return process.wait()
 
 
 # Job Creation #################################################################
