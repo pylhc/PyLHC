@@ -38,7 +38,7 @@ The latter tools can be found in [OMC3](https://github.com/pylhc/omc3) (Python 3
 ## Functionality
 
 - *Machine Settings Info* - Prints an overview over the machine settings at a given time. ([**machine_settings_info.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/machine_settings_info.py)) 
-
+- *MAD-X Job Submitter* - Allows to generate jobs based on a MAD-X template and submit them to HTCondor. ([**madx_submitter.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/madx_submitter.py)) 
 
 ### Tests
 
