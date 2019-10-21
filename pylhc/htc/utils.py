@@ -18,6 +18,8 @@ import os
 import htcondor
 import logging
 
+from constants.external_paths import MADX_BIN, PYTHON2_BIN, PYTHON3_BIN
+
 LOG = logging.getLogger(__name__)
 
 SHEBANG = "#!/bin/bash"
@@ -26,9 +28,9 @@ BASH_FILENAME = 'Job'
 
 HTCONDOR_JOBLIMIT = 100000
 
-EXECUTEABLEPATH = {'madx': '/afs/cern.ch/user/m/mad/bin/madx',
-                   'python3': '/afs/cern.ch/eng/sl/lintrack/anaconda3/bin/python',
-                   'python2': '/afs/cern.ch/eng/sl/lintrack/miniconda2/bin/python',
+EXECUTEABLEPATH = {'madx': MADX_BIN,
+                   'python3': PYTHON3_BIN,
+                   'python2': PYTHON2_BIN,
                    }
 
 CMD_SUBMIT = "condor_submit"
@@ -133,6 +135,7 @@ def make_subfile(cwd, job_df, **kwargs):
 
 
 def write_bash(job_df, output_dir=None, jobtype='madx', cmdline_arguments={}):
+    """ Write the bash-files to be called by HTCondor. """
     if len(job_df.index) > HTCONDOR_JOBLIMIT:
         raise AttributeError('Submitting too many jobs for HTCONDOR')
 
@@ -158,21 +161,21 @@ def write_bash(job_df, output_dir=None, jobtype='madx', cmdline_arguments={}):
 
 
 def _map_kwargs(add_dict):
+    """ Maps the kwargs for the job-file.
+
+    Some arguments have pre-defined choices and defaults, the remaining ones are just passed on. """
+    new = {}
+
+    # Predefined ones
     htc_map = {'duration': ('+JobFlavour', JOBFLAVOURS, "workday"),
                'output_dir': ('transfer_output_files', None, None),
                'group': ('+AccountingGroup', None, None),
                'retries': ('max_retries', None, 3),
                'notification': ('notification', NOTIFICATIONS, 'error'),
-               'priority': ('priority', None, None),
                }
-    unknown_options = [k not in htc_map for k in add_dict]
-    if any(unknown_options):
-        raise ValueError(f"Unknown options '{str(unknown_options).strip('[]')}'")
-
-    new = {}
     for key, (mapped, choices, default) in htc_map.items():
         try:
-            value = add_dict[key]
+            value = add_dict.pop(key)
         except KeyError:
             if default is not None:
                 new[mapped] = default
@@ -180,6 +183,10 @@ def _map_kwargs(add_dict):
             if choices is not None and value not in choices:
                 raise TypeError(f"{key} needs to be one of '{str(choices).strip('[]')}' but instead was '{value}'")
             new[mapped] = _maybe_put_in_quotes(mapped, value)
+
+    # Pass-Through Arguments
+    LOG.debug(f"Remaining arguments to be added: '{str(add_dict).strip('{}'):s}'")
+    new.update(add_dict)
     return new
 
 
