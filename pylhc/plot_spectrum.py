@@ -179,7 +179,7 @@ def create_waterfall_plot(cwd, amp, freq, lin, opt):
 @entrypoint(spectrum_plot_entrypoint(), strict=True)
 def spectrum_plots(opt):
 
-    save_options_to_config(os.path.join(opt.working_directory, 'config.ini'), OrderedDict(sorted(opt.items())))
+    save_options_to_config(os.path.join(opt.working_directory, 'plot_spectrum.ini'), OrderedDict(sorted(opt.items())))
     opt.files = [os.path.basename(filename) for filename in opt.files]
 
     bpm_figs = {}
