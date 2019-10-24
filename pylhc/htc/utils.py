@@ -23,9 +23,9 @@ BASH_FILENAME = 'Job'
 
 HTCONDOR_JOBLIMIT = 100000
 
-EXECUTEABLEPATH = {'madx': '/afs/cern.ch/user/m/mad/bin/madx',
-                   'python3': '/afs/cern.ch/eng/sl/lintrack/anaconda3/bin/python',
-                   'python2': '/afs/cern.ch/eng/sl/lintrack/miniconda2/bin/python',
+EXECUTEABLEPATH = {'madx': 'madx',
+                   'python3': 'python',
+                   'python2': 'python',
                    }
 CMD_SUBMIT = "condor_submit"
 JOBFLAVOURS = ('espresso',  # 20 min

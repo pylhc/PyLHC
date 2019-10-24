@@ -7,7 +7,7 @@
 
 This is the python-tool package of the optics measurements and corrections group (OMC).
 
-If you are not part of that group, you will most likely have no use for the codes provided here, 
+If you are not part of that group, you will most likely have no use for the codes provided here,
 unless you have a 9km wide accelerator at home.
 Feel free to use them anyway, if you wish!
 
@@ -22,7 +22,7 @@ Feel free to use them anyway, if you wish!
 
 The codes use a multitude of packages as can be found in the [requirements.txt](requirements.txt).
 
-Important ones are: ``numpy``, ``pandas`` and ``scipy``.
+Important ones are: ``numpy``, ``pandas``, ``matplotlib`` and ``scipy``.
 
 ### Installing
 
@@ -37,17 +37,17 @@ The latter tools can be found in [OMC3](https://github.com/pylhc/omc3) (Python 3
 
 ## Functionality
 
-- *Machine Settings Info* - Prints an overview over the machine settings at a given time. ([**machine_settings_info.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/machine_settings_info.py)) 
-
+- *Machine Settings Info* - Prints an overview over the machine settings at a given time. ([**machine_settings_info.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/machine_settings_info.py))
+- *Plot Spectrum* - Plots the spectrum for selected BPMs and, optionally, also a waterfall plot of all BPMs. ([**plot_spectrum.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/plot_spectrum.py))
 
 ### Tests
 
-- Pytest unit tests are run automatically after each commit via 
-[Travis-CI](https://travis-ci.com/pylhc/PyLHC). 
+- Pytest unit tests are run automatically after each commit via
+[Travis-CI](https://travis-ci.com/pylhc/PyLHC).
 
 ### Maintainability
 
-- Additional checks for code-complexity, design-rules, test-coverage, duplication on 
+- Additional checks for code-complexity, design-rules, test-coverage, duplication on
 [CodeClimate](https://codeclimate.com/github/pylhc/PyLHC)
 
 - Direct commits to master are forbidden.
