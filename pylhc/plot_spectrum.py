@@ -177,6 +177,13 @@ def create_waterfall_plot(cwd, amp, freq, lin, opt):
         return fig
 
 
+def make_cwd(opt, kickfile):
+    cwd = os.path.join(opt.working_directory, os.path.splitext(kickfile)[0])
+    if not os.path.exists(cwd):
+        os.makedirs(cwd)
+    return cwd
+
+
 @entrypoint(spectrum_plot_entrypoint(), strict=True)
 def spectrum_plots(opt):
 
@@ -188,9 +195,7 @@ def spectrum_plots(opt):
 
     for kickfile in opt.files:
 
-        cwd = os.path.join(opt.working_directory, os.path.splitext(kickfile)[0])
-        if not os.path.exists(cwd):
-            os.makedirs(cwd)
+        cwd = make_cwd(opt, kickfile)
 
         amp = get_amplitude_files(opt.harpy_directory, kickfile)
         freq = get_frequency_files(opt.harpy_directory, kickfile)
