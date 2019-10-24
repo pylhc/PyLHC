@@ -1,3 +1,24 @@
+"""
+Spectrum Plotter
+--------------------
+
+Takes data from frequency analysis and creates a frequency plot for every given BPM, with the possibility to include spectral lines.
+Optionally, a waterfall plot for all BPMs is created as well.
+Plots are saved in a directory with the name of the original TbT file.
+Returns a dict with the BPM as key and the figure as value for further processing.
+
+required arguments:
+    --files                 List with basenames of Tbt files, ie. tracking.sdds
+    --working_directory     Directory containing the Frequency files, amplitude, etc.
+    --harpy_directory       Directory to write results to
+
+optional arguments:
+    --bpms                  List of BPMs for which spectra will be plotted
+    --waterfall_plot        Flag to create waterfall plot
+    --no_plots              Flag to stopped saving plots
+    --lines                 Dict of lines to plot, key being label, value a list with order, ie. {"3Q_x":[2,0]}
+
+"""
 import os
 import tfs
 import pandas as pd
@@ -53,8 +74,11 @@ def get_lin_files(cwd, kickfile):
     return {plane: tfs.read(f'{cwd}/{kickfile}.lin{plane}', index='NAME') for plane in PLANES.keys()}
 
 
-def get_tune(lin, bpm):
-    return {f'Q{plane}': lin[plane].loc[bpm, f'TUNE{plane.upper()}'] for plane in PLANES.keys()}
+def get_tune(lin, bpm=None):
+    if bpm is None:
+        return {f'Q{plane}': lin[plane][f'TUNE{plane.upper()}'].mean() for plane in PLANES.keys()}
+    else:
+        return {f'Q{plane}': lin[plane].loc[bpm, f'TUNE{plane.upper()}'] for plane in PLANES.keys()}
 
 
 def plot_stems(ax, freq, amp, bpm):
@@ -69,12 +93,13 @@ def plot_stems(ax, freq, amp, bpm):
 def plot_line(ax, label, resonance, tunes):
     ax.axvline(x=[np.mod(resonance@tunes, 1) if np.mod(resonance@tunes, 1) < 0.5 else 1-np.mod(resonance@tunes, 1)],
                label=rf'${label}$',
-               linestyle='--')
+               linestyle='--',
+               color='black')
 
 
 def create_stem_plots(cwd, amp, freq, lin, opt):
 
-    common_bpms =[bpm for bpm in list(lin['x'].index.intersection(lin['y'].index)) if bpm in opt.bpms]
+    common_bpms = [bpm for bpm in list(lin['x'].index.intersection(lin['y'].index)) if bpm in opt.bpms]
     bpm_figs = {}
     for bpm in common_bpms:
         tune = get_tune(lin, bpm)
@@ -130,10 +155,14 @@ def create_waterfall_plot(cwd, amp, freq, lin, opt):
 
     bpm_to_index = {bpm: i+1 for i, bpm in enumerate(amp['x'].columns)}
 
+    tune = get_tune(lin)
+
     fig, ax = plt.subplots(nrows=2, ncols=1, figsize=(18, 9))
     for plane, value in PLANES.items():
         plot_waterfall(ax[value], freq_stacked[plane], amp_stacked[plane], bpm_indices[plane], bpm_to_index)
-
+        if opt.lines is not None:
+            for label, resonance in opt.lines.items():
+                plot_line(ax[value], label, np.array(resonance), np.array([*tune.values()]))
     if not opt.no_plots:
         plt.tight_layout()
         plt.savefig(f'{cwd}/waterfall_spectrum.png')
@@ -151,7 +180,7 @@ def spectrum_plots(opt):
 
     for kickfile in opt.files:
 
-        cwd = os.path.join(opt.working_directory, kickfile)
+        cwd = os.path.join(opt.working_directory, os.path.splitext(kickfile)[0])
         if not os.path.exists(cwd):
             os.makedirs(cwd)
 
