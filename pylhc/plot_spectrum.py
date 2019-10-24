@@ -10,13 +10,12 @@ Returns a dict with the BPM as key and the figure as value for further processin
 
 required arguments:
     --files                 List with basenames of Tbt files, ie. tracking.sdds
-    --working_directory     Directory containing the Frequency files, amplitude, etc.
     --harpy_directory       Directory to write results to
 
 optional arguments:
     --bpms                  List of BPMs for which spectra will be plotted
+    --working_directory     Directory containing the Frequency files, amplitude, etc.
     --waterfall_plot        Flag to create waterfall plot
-    --no_plots              Flag to stopped saving plots
     --lines                 Dict of lines to plot, key being label, value a list with order, ie. {"3Q_x":[2,0]}
 
 """
@@ -44,7 +43,7 @@ def spectrum_plot_entrypoint():
                          required=True,
                          help='Directory containing the Frequency files, amplitude, etc.')
     params.add_parameter(name="working_directory",
-                         required=True,
+                         type=str, default=None,
                          help='Directory to write results to')
     params.add_parameter(name="bpms",
                          nargs='+',
@@ -53,12 +52,9 @@ def spectrum_plot_entrypoint():
     params.add_parameter(name="waterfall_plot",
                          action="store_true",
                          help='Flag to create waterfall plot')
-    params.add_parameter(name="return__plots",
+    params.add_parameter(name="return_plots",
                          action="store_true",
                          help='Flag to return dict of plots')
-    params.add_parameter(name="no_plots",
-                         action="store_true",
-                         help='Flag to stopped saving plots')
     params.add_parameter(name="lines",
                          type=DictAsString,
                          default={'Q_x': [1, 0], 'Q_y': [0, 1]},
@@ -66,16 +62,16 @@ def spectrum_plot_entrypoint():
     return params
 
 
-def get_amplitude_files(cwd, kickfile):
-    return {plane: tfs.read(f'{cwd}/{kickfile}.amps{plane}') for plane in PLANES.keys()}
+def get_amplitude_files(working_directory, kickfile):
+    return {plane: tfs.read(f'{working_directory}/{kickfile}.amps{plane}') for plane in PLANES.keys()}
 
 
-def get_frequency_files(cwd, kickfile):
-    return {plane: tfs.read(f'{cwd}/{kickfile}.freqs{plane}') for plane in PLANES.keys()}
+def get_frequency_files(working_directory, kickfile):
+    return {plane: tfs.read(f'{working_directory}/{kickfile}.freqs{plane}') for plane in PLANES.keys()}
 
 
-def get_lin_files(cwd, kickfile):
-    return {plane: tfs.read(f'{cwd}/{kickfile}.lin{plane}', index='NAME') for plane in PLANES.keys()}
+def get_lin_files(working_directory, kickfile):
+    return {plane: tfs.read(f'{working_directory}/{kickfile}.lin{plane}', index='NAME') for plane in PLANES.keys()}
 
 
 def get_tune(lin, bpm=None):
@@ -93,6 +89,7 @@ def plot_stems(ax, freq, amp, bpm):
             markerfmt='bo',
             basefmt='b-')
     ax.set_yscale('log')
+    ax.set_xlim([0.0, 0.5])
     ax.set_ylim([10**-9, 10**-3])
     ax.set_ylabel('Amplitude [a.u]', fontsize=15)
     ax.set_xlabel('Frequency [tune units]', fontsize=15)
@@ -110,7 +107,6 @@ def plot_line(ax, label, resonance, tunes):
 def save_plot(fname):
     plt.tight_layout()
     plt.savefig(fname)
-    plt.show()
     plt.close()
 
 
@@ -122,12 +118,12 @@ def create_stem_plots(cwd, amp, freq, lin, opt):
         tune = get_tune(lin, bpm)
         fig, ax = plt.subplots(nrows=2, ncols=1, figsize=(18, 9))
         for plane, value in PLANES.items():
-            plot_stems(ax[value], freq[plane], amp[plane], bpm)
             if opt.lines is not None:
                 for label, resonance in opt.lines.items():
                     plot_line(ax[value], label, np.array(resonance), np.array([*tune.values()]))
+            plot_stems(ax[value], freq[plane], amp[plane], bpm)
 
-        if not opt.no_plots:
+        if opt.working_directory is not None:
             save_plot(f'{cwd}/{bpm}_spectrum.png')
         if opt.return_plots:
             bpm_figs[bpm] = fig
@@ -160,7 +156,9 @@ def create_waterfall_plot(cwd, amp, freq, lin, opt):
     amp_stacked = {plane: rescale_amp(amp, plane) for plane in PLANES.keys()}
     amp_stacked = {plane: np.vstack(amp_stacked[plane].to_numpy().T) for plane in PLANES.keys()}
     freq_stacked = {plane: np.vstack(freq[plane].to_numpy().T) for plane in PLANES.keys()}
-    bpm_indices = {plane: (np.ones(np.shape(freq[plane].to_numpy()))*np.arange(1, 1+np.shape(freq[plane].to_numpy())[1])).T.flatten() for plane in PLANES.keys()}  # good luck understanding this one
+
+    shape_freq = {plane: np.shape(freq[plane].to_numpy()) for plane in PLANES.keys()}
+    bpm_indices = {plane: (np.ones(shape_freq[plane])*np.arange(1, 1+shape_freq[plane][1])).flatten('F') for plane in PLANES.keys()}  # good luck understanding this one
 
     bpm_to_index = {bpm: i+1 for i, bpm in enumerate(amp['x'].columns)}
 
@@ -172,7 +170,7 @@ def create_waterfall_plot(cwd, amp, freq, lin, opt):
         if opt.lines is not None:
             for label, resonance in opt.lines.items():
                 plot_line(ax[value], label, np.array(resonance), np.array([*tune.values()]))
-    if not opt.no_plots:
+    if opt.working_directory is not None:
         save_plot(f'{cwd}/waterfall_spectrum.png')
     if opt.return_plots:
         return fig
