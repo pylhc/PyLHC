@@ -4,12 +4,12 @@ HTC Utils
 
 Functions allowing to create HTCondor jobs and submit them.
 
-write_bash creates bash scripts executing either a python or madx script. 
+write_bash creates bash scripts executing either a python or madx script.
 Takes dataframe, job type, and optional additional cmd line arguments for script.
 A shell script is created in each job directory in the dataframe.
 
 make_subfile takes the job dataframe and creates the .sub required for submissions to HTCondor.
-The .sub file will be put in the working directory. 
+The .sub file will be put in the working directory.
 The maximum runtime of one job can be specified, standard is 8h.
 
 """
@@ -23,9 +23,9 @@ BASH_FILENAME = 'Job'
 
 HTCONDOR_JOBLIMIT = 100000
 
-EXECUTEABLEPATH = {'madx': 'madx',
-                   'python3': 'python',
-                   'python2': 'python',
+EXECUTEABLEPATH = {'madx': '/afs/cern.ch/user/m/mad/bin/madx',
+                   'python3': '/afs/cern.ch/eng/sl/lintrack/anaconda3/bin/python',
+                   'python2': '/afs/cern.ch/eng/sl/lintrack/miniconda2/bin/python',
                    }
 CMD_SUBMIT = "condor_submit"
 JOBFLAVOURS = ('espresso',  # 20 min

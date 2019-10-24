@@ -2,7 +2,8 @@
 Spectrum Plotter
 --------------------
 
-Takes data from frequency analysis and creates a frequency plot for every given BPM, with the possibility to include spectral lines.
+Takes data from frequency analysis and creates a frequency plot for every given BPM,
+with the possibility to include spectral lines.
 Optionally, a waterfall plot for all BPMs is created as well.
 Plots are saved in a directory with the name of the original TbT file.
 Returns a dict with the BPM as key and the figure as value for further processing.
