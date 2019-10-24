@@ -52,6 +52,9 @@ def spectrum_plot_entrypoint():
     params.add_parameter(name="waterfall_plot",
                          action="store_true",
                          help='Flag to create waterfall plot')
+    params.add_parameter(name="return__plots",
+                         action="store_true",
+                         help='Flag to return dict of plots')
     params.add_parameter(name="no_plots",
                          action="store_true",
                          help='Flag to stopped saving plots')
@@ -121,7 +124,8 @@ def create_stem_plots(cwd, amp, freq, lin, opt):
             plt.savefig(f'{cwd}/{bpm}_spectrum.png')
             plt.show()
             plt.close()
-        bpm_figs[bpm] = fig
+        if opt.return_plots:
+            bpm_figs[bpm] = fig
 
     return bpm_figs
 
@@ -168,8 +172,8 @@ def create_waterfall_plot(cwd, amp, freq, lin, opt):
         plt.savefig(f'{cwd}/waterfall_spectrum.png')
         plt.show()
         plt.close()
-
-    return fig
+    if opt.return_plots:
+        return fig
 
 
 @entrypoint(spectrum_plot_entrypoint(), strict=True)
@@ -177,6 +181,9 @@ def spectrum_plots(opt):
 
     save_options_to_config(os.path.join(opt.working_directory, 'config.ini'), OrderedDict(sorted(opt.items())))
     opt.files = [os.path.basename(filename) for filename in opt.files]
+
+    bpm_figs = {}
+    waterfall_figs = {}
 
     for kickfile in opt.files:
 
@@ -188,14 +195,17 @@ def spectrum_plots(opt):
         freq = get_frequency_files(opt.harpy_directory, kickfile)
         lin = get_lin_files(opt.harpy_directory, kickfile)
 
-        bpm_figs = create_stem_plots(cwd, amp, freq, lin, opt)
+        bpm_fig = create_stem_plots(cwd, amp, freq, lin, opt)
 
         if opt.waterfall_plot:
             waterfall_fig = create_waterfall_plot(cwd, amp, freq, lin, opt)
         else:
             waterfall_fig = None
 
-    return bpm_figs, waterfall_fig
+        bpm_figs[kickfile] = bpm_fig
+        waterfall_figs[kickfile] = waterfall_fig
+
+    return bpm_figs, waterfall_figs
 
 
 if __name__ == "__main__":
