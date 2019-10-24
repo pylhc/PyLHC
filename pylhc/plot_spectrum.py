@@ -91,6 +91,12 @@ def plot_stems(ax, freq, amp, bpm):
             linefmt='bo-',
             markerfmt='bo',
             basefmt='b-')
+    ax.set_yscale('log')
+    ax.set_ylim([10**-9, 10**-3])
+    ax.set_ylabel('Amplitude [a.u]', fontsize=15)
+    ax.set_xlabel('Frequency [tune units]', fontsize=15)
+    ax.tick_params(axis='both', which='major', labelsize=15)
+    ax.legend(loc='upper right', frameon=True, fontsize=12)
 
 
 def plot_line(ax, label, resonance, tunes):
@@ -98,6 +104,13 @@ def plot_line(ax, label, resonance, tunes):
                label=rf'${label}$',
                linestyle='--',
                color='black')
+
+
+def save_plot(fname):
+    plt.tight_layout()
+    plt.savefig(fname)
+    plt.show()
+    plt.close()
 
 
 def create_stem_plots(cwd, amp, freq, lin, opt):
@@ -112,18 +125,9 @@ def create_stem_plots(cwd, amp, freq, lin, opt):
             if opt.lines is not None:
                 for label, resonance in opt.lines.items():
                     plot_line(ax[value], label, np.array(resonance), np.array([*tune.values()]))
-            ax[value].set_yscale('log')
-            ax[value].set_ylim([10**-9, 10**-3])
-            ax[value].set_ylabel('Amplitude [a.u]', fontsize=15)
-            ax[value].set_xlabel('Frequency [tune units]', fontsize=15)
-            ax[value].tick_params(axis='both', which='major', labelsize=15)
-            ax[value].legend(loc='upper right', frameon=True, fontsize=12)
 
         if not opt.no_plots:
-            plt.tight_layout()
-            plt.savefig(f'{cwd}/{bpm}_spectrum.png')
-            plt.show()
-            plt.close()
+            save_plot(f'{cwd}/{bpm}_spectrum.png')
         if opt.return_plots:
             bpm_figs[bpm] = fig
 
@@ -168,10 +172,7 @@ def create_waterfall_plot(cwd, amp, freq, lin, opt):
             for label, resonance in opt.lines.items():
                 plot_line(ax[value], label, np.array(resonance), np.array([*tune.values()]))
     if not opt.no_plots:
-        plt.tight_layout()
-        plt.savefig(f'{cwd}/waterfall_spectrum.png')
-        plt.show()
-        plt.close()
+        save_plot(f'{cwd}/waterfall_spectrum.png')
     if opt.return_plots:
         return fig
 
