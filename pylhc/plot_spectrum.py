@@ -6,17 +6,17 @@ Takes data from frequency analysis and creates a frequency plot for every given 
 with the possibility to include spectral lines.
 Optionally, a waterfall plot for all BPMs is created as well.
 Plots are saved in a directory with the name of the original TbT file.
-Returns a dict with the BPM as key and the figure as value for further processing.
+Returns a dict with the BPM as key and the figure as value for further processing if return_plots flag is present.
 
 required arguments:
     --files                 List with basenames of Tbt files, ie. tracking.sdds
-    --harpy_directory       Directory to write results to
+    --harpy_directory       Directory containing the Frequency files, amplitude, etc.
 
 optional arguments:
     --bpms                  List of BPMs for which spectra will be plotted
-    --working_directory     Directory containing the Frequency files, amplitude, etc.
+    --working_directory     Directory to write results to. If no option is given, plots will not be saved.
     --waterfall_plot        Flag to create waterfall plot
-    --lines                 Dict of lines to plot, key being label, value a list with order, ie. {"3Q_x":[2,0]}
+    --lines                 Dict of lines to plot, key being label, value a list with order, ie. {"3Q_x":[-2,0]}
 
 """
 import os
@@ -44,7 +44,7 @@ def spectrum_plot_entrypoint():
                          help='Directory containing the Frequency files, amplitude, etc.')
     params.add_parameter(name="working_directory",
                          type=str, default=None,
-                         help='Directory to write results to')
+                         help='Directory to write results to. If no option is given, plots will not be saved.')
     params.add_parameter(name="bpms",
                          nargs='+',
                          default=[None],
@@ -62,16 +62,16 @@ def spectrum_plot_entrypoint():
     return params
 
 
-def get_amplitude_files(working_directory, kickfile):
-    return {plane: tfs.read(f'{working_directory}/{kickfile}.amps{plane}') for plane in PLANES.keys()}
+def get_amplitude_files(directory, kickfile):
+    return {plane: tfs.read(f'{directory}/{kickfile}.amps{plane}') for plane in PLANES.keys()}
 
 
-def get_frequency_files(working_directory, kickfile):
-    return {plane: tfs.read(f'{working_directory}/{kickfile}.freqs{plane}') for plane in PLANES.keys()}
+def get_frequency_files(directory, kickfile):
+    return {plane: tfs.read(f'{directory}/{kickfile}.freqs{plane}') for plane in PLANES.keys()}
 
 
-def get_lin_files(working_directory, kickfile):
-    return {plane: tfs.read(f'{working_directory}/{kickfile}.lin{plane}', index='NAME') for plane in PLANES.keys()}
+def get_lin_files(directory, kickfile):
+    return {plane: tfs.read(f'{directory}/{kickfile}.lin{plane}', index='NAME') for plane in PLANES.keys()}
 
 
 def get_tune(lin, bpm=None):
@@ -186,7 +186,9 @@ def make_cwd(opt, kickfile):
 @entrypoint(spectrum_plot_entrypoint(), strict=True)
 def spectrum_plots(opt):
 
-    save_options_to_config(os.path.join(opt.working_directory, 'plot_spectrum.ini'), OrderedDict(sorted(opt.items())))
+    if opt.working_directory is not None:
+        save_options_to_config(os.path.join(opt.working_directory, 'plot_spectrum.ini'), OrderedDict(sorted(opt.items())))
+
     opt.files = [os.path.basename(filename) for filename in opt.files]
 
     bpm_figs = {}
@@ -194,7 +196,10 @@ def spectrum_plots(opt):
 
     for kickfile in opt.files:
 
-        cwd = make_cwd(opt, kickfile)
+        if opt.working_directory is not None:
+            cwd = make_cwd(opt, kickfile)
+        else:
+            cwd = None
 
         amp = get_amplitude_files(opt.harpy_directory, kickfile)
         freq = get_frequency_files(opt.harpy_directory, kickfile)
