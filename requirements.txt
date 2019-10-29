@@ -16,3 +16,4 @@ travis-sphinx>=2.1.0
 htcondor>=8.9.2
 tfs-pandas>=1.0.3
 generic-parser>=1.0.2
+attrs>=19.2.0
