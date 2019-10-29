@@ -120,7 +120,7 @@ def _create_jobs(cwd, maskfile, replace_dict, append_jobs):
 
     if append_jobs:
         job_df = tfs.read(os.path.join(cwd, JOBSUMMARY_FILE), index='JobId')
-        mask = [elem not in job_df[replace_dict.keys()].values for elem in values_grid]
+        mask = [elem not in job_df[replace_dict.keys()].to_numpy().tolist() for elem in values_grid.tolist()]
         njobs = mask.count(True)
         values_grid = values_grid[mask]
 
