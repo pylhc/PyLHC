@@ -95,7 +95,7 @@ def get_params():
 
 
 @entrypoint(get_params(), strict=True)
-def plot_bbq_data(opt):
+def main(opt):
     """ Plot BBQ wrapper.
 
     Keyword Args:
@@ -260,4 +260,4 @@ def _plot_bbq_data(bbq_df,
 
 
 if __name__ == '__main__':
-    plot_bbq_data()
+    main()

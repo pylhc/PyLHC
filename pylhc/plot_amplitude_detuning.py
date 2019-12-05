@@ -79,8 +79,8 @@ def get_params():
     return params
 
 
-@entrypoint(get_params())
-def plot_amplitude_detuning(opt):
+@entrypoint(get_params(), strict=True)
+def main(opt):
     LOG.info("Plotting Amplitude Detuning Results.")
     kick_df = tfs.read(opt.kick, index=COL_TIME())if isinstance(opt.kick, str) else opt.kick
     opt.pop("kick")
@@ -185,5 +185,5 @@ def plot_detuning(x, y, xerr, yerr, labels, xmin=None, xmax=None, ymin=None, yma
 
 
 if __name__ == '__main__':
-    plot_amplitude_detuning()
+    main()
 

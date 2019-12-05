@@ -416,6 +416,8 @@ def _no_nonzero_errors(series):
 
 
 def _convert_to_sigmas(plane, kick_df):
+    """ Converts the DA and the Action into Sigma-Units.
+    Hint: Both are currently in units of 2J! """
     LOG.debug("Calculating action and da in sigmas.")
     nominal_emittance = kick_df.headers[header_nominal_emittance(plane)]
 
@@ -704,7 +706,7 @@ if __name__ == '__main__':
     setup = dict(
         energy=6500.,
         plane="XY", beam=1,
-        directory='/media/jdilly/Storage/Repositories/Gui_Output/2019-08-09/LHCB1/Results/b1_amplitude_det_vertical_all',
+        directory='/media/jdilly/Storage/Repositories/Gui_Output/MD3312-AD-Vertical/LHCB1/Results/17-25-15_AmpDet_Vertical',
         fill=7391
     )
 
