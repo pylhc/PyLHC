@@ -1,5 +1,16 @@
+"""
+Plotshop: Lines
+---------------------------------
+
+Line-plotting related functionality.
+
+:module: plotshop.lines
+:author: jdilly
+
+"""
 import matplotlib.transforms as mtrans
 import numpy as np
+
 
 class MarkerList(object):
     """ Create a list of predefined markers """

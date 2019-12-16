@@ -1,3 +1,13 @@
+"""
+Constants: General
+-------------------
+
+General Constants, useful in many places.
+
+:module: constants.general
+:author: jdilly
+
+"""
 import numpy as np
 
 PLANES = ("X", "Y")

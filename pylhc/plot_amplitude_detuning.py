@@ -3,14 +3,21 @@ Amplitude Detuning Results Plotting
 ------------------------------------
 
 Provides the plotting function for amplitude detuning analysis
+
+
+:module: plot_amplitude_detuning
+:author: jdilly
+
 """
 import os
-from generic_parser import entrypoint, EntryPointParameters
-import tfs
-from omc3.omc3.utils import logging_tools, plot_style as pstyle
-from omc3.omc3.tune_analysis import constants as const, kickac_modifiers as kick_mod
-from matplotlib import pyplot as plt
+
 import numpy as np
+import tfs
+from generic_parser import entrypoint, EntryPointParameters
+from matplotlib import pyplot as plt
+
+from pylhc.omc3.omc3.tune_analysis import constants as const, kickac_modifiers as kick_mod
+from pylhc.omc3.omc3.utils import logging_tools, plot_style as pstyle
 
 LOG = logging_tools.get_logger(__name__)
 

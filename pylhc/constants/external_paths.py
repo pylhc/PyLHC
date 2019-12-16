@@ -1,3 +1,13 @@
+"""
+Constants: External Paths
+----------------------------------
+
+Collections of external paths used in this package.
+
+:module: constants.forced_da_analysis
+:author: jdilly
+
+"""
 import os
 
 # Binary Files -----------------------------------------------------------------

@@ -12,13 +12,17 @@ make_subfile takes the job dataframe and creates the .sub required for submissio
 The .sub file will be put in the working directory. 
 The maximum runtime of one job can be specified, standard is 8h.
 
+
+:module: htc.utils
+:author: mihofer
+
 """
 import subprocess
 import os
 import htcondor
 import logging
 
-from constants.external_paths import MADX_BIN, PYTHON2_BIN, PYTHON3_BIN
+from pylhc.constants.external_paths import MADX_BIN, PYTHON2_BIN, PYTHON3_BIN
 
 LOG = logging.getLogger(__name__)
 

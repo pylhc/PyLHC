@@ -1,3 +1,13 @@
+"""
+Constants: Plot TFS
+----------------------------------
+
+Constants and definitions for the tfs plotter.
+
+:module: constants.plot_tfs
+:author: jdilly
+
+"""
 IR_POS_DEFAULT = {
     "LHCB1": {
         'IP1': 23519.36962,

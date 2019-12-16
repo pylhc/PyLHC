@@ -17,7 +17,7 @@ import jpype
 import pjlsa
 import tfs
 
-from tools.time_tools import AccDatetime
+from pylhc.tools.time_tools import AccDatetime
 
 LOG = logging.getLogger(__name__)
 

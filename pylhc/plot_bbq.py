@@ -3,19 +3,25 @@ Plotting: BBQ
 ------------------------------------
 
 Provides the plotting function for the BBQ
+
+
+:module:  plot_bbq
+:author: jdilly
+
 """
+import datetime
 from contextlib import suppress
 
-from generic_parser import entrypoint, EntryPointParameters
-import tfs
-from omc3.omc3.utils import logging_tools, plot_style as pstyle
-from omc3.omc3.tune_analysis import constants as const
-from omc3.omc3 import amplitude_detuning_analysis as ad_ana
-import datetime
 import matplotlib.dates as mdates
+import tfs
+from generic_parser import entrypoint, EntryPointParameters
 from matplotlib import pyplot as plt, gridspec
 from matplotlib.ticker import FormatStrFormatter
-from plotshop import colors as pcolors
+
+from pylhc.omc3.omc3 import amplitude_detuning_analysis as ad_ana
+from pylhc.omc3.omc3.tune_analysis import constants as const
+from pylhc.omc3.omc3.utils import logging_tools, plot_style as pstyle
+from pylhc.plotshop import colors as pcolors
 
 LOG = logging_tools.get_logger(__name__)
 

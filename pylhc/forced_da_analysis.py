@@ -1,3 +1,55 @@
+"""
+Forced DA Analysis
+-------------------
+
+Runs the forced DA analysis, following the procedure described in `CarlierForcedDA2019`_.
+
+*--Required--*
+
+- **beam** *(int)*: Beam to use.
+
+  Flags: **['-b', '--beam']**
+  Choices: ``[1, 2]``
+- **directory** *(str)*: Analysis directory containing kick files.
+
+  Flags: **['-d', '--dir']**
+- **energy** *(float)*: Beam energy in GeV.
+
+  Flags: **['-e', '--energy']**
+
+*--Optional--*
+
+- **fill** *(int)*: Fill that was used. If not given, check out time_around_kicks.
+
+  Flags: **['-f', '--fill']**
+- **intensity_time_after_kick** *(int)*: Defines the times after the kicks (in seconds) which is used for intensity averaging to calculate the losses.
+
+  Flags: **['--tafter']**
+  Default: ``[5, 30]``
+- **intensity_time_before_kick** *(int)*: Defines the times before the kicks (in seconds) which is used for intensity averaging to calculate the losses.
+
+  Flags: **['--tbefore']**
+  Default: ``[30, 5]``
+- **plane** *(str)*: Plane of the kicks. Give 'XY' for using both planes (e.g. diagonal kicks).
+
+  Flags: **['-p', '--plane']**
+  Choices: ``['X', 'Y', 'XY']``
+  Default: ``XY``
+- **time_around_kicks** *(int)*: If no fill is given, this defines the time (in minutes) when data before the first and after the last kick is extracted.
+
+  Flags: **['--taround']**
+  Default: ``10``
+
+
+.. _CarlierForcedDA2019: https://journals.aps.org/prab/pdf/10.1103/PhysRevAccelBeams.22.031002
+
+
+:module: forced_da_analysis
+:author: jdilly
+
+"""
+
+
 import os
 from contextlib import suppress
 
@@ -10,21 +62,36 @@ import pandas as pd
 import pytimber
 import scipy.odr
 import tfs
-from tfs.tools import significant_digits
 from generic_parser import EntryPointParameters, entrypoint
+from tfs.tools import significant_digits
 
-from constants.forced_da_analysis import *  # I am using all that there is!
-from constants.general import get_proton_gamma, get_proton_beta, LHC_NOMINAL_EMITTANCE
-from omc3.omc3.utils import logging_tools
-from omc3.omc3.optics_measurements import toolbox
-from omc3.omc3.utils import plot_style as style
-from plotshop import lines, annotations, colors
-from tools.time_tools import CERNDatetime
+from pylhc.constants.forced_da_analysis import (bsrt_emittance_key, bws_emittance_key,
+                                                column_action, column_bws_norm_emittance, column_emittance,
+                                                column_norm_emittance,
+                                                err_col, mean_col, rel_col, sigma_col,
+                                                header_da, header_da_error, header_nominal_emittance,
+                                                header_norm_nominal_emittance,
+                                                outfile_emittance, outfile_emittance_bws, outfile_kick, outfile_plot,
+                                                TFS_SUFFIX, HEADER_EMITTANCE_AVERAGE, HEADER_ENERGY, HEADER_TIME_AFTER,
+                                                HEADER_TIME_BEFORE,
+                                                TIME, TIME_AFTER_KICK_S, TIME_AROUND_KICKS_MIN, TIME_BEFORE_KICK_S,
+                                                PLOT_FILETYPES, INTENSITY, INITIAL_DA_FIT, INTENSITY_AFTER,
+                                                INTENSITY_BEFORE,
+                                                INTENSITY_KEY, INTENSITY_LOSSES,
+                                                ROLLING_AVERAGE_WINDOW, BSRT_EMITTANCE_TO_METER, BWS_DIRECTIONS,
+                                                BWS_EMITTANCE_TO_METER, KICKFILE, RESULTS_DIR, YPAD,
+                                                )
+from pylhc.constants.general import get_proton_gamma, get_proton_beta, LHC_NOMINAL_EMITTANCE
+from pylhc.omc3.omc3.optics_measurements import toolbox
+from pylhc.omc3.omc3.utils import logging_tools
+from pylhc.omc3.omc3.utils import plot_style as style
+from pylhc.plotshop import lines, annotations, colors
+from pylhc.tools.time_tools import CERNDatetime
 
 LOG = logging_tools.get_logger(__name__)
 
 
-def get_parameters():
+def get_params():
     return EntryPointParameters(
         directory=dict(
             flags=['-d', "--dir"],
@@ -83,7 +150,7 @@ def get_parameters():
     )
 
 
-@entrypoint(get_parameters(), strict=True)
+@entrypoint(get_params(), strict=True)
 def main(opt):
     LOG.debug("Starting Forced DA analysis.")
     _log_opt(opt)
@@ -250,13 +317,15 @@ def _get_bws_emittances(beam, planes, db, timespan):
 
 
 def _get_kick_df(directory, plane):
+    def column_action_error(x):
+        return err_col(column_action(x))
+
     try:
         df = _get_new_kick_file(directory, plane)
     except FileNotFoundError:
         LOG.debug("Reading of kickfile failed. Looking for old kickfile.")
         df = _get_old_kick_file(directory, plane)
 
-    column_action_error = lambda x: err_col(column_action(x))
     df = _maybe_add_sum_for_planes(df, plane, column_action, column_action_error)
     return df[[column_action(plane), column_action_error(plane)]]
 
@@ -283,7 +352,7 @@ def _get_new_kick_file(directory, planes):
         path = os.path.join(directory, f"{KICKFILE}_{plane.lower()}{TFS_SUFFIX}")
         LOG.debug(f"Reading kickfile '{path}'.'")
         df = tfs.read(path, index=TIME)
-        df.index = pd.Index(CERNDatetime.from_cern_utc_string(t) for t in dfs.index)
+        df.index = pd.Index(CERNDatetime.from_cern_utc_string(t) for t in df.index)
         dfs[plane] = df
     return _merge_df_planes(dfs, planes)
 
@@ -699,21 +768,9 @@ def _save_fig(directory, plane, fig, ptype):
     except IOError:
         LOG.error(f"Couldn't create output files for {ptype} plots.")
 
+
 # Script Mode ------------------------------------------------------------------
 
 
 if __name__ == '__main__':
-    setup = dict(
-        energy=6500.,
-        plane="XY", beam=1,
-        directory='/media/jdilly/Storage/Repositories/Gui_Output/MD3312-AD-Vertical/LHCB1/Results/17-25-15_AmpDet_Vertical',
-        fill=7391
-    )
-
-    # setup = dict(
-    #     energy=450,
-    #     plane="Y", beam=1,
-    #     directory='/afs/cern.ch/work/m/mihofer2/public/MDs/MD3603/BBeatGui/2018-10-23/LHCB1/Results/ver_ACkicks_0.002QWind',
-    #     fill=6971
-    # )
-    main(**setup)
+    main()

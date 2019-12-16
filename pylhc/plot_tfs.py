@@ -3,6 +3,10 @@ Plot TFS
 -------------------------
 
 Wrapper to easily plot tfs-files. With entrypoint functionality.
+
+:module: plot_tfs
+:author: jdilly
+
 """
 from contextlib import suppress
 
@@ -10,9 +14,9 @@ import tfs
 from generic_parser import EntryPointParameters, entrypoint
 from matplotlib import pyplot as plt, rcParams
 
-from constants.plot_tfs import IR_POS_DEFAULT, MANUAL_STYLE, ERROR_ALPHA, MAX_LEGENDLENGTH, COMPLEX_NAMES
-from omc3.omc3.utils import logging_tools, plot_style as pstyle
-from plotshop import annotations, lines, post_processing
+from pylhc.constants.plot_tfs import IR_POS_DEFAULT, MANUAL_STYLE, ERROR_ALPHA, MAX_LEGENDLENGTH, COMPLEX_NAMES
+from pylhc.omc3.omc3.utils import logging_tools, plot_style as pstyle
+from pylhc.plotshop import annotations, lines, post_processing
 
 LOG = logging_tools.get_logger(__name__)
 

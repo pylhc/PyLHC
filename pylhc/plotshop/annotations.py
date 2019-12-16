@@ -1,3 +1,13 @@
+"""
+Plotshop: Annotations
+---------------------------------
+
+Helper functions to create annotations as well as style labels in plots.
+
+:module: plotshop.annotations
+:author: jdilly
+
+"""
 import re
 from distutils.version import LooseVersion
 

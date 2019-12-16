@@ -1,3 +1,13 @@
+"""
+Plotshop: Colors
+---------------------------------
+
+Make everything Rainbow.
+
+:module: plotshop.colors
+:author: jdilly
+
+"""
 import colorsys
 from itertools import cycle
 
@@ -6,6 +16,7 @@ from matplotlib import colors as mc
 
 
 def get_mpl_color(idx=None):
+    """ Gets the 'new' default matplotlib colors by index, or the whole cycle."""
     c = [
         '#1f77b4',  # muted blue
         '#ff7f0e',  # safety orange
@@ -24,6 +35,7 @@ def get_mpl_color(idx=None):
 
 
 def rgb_plotly_to_mpl(rgb_string):
+    """ Helper function to transforn plotly rbg to matplotlib rgb."""
     if rgb_string.startswith('#'):
         return rgb_string
 
@@ -57,14 +69,15 @@ def change_color_brightness(color, amount=0.5):
 
 
 def change_ebar_alpha_for_line(ebar, alpha):
-    """ loop through bars (ebar[1]) and caps (ebar[2]) and set the alpha value """
+    """ Changes the alpha value of an error-bar container.
+    Loop through bars (ebar[1]) and caps (ebar[2]) and set the alpha value. """
     for bars_or_caps in ebar[1:]:
         for bar_or_cap in bars_or_caps:
             bar_or_cap.set_alpha(alpha)
 
 
 def change_ebar_alpha_for_axes(ax, alpha):
-    """ Wrapper for change_ebar_alpha_for_line """
+    """ Wrapper for change_ebar_alpha_for_line to change all in one axes. """
     for ebar in ax.containers:
         if isinstance(ebar, matplotlib.container.ErrorbarContainer):
             change_ebar_alpha_for_line(ebar, alpha)

@@ -1,4 +1,14 @@
-from constants.general import PLANE_TO_HV
+"""
+Constants: Forced DA Analysis
+----------------------------------
+
+Constants and definitions for the forced DA analysis.
+
+:module: constants.forced_da_analysis
+:author: jdilly
+
+"""
+from pylhc.constants.general import PLANE_TO_HV
 
 RESULTS_DIR = "forced_da_analysis"
 
@@ -138,7 +148,3 @@ def column_norm_emittance(plane):
 
 def column_bws_norm_emittance(plane, direction):
     return f"{column_norm_emittance(plane)}_{direction}"
-
-
-def column_sigma(plane):
-    return f"{SIGMA}{plane.upper()}"

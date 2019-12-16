@@ -7,13 +7,14 @@ the job directory where processed mask is to be put, and columns containg the pa
 Job directories have to be created beforehand. Processed madx mask has the same filename as mask but with file extension .madx.
 Input Dataframe is returned with additonal column containg path to the processed madx files.
 
+:module: madx.mask
+:author: mihofer
+
 """
-import re
-import os
-from htc.utils import COLUMN_SHELL_SCRIPT, COLUMN_JOB_DIRECTORY, COLUMN_JOB_FILE
-
 import logging
+import os
 
+from pylhc.htc.utils import COLUMN_JOB_DIRECTORY, COLUMN_JOB_FILE
 
 LOG = logging.getLogger(__name__)
 

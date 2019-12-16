@@ -21,6 +21,9 @@ optional arguments:
     --append_jobs          flag allowing to resubmit study with different replace_dict, rechecks if datapoints have already been executed in a previous study and only resubmits new jobs
 
 
+:module: madx_submitter
+:author: mihofer, jdilly
+
 """
 import itertools
 import multiprocessing

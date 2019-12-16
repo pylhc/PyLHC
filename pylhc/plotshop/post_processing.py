@@ -1,14 +1,19 @@
 """
-Module plotshop.post_processing
+Plotshop: Post Processing
 ---------------------------------
 
 Functions for plot post-processing.
+
+
+:module: plotshop.post_processing
+:author: jdilly
+
 """
-import numpy as np
-from matplotlib import pyplot as plt
 import matplotlib as mpl
 import matplotlib.ticker as mtick
 import numpy as np
+from matplotlib import pyplot as plt
+
 
 # Public Functions #############################################################
 

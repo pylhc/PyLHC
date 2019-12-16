@@ -16,7 +16,7 @@ Contents:
    data_extract/index
    htc/index
    madx/index
-   utils/index
+   tools/index
 
 
 
