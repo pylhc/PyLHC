@@ -20,7 +20,7 @@ Feel free to use them anyway, if you wish!
 
 ### Prerequisites
 
-The codes use a multitude of packages as can be found in the [requirements.txt](requirements.txt).
+The codes use a multitude of packages as can be found in the [setup.py](setup.py).
 
 Important ones are: ``tfs-pandas``,  ``generic_parser``, ``numpy``, ``pandas`` and ``scipy``.
 
@@ -51,12 +51,18 @@ The latter tools can be found in [OMC3](https://github.com/pylhc/omc3) (Python 3
 
 ##### Quick Scripts
 
+- *Forced DA analysis* - Analysis of the dynamic aperture of forced kicks ([**forced_da_analysis.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/forced_da_analysis.py))
 - *Machine Settings Info* - Prints an overview over the machine settings at a given time. ([**machine_settings_info.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/machine_settings_info.py)) 
-- *Plot Tfs* - Provides easy plotting fucntionality for tfs files. ([**plot_tfs.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/plot_tfs.py))
+- *Plot: Tfs* - Provides easy plotting fucntionality for tfs files. ([**plot_tfs.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/plot_tfs.py))
+- *Plot: Amplitude Detuning* - Plots the result of OMC3s amplitude detuning analysis ([**plot_amplitude_detuning.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/plot_amplitude_detuning.py))
+- *Plot: BBQ* - Plots the result of OMC3s amplitude detuning tune-analysis ([**plot_bbq.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/plot_bbq.py))
 
 ##### Helper Functionality:
 
-- *Some plotting helpers* - found in [**post_processing.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/plotshop/post_processing.py) and [**plot_style.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/plotshop/plot_style.py) 
+- *Some plotting helpers* - found in [**post_processing.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/plotshop/post_processing.py),
+ [**lines.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/plotshop/lines.py), 
+ [**colors.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/plotshop/colors.py) and
+ [**annotations.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/plotshop/annotations.py).
 
 ### Tests
 
