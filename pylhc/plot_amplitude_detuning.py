@@ -18,12 +18,10 @@ from matplotlib import pyplot as plt
 
 # noinspection PyUnresolvedReferences
 from pylhc import omc3_context
-from pylhc.omc3.omc3.tune_analysis import constants as const, kickac_modifiers as kick_mod
+from pylhc.omc3.omc3.tune_analysis import constants as const, kick_file_modifiers as kick_mod
 from pylhc.omc3.omc3.utils import logging_tools, plot_style as pstyle
 
 LOG = logging_tools.get_logger(__name__)
-
-TIMEZONE = const.get_experiment_timezone()
 
 PLANES = const.get_planes()
 COL_MAV = const.get_mav_col
@@ -53,6 +51,12 @@ def get_params():
         flags="--out",
         help="Save the amplitude detuning plot here.",
         name="output",
+        type=str,
+    )
+    params.add_parameter(
+        flags="--label",
+        help="Label for the data.",
+        name="label",
         type=str,
     )
     params.add_parameter(
@@ -96,21 +100,27 @@ def main(opt):
 
     show = opt.pop("show")
     out = opt.pop("output")
+    kick_plane = opt.pop("plane")
+    label = opt.pop("label")
+
+    figs = {}
 
     for tune_plane in PLANES:
         for corr in [False, True]:
             corr_label = "_corrected" if corr else ""
 
-            labels = const.get_paired_lables(opt.plane, tune_plane)
-            id_str = "J{:s}_Q{:s}{:s}".format(opt.plane.upper(), tune_plane.upper(), corr_label)
-            odr_fit = kick_mod.get_linear_odr_data(kick_df, opt.plane, tune_plane, corr)
+            data = kick_mod.get_ampdet_data(kick_df, kick_plane, tune_plane, corr)
+            odr_fit = kick_mod.get_linear_odr_data(kick_df, kick_plane, tune_plane, corr)
 
-            fig = plot_detuning(
-                odr_fit=odr_fit,
-                odr_plot=plot_linear_odr,
-                labels={"x": labels[0], "y": labels[1], "line": opt.label},
-                **opt
-            )
+            labels = const.get_paired_lables(kick_plane, tune_plane)
+            id_str = "J{:s}_Q{:s}{:s}".format(kick_plane.upper(), tune_plane.upper(), corr_label)
+
+            fig = plot_detuning(**data,
+                                odr_fit=odr_fit,
+                                odr_plot=plot_linear_odr,
+                                labels={"x": labels[0], "y": labels[1], "line": label},
+                                **opt,
+                                )
 
             if show:
                 plt.show()
@@ -119,6 +129,11 @@ def main(opt):
                 output = os.path.splitext(out)
                 output = "{:s}_{:s}{:s}".format(output[0], id_str, output[1])
                 fig.savefig(output)
+
+            plt.close(fig)
+            figs[id_str] = fig
+
+    return figs
 
 
 # Other Functions --------------------------------------------------------------

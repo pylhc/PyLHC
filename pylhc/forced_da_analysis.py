@@ -88,8 +88,8 @@ from pylhc import omc3_context
 from pylhc.omc3.omc3.optics_measurements import toolbox
 from pylhc.omc3.omc3.utils import logging_tools
 from pylhc.omc3.omc3.utils import plot_style as style
+from pylhc.omc3.omc3.utils.time_tools import CERNDatetime
 from pylhc.plotshop import lines, annotations, colors
-from pylhc.tools.time_tools import CERNDatetime
 
 LOG = logging_tools.get_logger(__name__)
 

@@ -14,6 +14,7 @@ from contextlib import suppress
 
 import matplotlib.dates as mdates
 import tfs
+import numpy as np
 from generic_parser import entrypoint, EntryPointParameters
 from matplotlib import pyplot as plt, gridspec
 from matplotlib.ticker import FormatStrFormatter
@@ -22,13 +23,11 @@ from matplotlib.ticker import FormatStrFormatter
 # noinspection PyUnresolvedReferences
 from pylhc import omc3_context
 from pylhc.omc3.omc3 import amplitude_detuning_analysis as ad_ana
-from pylhc.omc3.omc3.tune_analysis import constants as const
+from pylhc.omc3.omc3.tune_analysis import constants as const, kick_file_modifiers as kick_mod
 from pylhc.omc3.omc3.utils import logging_tools, plot_style as pstyle
 from pylhc.plotshop import colors as pcolors
 
 LOG = logging_tools.get_logger(__name__)
-
-TIMEZONE = const.get_experiment_timezone()
 
 PLANES = const.get_planes()
 COL_MAV = const.get_mav_col
@@ -67,7 +66,7 @@ def get_params():
         flags="--xmin",
         help="Lower x-axis limit. (yyyy-mm-dd HH:mm:ss.mmm)",
         name="xmin",
-        type=str,
+        type=float,
     )
     params.add_parameter(
         flags="--ymin",
@@ -79,7 +78,7 @@ def get_params():
         flags="--xmax",
         help="Upper x-axis limit. (yyyy-mm-dd HH:mm:ss.mmm)",
         name="xmax",
-        type=str,
+        type=float,
     )
     params.add_parameter(
         flags="--ymax",
@@ -91,7 +90,7 @@ def get_params():
         flags="--interval",
         help="x_axis interval that was used in calculations.",
         name="interval",
-        type=str,
+        type=float,
         nargs=2,
     )
     params.add_parameter(
@@ -112,7 +111,7 @@ def main(opt):
         input: BBQ data as data frame or tfs file.
                **Flags**: --in
         Optional
-        interval (str): x_axis interval that was used in calculations.
+        interval (float): x_axis interval that was used in calculations.
                         **Flags**: --interval
         kick: Kick file as data frame or tfs file (for limiting plotting interval)
               **Flags**: --kick
@@ -124,9 +123,9 @@ def main(opt):
         two_plots: Plot two axis into the figure.
                    **Flags**: --two
                    **Action**: ``store_true``
-        xmax (str): Upper x-axis limit. (yyyy-mm-dd HH:mm:ss.mmm)
+        xmax (float): Upper x-axis limit. (yyyy-mm-dd HH:mm:ss.mmm)
                     **Flags**: --xmax
-        xmin (str): Lower x-axis limit. (yyyy-mm-dd HH:mm:ss.mmm)
+        xmin (float): Lower x-axis limit. (yyyy-mm-dd HH:mm:ss.mmm)
                     **Flags**: --xmin
         ymax (float): Upper y-axis limit.
                       **Flags**: --ymax
@@ -134,7 +133,7 @@ def main(opt):
                       **Flags**: --ymin
     """
     LOG.info("Plotting BBQ.")
-    bbq_df = tfs.read(opt.input, index=COL_TIME())if isinstance(opt.input, str) else opt.input
+    bbq_df = kick_mod.read_timed_dataframe(opt.input) if isinstance(opt.input, str) else opt.input
     opt.pop("input")
 
     if opt.kick is not None:
@@ -146,7 +145,7 @@ def main(opt):
             with suppress(KeyError):
                 window = bbq_df.headers[HEADER_MAV_WINDOW(p)]
 
-        kick_df = tfs.read(opt.kick, index=COL_TIME())if isinstance(opt.kick, str) else opt.kick
+        kick_df = kick_mod.read_timed_dataframe(opt.kick) if isinstance(opt.kick, str) else opt.kick
         opt.interval = ad_ana.get_approx_bbq_interval(bbq_df, kick_df.index, window)
         bbq_df = bbq_df.loc[opt.interval[0]:opt.interval[1]]
     opt.pop("kick")
@@ -160,6 +159,9 @@ def main(opt):
         plt.show()
     if out:
         fig.savefig(out)
+
+    plt.close(fig)
+    return fig
 
 
 def _plot_bbq_data(bbq_df,
@@ -200,22 +202,21 @@ def _plot_bbq_data(bbq_df,
         ax = fig.add_subplot(gs[0])
         ax = [ax, ax]
 
-    bbq_df.index = [datetime.datetime.fromtimestamp(time, tz=TIMEZONE) for time in bbq_df.index]
-
     handles = [None] * (3 * len(PLANES))
     for idx, plane in enumerate(PLANES):
         color = pcolors.get_mpl_color(idx)
-        mask = bbq_df[COL_IN_MAV(plane)]
+        mask = np.array(bbq_df[COL_IN_MAV(plane)], dtype=bool)
 
         # plot and save handles for nicer legend
-        handles[idx] = ax[idx].plot(bbq_df.index, bbq_df[COL_BBQ(plane)],
+        handles[idx] = ax[idx].plot([i.get_datetime() for i in bbq_df.index],
+                                    bbq_df[COL_BBQ(plane)],
                                     color=pcolors.change_color_brightness(color, .4),
                                     marker="o", markerfacecolor="None",
                                     label="$Q_{:s}$".format(plane.lower(),)
                                     )[0]
         filtered_data = bbq_df.loc[mask, COL_BBQ(plane)].dropna()
         handles[len(PLANES)+idx] = ax[idx].plot(filtered_data.index, filtered_data.values,
-                                                color=pstyle.change_color_brightness(color, .7),
+                                                color=pcolors.change_color_brightness(color, .7),
                                                 marker=".",
                                                 label="filtered".format(plane.lower())
                                                 )[0]

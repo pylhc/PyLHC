@@ -12,7 +12,7 @@ import logging
 
 import pytimber
 
-from pylhc.tools.time_tools import AccDatetime
+from omc3.omc3.utils.time_tools import AccDatetime
 
 LOG = logging.getLogger(__name__)
 
