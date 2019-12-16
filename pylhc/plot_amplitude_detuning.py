@@ -16,6 +16,8 @@ import tfs
 from generic_parser import entrypoint, EntryPointParameters
 from matplotlib import pyplot as plt
 
+# noinspection PyUnresolvedReferences
+from pylhc import omc3_context
 from pylhc.omc3.omc3.tune_analysis import constants as const, kickac_modifiers as kick_mod
 from pylhc.omc3.omc3.utils import logging_tools, plot_style as pstyle
 

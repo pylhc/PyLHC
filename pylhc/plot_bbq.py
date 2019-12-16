@@ -18,6 +18,9 @@ from generic_parser import entrypoint, EntryPointParameters
 from matplotlib import pyplot as plt, gridspec
 from matplotlib.ticker import FormatStrFormatter
 
+
+# noinspection PyUnresolvedReferences
+from pylhc import omc3_context
 from pylhc.omc3.omc3 import amplitude_detuning_analysis as ad_ana
 from pylhc.omc3.omc3.tune_analysis import constants as const
 from pylhc.omc3.omc3.utils import logging_tools, plot_style as pstyle
