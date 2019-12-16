@@ -36,8 +36,8 @@ jobs:
     - <<: *test-stage
       python: 3.7
 
-    - <<: *test-stage
-      python: 3.8
+#    - <<: *test-stage   # had to be removed as htcondor does not exists for 3.8 yet (check in future)
+#      python: 3.8
 
     - stage: documentation
       install:
