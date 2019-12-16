@@ -1,9 +1,7 @@
 import pytest
 import pytz
-from datetime import datetime, timedelta
 
-from . import context
-from tools import time_tools as tt
+from pylhc.tools import time_tools as tt
 
 
 def test_tz_check_succeed(now):
