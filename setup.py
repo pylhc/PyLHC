@@ -27,7 +27,7 @@ DEPENDENCIES = [
     'tfs-pandas>=1.0.3',
     'generic-parser>=1.0.6',
     'JPype1==0.6.3',
-
+    'ipython>=7.0.1',  # actually dependency of pytimber
 ]
 
 # Test dependencies that should only be installed for test purposes

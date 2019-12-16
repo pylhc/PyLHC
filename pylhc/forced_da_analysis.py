@@ -82,6 +82,7 @@ from pylhc.constants.forced_da_analysis import (bsrt_emittance_key, bws_emittanc
                                                 BWS_EMITTANCE_TO_METER, KICKFILE, RESULTS_DIR, YPAD,
                                                 )
 from pylhc.constants.general import get_proton_gamma, get_proton_beta, LHC_NOMINAL_EMITTANCE
+import omc3_context
 from pylhc.omc3.omc3.optics_measurements import toolbox
 from pylhc.omc3.omc3.utils import logging_tools
 from pylhc.omc3.omc3.utils import plot_style as style
