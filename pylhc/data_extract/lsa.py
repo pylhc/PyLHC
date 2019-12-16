@@ -14,7 +14,7 @@ import re
 from contextlib import suppress
 
 import jpype
-import pjlsa
+from pjlsa import pjlsa
 import tfs
 
 from pylhc.tools.time_tools import AccDatetime

@@ -16,16 +16,16 @@ MODULE_NAME = 'pylhc'
 DEPENDENCIES = [
     'numpy>=1.17.1',
     'scipy>=1.0.0',
-    'pandas>=0.22.0',
+    'pandas>=0.24.0',
     'GitPython>=2.1.8',
-    'matplotlib>=3.0.0',
+    'matplotlib>=3.1.0',
     'ruamel.yaml>=0.15.94',
     'cmmnbuild-dep-manager>=2.2.2',
     'pjlsa>=0.0.14',
     'pytimber>=2.6.2',
     'htcondor>=8.9.2',
     'tfs-pandas>=1.0.3',
-    'generic-parser>=1.0.5',
+    'generic-parser>=1.0.6',
     'JPype1==0.6.3',
 
 ]
