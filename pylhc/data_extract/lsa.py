@@ -13,13 +13,22 @@ import logging
 import re
 from contextlib import suppress
 
+from generic_parser import DotDict
 import jpype
-from pjlsa import pjlsa
+
+
 import tfs
 
 from pylhc.tools.time_tools import AccDatetime
 
 LOG = logging.getLogger(__name__)
+
+try:
+    from pjlsa import pjlsa  # need to import submodule as it otherwise catches the ImportError...
+except ImportError:
+    # Problematic when running setup.py (as this class is not tested), mock class
+    LOG.error("pjLSA not properly imported. Mocking class, but will fail if used!")
+    pjlsa = DotDict(LSAClient=object, ParametersRequestBuilder=object, Acclerators=object)
 
 RELEVANT_BP_CONTEXTS = ("OPERATIONAL", "MD")
 RELEVANT_BP_CATEGORIES = ("DISCRETE",)
