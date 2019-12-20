@@ -10,6 +10,7 @@ Provides the plotting function for amplitude detuning analysis
 
 """
 import os
+from functools import partial
 
 import numpy as np
 import tfs
@@ -22,9 +23,10 @@ from matplotlib import colors as mcolors
 from tfs.tools import significant_digits
 
 from pylhc import omc3_context
-from pylhc.omc3.omc3.tune_analysis import constants as const, kick_file_modifiers as kick_mod
+from pylhc.omc3.omc3.tune_analysis import constants as const, kick_file_modifiers as kick_mod, detuning_tools
 from pylhc.omc3.omc3.utils import logging_tools, plot_style as pstyle
 from pylhc.plotshop import colors as pcolors, annotations as pannot
+from pylhc.constants.general import UNIT_TO_M
 
 LOG = logging_tools.get_logger(__name__)
 
@@ -35,10 +37,10 @@ COL_BBQ = const.get_bbq_col
 COL_TIME = const.get_time_col
 HEADER_MAV_WINDOW = const.get_mav_window_header
 
-UNIT_TO_UM = dict(km=1e9, m=1e6, mm=1e3, um=1, nm=1e-3, pm=1e-6, fm=1e-9,)
 
+NFIT = 100  # Points for the fitting function
 
-MANUAL_STYLE_DEFAULT= {
+MANUAL_STYLE_DEFAULT = {
     u'figure.figsize': [9.5, 4],
     u"lines.marker": u"o",
     u"lines.linestyle": u"",
@@ -63,6 +65,11 @@ def get_params():
             required=True,
             choices=PLANES,
             type=str,
+        ),
+        detuning_order=dict(
+            help="Order of the detuning as int. Basically just the order of the applied fit.",
+            type=int,
+            default=1,
         ),
         correct_acd=dict(
             help="Correct for AC-Dipole kicks.",
@@ -95,7 +102,13 @@ def get_params():
         action_unit=dict(
             help="Unit the action is given in.",
             default="m",
-            choices=list(UNIT_TO_UM.keys()),
+            choices=list(UNIT_TO_M.keys()),
+            type=str,
+        ),
+        action_plot_unit=dict(
+            help="Unit the action should be plotted in.",
+            default="um",
+            choices=list(UNIT_TO_M.keys()),
             type=str,
         ),
         manual_style=dict(
@@ -136,15 +149,17 @@ def main(opt):
             for idx, (kick, label) in enumerate(zip(opt.kicks, opt.labels)):
                 kick_df = kick_mod.read_timed_dataframe(kick) if isinstance(kick, str) else kick
 
-                data = kick_mod.get_ampdet_data(kick_df, kick_plane, tune_plane, corr)
-                odr_fit = kick_mod.get_linear_odr_data(kick_df, kick_plane, tune_plane, corr)
-                data, odr_fit, scale_to_m = _scale_and_correct_data_to_um(data, odr_fit,
-                                                                          opt.action_unit, 10**opt.tune_scale, acd_corr)
+                data = kick_mod.get_ampdet_data(kick_df, kick_plane, tune_plane, corrected=corr)
+                odr_fit = kick_mod.get_odr_data(kick_df, kick_plane, tune_plane,
+                                                order=opt.detuning_order, corrected=corr)
+                data, odr_fit = _correct_and_scale(data, odr_fit,
+                                                   opt.action_unit, opt.action_plot_unit,
+                                                   10**opt.tune_scale, acd_corr)
 
                 _plot_detuning(ax, data=data, label=label, limits=limits,
                                odr_fit=odr_fit,
                                color=pcolors.get_mpl_color(idx),
-                               scale_to_m=scale_to_m, tune_scale=10**opt.tune_scale)
+                               action_unit=opt.action_plot_unit, tune_scale=10**opt.tune_scale)
 
             ax_labels = const.get_paired_lables(kick_plane, tune_plane, opt.tune_scale)
             id_str = f"Q{tune_plane.upper():s}J{kick_plane.upper():s}{corr_label:s}"
@@ -165,52 +180,71 @@ def main(opt):
     return figs
 
 
-# Other Functions --------------------------------------------------------------
+# Plotting --------------------------------------------------------------
 
-def _check_opt(opt):
-    if len(opt.labels) != len(opt.kicks):
-        raise ValueError("'kicks' and 'labels' need to be of same size!")
+
+def _get_scaled_odr_label(odr_fit, order, action_unit, tune_scale, magnitude_exponent=3):
+    scale = (tune_scale * (10 ** -magnitude_exponent)) / (UNIT_TO_M[action_unit] ** order)
+    str_val, str_std = _get_scaled_labels(odr_fit.beta[order], odr_fit.sd_beta[order], scale)
+    str_mag = ''
+    if magnitude_exponent != 0:
+        str_mag = f'$\cdot$ 10$^{{{magnitude_exponent}}}$'
+    return f'({str_val} $\pm$ {str_std}) {str_mag} m$^{{-{order}}}$'
+
+
+def _get_odr_label(odr_fit, action_unit, tune_scale):
+    order = len(odr_fit.beta) - 1
+
+    str_list = [None] * order
+    for o in range(order):
+        str_list[o] = _get_scaled_odr_label(odr_fit, o+1, action_unit, tune_scale)
+    return ", ".join(str_list)
+
+
+
+def plot_odr(ax, odr_fit, xmax, action_unit, tune_scale, color=None):
+    """ Adds a quadratic odr fit to axes. """
+
+    color = 'k' if color is None else color
+    odr_fit.beta[0] = 0   # no need to remove offset, as it is removed from data
+    label = _get_odr_label(odr_fit, action_unit, tune_scale)
+
+    # get fits
+    order = len(odr_fit.beta) - 1
+    fit_fun = detuning_tools.get_poly_fun(order)
+    f = partial(fit_fun, odr_fit.beta)
+    f_low = partial(fit_fun, np.array(odr_fit.beta)-np.array(odr_fit.sd_beta))
+    f_upp = partial(fit_fun, np.array(odr_fit.beta)+np.array(odr_fit.sd_beta))
+
+    if order == 1:
+        x = np.array([0, xmax])
+    else:
+        x = np.linspace(0, xmax, NFIT)
+
+    ax.fill_between(x, f_low(x), f_upp(x), facecolor=mcolors.to_rgba(color, .3))
+    ax.plot(x, f(x), marker="", linestyle='--', color=color, label=label)
+
+
+# Main Plot ---
+
+
+def _plot_detuning(ax, data, label, action_unit, tune_scale, color=None, limits=None, odr_fit=None):
+    """ Plot the detuning and the ODR into axes. """
+    xmax = _get_default(limits, 'xmax', max(data['x']+data['xerr']))
+
+    # Plot Fit
+    offset = odr_fit.beta[0]
+    plot_odr(ax, odr_fit, xmax=xmax, action_unit=action_unit, tune_scale=tune_scale, color=color)
+
+    # Plot Data
+    data['y'] -= offset
+    ax.errorbar(**data, label=label, color=color)
 
 
 def _set_plotstyle(manual_style):
     mstyle = MANUAL_STYLE_DEFAULT
     mstyle.update(manual_style)
     pstyle.set_style("standard", mstyle)
-
-
-def _get_linear_odr_label(slope, std, scale_to_m, tune_scale):
-    scale = scale_to_m  * tune_scale * 1e-3
-    s_slope, s_std = significant_digits(slope*scale, std*scale)
-    return f'({s_slope} $\pm$ {s_std}) $\cdot$ 10$^3$ m$^{{-1}}$'
-
-
-def plot_linear_odr(ax, odr_fit, xmax, scale_to_m, tune_scale, color=None):
-    """ Adds a linear odr fit to axes.
-    """
-    offset, slope, slope_std = odr_fit.beta + [odr_fit.sd_beta[1]]
-    x = [0, xmax]
-    y = [0, xmax * slope]
-    y_low = [0, x[1] * (slope - slope_std)]
-    y_upp = [0, x[1] * (slope + slope_std)]
-    label = _get_linear_odr_label(slope, slope_std, scale_to_m, tune_scale)
-    color = 'k' if color is None else color
-
-    ax.fill_between(x, y_low, y_upp, facecolor=mcolors.to_rgba(color, .3))
-    ax.plot(x, y, marker="", linestyle='--', color=color, label=label)
-
-    return offset
-
-
-def _plot_detuning(ax, data, label="", scale_to_m=1., tune_scale=1., color=None,
-                   limits=None, odr_fit=None):
-    """ Plot the detuning and the ODR into axes. """
-    xmax = _get_default(limits, 'xmax', max(data['x']+data['xerr']))
-    offset = 0
-    if odr_fit:
-        offset = plot_linear_odr(ax, odr_fit, xmax=xmax, scale_to_m=scale_to_m, tune_scale=tune_scale, color=color)
-
-    data['y'] -= offset
-    ax.errorbar(**data, label=label, color=color)
 
 
 def _format_axes(ax, limits, labels):
@@ -228,6 +262,21 @@ def _format_axes(ax, limits, labels):
     ax.figure.tight_layout()  # needs two calls for some reason to look great
 
 
+def _get_scaled_labels(val, std, scale):
+    scaled_vas, scaled_std = val*scale, std*scale
+    if abs(scaled_std) > 1 or scaled_std == 0:
+        return f'{int(round(scaled_vas)):d}', f'{int(round(scaled_std)):d}'
+    return significant_digits(scaled_vas, scaled_std)
+
+
+# Helper -----------------------------------------------------------------------
+
+
+def _check_opt(opt):
+    if len(opt.labels) != len(opt.kicks):
+        raise ValueError("'kicks' and 'labels' need to be of same size!")
+
+
 def _get_default(ddict, key, default):
     """ Returns 'default' if either the dict itself or the entry is None. """
     if ddict is None or key not in ddict or ddict[key] is None:
@@ -235,23 +284,24 @@ def _get_default(ddict, key, default):
     return ddict[key]
 
 
-def _scale_and_correct_data_to_um(data, odr_fit, unit, tune_scale, acd_corr):
-    # scale units
-    scale = UNIT_TO_UM[unit]
-    data['x'] *= scale
-    data['xerr'] *= scale
-    odr_fit.beta[1] /= scale
-    odr_fit.sd_beta[1] /= scale
+def _correct_and_scale(data, odr_fit, action_unit, action_plot_unit, tune_scale, acd_corr):
+    """ Corrects data for AC-Dipole and scales to plot-units (y=tune_scale, x=um)"""
+    # scale action units
+    x_scale = UNIT_TO_M[action_unit] / UNIT_TO_M[action_plot_unit]
+    data['x'] *= x_scale
+    data['xerr'] *= x_scale
 
-    # correct for ac-diple and tune units
-    acd_corr /= tune_scale
-    data['y'] *= acd_corr
-    data['yerr'] *= acd_corr
+    # correct for ac-diple and tune scaling
+    y_scale = acd_corr / tune_scale
+    data['y'] *= y_scale
+    data['yerr'] *= y_scale
 
-    odr_fit.beta[0] *= acd_corr
-    odr_fit.beta[1] *= acd_corr
-    odr_fit.sd_beta[1] *= acd_corr
-    return data, odr_fit, 1e6
+    # same for odr_fit:
+    for idx in range(len(odr_fit.beta)):
+        full_scale = y_scale / (x_scale**idx)
+        odr_fit.beta[idx] *= full_scale
+        odr_fit.sd_beta[idx] *= full_scale
+    return data, odr_fit
 
 
 # Script Mode ------------------------------------------------------------------
