@@ -197,9 +197,9 @@ def _get_odr_label(odr_fit, action_unit, tune_scale):
 
     str_list = [None] * order
     for o in range(order):
-        str_list[o] = _get_scaled_odr_label(odr_fit, o+1, action_unit, tune_scale)
+        str_list[o] = _get_scaled_odr_label(odr_fit, o+1, action_unit, tune_scale,
+                                            magnitude_exponent=const.get_detuning_exponent_for_order(o+1))
     return ", ".join(str_list)
-
 
 
 def plot_odr(ax, odr_fit, xmax, action_unit, tune_scale, color=None):
