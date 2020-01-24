@@ -4,21 +4,58 @@ MADX Job-Submitter
 
 Allows to execute a parametric madx study using a madx mask and a dictionary with parameters to replace.
 Parameters to be replaced must be present in mask as %(PARAMETER)s.
-When submitting to HTCondor, madx data to be transfered back to job_directory must be written in folder Outputdata.
-Script also allows to check if all htcondor job finished successfully, resubmissions with a different parameter grid, and local excution.
-Jobs.tfs is created in the working directory containing the Job Id, parameter per job and job directory for further post processing.
 
-required arguments:
-    --mask                  path to the madx mask to be used e.g. ./job_lhc_bbeat_misalign.mask
-    --working_directory     directory where job directories will be put and mask is located
-    --replace_dict          dictionary with keys being the parameters to be replaced in the mask and values the parameter values, e.g. {'PARAMETER_A':[1,2], 'PARAMETER_B':['a','b']}
+When submitting to HTCondor, madx data to be transferred back to the working directory
+must be written in a sub-folder defined by `job_output_directory` which defaults to `Outputdata`.
 
-optional arguments:
-    --jobflavour           string giving upper limit on how long job can take, only used when submitting to HTCondor
-    --local                flag to trigger local processing using the number of processes specified in --num_processes
-    --num_processes        number of processes used when run locally
-    --resume_jobs          flag which enables a check if all htcondor jobs finished successfully and resubmitting failed jobs
-    --append_jobs          flag allowing to resubmit study with different replace_dict, rechecks if datapoints have already been executed in a previous study and only resubmits new jobs
+Script also allows to check if all htcondor job finished successfully,
+resubmissions with a different parameter grid, and local execution.
+
+A `Jobs.tfs` is created in the working directory containing the Job Id,
+parameter per job and job directory for further post processing.
+
+*--Required--*
+- **mask** *(str)*: Madx mask to use
+
+- **replace_dict** *(DictAsString)*: Dict containing the str to replace as keys and values a list of parameters to replace
+
+- **working_directory** *(str)*: Directory where data should be put
+
+
+*--Optional--*
+- **additional_parameters** *(DictAsString)*: Additional parameters for the job, as Dict-String.
+Choices: group, retries, notification, priority
+
+  Default: ``{}``
+- **append_jobs**: Flag to rerun job with finer/wider grid, already existing points will not be reexecuted.
+
+  Action: ``store_true``
+- **check_files** *(str)*: List of files/file-name-masks expected to be in the
+'job_output_dir' after a successful job (for appending/resuming). Uses the 'glob'
+function, so unix-wildcards (*) are allowed. If not given, only the presence of the folder itself is checked.
+- **dryrun**: Flag to only prepare folders and scripts,
+but does not start madx/submit jobs.
+Together with `resume_jobs` this can be use to check which jobs succeeded and which failed.
+
+  Action: ``store_true``
+- **job_output_dir** *(str)*: The name of the output dir of the job. (Make sure your script puts its data there!)
+
+  Default: ``Outputdata``
+- **jobflavour** *(str)*: Jobflavour to give rough estimate of runtime of one job
+
+  Choices: ``('espresso', 'microcentury', 'longlunch', 'workday', 'tomorrow', 'testmatch', 'nextweek')``
+  Default: ``workday``
+- **jobid_mask** *(str)*: Mask to name jobs from replace_dict
+
+- **num_processes** *(int)*: number of processes to be used if run locally
+
+  Default: ``4``
+- **resume_jobs**: Only do jobs that did not work.
+
+  Action: ``store_true``
+- **run_local**: Flag to run the jobs on the local machine. Not suggested.
+
+  Action: ``store_true``
 
 
 :module: madx_submitter
@@ -97,6 +134,13 @@ def get_params():
         help="Flag to rerun job with finer/wider grid, already existing points will not be reexecuted.",
     )
     params.add_parameter(
+        name="dryrun",
+        action="store_true",
+        help="Flag to only prepare folders and scripts, but does not start madx/submit jobs. "
+             "Together with `resume_jobs` this can be use to check which jobs "
+             "succeeded and which failed.",
+    )
+    params.add_parameter(
         name="replace_dict",
         help="Dict containing the str to replace as keys and values a list of parameters to replace",
         type=DictAsString,
@@ -149,11 +193,14 @@ def main(opt):
 
     job_df = _create_jobs(opt.working_directory, opt.mask, opt.jobid_mask, opt.replace_dict,
                           opt.job_output_dir, opt.append_jobs)
-    job_df = _drop_already_run_jobs(job_df, opt.resume_jobs or opt.append_jobs,
-                                    opt.job_output_dir, opt.check_files)
+    job_df, dropped_jobs = _drop_already_run_jobs(job_df, opt.resume_jobs or opt.append_jobs,
+                                             opt.job_output_dir, opt.check_files)
 
-    _run(job_df, opt.working_directory, opt.job_output_dir,
-         opt.jobflavour, opt.num_processes, opt.run_local, opt.additional_parameters)
+    if not opt.dryrun:
+        _run(job_df, opt.working_directory, opt.job_output_dir,
+             opt.jobflavour, opt.num_processes, opt.run_local, opt.additional_parameters)
+    else:
+        _print_stats(job_df.index, dropped_jobs)
 
 
 # Main Functions ---------------------------------------------------------------
@@ -206,11 +253,14 @@ def _create_jobs(cwd, maskfile, jobid_mask, replace_dict, output_dir, append_job
 
 def _drop_already_run_jobs(job_df, drop_jobs, output_dir, check_files):
     LOG.debug("Dropping already finished jobs, if necessary.")
+    finished_jobs = []
     if drop_jobs:
-        finished_jobs = [idx for idx, row in job_df.iterrows() if _job_was_successful(row, output_dir, check_files)]
-        LOG.info(f"{len(finished_jobs):d} of {len(job_df.index):d} Jobs have already finished and will be skipped.")
+        finished_jobs = [idx for idx, row in job_df.iterrows()
+                         if _job_was_successful(row, output_dir, check_files)]
+        LOG.info(f"{len(finished_jobs):d} of {len(job_df.index):d}"
+                 " Jobs have already finished and will be skipped.")
         job_df = job_df.drop(index=finished_jobs)
-    return job_df
+    return job_df, finished_jobs
 
 
 def _run(job_df, cwd, output_dir, flavour, num_processes, run_local, additional_htc_parameters):
@@ -233,7 +283,8 @@ def _run(job_df, cwd, output_dir, flavour, num_processes, run_local, additional_
 
 def _setup_folders(job_df, working_directory):
     LOG.debug("Setting up folders: ")
-    job_df[COLUMN_JOB_DIRECTORY] = list(map(_return_job_dir, zip([working_directory] * len(job_df), job_df.index)))
+    job_df[COLUMN_JOB_DIRECTORY] = list(map(_return_job_dir,
+                                            zip([working_directory] * len(job_df), job_df.index)))
     for job_dir in job_df[COLUMN_JOB_DIRECTORY]:
         try:
             os.mkdir(job_dir)
@@ -314,6 +365,20 @@ def _convert_to_paths(opt, keys):
     for key in keys:
         opt[key] = Path(opt[key])
     return opt
+
+
+def _print_stats(new_jobs, finished_jobs):
+    """ Print some quick statistics. """
+    LOG.info("------------- QUICK STATS ----------------")
+    LOG.info(f"Jobs total:{len(new_jobs) + len(finished_jobs):d}")
+    LOG.info(f"Jobs to run: {len(new_jobs):d}")
+    LOG.info(f"Jobs already finished: {len(finished_jobs):d}")
+    LOG.info("---------- JOBS TO RUN NAMES -------------")
+    for job_name in new_jobs:
+        LOG.info(job_name)
+    LOG.info("--------- JOBS FINISHED NAMES ------------")
+    for job_name in finished_jobs:
+        LOG.info(job_name)
 
 
 def _set_auto_tfs_column_types(df):
