@@ -30,6 +30,7 @@ import multiprocessing
 import os
 import subprocess
 import re
+from pathlib import Path
 from functools import partial
 
 import numpy as np
@@ -109,7 +110,12 @@ def get_params():
     )
     params.add_parameter(
         name="check_files",
-        help="Files to check to count job as successfull",
+        help=("List of files/file-name-masks expected to be in the "
+              "'job_output_dir' after a successful job "
+              "(for appending/resuming). Uses the 'glob' function, so "
+              "unix-wildcards (*) are allowed. If not given, only the "
+              "presence of the folder itself is checked."
+              ),
         type=str,
         nargs="+",
     )
@@ -138,7 +144,8 @@ def get_params():
 def main(opt):
     LOG.info("Starting MADX-submitter.")
     opt = _check_opts(opt)
-    save_options_to_config(os.path.join(opt.working_directory, CONFIG_FILE), opt)
+    opt = _convert_to_paths(opt, ('working_directory', 'job_output_dir', 'mask'))
+    save_options_to_config(opt.working_directory / CONFIG_FILE, opt)
 
     job_df = _create_jobs(opt.working_directory, opt.mask, opt.jobid_mask, opt.replace_dict,
                           opt.job_output_dir, opt.append_jobs)
@@ -157,9 +164,9 @@ def _create_jobs(cwd, maskfile, jobid_mask, replace_dict, output_dir, append_job
     values_grid = np.array(list(itertools.product(*replace_dict.values())), dtype=object)
 
     if append_jobs:
-        jobfile_path = os.path.join(cwd, JOBSUMMARY_FILE)
+        jobfile_path = cwd / JOBSUMMARY_FILE
         try:
-            job_df = tfs.read(jobfile_path, index=COLUMN_JOBID)
+            job_df = tfs.read(str(jobfile_path.absolute()), index=COLUMN_JOBID)
         except FileNotFoundError:
             raise FileNotFoundError("Cannot append jobs, as no previous jobfile was found at "
                                     f"'{jobfile_path}'")
@@ -193,7 +200,7 @@ def _create_jobs(cwd, maskfile, jobid_mask, replace_dict, output_dir, append_job
     job_df = htcutils.write_bash(job_df, output_dir, jobtype='madx')
 
     job_df = _set_auto_tfs_column_types(job_df)
-    tfs.write(os.path.join(cwd, JOBSUMMARY_FILE), job_df, save_index=COLUMN_JOBID)
+    tfs.write(str(cwd / JOBSUMMARY_FILE), job_df, save_index=COLUMN_JOBID)
     return job_df
 
 
@@ -238,11 +245,11 @@ def _setup_folders(job_df, working_directory):
 
 
 def _job_was_successful(job_row, output_dir, files):
-    output_dir = os.path.join(job_row[COLUMN_JOB_DIRECTORY], output_dir)
-    success = os.path.isdir(output_dir)
+    output_dir = Path(job_row[COLUMN_JOB_DIRECTORY]) / output_dir
+    success = output_dir.is_dir()
     if success and files is not None and len(files):
         for f in files:
-            success &= os.path.isfile(os.path.join(output_dir, f))
+            success &= len(list(output_dir.glob(f))) > 0
     return success
 
 
@@ -299,6 +306,13 @@ def _check_opts(opt):
 
     print_dict_tree(opt, name="Input parameter", print_fun=LOG.debug)
 
+    return opt
+
+
+def _convert_to_paths(opt, keys):
+    """ Converts strings (defined by keys) that should be paths to Path. """
+    for key in keys:
+        opt[key] = Path(opt[key])
     return opt
 
 
