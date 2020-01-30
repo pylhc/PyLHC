@@ -61,6 +61,7 @@ import numpy as np
 import pandas as pd
 import pytimber
 import scipy.odr
+import scipy.optimize
 import tfs
 from generic_parser import EntryPointParameters, entrypoint
 from tfs.tools import significant_digits
@@ -450,35 +451,65 @@ def fun_exp_decay(p, x):
     return np.exp(-(p - x[0]/2) / x[1])
 
 
+def fun_exp_decay_for_curvefit(x, p):
+    """ Parameter Swapped. """
+    return fun_exp_decay(p, x)
+
+
 def _fit_exponential(plane, kick_df):
     LOG.debug("Fitting forced da to exponential. ")
     col_action = column_action(plane)
     col_emittance = column_emittance(plane)
     col_losses = rel_col(INTENSITY_LOSSES)
 
-    # fill zero errors with the minimum error - otherwise fit will not work
+    # get data
+    x = [kick_df[col_action], kick_df[col_emittance]]
+    y = kick_df[col_losses]
+
+    init_guess = [INITIAL_DA_FIT*kick_df.headers[header_nominal_emittance(plane)]]
+
+    # do prelim fit
+    init_fit = _fit_curve(x, y, init_guess)
+
+    # get errors
     err_action = _no_nonzero_errors(kick_df[err_col(col_action)])
     err_emittance = _no_nonzero_errors(kick_df[err_col(col_emittance)])
     err_losses = _no_nonzero_errors(kick_df[err_col(col_losses)])
 
+    sx = [err_action, err_emittance]
+    sy = err_losses
+
+    # do odr
+    odr = _fit_odr(x, y, sx, sy, init_fit)
+
+    # add DA to kick
+    da = odr.beta[0], odr.sd_beta[0]
+    kick_df.headers[header_da(plane)], kick_df.headers[header_da_error(plane)] = da
+    LOG.info(f"Forced DA in {plane} [m]: {da[0]} ± {da[1]}")
+
+    return kick_df
+
+
+def _fit_curve(x,y,init):
+    """ Preliminary curve fit. """
+    fit, cov = scipy.optimize.curve_fit(fun_exp_decay_for_curvefit, x, y, p0=init)
+    LOG.info(f"Initial DA fit: {fit} with cov {cov}")
+    return fit
+
+
+def _fit_odr(x,y, sx, sy, init):
+    """ ODR Fit """
+    # fill zero errors with the minimum error - otherwise fit will not work
     exp_decay_sigma_model = scipy.odr.Model(fun_exp_decay)
     data_model_sigma = scipy.odr.RealData(
-        x=[kick_df[col_action], kick_df[col_emittance]],
-        y=kick_df[col_losses],
-        sx=[err_action, err_emittance],
-        sy=err_losses
+        x=x, y=y, sx=sx, sy=sy,
     )
     da_odr = scipy.odr.ODR(data_model_sigma, exp_decay_sigma_model,
-                           beta0=[INITIAL_DA_FIT*kick_df.headers[header_nominal_emittance(plane)]])
+                           beta0=init)
     # da_odr.set_job(fit_type=2)
     odr_output = da_odr.run()
     logging_tools.odr_pprint(LOG.info, odr_output)
-
-    # Add DA to kick
-    da = odr_output.beta[0], odr_output.sd_beta[0]
-    kick_df.headers[header_da(plane)], kick_df.headers[header_da_error(plane)] = da
-    LOG.info(f"Forced DA in {plane} [m]: {da[0]} ± {da[1]}")
-    return kick_df
+    return odr_output
 
 
 def _no_nonzero_errors(series):
@@ -523,7 +554,8 @@ def _plot_intensity(directory, beam, plane, kick_df, intensity_df):
     # convert to % relative to before first kick
     idx_before = intensity_df.index.get_loc(kick_df.index.min() - pd.Timedelta(seconds=x_span[0]), method="ffill")
     idx_intensity = intensity_df.columns.get_loc(INTENSITY)  # for iloc
-    norm = intensity_df.iloc[idx_before, idx_intensity]/100.
+    intensity_start = intensity_df.iloc[idx_before, idx_intensity]
+    norm = intensity_start/100.
 
     # plot intensity
     ax.plot(intensity_df[INTENSITY] / norm,
@@ -560,6 +592,11 @@ def _plot_intensity(directory, beam, plane, kick_df, intensity_df):
     annotations.make_top_legend(ax, ncol=3)
     plt.tight_layout()
     annotations.set_name(f"Intensity Beam {beam}, Plane {plane}", fig)
+    annotations.set_annotation(
+        f'Intensity at 100%: {intensity_start*1e-10:.3f}'
+        '$\;\cdot\;10^{{10}}$ charges',
+        ax=ax, position='left'
+    )
     _save_fig(directory, plane, fig, 'intensity')
 
 
@@ -677,7 +714,7 @@ def _plot_da_fit(directory, beam, plane, kick_df):
 
 def _plot_da_fit_normalized(directory, beam, plane, kick_df):
     """ Plot the Forced Dynamic Aperture fit in normalized units (of sigma). """
-    LOG.debug("Plotting Dynamic Aperture Fit")
+    LOG.debug("Plotting Normalized Dynamic Aperture Fit")
     style.set_style("standard")
     col_action = column_action(plane)
     col_emittance = column_emittance(plane)
