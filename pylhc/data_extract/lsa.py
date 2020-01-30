@@ -13,13 +13,10 @@ import logging
 import re
 from contextlib import suppress
 
-from generic_parser import DotDict
 import jpype
-
-
 import tfs
-
-from omc3.omc3.utils.time_tools import AccDatetime
+from generic_parser import DotDict
+from omc3.utils.time_tools import AccDatetime
 
 LOG = logging.getLogger(__name__)
 
