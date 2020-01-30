@@ -28,7 +28,7 @@ DEPENDENCIES = [
     'generic-parser>=1.0.6',
     'JPype1==0.6.3',
     'ipython>=7.0.1',  # actually dependency of pytimber
-    '-e git+git://github.com/pylhc/omc3.git@enhancement/106/amplitude_detuning#egg=omc3',
+    '-e git://github.com/pylhc/omc3.git@enhancement/106/amplitude_detuning#egg=omc3',
 ]
 
 # Test dependencies that should only be installed for test purposes
