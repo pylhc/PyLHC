@@ -17,9 +17,7 @@ from matplotlib import pyplot as plt, rcParams
 from pylhc.plotshop import annotations, lines, post_processing
 from pylhc.constants.plot_tfs import IR_POS_DEFAULT, MANUAL_STYLE, ERROR_ALPHA, MAX_LEGENDLENGTH, COMPLEX_NAMES
 
-# noinspection PyUnresolvedReferences
-from pylhc import omc3_context
-from pylhc.omc3.omc3.utils import logging_tools, plot_style as pstyle
+from omc3.utils import logging_tools, plot_style as pstyle
 
 LOG = logging_tools.get_logger(__name__)
 

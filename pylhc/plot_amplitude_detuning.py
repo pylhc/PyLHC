@@ -22,9 +22,8 @@ from matplotlib import colors as mcolors
 # noinspection PyUnresolvedReferences
 from tfs.tools import significant_digits
 
-from pylhc import omc3_context
-from pylhc.omc3.omc3.tune_analysis import constants as const, kick_file_modifiers as kick_mod, detuning_tools
-from pylhc.omc3.omc3.utils import logging_tools, plot_style as pstyle
+from omc3.tune_analysis import constants as const, kick_file_modifiers as kick_mod, detuning_tools
+from omc3.utils import logging_tools, plot_style as pstyle
 from pylhc.plotshop import colors as pcolors, annotations as pannot
 from pylhc.constants.general import UNIT_TO_M
 

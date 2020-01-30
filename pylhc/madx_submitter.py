@@ -83,9 +83,7 @@ import pylhc.madx.mask as mask_processing
 from pylhc.htc.utils import COLUMN_SHELL_SCRIPT, COLUMN_JOB_DIRECTORY
 from pylhc.htc.utils import JOBFLAVOURS, HTCONDOR_JOBLIMIT
 
-# noinspection PyUnresolvedReferences
-from pylhc import omc3_context
-from pylhc.omc3.omc3.utils import logging_tools
+from omc3.utils import logging_tools
 
 
 JOBSUMMARY_FILE = 'Jobs.tfs'

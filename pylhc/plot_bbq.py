@@ -21,10 +21,9 @@ from matplotlib.ticker import FormatStrFormatter
 
 
 # noinspection PyUnresolvedReferences
-from pylhc import omc3_context
-from pylhc.omc3.omc3 import amplitude_detuning_analysis as ad_ana
-from pylhc.omc3.omc3.tune_analysis import constants as const, kick_file_modifiers as kick_mod
-from pylhc.omc3.omc3.utils import logging_tools, plot_style as pstyle
+from omc3 import amplitude_detuning_analysis as ad_ana
+from omc3.tune_analysis import constants as const, kick_file_modifiers as kick_mod
+from omc3.utils import logging_tools, plot_style as pstyle
 from pylhc.plotshop import colors as pcolors
 
 LOG = logging_tools.get_logger(__name__)

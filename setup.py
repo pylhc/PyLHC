@@ -16,11 +16,11 @@ MODULE_NAME = 'pylhc'
 DEPENDENCIES = [
     'numpy>=1.17.1',
     'scipy>=1.0.0',
-    'pandas>=0.24.0',
+    'pandas>=0.24.0<1.0',
     'GitPython>=2.1.8',
     'matplotlib>=3.1.0',
     'ruamel.yaml>=0.15.94',
-    'cmmnbuild-dep-manager>=2.2.2',
+    'cmmnbuild-dep-manager>=2.2.2<=2.3.0',
     'pjlsa>=0.0.14',
     'pytimber>=2.6.2',
     'htcondor>=8.9.2',
@@ -28,6 +28,7 @@ DEPENDENCIES = [
     'generic-parser>=1.0.6',
     'JPype1==0.6.3',
     'ipython>=7.0.1',  # actually dependency of pytimber
+    'git+git://github.com/pylhc/omc3.git@enhancement/106/amplitude_detuning#egg=omc3',
 ]
 
 # Test dependencies that should only be installed for test purposes
