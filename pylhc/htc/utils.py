@@ -21,6 +21,8 @@ import subprocess
 import os
 import htcondor
 import logging
+from pandas import DataFrame
+from pathlib import Path
 
 from pylhc.constants.external_paths import MADX_BIN, PYTHON2_BIN, PYTHON3_BIN
 
@@ -59,16 +61,16 @@ COLUMN_JOB_FILE = "JobFile"
 # Subprocess Methods ###########################################################
 
 
-def create_subfile_from_job(cwd, job):
+def create_subfile_from_job(cwd: Path, job: str):
     """ Write file to submit to htcondor """
-    subfile = os.path.join(cwd, SUBFILE)
-    LOG.debug(f"Writing sub-file '{subfile}'.")
-    with open(subfile, "w") as f:
+    subfile = cwd / SUBFILE
+    LOG.debug(f"Writing sub-file '{str(subfile)}'.")
+    with subfile.open("w") as f:
         f.write(str(job))
     return subfile
 
 
-def submit_jobfile(jobfile):
+def submit_jobfile(jobfile: Path):
     """ Submit subfile to htcondor via subprocess """
     status = _start_subprocess([CMD_SUBMIT, jobfile])
     if status:
@@ -91,7 +93,7 @@ def _start_subprocess(command):
 # Job Creation #################################################################
 
 
-def create_multijob_for_bashfiles(job_df, **kwargs):
+def create_multijob_for_bashfiles(job_df: DataFrame, **kwargs):
     """ Function to create a HTCondor job assuming n_files bash-files.
 
     Keyword Args:
@@ -130,7 +132,7 @@ def create_multijob_for_bashfiles(job_df, **kwargs):
 # Main functions ###############################################################
 
 
-def make_subfile(cwd, job_df, **kwargs):
+def make_subfile(cwd: Path, job_df: DataFrame, **kwargs):
     """ Creates submit-file for htc.
 
     For kwargs see create_multijob_for_bashfiles.
@@ -139,7 +141,7 @@ def make_subfile(cwd, job_df, **kwargs):
     return create_subfile_from_job(cwd, job)
 
 
-def write_bash(job_df, output_dir=None, executable='madx', cmdline_arguments=None):
+def write_bash(job_df: DataFrame, output_dir: Path = None, executable: str = 'madx', cmdline_arguments: dict = None):
     """ Write the bash-files to be called by HTCondor. """
     if len(job_df.index) > HTCONDOR_JOBLIMIT:
         raise AttributeError('Submitting too many jobs for HTCONDOR')
@@ -151,17 +153,18 @@ def write_bash(job_df, output_dir=None, executable='madx', cmdline_arguments=Non
     exec_path = EXECUTEABLEPATH.get(executable, executable)
     shell_scripts = [None] * len(job_df.index)
     for idx, (jobid, job) in enumerate(job_df.iterrows()):
-        bash_file = f'{BASH_FILENAME}.{jobid}.sh'
-        jobfile = os.path.join(job[COLUMN_JOB_DIRECTORY], bash_file)
+        job_dir = Path(job[COLUMN_JOB_DIRECTORY])
+        bash_file_name = f'{BASH_FILENAME}.{jobid}.sh'
+        jobfile = job_dir / bash_file_name
         LOG.debug(f"Writing bash-file {idx:d} '{jobfile}'.")
         with open(jobfile, 'w') as f:
             f.write(f"{SHEBANG}\n")
             if output_dir is not None:
-                f.write(f'mkdir {output_dir}\n')
+                f.write(f'mkdir {str(output_dir)}\n')
             f.write(
-                f'{exec_path} {os.path.join(job[COLUMN_JOB_DIRECTORY], job[COLUMN_JOB_FILE])} {cmds}\n'
+                f'{exec_path} {str(job_dir / job[COLUMN_JOB_FILE])} {cmds}\n'
             )
-        shell_scripts[idx] = bash_file
+        shell_scripts[idx] = bash_file_name
     job_df[COLUMN_SHELL_SCRIPT] = shell_scripts
     return job_df
 

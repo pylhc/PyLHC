@@ -9,6 +9,11 @@ Constants for the machine settings info.
 
 """
 # TFS-File Conventions #########################################################
+# Filename
+ext = ".tfs"
+info_name = f"machine_settings{ext}"
+knobdef_suffix = f"_definition{ext}"
+
 # Columns
 column_knob = "KNOB"
 column_value = "VALUE"
