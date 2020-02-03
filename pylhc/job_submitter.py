@@ -1,12 +1,15 @@
 """
-MADX Job-Submitter
+Job-Submitter
 --------------------
 
-Allows to execute a parametric madx study using a madx mask and a dictionary with parameters to replace.
+Allows to execute a parametric study using a script-mask and a dictionary with parameters to replace.
 Parameters to be replaced must be present in mask as `%(PARAMETER)s`
 (other types apart from string also allowed).
 
-When submitting to HTCondor, madx data to be transferred back to the working directory
+The type of script and executable is freely choosable, but defaults to madx - for which
+this submitter was originally written.
+
+When submitting to HTCondor, data to be transferred back to the working directory
 must be written in a sub-folder defined by `job_output_directory` which defaults to `Outputdata`.
 
 Script also allows to check if all htcondor job finished successfully,
@@ -17,7 +20,7 @@ parameter per job and job directory for further post processing.
 
 *--Required--*
 
-- **mask** *(str)*: Madx mask to use
+- **mask** *(str)*: Script Mask to use
 
 - **replace_dict** *(DictAsString)*: Dict containing the str to replace as
   keys and values a list of parameters to replace
@@ -68,6 +71,9 @@ parameter per job and job directory for further post processing.
   as dict in key-value pairs ('--' need to be included in the keys).
 
   Default: ``{}``
+- **script_extension** *(str)*: New extension for the scripts created from the masks.
+  This is inferred automatically for ['madx', 'python3', 'python2']. Otherwise not changed.
+
 
 :module: madx_submitter
 :author: mihofer, jdilly
@@ -90,7 +96,7 @@ from generic_parser.entrypoint_parser import save_options_to_config
 from generic_parser.tools import print_dict_tree
 
 import pylhc.htc.utils as htcutils
-import pylhc.madx.mask as mask_processing
+import htc.mask as mask_processing
 from pylhc.htc.utils import (COLUMN_SHELL_SCRIPT, COLUMN_JOB_DIRECTORY,
                              JOBFLAVOURS, HTCONDOR_JOBLIMIT, EXECUTEABLEPATH)
 
@@ -102,6 +108,11 @@ JOBDIRECTORY_PREFIX = 'Job'
 COLUMN_JOBID = "JobId"
 CONFIG_FILE = 'config.ini'
 
+SCRIPT_EXTENSIONS = {
+    'madx': 'madx',
+    'python3': 'py',
+    'python2': 'py',
+}
 
 LOG = logging_tools.get_logger(__name__)
 
@@ -170,6 +181,12 @@ def get_params():
         default={},
     )
     params.add_parameter(
+        name="script_extension",
+        help="New extension for the scripts created from the masks. This is inferred "
+             f"automatically for {str(list(SCRIPT_EXTENSIONS.keys()))}. Otherwise not changed.",
+        type=str,
+    )
+    params.add_parameter(
         name="num_processes",
         help="Number of processes to be used if run locally",
         type=int,
@@ -218,7 +235,8 @@ def main(opt):
     save_options_to_config(opt.working_directory / CONFIG_FILE, opt)
 
     job_df = _create_jobs(opt.working_directory, opt.mask, opt.jobid_mask, opt.replace_dict,
-                          opt.job_output_dir, opt.append_jobs, opt.executable, opt.script_arguments)
+                          opt.job_output_dir, opt.append_jobs, opt.executable,
+                          opt.script_arguments, opt.script_extension)
     job_df, dropped_jobs = _drop_already_run_jobs(job_df, opt.resume_jobs or opt.append_jobs,
                                              opt.job_output_dir, opt.check_files)
 
@@ -232,7 +250,8 @@ def main(opt):
 # Main Functions ---------------------------------------------------------------
 
 
-def _create_jobs(cwd, maskfile, jobid_mask, replace_dict, output_dir, append_jobs, executable, script_args):
+def _create_jobs(cwd, maskfile, jobid_mask, replace_dict, output_dir, append_jobs,
+                 executable, script_args, script_extension):
     LOG.debug("Creating MADX-Jobs")
     values_grid = np.array(list(itertools.product(*replace_dict.values())), dtype=object)
 
@@ -267,7 +286,8 @@ def _create_jobs(cwd, maskfile, jobid_mask, replace_dict, output_dir, append_job
     job_df = _setup_folders(job_df, cwd)
 
     # creating all madx jobs
-    job_df = mask_processing.create_madx_jobs_from_mask(job_df, maskfile, replace_dict.keys())
+    script_extension = _get_script_extension(script_extension, executable, maskfile)
+    job_df = mask_processing.create_madx_jobs_from_mask(job_df, maskfile, replace_dict.keys(), script_extension)
 
     # creating all shell scripts
     job_df = htcutils.write_bash(job_df, output_dir, executable=executable, cmdline_arguments=script_args)
@@ -302,6 +322,12 @@ def _run(job_df, cwd, output_dir, flavour, num_processes, run_local, additional_
                                         **additional_htc_arguments)
         # submit to htcondor
         htcutils.submit_jobfile(subfile)
+
+
+def _get_script_extension(script_extension, executable, mask):
+    if script_extension is not None:
+        return script_extension
+    return SCRIPT_EXTENSIONS.get(executable, mask.suffix)
 
 
 # Sub Functions ----------------------------------------------------------------

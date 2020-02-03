@@ -37,6 +37,7 @@ EXECUTEABLEPATH = {'madx': MADX_BIN,
                    'python2': PYTHON2_BIN,
                    }
 
+
 CMD_SUBMIT = "condor_submit"
 JOBFLAVOURS = ('espresso',  # 20 min
                'microcentury',  # 1 h
