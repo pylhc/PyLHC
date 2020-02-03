@@ -17,12 +17,12 @@ The maximum runtime of one job can be specified, standard is 8h.
 :author: mihofer
 
 """
-import subprocess
-import os
-import htcondor
 import logging
-from pandas import DataFrame
+import subprocess
 from pathlib import Path
+
+import htcondor
+from pandas import DataFrame
 
 from pylhc.constants.external_paths import MADX_BIN, PYTHON2_BIN, PYTHON3_BIN
 
@@ -108,9 +108,9 @@ def create_multijob_for_bashfiles(job_df: DataFrame, **kwargs):
         "MyId": "htcondor",
         "universe": "vanilla",
         "arguments": "$(ClusterId) $(ProcId)",
-        "output": os.path.join("$(initialdir)", "$(MyId).$(ClusterId).$(ProcId).out"),
-        "error": os.path.join("$(initialdir)", "$(MyId).$(ClusterId).$(ProcId).err"),
-        "log": os.path.join("$(initialdir)", "$(MyId).$(ClusterId).$(ProcId).log"),
+        "output": Path("$(initialdir)", "$(MyId).$(ClusterId).$(ProcId).out"),
+        "error": Path("$(initialdir)", "$(MyId).$(ClusterId).$(ProcId).err"),
+        "log": Path("$(initialdir)", "$(MyId).$(ClusterId).$(ProcId).log"),
         "on_exit_remove": '(ExitBySignal == False) && (ExitCode == 0)',
         "requirements": 'Machine =!= LastRemoteHost',
     }
@@ -119,7 +119,7 @@ def create_multijob_for_bashfiles(job_df: DataFrame, **kwargs):
     job = htcondor.Submit(submit_dict)
 
     # add the multiple bash files
-    scripts = [os.path.join(*parts) for parts in zip(job_df[COLUMN_JOB_DIRECTORY], job_df[COLUMN_SHELL_SCRIPT])]
+    scripts = [Path(*parts) for parts in zip(job_df[COLUMN_JOB_DIRECTORY], job_df[COLUMN_SHELL_SCRIPT])]
     args = [",".join(parts) for parts in zip(scripts, job_df[COLUMN_JOB_DIRECTORY])]
     queueArgs = ["queue executable, initialdir from (", *args, ")"]
 

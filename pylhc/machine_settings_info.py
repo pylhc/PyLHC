@@ -34,6 +34,7 @@ Can be run from command line, parameters as given in :meth:`print_machine_settin
 import os
 import re
 from collections import OrderedDict
+from pathlib import Path
 
 import tfs
 from generic_parser import DotDict, entrypoint, EntryPointParameters

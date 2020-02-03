@@ -81,11 +81,10 @@ parameter per job and job directory for further post processing.
 """
 import itertools
 import multiprocessing
-import os
-import subprocess
 import re
-from pathlib import Path
+import subprocess
 from functools import partial
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -94,14 +93,12 @@ from generic_parser import entrypoint, EntryPointParameters
 from generic_parser.entry_datatypes import DictAsString
 from generic_parser.entrypoint_parser import save_options_to_config
 from generic_parser.tools import print_dict_tree
-
-import pylhc.htc.utils as htcutils
-import htc.mask as mask_processing
-from pylhc.htc.utils import (COLUMN_SHELL_SCRIPT, COLUMN_JOB_DIRECTORY,
-                             JOBFLAVOURS, HTCONDOR_JOBLIMIT, EXECUTEABLEPATH)
-
 from omc3.utils import logging_tools
 
+import htc.mask as mask_processing
+import pylhc.htc.utils as htcutils
+from pylhc.htc.utils import (COLUMN_SHELL_SCRIPT, COLUMN_JOB_DIRECTORY,
+                             JOBFLAVOURS, HTCONDOR_JOBLIMIT, EXECUTEABLEPATH)
 
 JOBSUMMARY_FILE = 'Jobs.tfs'
 JOBDIRECTORY_PREFIX = 'Job'
@@ -292,6 +289,7 @@ def _create_jobs(cwd, maskfile, jobid_mask, replace_dict, output_dir, append_job
     # creating all shell scripts
     job_df = htcutils.write_bash(job_df, output_dir, executable=executable, cmdline_arguments=script_args)
 
+    job_df[COLUMN_JOB_DIRECTORY] = job_df[COLUMN_JOB_DIRECTORY].apply(str)
     job_df = _set_auto_tfs_column_types(job_df)
     tfs.write(str(cwd / JOBSUMMARY_FILE), job_df, save_index=COLUMN_JOBID)
     return job_df
@@ -334,21 +332,24 @@ def _get_script_extension(script_extension, executable, mask):
 
 
 def _setup_folders(job_df, working_directory):
+    def _return_job_dir(job_id):
+        return working_directory / f'{JOBDIRECTORY_PREFIX}.{job_id}'
+
     LOG.debug("Setting up folders: ")
-    job_df[COLUMN_JOB_DIRECTORY] = list(map(_return_job_dir,
-                                            zip([working_directory] * len(job_df), job_df.index)))
+    job_df[COLUMN_JOB_DIRECTORY] = [_return_job_dir(id_) for id_ in job_df.index]
+
     for job_dir in job_df[COLUMN_JOB_DIRECTORY]:
         try:
-            os.mkdir(job_dir)
+            job_dir.mkdir()
         except IOError:
-            LOG.debug(f"   created '{job_dir}'.")
-        else:
             LOG.debug(f"   failed '{job_dir}' (might already exist).")
+        else:
+            LOG.debug(f"   created '{job_dir}'.")
     return job_df
 
 
 def _job_was_successful(job_row, output_dir, files):
-    output_dir = Path(job_row[COLUMN_JOB_DIRECTORY]) / output_dir
+    output_dir = Path(job_row[COLUMN_JOB_DIRECTORY], output_dir)
     success = output_dir.is_dir()
     if success and files is not None and len(files):
         for f in files:
@@ -364,13 +365,9 @@ def _generate_index(old_df, mask, keys, values):
     return [mask % dict(zip(keys, v)) for v in values]
 
 
-def _return_job_dir(inp):
-    return os.path.join(inp[0], f'{JOBDIRECTORY_PREFIX}.{inp[1]}')
-
-
 def _execute_shell(df_row):
     idx, column = df_row
-    with open(os.path.join(column[COLUMN_JOB_DIRECTORY], 'log.tmp'), 'w') as logfile:
+    with Path(column[COLUMN_JOB_DIRECTORY], 'log.tmp').open('w') as logfile:
         process = subprocess.Popen(['sh', column[COLUMN_SHELL_SCRIPT]],
                                    shell=False,
                                    stdout=logfile,
