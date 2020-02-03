@@ -42,7 +42,8 @@ parameter per job and job directory for further post processing.
 - **executable** *(str)*: Path to executable or job-type (of ['madx', 'python3', 'python2']) to use.
 
 - **htc_arguments** *(DictAsString)*: Additional arguments for htcondor, as Dict-String.
-  Choices: ['accounting_group', 'max_retries', 'notification', 'priority']
+  For AccountingGroup please use 'accounting_group'. 'max_retries' and 'notification' have defaults (if not given).
+  Others are just passed on.
 
   Default: ``{}``
 - **job_output_dir** *(str)*: The name of the output dir of the job. (Make sure your script puts its data there!)
@@ -199,7 +200,9 @@ def get_params():
     params.add_parameter(
         name="htc_arguments",
         help="Additional arguments for htcondor, as Dict-String. "
-             "Choices: ['accounting_group', 'max_retries', 'notification', 'priority']",
+             "For AccountingGroup please use 'accounting_group'. "
+             "'max_retries' and 'notification' have defaults (if not given). "
+             "Others are just passed on. ",
         type=DictAsString,
         default={}
     )
