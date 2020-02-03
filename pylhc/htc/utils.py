@@ -119,7 +119,7 @@ def create_multijob_for_bashfiles(job_df: DataFrame, **kwargs):
     job = htcondor.Submit(submit_dict)
 
     # add the multiple bash files
-    scripts = [Path(*parts) for parts in zip(job_df[COLUMN_JOB_DIRECTORY], job_df[COLUMN_SHELL_SCRIPT])]
+    scripts = [str(Path(*parts)) for parts in zip(job_df[COLUMN_JOB_DIRECTORY], job_df[COLUMN_SHELL_SCRIPT])]
     args = [",".join(parts) for parts in zip(scripts, job_df[COLUMN_JOB_DIRECTORY])]
     queueArgs = ["queue executable, initialdir from (", *args, ")"]
 
