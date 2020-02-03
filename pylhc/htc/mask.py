@@ -4,7 +4,7 @@ MASK Resolver
 
 Package to resolve script masks.
 
-:module: madx.mask
+:module: htc.mask
 :author: mihofer
 
 """
