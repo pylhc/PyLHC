@@ -121,6 +121,7 @@ def get_params():
     )
     params.add_parameter(
         name="executable",
+        default='madx',
         type=str,
         help="Path to executable or job-type "
              f"(of {str(list(EXECUTEABLEPATH.keys()))}) to use.",
