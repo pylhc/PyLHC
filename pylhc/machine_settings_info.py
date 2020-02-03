@@ -34,15 +34,16 @@ Can be run from command line, parameters as given in :meth:`print_machine_settin
 import argparse
 import logging
 import re
-import tfs
+from collections import OrderedDict
 from typing import Iterable
 
-from data_extract.lsa import LSA
-from utils.dict_tools import DotDict
-from utils.logging_tools import setup_logger
-from utils.time_tools import AcceleratorDatetime, AccDatetime
-from constants import machine_settings_info as const
-from collections import OrderedDict
+import tfs
+
+from pylhc.constants import machine_settings_info as const
+from pylhc.data_extract.lsa import LSA
+from pylhc.utils.dict_tools import DotDict
+from pylhc.utils.logging_tools import setup_logger
+from pylhc.utils.time_tools import AcceleratorDatetime, AccDatetime
 
 LOG = logging.getLogger(__name__)
 

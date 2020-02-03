@@ -7,10 +7,16 @@ the job directory where processed mask is to be put, and columns containg the pa
 Job directories have to be created beforehand. Processed madx mask has the same filename as mask but with file extension .madx.
 Input Dataframe is returned with additonal column containg path to the processed madx files.
 
+:module: madx.mask
+:author: mihofer
+
 """
-import re
+import logging
 import os
-from htc.utils import COLUMN_SHELL_SCRIPTS, COLUMN_JOB_DIRECTORY, COLUMN_JOBS
+
+from pylhc.htc.utils import COLUMN_JOB_DIRECTORY, COLUMN_JOB_FILE
+
+LOG = logging.getLogger(__name__)
 
 
 def create_madx_jobs_from_mask(job_df, maskfile, replace_keys):
@@ -20,12 +26,14 @@ def create_madx_jobs_from_mask(job_df, maskfile, replace_keys):
 
     jobname = os.path.splitext(os.path.basename(maskfile))[0]
     jobs = [None] * len(job_df)
-    for idx, values in job_df.iterrows():
-        jobdir = os.path.join(values[COLUMN_JOB_DIRECTORY], f'{jobname}.madx')
-        with open(jobdir, 'w') as madxjob:
+    for idx, (jobid, values) in enumerate(job_df.iterrows()):
+        jobfile_name = f'{jobname}.madx'
+        jobfile_fullpath = os.path.join(values[COLUMN_JOB_DIRECTORY], jobfile_name)
+
+        with open(jobfile_fullpath, 'w') as madxjob:
             madxjob.write(template % dict(zip(replace_keys, values[list(replace_keys)])))
-        jobs[idx] = jobdir
-    job_df[COLUMN_JOBS] = jobs
+        jobs[idx] = jobfile_name
+    job_df[COLUMN_JOB_FILE] = jobs
     return job_df
 
 

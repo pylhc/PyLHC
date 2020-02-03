@@ -14,7 +14,7 @@ import re
 
 import pjlsa
 
-from utils.time_tools import AccDatetime
+from pylhc.utils.time_tools import AccDatetime
 
 LOG = logging.getLogger(__name__)
 
