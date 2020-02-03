@@ -3,7 +3,8 @@ MADX Job-Submitter
 --------------------
 
 Allows to execute a parametric madx study using a madx mask and a dictionary with parameters to replace.
-Parameters to be replaced must be present in mask as `%(PARAMETER)s`.
+Parameters to be replaced must be present in mask as `%(PARAMETER)s`
+(other types apart from string also allowed).
 
 When submitting to HTCondor, madx data to be transferred back to the working directory
 must be written in a sub-folder defined by `job_output_directory` which defaults to `Outputdata`.
@@ -18,18 +19,16 @@ parameter per job and job directory for further post processing.
 
 - **mask** *(str)*: Madx mask to use
 
-- **replace_dict** *(DictAsString)*: Dict containing the str to replace as keys and values a list of parameters to replace
+- **replace_dict** *(DictAsString)*: Dict containing the str to replace as
+  keys and values a list of parameters to replace
 
 - **working_directory** *(str)*: Directory where data should be put
 
 
 *--Optional--*
 
-- **additional_parameters** *(DictAsString)*: Additional parameters for the job, as Dict-String.
-  Choices: group, retries, notification, priority
-
-  Default: ``{}``
-- **append_jobs**: Flag to rerun job with finer/wider grid, already existing points will not be reexecuted.
+- **append_jobs**: Flag to rerun job with finer/wider grid,
+  already existing points will not be reexecuted.
 
   Action: ``store_true``
 - **check_files** *(str)*: List of files/file-name-masks expected to be in the
@@ -40,6 +39,12 @@ parameter per job and job directory for further post processing.
   Together with `resume_jobs` this can be use to check which jobs succeeded and which failed.
 
   Action: ``store_true``
+- **executable** *(str)*: Path to executable or job-type (of ['madx', 'python3', 'python2']) to use.
+
+- **htc_arguments** *(DictAsString)*: Additional arguments for htcondor, as Dict-String.
+  Choices: ['accounting_group', 'max_retries', 'notification', 'priority']
+
+  Default: ``{}``
 - **job_output_dir** *(str)*: The name of the output dir of the job. (Make sure your script puts its data there!)
 
   Default: ``Outputdata``
@@ -49,7 +54,7 @@ parameter per job and job directory for further post processing.
   Default: ``workday``
 - **jobid_mask** *(str)*: Mask to name jobs from replace_dict
 
-- **num_processes** *(int)*: number of processes to be used if run locally
+- **num_processes** *(int)*: Number of processes to be used if run locally
 
   Default: ``4``
 - **resume_jobs**: Only do jobs that did not work.
@@ -58,7 +63,10 @@ parameter per job and job directory for further post processing.
 - **run_local**: Flag to run the jobs on the local machine. Not suggested.
 
   Action: ``store_true``
+- **script_arguments** *(DictAsString)*: Additional arguments to pass to the script,
+  as dict in key-value pairs ('--' need to be included in the keys).
 
+  Default: ``{}``
 
 :module: madx_submitter
 :author: mihofer, jdilly
@@ -114,7 +122,8 @@ def get_params():
     params.add_parameter(
         name="executable",
         type=str,
-        help=f"Path to executable or job-type (of {str(EXECUTEABLEPATH.keys())}) to use.",
+        help="Path to executable or job-type "
+             f"(of {str(list(EXECUTEABLEPATH.keys()))}) to use.",
     )
     params.add_parameter(
         name="jobflavour",
@@ -187,9 +196,9 @@ def get_params():
         default="Outputdata"
     )
     params.add_parameter(
-        name="additional_parameters",
-        help="Additional parameters for htcondor, as Dict-String. "
-             "Choices: [accounting_group, max_retries, notification, priority]",
+        name="htc_arguments",
+        help="Additional arguments for htcondor, as Dict-String. "
+             "Choices: ['accounting_group', 'max_retries', 'notification', 'priority']",
         type=DictAsString,
         default={}
     )
@@ -211,7 +220,7 @@ def main(opt):
 
     if not opt.dryrun:
         _run(job_df, opt.working_directory, opt.job_output_dir,
-             opt.jobflavour, opt.num_processes, opt.run_local, opt.additional_parameters)
+             opt.jobflavour, opt.num_processes, opt.run_local, opt.htc_arguments)
     else:
         _print_stats(job_df.index, dropped_jobs)
 
@@ -276,7 +285,7 @@ def _drop_already_run_jobs(job_df, drop_jobs, output_dir, check_files):
     return job_df, finished_jobs
 
 
-def _run(job_df, cwd, output_dir, flavour, num_processes, run_local, additional_htc_parameters):
+def _run(job_df, cwd, output_dir, flavour, num_processes, run_local, additional_htc_arguments):
     if run_local:
         LOG.info(f"Running {len(job_df.index)} jobs locally in {num_processes:d} processes.")
         pool = multiprocessing.Pool(processes=num_processes)
@@ -286,7 +295,7 @@ def _run(job_df, cwd, output_dir, flavour, num_processes, run_local, additional_
         LOG.info(f"Submitting {len(job_df.index)} jobs on htcondor, flavour '{flavour}'.")
         # create submission file
         subfile = htcutils.make_subfile(cwd, job_df, output_dir=output_dir, duration=flavour,
-                                        **additional_htc_parameters)
+                                        **additional_htc_arguments)
         # submit to htcondor
         htcutils.submit_jobfile(subfile)
 
