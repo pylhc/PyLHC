@@ -9,14 +9,16 @@ Package to resolve script masks.
 
 """
 import logging
-import os
+from pathlib import Path
+
+from pandas import DataFrame
 
 from pylhc.htc.utils import COLUMN_JOB_DIRECTORY, COLUMN_JOB_FILE
 
 LOG = logging.getLogger(__name__)
 
 
-def create_madx_jobs_from_mask(job_df, maskfile, replace_keys, file_ext='madx'):
+def create_madx_jobs_from_mask(job_df: DataFrame, maskfile: Path, replace_keys: dict, file_ext: str = 'madx'):
     """
     Takes path to mask file, list of parameter to be replaced and pandas dataframe containg per job
     the job directory where processed mask is to be put, and columns containing the parameter values
@@ -35,18 +37,17 @@ def create_madx_jobs_from_mask(job_df, maskfile, replace_keys, file_ext='madx'):
 
     """
 
-    with open(maskfile, 'r') as mfile:
+    with maskfile.open('r') as mfile:
         template = mfile.read()
 
-    jobname = os.path.splitext(os.path.basename(maskfile))[0]
+    jobname = maskfile.with_suffix('').name
     jobs = [None] * len(job_df)
     for idx, (jobid, values) in enumerate(job_df.iterrows()):
-        jobfile_name = f'{jobname}.{file_ext}'
-        jobfile_fullpath = os.path.join(values[COLUMN_JOB_DIRECTORY], jobfile_name)
+        jobfile_fullpath = (Path(values[COLUMN_JOB_DIRECTORY]) / jobname).with_suffix(f'.{file_ext}')
 
-        with open(jobfile_fullpath, 'w') as madxjob:
+        with jobfile_fullpath.open('w') as madxjob:
             madxjob.write(template % dict(zip(replace_keys, values[list(replace_keys)])))
-        jobs[idx] = jobfile_name
+        jobs[idx] = jobfile_fullpath.name
     job_df[COLUMN_JOB_FILE] = jobs
     return job_df
 

@@ -32,20 +32,19 @@ Can be run from command line, parameters as given in :meth:`print_machine_settin
 
 """
 import argparse
-import logging
 import re
 from collections import OrderedDict
 from typing import Iterable
 
 import tfs
+from omc3.utils import logging_tools
 
 from pylhc.constants import machine_settings_info as const
 from pylhc.data_extract.lsa import LSA
 from pylhc.utils.dict_tools import DotDict
-from pylhc.utils.logging_tools import setup_logger
 from pylhc.utils.time_tools import AcceleratorDatetime, AccDatetime
 
-LOG = logging.getLogger(__name__)
+LOG = logging_tools.get_logger(__name__)
 
 
 DEFAULT_BP_RE = '^(RAMP|SQUEEZE)[_-]'
@@ -197,5 +196,4 @@ def get_options() -> dict:
 
 
 if __name__ == '__main__':
-    setup_logger()
     get_info(**get_options())
