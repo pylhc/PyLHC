@@ -95,7 +95,7 @@ from generic_parser.entrypoint_parser import save_options_to_config
 from generic_parser.tools import print_dict_tree
 from omc3.utils import logging_tools
 
-import htc.mask as mask_processing
+import pylhc.htc.mask as mask_processing
 import pylhc.htc.utils as htcutils
 from pylhc.htc.utils import (COLUMN_SHELL_SCRIPT, COLUMN_JOB_DIRECTORY,
                              JOBFLAVOURS, HTCONDOR_JOBLIMIT, EXECUTEABLEPATH)
