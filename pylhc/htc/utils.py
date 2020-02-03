@@ -138,11 +138,16 @@ def make_subfile(cwd, job_df, **kwargs):
     return create_subfile_from_job(cwd, job)
 
 
-def write_bash(job_df, output_dir=None, jobtype='madx', cmdline_arguments={}):
+def write_bash(job_df, output_dir=None, executable='madx', cmdline_arguments=None):
     """ Write the bash-files to be called by HTCondor. """
     if len(job_df.index) > HTCONDOR_JOBLIMIT:
         raise AttributeError('Submitting too many jobs for HTCONDOR')
 
+    cmds = ''
+    if cmdline_arguments is not None:
+        cmds = ' '.join([f'{param} {val}' for param, val in cmdline_arguments.items()])
+
+    exec_path = EXECUTEABLEPATH.get(executable, executable)
     shell_scripts = [None] * len(job_df.index)
     for idx, (jobid, job) in enumerate(job_df.iterrows()):
         bash_file = f'{BASH_FILENAME}.{jobid}.sh'
@@ -152,9 +157,8 @@ def write_bash(job_df, output_dir=None, jobtype='madx', cmdline_arguments={}):
             f.write(f"{SHEBANG}\n")
             if output_dir is not None:
                 f.write(f'mkdir {output_dir}\n')
-            cmds = ' '.join([f'--{param} {val}' for param, val in cmdline_arguments.items()])
             f.write(
-                f'{EXECUTEABLEPATH[jobtype]} {os.path.join(job[COLUMN_JOB_DIRECTORY], job[COLUMN_JOB_FILE])} {cmds}\n'
+                f'{exec_path} {os.path.join(job[COLUMN_JOB_DIRECTORY], job[COLUMN_JOB_FILE])} {cmds}\n'
             )
         shell_scripts[idx] = bash_file
     job_df[COLUMN_SHELL_SCRIPT] = shell_scripts
@@ -173,8 +177,8 @@ def _map_kwargs(add_dict):
     # Predefined ones
     htc_map = {'duration': ('+JobFlavour', JOBFLAVOURS, "workday"),
                'output_dir': ('transfer_output_files', None, None),
-               'group': ('+AccountingGroup', None, None),
-               'retries': ('max_retries', None, 3),
+               'accounting_group': ('+AccountingGroup', None, None),
+               'max_retries': ('max_retries', None, 3),
                'notification': ('notification', NOTIFICATIONS, 'error'),
                }
     for key, (mapped, choices, default) in htc_map.items():

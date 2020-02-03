@@ -82,8 +82,8 @@ from generic_parser.tools import print_dict_tree
 
 import pylhc.htc.utils as htcutils
 import pylhc.madx.mask as mask_processing
-from pylhc.htc.utils import COLUMN_SHELL_SCRIPT, COLUMN_JOB_DIRECTORY
-from pylhc.htc.utils import JOBFLAVOURS, HTCONDOR_JOBLIMIT
+from pylhc.htc.utils import (COLUMN_SHELL_SCRIPT, COLUMN_JOB_DIRECTORY,
+                             JOBFLAVOURS, HTCONDOR_JOBLIMIT, EXECUTEABLEPATH)
 
 from omc3.utils import logging_tools
 
@@ -110,6 +110,11 @@ def get_params():
         type=str,
         required=True,
         help="Directory where data should be put",
+    )
+    params.add_parameter(
+        name="executable",
+        type=str,
+        help=f"Path to executable or job-type (of {str(EXECUTEABLEPATH.keys())}) to use.",
     )
     params.add_parameter(
         name="jobflavour",
@@ -147,8 +152,15 @@ def get_params():
         required=True
     )
     params.add_parameter(
+        name="script_arguments",
+        help="Additional arguments to pass to the script, as dict in key-value pairs "
+             "('--' need to be included in the keys).",
+        type=DictAsString,
+        default={},
+    )
+    params.add_parameter(
         name="num_processes",
-        help="number of processes to be used if run locally",
+        help="Number of processes to be used if run locally",
         type=int,
         default=4
     )
@@ -176,7 +188,8 @@ def get_params():
     )
     params.add_parameter(
         name="additional_parameters",
-        help="Additional parameters for the job, as Dict-String. Choices: group, retries, notification, priority",
+        help="Additional parameters for htcondor, as Dict-String. "
+             "Choices: [accounting_group, max_retries, notification, priority]",
         type=DictAsString,
         default={}
     )
@@ -192,7 +205,7 @@ def main(opt):
     save_options_to_config(opt.working_directory / CONFIG_FILE, opt)
 
     job_df = _create_jobs(opt.working_directory, opt.mask, opt.jobid_mask, opt.replace_dict,
-                          opt.job_output_dir, opt.append_jobs)
+                          opt.job_output_dir, opt.append_jobs, opt.executable, opt.script_arguments)
     job_df, dropped_jobs = _drop_already_run_jobs(job_df, opt.resume_jobs or opt.append_jobs,
                                              opt.job_output_dir, opt.check_files)
 
@@ -206,7 +219,7 @@ def main(opt):
 # Main Functions ---------------------------------------------------------------
 
 
-def _create_jobs(cwd, maskfile, jobid_mask, replace_dict, output_dir, append_jobs):
+def _create_jobs(cwd, maskfile, jobid_mask, replace_dict, output_dir, append_jobs, executable, script_args):
     LOG.debug("Creating MADX-Jobs")
     values_grid = np.array(list(itertools.product(*replace_dict.values())), dtype=object)
 
@@ -244,7 +257,7 @@ def _create_jobs(cwd, maskfile, jobid_mask, replace_dict, output_dir, append_job
     job_df = mask_processing.create_madx_jobs_from_mask(job_df, maskfile, replace_dict.keys())
 
     # creating all shell scripts
-    job_df = htcutils.write_bash(job_df, output_dir, jobtype='madx')
+    job_df = htcutils.write_bash(job_df, output_dir, executable=executable, cmdline_arguments=script_args)
 
     job_df = _set_auto_tfs_column_types(job_df)
     tfs.write(str(cwd / JOBSUMMARY_FILE), job_df, save_index=COLUMN_JOBID)
