@@ -11,15 +11,31 @@ Provides additional functionality for pjlsa.
 """
 import logging
 import re
+from contextlib import suppress
 
-import pjlsa
-
-from utils.time_tools import AccDatetime
+import jpype
+import tfs
+from generic_parser import DotDict
+from omc3.utils.time_tools import AccDatetime
 
 LOG = logging.getLogger(__name__)
 
+try:
+    from pjlsa import pjlsa  # need to import submodule as it otherwise catches the ImportError...
+except ImportError:
+    # Problematic when running setup.py (as this class is not tested), mock class
+    LOG.error("pjLSA not properly imported. Mocking class, but will fail if used!")
+    pjlsa = DotDict(LSAClient=object, ParametersRequestBuilder=object, Acclerators=object)
+
 RELEVANT_BP_CONTEXTS = ("OPERATIONAL", "MD")
 RELEVANT_BP_CATEGORIES = ("DISCRETE",)
+
+HEAD_KNOB = "Knob"
+HEAD_OPTICS = "Optics"
+HEAD_INFO = "Info"
+COL_NAME = "NAME"
+COL_CIRCUIT = "CIRCUIT"
+PREF_DELTA = "DELTA_"
 
 
 class LSAClient(pjlsa.LSAClient):
@@ -60,7 +76,7 @@ class LSAClient(pjlsa.LSAClient):
                                                 t2=acc_time.local_string(),
                                                 accelerator=accelerator)
         except TypeError:
-            raise ValueError(f"No beamprocesses found in the day before {acc_time.utc_string()}")
+            raise ValueError(f"No beamprocesses found in the day before {acc_time.cern_utc_string()}")
         last_fill = sorted(fills.keys())[-1]
         return last_fill, fills[last_fill]
 
@@ -82,7 +98,7 @@ class LSAClient(pjlsa.LSAClient):
         trims = self.getTrims(beamprocess, knobs, end=acc_time.timestamp())
         trims_not_found = [k for k in knobs if k not in trims.keys()]
         if len(trims_not_found):
-            LOG.warn(f"The following knobs were not found in '{beamprocess}': {trims_not_found}")
+            LOG.warning(f"The following knobs were not found in '{beamprocess}': {trims_not_found}")
         return {trim: trims[trim].data[-1] for trim in trims.keys()}  # return last set value
 
     def get_beamprocess_info(self, beamprocess: str):
@@ -109,8 +125,53 @@ class LSAClient(pjlsa.LSAClient):
         beamprocessmap = self._lhcService.findResidentStandAloneBeamProcessesByTime(int(acc_time.timestamp()))
         # print(str(beamprocessmap))
         beamprocess = beamprocessmap.get("POWERCONVERTERS")
-        LOG.debug(f"Active Beamprocess at time '{acc_time.utc_string()}': {beamprocess}")
+        LOG.debug(f"Active Beamprocess at time '{acc_time.cern_utc_string()}': {beamprocess}")
         return beamprocess
+
+    def get_knob_circuits(self, knob_name: str, optics: str) -> tfs.TfsDataFrame:
+        """ Get a dataframe of the structure of the knob.
+        (Similar to online model extractor KnobExtractor.getKnobHiercarchy)
+        
+        Args:
+            knob: name of the knob
+            optics: name of the optics
+
+        Returns: TfsDataFrame
+
+        """
+        LOG.debug(f"Getting knob defintions for '{knob_name}', optics '{optics}'")
+        df = tfs.TfsDataFrame()
+        df.headers[HEAD_KNOB] = knob_name
+        df.headers[HEAD_OPTICS] = optics
+        df.headers[HEAD_INFO] = "In MAD-X it should be 'name = name + DELTA * knobValue'"
+        knob = self._knobService.findKnob(knob_name)
+        if knob is None:
+            raise IOError(f"Knob '{knob_name}' does not exist")
+        try:
+            knob_settings = knob.getKnobFactors().getFactorsForOptic(optics)
+        except jpype.JException(jpype.java.lang.IllegalArgumentException):
+            raise IOError(f"Knob '{knob_name}' not available for optics '{optics}'")
+
+        for knob_factor in knob_settings:
+            circuit = knob_factor.componentName
+            param = self._parameterService.findParameterByName(circuit)
+            type = param.getParameterType().getName()
+            madx_name = self.get_madx_name_from_circuit(circuit)
+            if madx_name is None:
+                LOG.error(f"Circuit '{circuit}' could not be resolved to a MADX name in LSA! "
+                          "It will not be found in knob-definition!")
+            else:
+                LOG.debug(f"  Found component '{circuit}': {madx_name}, {knob_factor.factor}")
+                df.loc[madx_name, COL_CIRCUIT] = circuit
+                df.loc[madx_name, f"{PREF_DELTA}{type.upper()}"] = knob_factor.factor
+        return df.fillna(0)
+
+    def get_madx_name_from_circuit(self, circuit: str):
+        """ Returns the MAD-X Strength Name (Circuit/Knob) from the circuit name. """
+        logical_name = circuit.split("/")[0]
+        slist = jpype.java.util.Collections.singletonList(logical_name)  # python lists did not work (jdilly)
+        madx_name = self._deviceService.findMadStrengthNamesByLogicalNames(slist)  # returns a map
+        return madx_name[logical_name]
 
 
 # Single Instance LSAClient ####################################################
@@ -129,9 +190,10 @@ class LSAMeta(type):
         if callable(client_attr):
             def hooked(*args, **kwargs):
                 result = client_attr(*args, **kwargs)
-                if result == cls._client:
-                    # prevent client from becoming unwrapped
-                    return cls
+                with suppress(ValueError):  # happens with e.g. numpy arrays as return value
+                    if result == cls._client:
+                        # prevent client from becoming unwrapped
+                        return cls
                 return result
             return hooked
         else:

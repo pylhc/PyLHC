@@ -5,5 +5,5 @@ Main Scripts
     :members:
 
 
-.. automodule:: pylhc.madx_submitter
+.. automodule:: pylhc.job_submitter
     :members:

@@ -11,13 +11,12 @@ Useful functionality for pytimber.
 import logging
 
 import pytimber
-
-from utils.time_tools import AccDatetime
+from omc3.utils.time_tools import AccDatetime
 
 LOG = logging.getLogger(__name__)
 
 
-def find_exact_time_for_bp(acc_time: AccDatetime) -> AccDatetime:
+def find_exact_time_for_beamprocess(acc_time: AccDatetime) -> AccDatetime:
     """ Finds the last entry where HX:SRMP-POW equals 123.
 
     Which is, according to the online model KnobExtractor, the timing event for SQUEEZE or RAMP.
@@ -31,9 +30,9 @@ def find_exact_time_for_bp(acc_time: AccDatetime) -> AccDatetime:
 
     if len(event_ts) == 0:
         raise ValueError(
-            f"No valid beamprocess found in the 24h before {acc_time.utc_string()}"
+            f"No valid beamprocess found in the 24h before {acc_time.cern_utc_string()}"
         )
 
     exact_time = acc_time.__class__.from_timestamp(event_ts[-1])
-    LOG.debug(f"Exact time for beamprocess found: {exact_time.utc_string()}")
+    LOG.debug(f"Exact time for beamprocess found: {exact_time.cern_utc_string()}")
     return exact_time
