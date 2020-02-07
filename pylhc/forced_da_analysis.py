@@ -81,6 +81,7 @@ from pylhc.constants.forced_da_analysis import (bsrt_emittance_key, bws_emittanc
                                                 INTENSITY_KEY, INTENSITY_LOSSES,
                                                 ROLLING_AVERAGE_WINDOW, BSRT_EMITTANCE_TO_METER, BWS_DIRECTIONS,
                                                 BWS_EMITTANCE_TO_METER, KICKFILE, RESULTS_DIR, YPAD,
+                                                MAX_CURVEFIT_FEV,
                                                 )
 from pylhc.constants.general import get_proton_gamma, get_proton_beta, LHC_NOMINAL_EMITTANCE
 
@@ -338,7 +339,7 @@ def _get_old_kick_file(directory, plane):
     LOG.debug(f"Reading kickfile '{path}'.'")
     df = tfs.read(path)
     df = df.set_index("TIME")
-    df.index = pd.Index(CERNDatetime.from_timestamp(t) for t in df.index)
+    df.index = pd.Index([CERNDatetime.from_timestamp(t) for t in df.index], dtype=object)
     rename_dict = {}
     for p in plane:
         rename_dict.update({f"2J{p}RES": column_action(p), f"2J{p}STDRES": err_col(column_action(p))})
@@ -354,7 +355,7 @@ def _get_new_kick_file(directory, planes):
         path = os.path.join(directory, f"{KICKFILE}_{plane.lower()}{TFS_SUFFIX}")
         LOG.debug(f"Reading kickfile '{path}'.'")
         df = tfs.read(path, index=TIME)
-        df.index = pd.Index(CERNDatetime.from_cern_utc_string(t) for t in df.index)
+        df.index = pd.Index([CERNDatetime.from_cern_utc_string(t) for t in df.index], dtype=object)
         dfs[plane] = df
     return _merge_df_planes(dfs, planes)
 
@@ -488,14 +489,15 @@ def _fit_exponential(plane, kick_df):
     return kick_df
 
 
-def _fit_curve(x,y,init):
+def _fit_curve(x, y, init):
     """ Preliminary curve fit. """
-    fit, cov = scipy.optimize.curve_fit(fun_exp_decay_for_curvefit, x, y, p0=init)
+    fit, cov = scipy.optimize.curve_fit(fun_exp_decay_for_curvefit, x, y,
+                                        p0=init, maxfev=MAX_CURVEFIT_FEV)
     LOG.info(f"Initial DA fit: {fit} with cov {cov}")
     return fit
 
 
-def _fit_odr(x,y, sx, sy, init):
+def _fit_odr(x, y, sx, sy, init):
     """ ODR Fit """
     # fill zero errors with the minimum error - otherwise fit will not work
     exp_decay_sigma_model = scipy.odr.Model(fun_exp_decay)
@@ -567,6 +569,7 @@ def _plot_intensity(directory, beam, plane, kick_df, intensity_df):
     normalized_intensity = kick_df.loc[:, [INTENSITY_BEFORE, INTENSITY_AFTER]]/norm
     normalized_intensity_error = kick_df.loc[:, [err_col(INTENSITY_BEFORE), err_col(INTENSITY_AFTER)]]/norm
     normalized_losses = kick_df.loc[:, [INTENSITY_LOSSES, err_col(INTENSITY_LOSSES)]]/norm
+    normalized_losses_kick = kick_df.loc[:, [rel_col(INTENSITY_LOSSES), err_col(rel_col(INTENSITY_LOSSES))]]*100
 
     for idx, kick in enumerate(kick_df.index):
         ax.errorbar([kick] * 2,  normalized_intensity.loc[kick, :],
@@ -577,7 +580,8 @@ def _plot_intensity(directory, beam, plane, kick_df, intensity_df):
                     label='__nolegend__' if idx > 0 else "Losses")
 
         ax.text(kick, .5 * sum(normalized_intensity.loc[kick, :]),
-                " -{:.1f}$\pm${:.1f} %".format(*normalized_losses.loc[kick, :]),
+                "  -{:.1f}$\pm${:.1f} %\n".format(*normalized_losses.loc[kick, :]) +
+                " (-{:.1f}$\pm${:.1f} %)".format(*normalized_losses_kick.loc[kick, :]),
                 va="bottom", color=colors.get_mpl_color(1),
                 fontdict=dict(fontsize=mpl.rcParams["font.size"] * 0.8)
                 )

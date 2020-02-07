@@ -19,6 +19,8 @@ TIME_AFTER_KICK_S = [5, 30]
 YPAD = 0.05  # additional padding of the y axis for DA plots
 
 INITIAL_DA_FIT = 12  # initial DA for fitting in values of nominal emittance
+MAX_CURVEFIT_FEV = 10000    # Max number of curve_fit iterations
+
 
 BWS_DIRECTIONS = ("IN", "OUT")
 
