@@ -1,0 +1,6 @@
+
+BETAFUNCTIONS = ('BETX', 'BETY')
+ORBIT = ('X', 'Y')
+DISPERSION = ('DX', 'DY')
+ALPHAFUNCTION = ('ALFX', 'ALFY')
+
