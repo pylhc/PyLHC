@@ -27,7 +27,7 @@ jobs:
         - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
         - chmod +x ./cc-test-reporter
         - ./cc-test-reporter before-build
-        - python -m pip install -e git+git://github.com/pylhc/omc3.git
+        - python -m pip install -e git+git://github.com/pylhc/omc3.git#egg=omc3
       script:
         - python setup.py test
       after_script:
