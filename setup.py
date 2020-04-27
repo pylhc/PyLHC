@@ -26,6 +26,7 @@ DEPENDENCIES = [
     'htcondor>=8.9.2',
     'tfs-pandas>=1.0.3',
     'generic-parser>=1.0.6',
+    'JPype1==0.7.3',
     'ipython>=7.0.1',  # actually dependency of pytimber
     'omc3@https://github.com/pylhc/omc3/tarball/master',  # installed in travis.yml
     'pyjapc>=2.0.6'
