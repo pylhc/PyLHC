@@ -28,7 +28,7 @@ DEPENDENCIES = [
     'generic-parser>=1.0.6',
     'JPype1==0.6.3',
     'ipython>=7.0.1',  # actually dependency of pytimber
-    'omc3@https://github.com/pylhc/omc3/tarball/106/amplitude_detuning'  # installed in travis.yml
+    'omc3@https://github.com/pylhc/omc3'  # installed in travis.yml
 ]
 
 # Test dependencies that should only be installed for test purposes
