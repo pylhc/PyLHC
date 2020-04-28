@@ -1,3 +1,14 @@
+'''
+BSRT logger
+-------------------
+
+Script used during RunII to log detailed BSRT data and save it for later analysis.
+Data from the BSRT for each timestep is put in dictionary and append to a list.
+The list is then saved as a pickle and gzipped.
+Proper testing requires communication with FESA class, possible only from the TN.
+
+Original authors: E. H. Maclean, T. Persson, G. Trad
+'''
 import sys
 import os
 import time
@@ -10,8 +21,10 @@ import pyjapc
 
 
 def parse_timestamp(thistime):
-    accepted_time_input_format = ['%Y-%m-%d %H:%M:%S.%f', '%Y-%m-%d %H:%M:%S',
-                                  '%Y-%m-%d_%H:%M:%S.%f', '%Y-%m-%d_%H:%M:%S',
+    accepted_time_input_format = ['%Y-%m-%d %H:%M:%S.%f',
+                                  '%Y-%m-%d %H:%M:%S',
+                                  '%Y-%m-%d_%H:%M:%S.%f',
+                                  '%Y-%m-%d_%H:%M:%S',
                                   '%Y/%m/%d %H:%M:%S.%f']
     for fmat in accepted_time_input_format:
         try:

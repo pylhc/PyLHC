@@ -27,14 +27,16 @@ DEPENDENCIES = [
     'tfs-pandas>=1.0.3',
     'generic-parser>=1.0.6',
     'JPype1>=0.7.2',
+    'parse>=1.15.0'
     'ipython>=7.0.1',  # actually dependency of pytimber
     'omc3@https://github.com/pylhc/omc3/tarball/master',  # installed in travis.yml
-    'pyjapc@https://gitlab.cern.ch/scripting-tools/pyjapc/tarball/master'
+    # 'pyjapc@https://gitlab.cern.ch/scripting-tools/pyjapc/tarball/master'
 ]
 
 # Test dependencies that should only be installed for test purposes
 TEST_DEPENDENCIES = ['pytest>=5.2',
                      'pytest-cov>=2.6',
+                     'pytest-mpl>=0.11',
                      'hypothesis>=4.36.2',
                      'attrs>=19.2.0'
                      ]
