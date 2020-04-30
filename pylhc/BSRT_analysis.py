@@ -222,6 +222,7 @@ def pcolormesh_irregulargrid(ax, df, x_column, y_column, z_column):
                       vmax=vmax,
                       cmap='inferno')
 
+
 def plot_full_crosssection(opt, bsrt_df):
     fig, ax = plt.subplots(nrows=2, ncols=1, figsize=(18, 9))
 
