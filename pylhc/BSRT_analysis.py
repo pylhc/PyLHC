@@ -2,11 +2,11 @@
 BSRT analysis
 ---------------------------
 
-Processes the output files of BSRT_logger.py for a given timeframe, 
+Processes the output files of BSRT_logger.py for a given timeframe,
 returns them in as a tfs for further processing.
-Additionally, plots for quick checks of fit parameters, auxiliary variables and 
+Additionally, plots for quick checks of fit parameters, auxiliary variables and
 beam evolution are generated.
-Provided a tfs file with timestamps, plots of the 2D distribution and comparision 
+Provided a tfs file with timestamps, plots of the 2D distribution and comparision
 of fit parameter to crosssections are added.
 Plots functions return figures and can be imported in e.g. IPython notebooks for plot tweaking.
 '''
@@ -81,8 +81,8 @@ def main(opt):
     files_df = _select_files(opt)
     bsrt_df = _load_pickled_data(opt, files_df)
 
-    if not opt.show_plots or opt.outputdir is  None:
-        LOG.info("Neither plot display nor outputdir was selcted. Plotting is omitted")
+    if not opt.show_plots and opt.outputdir is None:
+        LOG.info("Neither plot display nor outputdir was selected. Plotting is omitted")
         sys.exit()
 
     plot_fit_variables(opt, bsrt_df)
@@ -119,7 +119,7 @@ def _get_auxiliary_var_plot_fname(beam):
 # File Handling  ---------------------------------------------------------------
 
 def _select_files(opt):
-    files_df = pd.DataFrame(data={'FILES':glob.glob(Path(opt.directory)/_get_bsrt_logger_fname(opt.beam, '*'))})
+    files_df = pd.DataFrame(data={'FILES':glob.glob(str(Path(opt.directory)/_get_bsrt_logger_fname(opt.beam, '*')))})
 
     files_df = files_df.assign(TIMESTAMP=[
         _get_timestamp_from_name(Path(f).name, _get_bsrt_logger_fname(opt.beam, '{}-{}-{}-{}-{}-{}.{}'))
@@ -134,7 +134,7 @@ def _select_files(opt):
         assert opt.endtime >= opt.starttime
 
     indices = []
-    for time, fct in zip([opt.startime, opt.endtime], ['first_valid_index', 'last_valid_index']):
+    for time, fct in zip([opt.starttime, opt.endtime], ['first_valid_index', 'last_valid_index']):
         indices.append(
             _get_closest_index(files_df, time if time is not None else getattr(files_df, fct)())
         )
@@ -159,8 +159,9 @@ def _load_pickled_data(opt, files_df):
             merged_df = merged_df.append(entry, ignore_index=True)
 
     merged_df = merged_df.set_index(pd.to_datetime(merged_df['acqTime'], format=TIME_FORMAT))
+    merged_df.index.name='TimeIndex'
     if opt.outputdir is not None:
-        tfs.write(Path(opt.outputdir)/_get_bsrt_tfs_fname(opt.beam), merged_df)
+        merged_df.to_csv(Path(opt.outputdir, _get_bsrt_tfs_fname(opt.beam)))
 
     return merged_df
 
@@ -195,7 +196,7 @@ def plot_fit_variables(opt, bsrt_df):
     plt.tight_layout()
 
     if opt.outputdir is not None:
-        plt.savefig(Path(opt.outputdir)/_get_fitvar_plot_fname(opt.beam))
+        plt.savefig(Path(opt.outputdir, _get_fitvar_plot_fname(opt.beam)))
     if opt.show_plots:
         plt.show()
     return fig
@@ -208,31 +209,23 @@ def flattend_column(df, col):
     return flat_column
 
 
-def add_xcols(df):
-    x1_col=[]
-    x2_col=[]
-
-    for idx, row in df.iterrows():
-        x1_col.append((np.ones(len(row['projPositionSet1']))*idx))
-        x2_col.append((np.ones(len(row['projPositionSet2']))*idx))
-
-    df['XCol_Set1'] = x1_col
-    df['XCol_Set2'] = x2_col
-    return df
-
+def pcolormesh_irregulargrid(ax, df, x_column, y_column, z_column):
+    df['Starttime'] = df[x_column] - 0.5*df[x_column].diff().fillna(pd.Timedelta(seconds=0))
+    df['Endtime'] = df[x_column] + 0.5*df[x_column].diff().shift(periods=-1).fillna(pd.Timedelta(seconds=0))
+    vmax = np.max(flattend_column(df, z_column))
+    vmin = np.min(flattend_column(df, z_column))
+    for _, row in df.iterrows():
+        ax.pcolormesh([row['Starttime'], row['Endtime']],
+                      np.concatenate([row[y_column][0], row[y_column][:-1]+0.5*np.diff(row[y_column]), row[y_column][-1]], axis=None),
+                      np.array([row[z_column]]).T,
+                      vmin=vmin,
+                      vmax=vmax,
+                      cmap='inferno')
 
 def plot_full_crosssection(opt, bsrt_df):
-
-    bsrt_df = add_xcols(bsrt_df)
-
     fig, ax = plt.subplots(nrows=2, ncols=1, figsize=(18, 9))
 
-    ax[0].scatter(x=flattend_column(bsrt_df, 'XCol_Set1'),
-                  y=flattend_column(bsrt_df, 'projPositionSet1'),
-                  s=np.ones(len(flattend_column(bsrt_df, 'projDataSet1')))*0.5,
-                  c=flattend_column(bsrt_df, 'projDataSet1'),
-                  marker='s',
-                  cmap='inferno')
+    pcolormesh_irregulargrid(ax[0], bsrt_df.reset_index(), 'TimeIndex', 'projPositionSet1', 'projDataSet1')
     ax[0].plot(bsrt_df.index, [entry[3] for entry in bsrt_df['lastFitResults']],
                color='white', linewidth=0.5)
     ax[0].plot(bsrt_df.index, [entry[3]+entry[4] for entry in bsrt_df['lastFitResults']],
@@ -241,12 +234,8 @@ def plot_full_crosssection(opt, bsrt_df):
                color='white', linestyle='--', linewidth=0.3)
     ax[0].set_title('Horizontal Crossection')
 
-    ax[1].scatter(x=flattend_column(bsrt_df, 'XCol_Set2'),
-                  y=flattend_column(bsrt_df, 'projPositionSet2'),
-                  s=np.ones(len(flattend_column(bsrt_df, 'projDataSet2')))*0.5,
-                  c=flattend_column(bsrt_df, 'projDataSet2'),
-                  marker='s',
-                  cmap='inferno')
+
+    pcolormesh_irregulargrid(ax[1], bsrt_df.reset_index(), 'TimeIndex', 'projPositionSet2', 'projDataSet2')
     ax[1].plot(bsrt_df.index, [entry[8] for entry in bsrt_df['lastFitResults']],
                color='white', linewidth=0.5)
     ax[1].plot(bsrt_df.index, [entry[8]+entry[9] for entry in bsrt_df['lastFitResults']],
@@ -258,7 +247,7 @@ def plot_full_crosssection(opt, bsrt_df):
     plt.tight_layout()
     
     if opt.outputdir is not None:
-        plt.savefig(Path(opt.outputdir)/_get_2dcrossection_plot_fname(opt.beam))
+        plt.savefig(Path(opt.outputdir, _get_2dcrossection_plot_fname(opt.beam)))
     if opt.show_plots:
         plt.show()
     return fig
@@ -286,17 +275,17 @@ def plot_crosssection_for_timesteps(opt, bsrt_df):
 
         data_row = bsrt_df.iloc[_get_closest_index(bsrt_df, timestamp)]
 
-        fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(9,18))
+        fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(9, 18))
         
         ax[0].image(_reshaped_imageset(data_row), cmap='hot', interpolation='nearest')
         ax[0].set_title(f'2D Pixel count, Timestamp: {timestamp}')
         
         ax[1].plot(data_row['projPositionSet1'], data_row['projDataSet1'], color='darkred')
         ax[1].plot(data_row['projPositionSet1'],
-                     _gauss(data_row['projPositionSet1'],
-                            data_row['lastFitResults'][2],
-                            data_row['lastFitResults'][3],
-                            data_row['lastFitResults'][4]),
+                   _gauss(data_row['projPositionSet1'],
+                          data_row['lastFitResults'][2],
+                          data_row['lastFitResults'][3],
+                          data_row['lastFitResults'][4]),
                      color='darkgreen',
                      label='Gaussian Fit')
         ax[1].set_ylim(bottom=0)
@@ -305,10 +294,10 @@ def plot_crosssection_for_timesteps(opt, bsrt_df):
 
         ax[2].plot(data_row['projPositionSet2'], data_row['projDataSet2'], color='darkred')
         ax[2].plot(data_row['projPositionSet2'],
-                     _gauss(data_row['projPositionSet2'],
-                            data_row['lastFitResults'][7],
-                            data_row['lastFitResults'][8],
-                            data_row['lastFitResults'][9]),
+                   _gauss(data_row['projPositionSet2'],
+                          data_row['lastFitResults'][7],
+                          data_row['lastFitResults'][8],
+                          data_row['lastFitResults'][9]),
                       color='darkgreen',
                       label='Gaussian Fit')
         ax[2].set_ylim(bottom=0)
@@ -317,7 +306,7 @@ def plot_crosssection_for_timesteps(opt, bsrt_df):
 
         plt.tight_layout()
         if opt.outputdir is not None:
-            plt.savefig(Path(opt.outputdir)/_get_crossection_plot_fname(opt.beam, timestamp))
+            plt.savefig(Path(opt.outputdir, _get_crossection_plot_fname(opt.beam, timestamp)))
         if opt.show_plots:
             plt.show()
         figlist.append(fig)
@@ -336,30 +325,38 @@ def plot_auxiliary_variables(opt, bsrt_df):
     ax[1].set_title('lastAcquiredBunch')
 
     ax[2].plot(bsrt_df.index, bsrt_df['opticsResolutionSet1'], color='red', label='opticsResolutionSet1')
-    ax[2].twinx().plot(bsrt_df.index, bsrt_df['opticsResolutionSet2'], color='blue', label='opticsResolutionSet2')
-    ax[2].legend()
+    ax2 = ax[2].twinx()
+    ax2.plot(bsrt_df.index, bsrt_df['opticsResolutionSet2'], color='blue', label='opticsResolutionSet2')
+    ax[2].legend(loc='upper left')
+    ax2.legend(loc='upper right')
     ax[2].set_title('opticsResolution')
 
     ax[3].plot(bsrt_df.index, bsrt_df['cameraGainVoltage'])
     ax[3].set_title('cameraGainVoltage')
 
     ax[4].plot(bsrt_df.index, bsrt_df['imageCenterSet1'], color='red', label='imageCenterSet1')
-    ax[4].twinx().plot(bsrt_df.index, bsrt_df['imageCenterSet2'], color='blue', label='imageCenterSet2')
-    ax[4].legend()
+    ax4 = ax[4].twinx()
+    ax4.plot(bsrt_df.index, bsrt_df['imageCenterSet2'], color='blue', label='imageCenterSet2')
+    ax[4].legend(loc='upper left')
+    ax4.legend(loc='upper right')
     ax[4].set_title('imageCenter')
 
     ax[5].plot(bsrt_df.index, bsrt_df['betaTwissSet1'], color='red', label='betaTwissSet1')
-    ax[5].twinx().plot(bsrt_df.index, bsrt_df['betaTwissSet2'], color='blue', label='betaTwissSet2')
-    ax[5].legend()
+    ax5 = ax[5].twinx()
+    ax5.plot(bsrt_df.index, bsrt_df['betaTwissSet2'], color='blue', label='betaTwissSet2')
+    ax[5].legend(loc='upper left')
+    ax5.legend(loc='upper right')
     ax[5].set_title('betaTwissSet')
 
     ax[6].plot(bsrt_df.index, bsrt_df['imageScaleSet1'], color='red', label='imageScaleSet1')
-    ax[6].twinx().plot(bsrt_df.index, bsrt_df['imageScaleSet2'], color='blue', label='imageScaleSet2')
-    ax[6].legend()
+    ax6 = ax[6].twinx()
+    ax6.plot(bsrt_df.index, bsrt_df['imageScaleSet2'], color='blue', label='imageScaleSet2')
+    ax[6].legend(loc='upper left')
+    ax6.legend(loc='upper right')
     ax[6].set_title('imageScale')
 
     if opt.outputdir is not None:
-        plt.savefig(Path(opt.outputdir)/_get_auxiliary_var_plot_fname(opt.beam))
+        plt.savefig(Path(opt.outputdir, _get_auxiliary_var_plot_fname(opt.beam)))
     if opt.show_plots:
         plt.show()
     return fig
