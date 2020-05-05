@@ -10,7 +10,6 @@ Provided a tfs file with timestamps, plots of the 2D distribution and comparisio
 of fit parameter to crosssections are added.
 Plots functions return figures and can be imported in e.g. IPython notebooks for plot tweaking.
 '''
-import sys
 import glob
 from pathlib import Path
 import gzip
@@ -68,28 +67,30 @@ def get_params():
         show_plots=dict(
             flags=["--show_plots"],
             type=bool,
+            default=False,
             help="Show BSRT plots."
         ),
     )
 
 
-
 @entrypoint(get_params(), strict=True)
 def main(opt):
     LOG.info("Starting BSRT analysis.")
-
-    files_df = _select_files(opt)
+    files_df = _load_files_in_df(opt)
+    files_df = _select_files(opt, files_df)
     bsrt_df = _load_pickled_data(opt, files_df)
+    results = {'bsrt_df': bsrt_df}
 
     if not opt.show_plots and opt.outputdir is None:
         LOG.info("Neither plot display nor outputdir was selected. Plotting is omitted")
-        sys.exit()
+        return results
 
-    plot_fit_variables(opt, bsrt_df)
-    plot_full_crosssection(opt, bsrt_df)
-    plot_auxiliary_variables(opt, bsrt_df)
+    results.update(fitvariables=plot_fit_variables(opt, bsrt_df))
+    results.update(full_crosssection=plot_full_crosssection(opt, bsrt_df))
+    results.update(auxiliary_variables=plot_auxiliary_variables(opt, bsrt_df))
     if opt.kick_df is not None:
-        plot_crosssection_for_timesteps(opt, bsrt_df)
+        results.update(crosssection_for_timesteps=plot_crosssection_for_timesteps(opt, bsrt_df))
+    return results
 
 # File Name Functions ----------------------------------------------------------
 
@@ -118,17 +119,7 @@ def _get_auxiliary_var_plot_fname(beam):
 
 # File Handling  ---------------------------------------------------------------
 
-def _select_files(opt):
-    files_df = pd.DataFrame(data={'FILES':glob.glob(str(Path(opt.directory)/_get_bsrt_logger_fname(opt.beam, '*')))})
-
-    files_df = files_df.assign(TIMESTAMP=[
-        _get_timestamp_from_name(Path(f).name, _get_bsrt_logger_fname(opt.beam, '{}-{}-{}-{}-{}-{}.{}'))
-        for f in files_df['FILES']
-        ]
-        )
-    files_df = files_df.assign(TIME=[f.timestamp() for f in files_df['TIMESTAMP']])
-
-    files_df = files_df.sort_values(by=['TIME']).reset_index(drop=True).set_index('TIME')
+def _select_files(opt, files_df):
 
     if opt.endtime is not None and opt.starttime is not None:
         assert opt.endtime >= opt.starttime
@@ -141,6 +132,20 @@ def _select_files(opt):
 
     return files_df.iloc[indices[0]:indices[1]]
 
+def _load_files_in_df(opt):
+    files_df = pd.DataFrame(data={'FILES':glob.glob(str(Path(opt.directory)/_get_bsrt_logger_fname(opt.beam, '*')))})
+
+    files_df = files_df.assign(TIMESTAMP=[
+        _get_timestamp_from_name(Path(f).name, _get_bsrt_logger_fname(
+            opt.beam, '{}-{}-{}-{}-{}-{}.{}'))
+        for f in files_df['FILES']
+    ]
+    )
+    files_df = files_df.assign(TIME=[f.timestamp() for f in files_df['TIMESTAMP']])
+
+    files_df = files_df.sort_values(by=['TIME']).reset_index(drop=True).set_index('TIME')
+    return files_df
+
 
 def _get_closest_index(df, time):
     return  df.index.get_loc(time, method='nearest')
@@ -151,15 +156,26 @@ def _get_timestamp_from_name(name, formatstring):
     return datetime.datetime(year, month, day, hour, minute, second, microsecond, tzinfo=pytz.timezone('UTC'))
 
 
+def _check_and_fix_entries(entry):
+    # pd.to_csv does not handle np.array as entries nicely, converting to list circumvents this
+    for key, val in entry.items():
+        if isinstance(val, (np.ndarray, tuple)):
+            entry[key] = list(val)
+        if np.array(val).size == 0:
+            entry[key] = np.nan
+    return entry
+
+
 def _load_pickled_data(opt, files_df):
     merged_df = pd.DataFrame()
     for bsrtfile in files_df['FILES']:
         data = pickle.load(gzip.open(bsrtfile, 'rb'))
         for entry in data:
+            entry = _check_and_fix_entries(entry)
             merged_df = merged_df.append(entry, ignore_index=True)
 
     merged_df = merged_df.set_index(pd.to_datetime(merged_df['acqTime'], format=TIME_FORMAT))
-    merged_df.index.name='TimeIndex'
+    merged_df.index.name = 'TimeIndex'
     if opt.outputdir is not None:
         merged_df.to_csv(Path(opt.outputdir, _get_bsrt_tfs_fname(opt.beam)))
 
@@ -195,9 +211,9 @@ def plot_fit_variables(opt, bsrt_df):
 
     plt.tight_layout()
 
-    if opt.outputdir is not None:
+    if opt['outputdir'] is not None:
         plt.savefig(Path(opt.outputdir, _get_fitvar_plot_fname(opt.beam)))
-    if opt.show_plots:
+    if opt['show_plots']:
         plt.show()
     return fig
 
@@ -247,18 +263,16 @@ def plot_full_crosssection(opt, bsrt_df):
 
     plt.tight_layout()
     
-    if opt.outputdir is not None:
+    if opt['outputdir'] is not None:
         plt.savefig(Path(opt.outputdir, _get_2dcrossection_plot_fname(opt.beam)))
-    if opt.show_plots:
+    if opt['show_plots']:
         plt.show()
     return fig
 
 
 def _gauss(x, *p):
     a, b, c = p
-    y = a*np.exp(-(x - b)**2/(2. * c**2.))
-
-    return y
+    return a*np.exp(-(x - b)**2/(2. * c**2.))
 
 
 def _reshaped_imageset(df):
@@ -267,7 +281,7 @@ def _reshaped_imageset(df):
 
 def plot_crosssection_for_timesteps(opt, bsrt_df):
     kick_df = tfs.read(opt.kick_df)
-    figlist=[]
+    figlist = []
 
     if TIME_COLUMN not in bsrt_df.columns:
         raise AssertionError(f'Column {TIME_COLUMN} not found in kick_tfs.')
@@ -277,18 +291,18 @@ def plot_crosssection_for_timesteps(opt, bsrt_df):
         data_row = bsrt_df.iloc[_get_closest_index(bsrt_df, timestamp)]
 
         fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(9, 18))
-        
+
         ax[0].image(_reshaped_imageset(data_row), cmap='hot', interpolation='nearest')
         ax[0].set_title(f'2D Pixel count, Timestamp: {timestamp}')
-        
+
         ax[1].plot(data_row['projPositionSet1'], data_row['projDataSet1'], color='darkred')
         ax[1].plot(data_row['projPositionSet1'],
                    _gauss(data_row['projPositionSet1'],
                           data_row['lastFitResults'][2],
                           data_row['lastFitResults'][3],
                           data_row['lastFitResults'][4]),
-                     color='darkgreen',
-                     label='Gaussian Fit')
+                   color='darkgreen',
+                   label='Gaussian Fit')
         ax[1].set_ylim(bottom=0)
         ax[1].legend()
         ax[1].set_title('Horizontal Projection')
@@ -299,16 +313,16 @@ def plot_crosssection_for_timesteps(opt, bsrt_df):
                           data_row['lastFitResults'][7],
                           data_row['lastFitResults'][8],
                           data_row['lastFitResults'][9]),
-                      color='darkgreen',
-                      label='Gaussian Fit')
+                   color='darkgreen',
+                   label='Gaussian Fit')
         ax[2].set_ylim(bottom=0)
         ax[2].legend()
         ax[2].set_title('Vertical Projection')
 
         plt.tight_layout()
-        if opt.outputdir is not None:
+        if opt['outputdir'] is not None:
             plt.savefig(Path(opt.outputdir, _get_crossection_plot_fname(opt.beam, timestamp)))
-        if opt.show_plots:
+        if opt['show_plot']:
             plt.show()
         figlist.append(fig)
     return figlist
@@ -318,7 +332,7 @@ def plot_crosssection_for_timesteps(opt, bsrt_df):
 def plot_auxiliary_variables(opt, bsrt_df):
 
     fig, ax = plt.subplots(nrows=7, ncols=1, figsize=(9, 20), sharex=True)
- 
+
     ax[0].plot(bsrt_df.index, bsrt_df['acqCounter'])
     ax[0].set_title('acqCounter')
 
@@ -356,9 +370,9 @@ def plot_auxiliary_variables(opt, bsrt_df):
     ax6.legend(loc='upper right')
     ax[6].set_title('imageScale')
 
-    if opt.outputdir is not None:
+    if opt['outputdir'] is not None:
         plt.savefig(Path(opt.outputdir, _get_auxiliary_var_plot_fname(opt.beam)))
-    if opt.show_plots:
+    if opt['show_plots']:
         plt.show()
     return fig
 
