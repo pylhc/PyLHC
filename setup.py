@@ -1,7 +1,36 @@
 import re
+import sys
 import os
 import pathlib
+import shlex
 from setuptools import setup, find_packages
+
+from setuptools.command.test import test as TestCommand
+
+
+class PyTest(TestCommand):
+    """ Allows passing commandline arguments to pytest.
+        e.g. `python setup.py test -a='-o python_classes=BasicTests'`
+        or   `python setup.py pytest -a '-o python_classes="BasicTests ExtendedTests"'
+        or   `python setup.py test --pytest-args='--collect-only'`
+    """
+    user_options = [('pytest-args=', 'a', "Arguments to pass into pytest")]
+
+    def initialize_options(self):
+        TestCommand.initialize_options(self)
+        self.pytest_args = ''
+
+    def finalize_options(self):
+        TestCommand.finalize_options(self)
+        self.test_args = []
+        self.test_suite = True
+
+    def run_tests(self):
+        import pytest
+
+        # shlex.split() preserves quotes
+        errno = pytest.main(shlex.split(self.pytest_args))
+        sys.exit(errno)
 
 # The directory containing this file
 HERE = pathlib.Path(__file__).parent
@@ -74,6 +103,7 @@ setup(
     author="pyLHC",
     author_email="pylhc@github.com",
     license="MIT",
+    cmdclass={'pytest': PyTest},  # pass test arguments
     classifiers=[
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3",
