@@ -4,7 +4,9 @@ import pandas as pd
 import pytest
 from pylhc import BSRT_analysis
 
-INPUTS = os.path.join('..', 'inputs', 'bsrt_analysis')
+CURRENT_DIR = os.path.dirname(__file__)
+
+INPUTS = os.path.join(CURRENT_DIR, os.pardir, 'inputs', 'bsrt_analysis')
 
 
 def test_bsrt_df(_bsrt_df):
