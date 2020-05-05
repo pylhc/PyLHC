@@ -30,7 +30,7 @@ jobs:
         - python -m pip install -e git+git://github.com/pylhc/omc3.git#egg=omc3
         # - python -m pip install -e git+git://gitlab.cern.ch/scripting-tools/pyjapc.git#egg=pyjapc
       script:
-        - python setup.py test --pytest_args='--mpl'
+        - python setup.py test --pytest-args='--mpl'
       after_script:
         - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
 
