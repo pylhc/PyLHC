@@ -22,7 +22,7 @@ Feel free to use them anyway, if you wish!
 
 ### Prerequisites
 
-The codes use a multitude of packages as can be found in the [requirements.txt](requirements.txt).
+The codes use a multitude of packages as can be found in the [setup.py](setup.py) file.
 
 Important ones are: ``numpy``, ``pandas`` and ``scipy``.
 
