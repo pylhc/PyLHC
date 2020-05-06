@@ -68,6 +68,15 @@ def test_auxiliary_variables_with_kick_df(_bsrt_df, _kick_df):
                                                    'kick_df': _kick_df}, _bsrt_df)
 
 
+@pytest.mark.mpl_image_compare
+def test_crossection_for_timesteps(_bsrt_df, _kick_df):
+    results = BSRT_analysis.plot_crosssection_for_timesteps({'show_plots': False,
+                                                             'outputdir': None,
+                                                             'kick_df': _kick_df}, _bsrt_df)
+    assert len(results) == len(_kick_df)
+    return results[0]
+
+
 @pytest.fixture()
 def _bsrt_df():
     return pd.read_csv(os.path.join(INPUTS, BSRT_analysis._get_bsrt_tfs_fname('B1')),

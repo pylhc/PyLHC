@@ -180,6 +180,7 @@ def _load_pickled_data(opt, files_df):
 
     merged_df = merged_df.set_index(pd.to_datetime(merged_df['acqTime'], format=TIME_FORMAT))
     merged_df.index.name = 'TimeIndex'
+    merged_df = merged_df.drop_duplicates(subset=['acqCounter', 'acqTime'])
     if opt.outputdir is not None:
         merged_df.to_csv(Path(opt.outputdir, _get_bsrt_tfs_fname(opt.beam)))
 
@@ -280,7 +281,7 @@ def plot_full_crosssection(opt, bsrt_df):
     _add_kick_lines(ax[1], opt['kick_df'])
 
     plt.tight_layout()
-    
+
     if opt['outputdir'] is not None:
         plt.savefig(Path(opt.outputdir, _get_2dcrossection_plot_fname(opt.beam)))
     if opt['show_plots']:
@@ -300,22 +301,23 @@ def _reshaped_imageset(df):
 def plot_crosssection_for_timesteps(opt, bsrt_df):
     kick_df = opt['kick_df']
     figlist = []
-
-    for timestamp in pd.to_datetime(kick_df[TIME_COLUMN], format=TIME_FORMAT):
+    for idx, _ in kick_df.iterrows():
+        timestamp = pd.to_datetime(time_tools.cern_utc_string_to_utc(idx))
 
         data_row = bsrt_df.iloc[_get_closest_index(bsrt_df, timestamp)]
+        fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(18, 9), constrained_layout=True)
 
-        fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(9, 18))
+        fig.suptitle(f'Timestamp: {timestamp}')
 
-        ax[0].image(_reshaped_imageset(data_row), cmap='hot', interpolation='nearest')
-        ax[0].set_title(f'2D Pixel count, Timestamp: {timestamp}')
+        ax[0].imshow(_reshaped_imageset(data_row), cmap='hot', interpolation='nearest')
+        ax[0].set_title(f'2D Pixel count')
 
         ax[1].plot(data_row['projPositionSet1'], data_row['projDataSet1'], color='darkred')
         ax[1].plot(data_row['projPositionSet1'],
-                   _gauss(data_row['projPositionSet1'],
-                          data_row['lastFitResults'][2],
-                          data_row['lastFitResults'][3],
-                          data_row['lastFitResults'][4]),
+                   _gauss(np.array(data_row['projPositionSet1']),
+                                   data_row['lastFitResults'][2],
+                                   data_row['lastFitResults'][3],
+                                   data_row['lastFitResults'][4]),
                    color='darkgreen',
                    label='Gaussian Fit')
         ax[1].set_ylim(bottom=0)
@@ -324,10 +326,10 @@ def plot_crosssection_for_timesteps(opt, bsrt_df):
 
         ax[2].plot(data_row['projPositionSet2'], data_row['projDataSet2'], color='darkred')
         ax[2].plot(data_row['projPositionSet2'],
-                   _gauss(data_row['projPositionSet2'],
-                          data_row['lastFitResults'][7],
-                          data_row['lastFitResults'][8],
-                          data_row['lastFitResults'][9]),
+                   _gauss(np.array(data_row['projPositionSet2']),
+                                   data_row['lastFitResults'][7],
+                                   data_row['lastFitResults'][8],
+                                   data_row['lastFitResults'][9]),
                    color='darkgreen',
                    label='Gaussian Fit')
         ax[2].set_ylim(bottom=0)
@@ -337,7 +339,7 @@ def plot_crosssection_for_timesteps(opt, bsrt_df):
         plt.tight_layout()
         if opt['outputdir'] is not None:
             plt.savefig(Path(opt.outputdir, _get_crossection_plot_fname(opt.beam, timestamp)))
-        if opt['show_plot']:
+        if opt['show_plots']:
             plt.show()
         figlist.append(fig)
     return figlist
