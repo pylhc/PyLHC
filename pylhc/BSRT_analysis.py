@@ -27,7 +27,9 @@ from pylhc.constants.general import FILE_SUFFIX, TIME_COLUMN
 
 LOG = logging_tools.get_logger(__name__)
 PLOT_FILE_SUFFIX = '.pdf'
-TIME_FORMAT = '%Y/%m/%d %H:%M:%S.%f'
+BSRT_FESA_TIME_FORMAT = '%Y/%m/%d %H:%M:%S.%f'
+OLD_FILENAMING_CONV = '{}-{}-{}-{}-{}-{}.{}'
+NEW_FILENAMING_CONV = '{}_{}_{}@{}_{}_{}_{}'
 
 def get_params():
     return EntryPointParameters(
@@ -143,12 +145,14 @@ def _select_files(opt, files_df):
 
     return files_df.iloc[indices[0]:indices[1]+1]
 
+
 def _load_files_in_df(opt):
     files_df = pd.DataFrame(data={'FILES':glob.glob(str(Path(opt.directory)/_get_bsrt_logger_fname(opt.beam, '*')))})
 
     files_df = files_df.assign(TIMESTAMP=[
-        _get_timestamp_from_name(Path(f).name, _get_bsrt_logger_fname(
-            opt.beam, '{}-{}-{}-{}-{}-{}.{}'))
+        _get_timestamp_from_name(Path(f).name,
+                                 _get_bsrt_logger_fname(opt.beam,
+                                                        NEW_FILENAMING_CONV if ('@' in Path(f).name) else OLD_FILENAMING_CONV))
         for f in files_df['FILES']
     ]
     )
@@ -185,7 +189,7 @@ def _load_pickled_data(opt, files_df):
             entry = _check_and_fix_entries(entry)
             merged_df = merged_df.append(entry, ignore_index=True)
 
-    merged_df = merged_df.set_index(pd.to_datetime(merged_df['acqTime'], format=TIME_FORMAT))
+    merged_df = merged_df.set_index(pd.to_datetime(merged_df['acqTime'], format=BSRT_FESA_TIME_FORMAT))
     merged_df.index.name = 'TimeIndex'
     merged_df = merged_df.drop_duplicates(subset=['acqCounter', 'acqTime'])
     if opt.outputdir is not None:

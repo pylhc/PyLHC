@@ -15,6 +15,7 @@ import time
 import datetime as dt
 import pickle
 import pyjapc
+from omc3.definitions import formats
 #export PATH="/user/bdisoft/operational/bin/Python/PRO/bin:$PATH
 
 ##########################################
@@ -43,7 +44,7 @@ def parse_timestamp(thistime):
 
 # function to help write output from datetime objects in standard format throughout code
 def convert_to_data_output_format(dtobject):
-    output_timestamp = dtobject.strftime('%Y-%m-%d-%H-%M-%S.%f')
+    output_timestamp = dtobject.strftime(formats.TIME)
     return output_timestamp
 
 
