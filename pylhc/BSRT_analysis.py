@@ -7,7 +7,7 @@ returns them in as a tfs for further processing.
 Additionally, plots for quick checks of fit parameters, auxiliary variables and
 beam evolution are generated.
 Provided a tfs file with timestamps, plots of the 2D distribution and comparision
-of fit parameter to crosssections are added.
+of fit parameter to cross sections are added.
 Plots functions return figures and can be imported in e.g. IPython notebooks for plot tweaking.
 '''
 import glob
@@ -63,7 +63,7 @@ def get_params():
         kick_df=dict(
             flags=["--kick_df"],
             default=None,
-            help=f"TFS with column {TIME_COLUMN} with time stamps to be added in the plots. Additionally, crossection at these timestamps will be plotted."
+            help=f"TFS with column {TIME_COLUMN} with time stamps to be added in the plots. Additionally, cross section at these timestamps will be plotted."
         ),
         show_plots=dict(
             flags=["--show_plots"],
@@ -77,8 +77,11 @@ def get_params():
 @entrypoint(get_params(), strict=True)
 def main(opt):
     LOG.info("Starting BSRT analysis.")
+    LOG.info("Indexing files in directory.")
     files_df = _load_files_in_df(opt)
+    LOG.info("Select files based on provided timestamps.")
     files_df = _select_files(opt, files_df)
+    LOG.info("Load BSRT files in selected time frame.")
     bsrt_df = _load_pickled_data(opt, files_df)
     results = {'bsrt_df': bsrt_df}
 
@@ -89,10 +92,14 @@ def main(opt):
     if opt['kick_df'] is not None and isinstance(opt['kick_df'], str):
         opt['kick_df'] = tfs.read(opt['kick_df'], index=TIME_COLUMN)
 
+    LOG.info("Plotting Fitvariables.")
     results.update(fitvariables=plot_fit_variables(opt, bsrt_df))
+    LOG.info("Plotting full cross section.")
     results.update(full_crosssection=plot_full_crosssection(opt, bsrt_df))
+    LOG.info("Plotting auxiliary variables.")
     results.update(auxiliary_variables=plot_auxiliary_variables(opt, bsrt_df))
     if opt['kick_df'] is not None:
+        LOG.info("Plotting cross section for timesteps.")
         results.update(crosssection_for_timesteps=plot_crosssection_for_timesteps(opt, bsrt_df))
     return results
 
@@ -111,11 +118,11 @@ def _get_fitvar_plot_fname(beam):
 
 
 def _get_2dcrossection_plot_fname(beam):
-    return f'plot_BSRT_2DCrossection_{beam}{PLOT_FILE_SUFFIX}'
+    return f'plot_BSRT_2DCross_section_{beam}{PLOT_FILE_SUFFIX}'
 
 
 def _get_crossection_plot_fname(beam, timestamp):
-    return f'plot_BSRT_Crossection_{timestamp}_{beam}{PLOT_FILE_SUFFIX}'
+    return f'plot_BSRT_Cross_section_{timestamp}_{beam}{PLOT_FILE_SUFFIX}'
 
 
 def _get_auxiliary_var_plot_fname(beam):
@@ -194,40 +201,28 @@ def _add_kick_lines(ax, df):
             ax.axvline(x=time_tools.cern_utc_string_to_utc(idx), color='red', linestyle='--')
 
 
+def _fit_var(ax, bsrt_df, plot_dict, opt):
+
+    ax[plot_dict['idx']].plot(bsrt_df.index, [entry[plot_dict['fitidx']] for entry in bsrt_df['lastFitResults']])
+    ax[plot_dict['idx']].set_title(plot_dict['title'])
+    ax[plot_dict['idx']].set_ylim(bottom=plot_dict['bottom'])
+    _add_kick_lines(ax[plot_dict['idx']], opt['kick_df'])
+
+
 def plot_fit_variables(opt, bsrt_df):
 
-    fig, ax = plt.subplots(nrows=2, ncols=3, figsize=(20, 9), sharex=True)
+    fig, ax = plt.subplots(nrows=2, ncols=3, figsize=(20, 9), sharex=True, constrained_layout=True)
 
-    ax[0, 0].plot(bsrt_df.index, [entry[2] for entry in bsrt_df['lastFitResults']])
-    ax[0, 0].set_title('Horizontal Amplitude')
-    ax[0, 0].set_ylim(bottom=0)
+    plot_dicts = [
+        {'idx':(0, 0), 'fitidx':2, 'title':'Horizontal Amplitude', 'bottom':0},
+        {'idx':(0, 1), 'fitidx':3, 'title':'Horizontal Center', 'bottom':None},
+        {'idx':(0, 2), 'fitidx':4, 'title':'Horizontal Sigma', 'bottom':0},
+        {'idx':(1, 0), 'fitidx':7, 'title':'Vertical Amplitude', 'bottom':0},
+        {'idx':(1, 1), 'fitidx':8, 'title':'Vertical Center', 'bottom':None},
+        {'idx':(1, 2), 'fitidx':9, 'title':'Vertical Sigma', 'bottom':0},
+    ]
 
-    _add_kick_lines(ax[0, 0], opt['kick_df'])
-
-    ax[0, 1].plot(bsrt_df.index, [entry[3] for entry in bsrt_df['lastFitResults']])
-    ax[0, 1].set_title('Horizontal Center')
-    _add_kick_lines(ax[0, 1], opt['kick_df'])
-
-    ax[0, 2].plot(bsrt_df.index, [entry[4] for entry in bsrt_df['lastFitResults']])
-    ax[0, 2].set_title('Horizontal Sigma')
-    ax[0, 2].set_ylim(bottom=0)
-    _add_kick_lines(ax[0, 2], opt['kick_df'])
-
-    ax[1, 0].plot(bsrt_df.index, [entry[7] for entry in bsrt_df['lastFitResults']])
-    ax[1, 0].set_title('Vertical Amplitude')
-    ax[1, 0].set_ylim(bottom=0)
-    _add_kick_lines(ax[1, 0], opt['kick_df'])
-
-    ax[1, 1].plot(bsrt_df.index, [entry[8] for entry in bsrt_df['lastFitResults']])
-    ax[1, 1].set_title('Vertical Center')
-    _add_kick_lines(ax[1, 1], opt['kick_df'])
-
-    ax[1, 2].plot(bsrt_df.index, [entry[9] for entry in bsrt_df['lastFitResults']])
-    ax[1, 2].set_title('Vertical Sigma')
-    ax[1, 2].set_ylim(bottom=0)
-    _add_kick_lines(ax[1, 2], opt['kick_df'])
-
-    plt.tight_layout()
+    [_fit_var(ax, bsrt_df, plot_dict, opt) for plot_dict in plot_dicts]
 
     if opt['outputdir'] is not None:
         plt.savefig(Path(opt.outputdir, _get_fitvar_plot_fname(opt.beam)))
@@ -250,37 +245,43 @@ def pcolormesh_irregulargrid(ax, df, x_column, y_column, z_column):
     vmin = np.min(flattend_column(df, z_column))
     for _, row in df.iterrows():
         ax.pcolormesh([row['Starttime'], row['Endtime']],
-                      np.concatenate([row[y_column][0], row[y_column][:-1]+0.5*np.diff(row[y_column]), row[y_column][-1]], axis=None),
+                      np.concatenate([row[y_column][0],
+                                      row[y_column][:-1]+0.5*np.diff(row[y_column]),
+                                      row[y_column][-1]],
+                                      axis=None),
                       np.array([row[z_column]]).T,
                       vmin=vmin,
                       vmax=vmax,
                       cmap='inferno')
 
 
+def _full_crossection(ax, bsrt_df, plot_dict, opt):
+    pcolormesh_irregulargrid(ax, bsrt_df.reset_index(),
+                             'TimeIndex',
+                             f'projPositionSet{plot_dict["idx"]}',
+                             f'projDataSet{plot_dict["idx"]}')
+    ax.plot(bsrt_df.index,
+            [entry[plot_dict['fitresult']] for entry in bsrt_df['lastFitResults']],
+            color='white', linewidth=0.5)
+    ax.plot(bsrt_df.index,
+            [entry[plot_dict['fitresult']]+entry[plot_dict['fiterror']] for entry in bsrt_df['lastFitResults']],
+            color='white', linestyle='--', linewidth=0.3)
+    ax.plot(bsrt_df.index,
+            [entry[plot_dict['fitresult']]-entry[plot_dict['fiterror']] for entry in bsrt_df['lastFitResults']],
+            color='white', linestyle='--', linewidth=0.3)
+    ax.set_title(plot_dict['title'])
+    _add_kick_lines(ax, opt['kick_df'])
+
+
 def plot_full_crosssection(opt, bsrt_df):
-    fig, ax = plt.subplots(nrows=2, ncols=1, figsize=(18, 9))
 
-    pcolormesh_irregulargrid(ax[0], bsrt_df.reset_index(), 'TimeIndex', 'projPositionSet1', 'projDataSet1')
-    ax[0].plot(bsrt_df.index, [entry[3] for entry in bsrt_df['lastFitResults']],
-               color='white', linewidth=0.5)
-    ax[0].plot(bsrt_df.index, [entry[3]+entry[4] for entry in bsrt_df['lastFitResults']],
-               color='white', linestyle='--', linewidth=0.3)
-    ax[0].plot(bsrt_df.index, [entry[3]-entry[4] for entry in bsrt_df['lastFitResults']],
-               color='white', linestyle='--', linewidth=0.3)
-    ax[0].set_title('Horizontal Crossection')
-    _add_kick_lines(ax[0], opt['kick_df'])
+    plot_dicts = [
+        {'idx':1, 'fitresult':3, 'fiterror':4, 'title':'Horizontal Cross section'},
+        {'idx':2, 'fitresult':8, 'fiterror':9, 'title':'Vertical Cross section'},
+    ]
 
-    pcolormesh_irregulargrid(ax[1], bsrt_df.reset_index(), 'TimeIndex', 'projPositionSet2', 'projDataSet2')
-    ax[1].plot(bsrt_df.index, [entry[8] for entry in bsrt_df['lastFitResults']],
-               color='white', linewidth=0.5)
-    ax[1].plot(bsrt_df.index, [entry[8]+entry[9] for entry in bsrt_df['lastFitResults']],
-               color='white', linestyle='--', linewidth=0.3)
-    ax[1].plot(bsrt_df.index, [entry[8]-entry[9] for entry in bsrt_df['lastFitResults']],
-               color='white', linestyle='--', linewidth=0.3)
-    ax[1].set_title('Vertical Crossection')
-    _add_kick_lines(ax[1], opt['kick_df'])
-
-    plt.tight_layout()
+    fig, ax = plt.subplots(nrows=len(plot_dicts), ncols=1, figsize=(18, 9), constrained_layout=True)
+    [_full_crossection(axis, bsrt_df, plot_dict, opt) for axis, plot_dict in zip(ax, plot_dicts)]
 
     if opt['outputdir'] is not None:
         plt.savefig(Path(opt.outputdir, _get_2dcrossection_plot_fname(opt.beam)))
@@ -336,7 +337,6 @@ def plot_crosssection_for_timesteps(opt, bsrt_df):
         ax[2].legend()
         ax[2].set_title('Vertical Projection')
 
-        plt.tight_layout()
         if opt['outputdir'] is not None:
             plt.savefig(Path(opt.outputdir, _get_crossection_plot_fname(opt.beam, timestamp)))
         if opt['show_plots']:
@@ -345,53 +345,33 @@ def plot_crosssection_for_timesteps(opt, bsrt_df):
     return figlist
 
 
+def _aux_variables(ax, bsrt_df, plot_dict, opt):
+
+    ax.plot(bsrt_df.index, bsrt_df[plot_dict['variable1']], color='red', label=plot_dict['variable1'])
+    ax.legend(loc='upper left')
+    ax.set_title(plot_dict['title'])
+    _add_kick_lines(ax, opt['kick_df'])
+
+    if plot_dict['variable2'] is not None:
+        ax2 = ax.twinx()
+        ax2.plot(bsrt_df.index, bsrt_df[plot_dict['variable2']], color='blue', label=plot_dict['variable2'])
+        ax2.legend(loc='upper right')
+
+
 def plot_auxiliary_variables(opt, bsrt_df):
+    plot_dicts = [
+        {'variable1':'acqCounter', 'variable2':None, 'title':'acqCounter'},
+        {'variable1':'lastAcquiredBunch', 'variable2':None, 'title':'lastAcquiredBunch'},
+        {'variable1':'cameraGainVoltage', 'variable2':None, 'title':'cameraGainVoltage'},
+        {'variable1':'opticsResolutionSet1', 'variable2':'opticsResolutionSet2', 'title':'opticsResolutionSet'},
+        {'variable1':'imageCenterSet1', 'variable2':'imageCenterSet2', 'title':'imageCenter'},
+        {'variable1':'betaTwissSet1', 'variable2':'betaTwissSet2', 'title':'betaTwiss'},
+        {'variable1':'imageScaleSet1', 'variable2':'imageScaleSet2', 'title':'imageScale'},
+    ]
 
-    fig, ax = plt.subplots(nrows=7, ncols=1, figsize=(9, 20), sharex=True)
+    fig, ax = plt.subplots(nrows=len(plot_dicts), ncols=1, figsize=(9, 20), sharex=True)
 
-    ax[0].plot(bsrt_df.index, bsrt_df['acqCounter'])
-    ax[0].set_title('acqCounter')
-    _add_kick_lines(ax[0], opt['kick_df'])
-
-    ax[1].plot(bsrt_df.index, bsrt_df['lastAcquiredBunch'])
-    ax[1].set_title('lastAcquiredBunch')
-    _add_kick_lines(ax[1], opt['kick_df'])
-
-    ax[2].plot(bsrt_df.index, bsrt_df['opticsResolutionSet1'], color='red', label='opticsResolutionSet1')
-    ax2 = ax[2].twinx()
-    ax2.plot(bsrt_df.index, bsrt_df['opticsResolutionSet2'], color='blue', label='opticsResolutionSet2')
-    ax[2].legend(loc='upper left')
-    ax2.legend(loc='upper right')
-    ax[2].set_title('opticsResolution')
-    _add_kick_lines(ax[2], opt['kick_df'])
-
-    ax[3].plot(bsrt_df.index, bsrt_df['cameraGainVoltage'])
-    ax[3].set_title('cameraGainVoltage')
-    _add_kick_lines(ax[3], opt['kick_df'])
-
-    ax[4].plot(bsrt_df.index, bsrt_df['imageCenterSet1'], color='red', label='imageCenterSet1')
-    ax4 = ax[4].twinx()
-    ax4.plot(bsrt_df.index, bsrt_df['imageCenterSet2'], color='blue', label='imageCenterSet2')
-    ax[4].legend(loc='upper left')
-    ax4.legend(loc='upper right')
-    ax[4].set_title('imageCenter')
-    _add_kick_lines(ax[4], opt['kick_df'])
-
-    ax[5].plot(bsrt_df.index, bsrt_df['betaTwissSet1'], color='red', label='betaTwissSet1')
-    ax5 = ax[5].twinx()
-    ax5.plot(bsrt_df.index, bsrt_df['betaTwissSet2'], color='blue', label='betaTwissSet2')
-    ax[5].legend(loc='upper left')
-    ax5.legend(loc='upper right')
-    ax[5].set_title('betaTwissSet')
-    _add_kick_lines(ax[5], opt['kick_df'])
-
-    ax[6].plot(bsrt_df.index, bsrt_df['imageScaleSet1'], color='red', label='imageScaleSet1')
-    ax6 = ax[6].twinx()
-    ax6.plot(bsrt_df.index, bsrt_df['imageScaleSet2'], color='blue', label='imageScaleSet2')
-    ax[6].legend(loc='upper left')
-    ax6.legend(loc='upper right')
-    ax[6].set_title('imageScale')
-    _add_kick_lines(ax[6], opt['kick_df'])
+    [_aux_variables(axis, bsrt_df, plot_dict, opt) for axis, plot_dict in zip(ax, plot_dicts)]
 
     if opt['outputdir'] is not None:
         plt.savefig(Path(opt.outputdir, _get_auxiliary_var_plot_fname(opt.beam)))
