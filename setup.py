@@ -1,7 +1,36 @@
 import re
+import sys
 import os
 import pathlib
+import shlex
 from setuptools import setup, find_packages
+
+from setuptools.command.test import test as TestCommand
+
+
+class PyTest(TestCommand):
+    """ Allows passing commandline arguments to pytest.
+        e.g. `python setup.py test -a='-o python_classes=BasicTests'`
+        or   `python setup.py pytest -a '-o python_classes="BasicTests ExtendedTests"'
+        or   `python setup.py test --pytest-args='--collect-only'`
+    """
+    user_options = [('pytest-args=', 'a', "Arguments to pass into pytest")]
+
+    def initialize_options(self):
+        TestCommand.initialize_options(self)
+        self.pytest_args = ''
+
+    def finalize_options(self):
+        TestCommand.finalize_options(self)
+        self.test_args = []
+        self.test_suite = True
+
+    def run_tests(self):
+        import pytest
+
+        # shlex.split() preserves quotes
+        errno = pytest.main(shlex.split(self.pytest_args))
+        sys.exit(errno)
 
 # The directory containing this file
 HERE = pathlib.Path(__file__).parent
@@ -26,14 +55,18 @@ DEPENDENCIES = [
     'htcondor>=8.9.2',
     'tfs-pandas>=1.0.3',
     'generic-parser>=1.0.6',
-    'JPype1==0.6.3',
+    'JPype1>=0.7.2',
+    'parse>=1.15.0',
     'ipython>=7.0.1',  # actually dependency of pytimber
-    'omc3@https://github.com/pylhc/omc3/tarball/106/amplitude_detuning'  # installed in travis.yml
+    'omc3@https://github.com/pylhc/omc3/tarball/master',  # installed in travis.yml
+    # 'pyjapc@https://gitlab.cern.ch/scripting-tools/pyjapc/tarball/master'
 ]
 
 # Test dependencies that should only be installed for test purposes
 TEST_DEPENDENCIES = ['pytest>=5.2',
                      'pytest-cov>=2.6',
+                     'pytest-regressions>=2.0.0',
+                     'pytest-mpl>=0.11',
                      'hypothesis>=4.36.2',
                      'attrs>=19.2.0'
                      ]
@@ -70,6 +103,7 @@ setup(
     author="pyLHC",
     author_email="pylhc@github.com",
     license="MIT",
+    cmdclass={'pytest': PyTest},  # pass test arguments
     classifiers=[
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3",

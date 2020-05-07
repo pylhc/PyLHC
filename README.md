@@ -1,4 +1,6 @@
+
 # <img src="https://twiki.cern.ch/twiki/pub/BEABP/Logos/OMC_logo.png" height="28"> PyLHC Tools
+
 [![Travis (.com)](https://img.shields.io/travis/com/pylhc/PyLHC.svg?style=popout)](https://travis-ci.com/pylhc/PyLHC/)
 [![Code Climate coverage](https://img.shields.io/codeclimate/coverage/pylhc/PyLHC.svg?style=popout)](https://codeclimate.com/github/pylhc/PyLHC)
 [![Code Climate maintainability (percentage)](https://img.shields.io/codeclimate/maintainability-percentage/pylhc/PyLHC.svg?style=popout)](https://codeclimate.com/github/pylhc/PyLHC)
@@ -7,7 +9,7 @@
 
 This is the python-tool package of the optics measurements and corrections group (OMC).
 
-If you are not part of that group, you will most likely have no use for the codes provided here, 
+If you are not part of that group, you will most likely have no use for the codes provided here,
 unless you have a 9km wide accelerator at home.
 Feel free to use them anyway, if you wish!
 
@@ -20,7 +22,7 @@ Feel free to use them anyway, if you wish!
 
 ### Prerequisites
 
-The codes use a multitude of packages as can be found in the [requirements.txt](requirements.txt).
+The codes use a multitude of packages as can be found in the [setup.py](setup.py) file.
 
 Important ones are: ``numpy``, ``pandas`` and ``scipy``.
 
@@ -37,8 +39,9 @@ The latter tools can be found in [OMC3](https://github.com/pylhc/omc3) (Python 3
 
 ## Functionality
 
-- *Machine Settings Info* - Prints an overview over the machine settings at a given time. ([**machine_settings_info.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/machine_settings_info.py)) 
-- *MAD-X Job Submitter* - Allows to generate jobs based on a MAD-X template and submit them to HTCondor. ([**madx_submitter.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/madx_submitter.py)) 
+- *Machine Settings Info* - Prints an overview over the machine settings at a given time. ([**machine_settings_info.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/machine_settings_info.py))
+- *MAD-X Job Submitter* - Allows to generate jobs based on a MAD-X template and submit them to HTCondor. ([**madx_submitter.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/madx_submitter.py))
+- *BSRT Logger* and *BSRT Analysis* - Saves data coming straight from LHC BSRT FESA class and allows subsequent analysis. ([**BSRT_logger.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/BSRT_logger.py) & [**BSRT_analysis.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/BSRT_analysis.py) )
 
 ### Tests
 
