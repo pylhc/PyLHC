@@ -453,8 +453,8 @@ def fun_exp_decay(p, x):
 
 
 def fun_linear(p, x):
-    """ p = DA, x[0] = action (2J res), x[1] = emittance"""
-    return np.exp(-(p - x[0]/2) / x[1])
+    """ p = DA, x = action (2J res)"""
+    return x - p
 
 
 def swap_fun_parameters(fun):
@@ -467,7 +467,7 @@ def _do_fit(plane, kick_df):
     action, emittance, rel_losses = _get_fit_data(kick_df, plane)
     init_guess = [INITIAL_DA_FIT*kick_df.headers[header_nominal_emittance(plane)]]
 
-    # fit_fun, x, y, sx, sy = _linear_fit_parameters(action, emittance, rel_losses)
+    #fit_fun, x, y, sx, sy = _linear_fit_parameters(action, emittance, rel_losses)
     fit_fun, x, y, sx, sy = _exponential_fit_parameters(action, emittance, rel_losses)
 
     # do prelim fit
