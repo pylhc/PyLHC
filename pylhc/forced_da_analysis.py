@@ -267,7 +267,7 @@ def _check_all_times_in(series, start, end):
 def _get_dataframes(kick_times, opt):
     db = None
     try:
-        db = pytimber.LoggingDB(opt['timber_db'])
+        db = pytimber.LoggingDB(source=opt['timber_db'])
     except AttributeError:
         error_msg = ""
         if opt.fill is not None:
