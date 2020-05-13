@@ -6,10 +6,10 @@ Functions allowing to create HTCondor jobs and submit them.
 
 write_bash creates bash scripts executing either a python or madx script. 
 Takes dataframe, job type, and optional additional cmd line arguments for script.
-A shell script is created in each job directory in the dataframe.
+A shell script is created in each job kick_directory in the dataframe.
 
 make_subfile takes the job dataframe and creates the .sub required for submissions to HTCondor.
-The .sub file will be put in the working directory. 
+The .sub file will be put in the working kick_directory.
 The maximum runtime of one job can be specified, standard is 8h.
 
 
@@ -94,7 +94,7 @@ def create_multijob_for_bashfiles(job_df, **kwargs):
     """ Function to create a HTCondor job assuming n_files bash-files.
 
     Keyword Args:
-        output_dir (str): output directory that will be transferred. Default: None
+        output_dir (str): output kick_directory that will be transferred. Default: None
         duration (str): max duration of the job. Needs to be one of the HTCondor Jobflavours. Default: 'workday'
         group (str): force use of accounting group. Default: None
         retries (int): maximum amount of retries. Default: 3

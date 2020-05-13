@@ -44,6 +44,8 @@ def outfile_emittance_bws(plane):
     return f'emittance_bws_{plane.lower()}{TFS_SUFFIX}'
 
 
+OUTFILE_INTENSITY = f'intensity{TFS_SUFFIX}'
+
 # Plotting ---------------------------------------------------------------------
 
 PLOT_FILETYPES = (".pdf", ".png")

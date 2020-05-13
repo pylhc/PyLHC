@@ -3,7 +3,7 @@ MADX MASK Resolver
 ------------------
 
 Takes path to mask file, list of parameter to be replaced and pandas dataframe containg per job 
-the job directory where processed mask is to be put, and columns containg the parameter values with column named like replace parameterself.
+the job kick_directory where processed mask is to be put, and columns containg the parameter values with column named like replace parameterself.
 Job directories have to be created beforehand. Processed madx mask has the same filename as mask but with file extension .madx.
 Input Dataframe is returned with additonal column containg path to the processed madx files.
 

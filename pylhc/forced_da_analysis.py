@@ -10,7 +10,7 @@ Runs the forced DA analysis, following the procedure described in `CarlierForced
 
   Flags: **['-b', '--beam']**
   Choices: ``[1, 2]``
-- **directory** *(str)*: Analysis directory containing kick files.
+- **kick_directory** *(str)*: Analysis kick_directory containing kick files.
 
   Flags: **['-d', '--dir']**
 - **energy** *(float)*: Beam energy in GeV.
@@ -52,6 +52,7 @@ Runs the forced DA analysis, following the procedure described in `CarlierForced
 
 import os
 from contextlib import suppress
+from pathlib import Path
 
 import matplotlib as mpl
 import matplotlib.colors as mcolors
@@ -82,7 +83,7 @@ from pylhc.constants.forced_da_analysis import (bsrt_emittance_key, bws_emittanc
                                                 INTENSITY_KEY, INTENSITY_LOSSES,
                                                 ROLLING_AVERAGE_WINDOW, BSRT_EMITTANCE_TO_METER, BWS_DIRECTIONS,
                                                 BWS_EMITTANCE_TO_METER, KICKFILE, RESULTS_DIR, YPAD,
-                                                MAX_CURVEFIT_FEV,
+                                                MAX_CURVEFIT_FEV, OUTFILE_INTENSITY,
                                                 )
 from pylhc.constants.general import get_proton_gamma, get_proton_beta, LHC_NOMINAL_EMITTANCE
 
@@ -96,11 +97,16 @@ LOG = logging_tools.get_logger(__name__)
 
 def get_params():
     return EntryPointParameters(
-        directory=dict(
-            flags=['-d', "--dir"],
+        kick_directory=dict(
+            flags=['-k', "--kickdir"],
             required=True,
             type=str,
-            help="Analysis directory containing kick files."
+            help="Analysis kick_directory containing kick files."
+        ),
+        output_directory=dict(
+            flags=['-o', "--outdir"],
+            type=str,
+            help="Output kick_directory, if not given subfolder in kick kick_directory",
         ),
         energy=dict(
             flags=['-e', "--energy"],
@@ -128,14 +134,12 @@ def get_params():
             help="Plane of the kicks. Give 'XY' for using both planes (e.g. diagonal kicks)."
         ),
         time_around_kicks=dict(
-            flags=["--taround"],
             type=int,
             default=TIME_AROUND_KICKS_MIN,
             help=("If no fill is given, this defines the time (in minutes) "
                   "when data before the first and after the last kick is extracted.")
         ),
         intensity_time_before_kick=dict(
-            flags=["--tbefore"],
             type=int,
             nargs=2,
             default=TIME_BEFORE_KICK_S,
@@ -143,12 +147,39 @@ def get_params():
                   "which is used for intensity averaging to calculate the losses.")
         ),
         intensity_time_after_kick=dict(
-            flags=["--tafter"],
             type=int,
             nargs=2,
             default=TIME_AFTER_KICK_S,
             help=("Defines the times after the kicks (in seconds) "
                   "which is used for intensity averaging to calculate the losses.")
+        ),
+        normalized_emittance=dict(
+            type=float,
+            default=LHC_NOMINAL_EMITTANCE,
+            help=("Assumed NORMALIZED emittance for the machine.")
+        ),
+        emittance_tfs=dict(
+            help="Dataframe or Path of pre-saved emittance tfs.",
+        ),
+        intensity_tfs=dict(
+            help="Dataframe or Path of pre-saved intensity tfs.",
+        ),
+        show_wirescan_emittance=dict(
+            default=False,
+            help=("Flag if the emittance from wirescan should also be shown, "
+                  "can also be a Dataframe or Path of pre-saved emittance bws tfs."),
+        ),
+        timber_db=dict(
+            type=str,
+            default='all',
+            choices=['all', 'mdb', 'ldb', 'nxcals'],
+            help="Which timber database to use."
+        ),
+        fit=dict(
+            type=str,
+            default='exponential',
+            choices=['exponential', 'linear'],
+            help="Fitting function to use (rearranges parameters to make sense)."
         ),
     )
 
@@ -159,22 +190,24 @@ def main(opt):
     _log_opt(opt)
 
     # get data
-    out_dir = _get_output_dir(opt.directory)
-    kick_df = _get_kick_df(opt.directory, opt.plane)
+    kick_dir, out_dir = _get_output_dir(opt.kick_directory, opt.output_directory)
+    kick_df = _get_kick_df(kick_dir, opt.plane)
     # todo: write intensity_df, load a either of them from tfs
-    intensity_df, emittance_df, emittance_bws_df = _get_dfs_from_timber(opt.fill, opt.beam, opt.plane,
-                                                                        kick_df.index, opt.time_around_kicks)
+    intensity_df, emittance_df, emittance_bws_df = _get_dataframes(kick_df.index,
+                                                                   opt.get_subdict(['fill', 'beam', 'plane', 'time_around_kicks',
+                                                                                    'emittance_tfs', 'intensity_tfs', 'show_wirescan_emittance',
+                                                                                    'timber_db']))
     _check_all_times_in(kick_df.index, intensity_df.index[0], intensity_df.index[-1])
 
     # add data to kicks
     kick_df = _add_intensity_and_losses_to_kicks(kick_df, intensity_df,
                                                  opt.intensity_time_before_kick, opt.intensity_time_after_kick)
-    kick_df = _add_emittance_to_kicks(opt.plane, opt.energy, kick_df, emittance_df)
-    kick_df = _do_fit(opt.plane, kick_df)
+    kick_df = _add_emittance_to_kicks(opt.plane, opt.energy, kick_df, emittance_df, opt.normalized_emittance)
+    kick_df = _do_fit(opt.plane, kick_df, opt.fit_type)
     kick_df = _convert_to_sigmas(opt.plane, kick_df)
 
     # output
-    _write_tfs(out_dir, opt.plane, kick_df, emittance_df, emittance_bws_df)
+    _write_tfs(out_dir, opt.plane, kick_df, intensity_df, emittance_df, emittance_bws_df)
 
     # plotting
     register_matplotlib_converters()  # for datetime plotting
@@ -196,20 +229,21 @@ def _log_opt(opt):
     LOG.info(f"  Energy: {opt.energy} GeV")
     LOG.info(f"  Beam: {opt.beam}")
     LOG.info(f"  Plane: {opt.plane}")
-    LOG.info(f"  Analysis Directory: '{opt.directory}'")
+    LOG.info(f"  Analysis Directory: '{opt.kick_directory}'")
 
 
-def _write_tfs(directory, plane, kick_df, emittance_df, emittance_bws_df):
+def _write_tfs(out_dir, plane, kick_df, intensity_df, emittance_df, emittance_bws_df):
     """ Write out gathered data. """
     LOG.debug("Writing tfs files.")
     for df in (kick_df, emittance_df, emittance_bws_df):
         df.insert(0, TIME, [CERNDatetime(dt).cern_utc_string() for dt in df.index])
     try:
-        tfs.write(os.path.join(directory, outfile_kick(plane)), kick_df)
-        tfs.write(os.path.join(directory, outfile_emittance(plane)), emittance_df)
-        tfs.write(os.path.join(directory, outfile_emittance_bws(plane)), emittance_bws_df)
+        tfs.write(out_dir / outfile_kick(plane), kick_df)
+        tfs.write(out_dir / OUTFILE_INTENSITY, intensity_df)
+        tfs.write(out_dir / outfile_emittance(plane), emittance_df)
+        tfs.write(out_dir / outfile_emittance_bws(plane), emittance_bws_df)
     except (FileNotFoundError, IOError):
-        LOG.error(f"Cannot write into directory: {directory} ")
+        LOG.error(f"Cannot write into kick_directory: {str(out_dir)} ")
 
 
 def _check_all_times_in(series, start, end):
@@ -219,28 +253,72 @@ def _check_all_times_in(series, start, end):
                          "Check if correct kick-file or fill number are used.")
 
 
-# Timber Data ------------------------------------------------------------------
+# TFS Data Loading -------------------------------------------------------------
 
+def _get_dataframes(kick_times, opt):
+    db = None
+    try:
+        db = pytimber.LoggingDB(opt['timber_db'])
+    except AttributeError:
+        error_msg = ""
+        if opt.fill is not None:
+            error_msg += "'fill' is given, "
+        if opt.emittance_tfs is None:
+            error_msg += "'emittance_tfs' is not given, "
+        if opt.intensity_tfs is None:
+            error_msg += "'intensity_tfs' is not given, "
+        if opt.show_wirescan_emittance is True:
+            error_msg += 'wirescan emittance is requested, '
+        error_msg += "but there is no access to timber databases. Aborting."
+        raise EnvironmentError(error_msg)
 
-def _get_dfs_from_timber(fill, beam, plane, kick_times, time_around_kicks):
-    LOG.debug("Getting data from timber.")
-    db = pytimber.LoggingDB()
-    if fill is not None:
-        LOG.debug("Getting Timespan from fill")
-        filldata = db.getLHCFillData(fill)
-        timespan = filldata['startTime'], filldata['endTime']
+    if opt.fill is not None:
+        timespan = _get_fill_times(db, opt.fill)
     else:
-        td = pd.Timedelta(minutes=time_around_kicks)
+        td = pd.Timedelta(minutes=opt.time_around_kicks)
         timespan = (kick_times.min() - td, kick_times.max() + td)
         timespan = tuple(t.timestamp() for t in timespan)
 
-    intensity_df = _get_bctrf_beam_intensity(beam, db, timespan)
-    emittance_bws_df = _get_bws_emittances(beam, plane, db, timespan)
-    emittance_df = _get_bsrt_bunch_emittances(beam, plane,  db, timespan)
+    if opt.intensity_tfs:
+        intensity_df = _get_bctrf_beam_intensity_from_timber(opt.beam, db, timespan)
+    else:
+        intensity_df = _read_tfs(opt.intensity_tfs, timespan)
+
+    if opt.emittance_tfs:
+        emittance_df = _get_bsrt_bunch_emittances_from_timber(opt.beam, opt.plane, db, timespan)
+    else:
+        intensity_df = _read_tfs(opt.emittance_tfs, timespan)
+
+    if opt.show_wirescan_emittance is True:
+        emittance_bws_df = _get_bws_emittances_from_timber(opt.beam, opt.plane, db, timespan)
+    elif opt.show_wirescan_emittance:
+        emittance_bws_df = _read_tfs(opt.show_wirescan_emittance, timespan)
+    else:
+        emittance_bws_df = None
+
     return intensity_df, emittance_df, emittance_bws_df
 
 
-def _get_bctrf_beam_intensity(beam, db, timespan):
+def _read_tfs(tfs_file_or_path, timespan):
+    """ Read previously gathered data (see :meth:`pylhc.forced_da_analysis._write_tfs`)"""
+    try:
+        tfs_df = tfs.read_tfs(tfs_file_or_path, index=TIME)
+    except IOError:
+        tfs_df = tfs_file_or_path  # hopefully
+    else:
+        tfs_df.index = pd.Index(CERNDatetime.from_cern_utc_string(t) for t in tfs_df.index)
+
+    return tfs_df.loc[slice(timespan), :]
+
+# Timber Data ------------------------------------------------------------------
+
+def _get_fill_times(db, fill):
+    LOG.debug(f"Getting Timespan from fill {fill}")
+    filldata = db.getLHCFillData(fill)
+    return filldata['startTime'], filldata['endTime']
+
+
+def _get_bctrf_beam_intensity_from_timber(beam, db, timespan):
     LOG.debug(f"Getting beam intensity from bctfr for beam {beam}.")
     intensity_key = INTENSITY_KEY.format(beam=beam)
     LOG.debug(f"  Key: {intensity_key}")
@@ -251,7 +329,7 @@ def _get_bctrf_beam_intensity(beam, db, timespan):
     return df
 
 
-def _get_bsrt_bunch_emittances(beam, planes, db, timespan):
+def _get_bsrt_bunch_emittances_from_timber(beam, planes, db, timespan):
     dfs = {p: None for p in planes}
     for plane in planes:
         LOG.debug(f"Getting emittance from BSRT for beam {beam}  and plane {plane}.")
@@ -288,7 +366,7 @@ def _get_bsrt_bunch_emittances(beam, planes, db, timespan):
     return df
 
 
-def _get_bws_emittances(beam, planes, db, timespan):
+def _get_bws_emittances_from_timber(beam, planes, db, timespan):
     dfs = {p: None for p in planes}
     for plane in planes:
         LOG.debug(f"Getting emittance from BWS for beam {beam} and plane {plane}.")
@@ -321,24 +399,24 @@ def _get_bws_emittances(beam, planes, db, timespan):
 # Kick Data --------------------------------------------------------------------
 
 
-def _get_kick_df(directory, plane):
+def _get_kick_df(kick_dir, plane):
     def column_action_error(x):
         return err_col(column_action(x))
 
     try:
-        df = _get_new_kick_file(directory, plane)
+        df = _get_new_kick_file(kick_dir, plane)
     except FileNotFoundError:
         LOG.debug("Reading of kickfile failed. Looking for old kickfile.")
-        df = _get_old_kick_file(directory, plane)
+        df = _get_old_kick_file(kick_dir, plane)
 
     df = _maybe_add_sum_for_planes(df, plane, column_action, column_action_error)
     return df[[column_action(plane), column_action_error(plane)]]
 
 
-def _get_old_kick_file(directory, plane):
+def _get_old_kick_file(kick_dir, plane):
     """ Kick files from Beta-Beat.src """
-    path = os.path.join(directory, "getkickac.out")
-    LOG.debug(f"Reading kickfile '{path}'.'")
+    path = kick_dir / "getkickac.out"
+    LOG.debug(f"Reading kickfile '{str(path)}'.'")
     df = tfs.read(path)
     df = df.set_index("TIME")
     df.index = pd.Index([CERNDatetime.from_timestamp(t) for t in df.index], dtype=object)
@@ -350,23 +428,25 @@ def _get_old_kick_file(directory, plane):
     return df
 
 
-def _get_new_kick_file(directory, planes):
+def _get_new_kick_file(kick_dir, planes):
     """ Kick files from OMC3 """
     dfs = {p: None for p in planes}
     for plane in planes:
-        path = os.path.join(directory, f"{KICKFILE}_{plane.lower()}{TFS_SUFFIX}")
-        LOG.debug(f"Reading kickfile '{path}'.'")
+        path = kick_dir / f"{KICKFILE}_{plane.lower()}{TFS_SUFFIX}"
+        LOG.debug(f"Reading kickfile '{str(path)}'.'")
         df = tfs.read(path, index=TIME)
         df.index = pd.Index([CERNDatetime.from_cern_utc_string(t) for t in df.index], dtype=object)
         dfs[plane] = df
     return _merge_df_planes(dfs, planes)
 
 
-def _get_output_dir(directory):
-    path = os.path.join(directory, RESULTS_DIR)
-    with suppress(IOError):
-        os.mkdir(path)
-    return path
+def _get_output_dir(kick_directory, output_directory):
+    if output_directory:
+        return Path(kick_directory), Path(output_directory)
+
+    path = Path(kick_directory) / RESULTS_DIR
+    path.mkdir(exist_ok=True)
+    return path.parent, path
 
 
 # Intensity at Kicks -----------------------------------------------------------
@@ -419,7 +499,7 @@ def _calculate_intensity_losses_at_kicks(kick_df):
 # Emittance at Kicks -----------------------------------------------------------
 
 
-def _add_emittance_to_kicks(plane, energy, kick_df, emittance_df):
+def _add_emittance_to_kicks(plane, energy, kick_df, emittance_df, nominal):
     LOG.debug("Retrieving normalized emittance at the kicks.")
     kick_df.headers[HEADER_ENERGY] = energy
     kick_df.headers[HEADER_BSRT_ROLLING_WINDOW] = ROLLING_AVERAGE_WINDOW
@@ -437,8 +517,8 @@ def _add_emittance_to_kicks(plane, energy, kick_df, emittance_df):
     normalization = get_proton_gamma(energy) * get_proton_beta(energy)  # norm emittance to emittance
     col_emittance = column_emittance(plane)
 
-    kick_df.headers[header_norm_nominal_emittance(plane)] = LHC_NOMINAL_EMITTANCE
-    kick_df.headers[header_nominal_emittance(plane)] = LHC_NOMINAL_EMITTANCE / normalization
+    kick_df.headers[header_norm_nominal_emittance(plane)] = nominal
+    kick_df.headers[header_nominal_emittance(plane)] = nominal / normalization
     kick_df[col_emittance] = kick_df[col_nemittance] / normalization
     kick_df[err_col(col_emittance)] = kick_df[err_col(col_nemittance)] / normalization
     return kick_df
@@ -462,13 +542,16 @@ def swap_fun_parameters(fun):
     return lambda x, p: fun(p, x)
 
 
-def _do_fit(plane, kick_df):
+def _do_fit(plane, kick_df, fit_type):
     LOG.debug("Fitting forced da to exponential. ")
     action, emittance, rel_losses = _get_fit_data(kick_df, plane)
     init_guess = [INITIAL_DA_FIT*kick_df.headers[header_nominal_emittance(plane)]]
 
-    # fit_fun, x, y, sx, sy = _linear_fit_parameters(action, emittance, rel_losses)
-    fit_fun, x, y, sx, sy = _exponential_fit_parameters(action, emittance, rel_losses)
+    get_fit_param = {'linear': _linear_fit_parameters,
+                     'exponential': _exponential_fit_parameters,
+                     }[fit_type]
+
+    fit_fun, x, y, sx, sy = get_fit_param(action, emittance, rel_losses)
 
     # do prelim fit
     init_fit = _fit_curve(swap_fun_parameters(fit_fun), x, y, init_guess)

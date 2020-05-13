@@ -5,14 +5,14 @@ MADX Job-Submitter
 Allows to execute a parametric madx study using a madx mask and a dictionary with parameters to replace.
 Parameters to be replaced must be present in mask as %(PARAMETER)s.
 
-When submitting to HTCondor, madx data to be transferred back to the working directory
+When submitting to HTCondor, madx data to be transferred back to the working kick_directory
 must be written in a sub-folder defined by `job_output_directory` which defaults to `Outputdata`.
 
 Script also allows to check if all htcondor job finished successfully,
 resubmissions with a different parameter grid, and local execution.
 
-A `Jobs.tfs` is created in the working directory containing the Job Id,
-parameter per job and job directory for further post processing.
+A `Jobs.tfs` is created in the working kick_directory containing the Job Id,
+parameter per job and job kick_directory for further post processing.
 
 *--Required--*
 - **mask** *(str)*: Madx mask to use
