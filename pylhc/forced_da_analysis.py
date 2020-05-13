@@ -556,8 +556,8 @@ def fun_exp_decay(p, x):
 
 
 def fun_linear(p, x):
-    """ p = DA, x[0] = action (2J res), x[1] = emittance"""
-    return np.exp(-(p - x[0]/2) / x[1])
+    """ p = DA, x = action (2J res)"""
+    return x - p/2
 
 
 def swap_fun_parameters(fun):
