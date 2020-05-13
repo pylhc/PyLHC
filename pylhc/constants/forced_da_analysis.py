@@ -76,13 +76,13 @@ def bws_emittance_key(beam, plane, direction):
 
 # Headers ----------------------------------------------------------------------
 # TODO: tfs compatible headers
-HEADER_TIME_BEFORE = "Timespan before kick (for intensity averaging) [s]"
-HEADER_TIME_AFTER = "Timespan after kick (for intensity averaging) [s]"
-HEADER_BSRT_ROLLING_WINDOW = "Rolling window length for BSRT-Emittance averaging"
-HEADER_DA = "Forced DA Fit {plane:} [{unit:}]"
-HEADER_DA_ERROR = "Forced DA Fit Error {plane:} [{unit:}]"
-HEADER_ENERGY = "Beam Energy [GeV]"
-HEADER_NOMINAL_EMITTANCE = "Nominal Emittance {plane:}[m]"
+HEADER_TIME_BEFORE = "Timespan_before_kick[s]"
+HEADER_TIME_AFTER = "Timespan_after_kick[s]"
+HEADER_BSRT_ROLLING_WINDOW = "Emittance_rolling_window_length"
+HEADER_DA = "Forced_DA_Fit_{plane:}[{unit:}]"
+HEADER_DA_ERROR = "Forced_DA_Fit_Error_{plane:}[{unit:}]"
+HEADER_ENERGY = "Beam_Energy[GeV]"
+HEADER_NOMINAL_EMITTANCE = "Nominal_Emittance_{plane:}[m]"
 
 
 def header_da(plane, unit="m"):
