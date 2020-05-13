@@ -245,7 +245,8 @@ def _write_tfs(out_dir, plane, kick_df, intensity_df, emittance_df, emittance_bw
     """ Write out gathered data. """
     LOG.debug("Writing tfs files.")
     for df in (kick_df, emittance_df, emittance_bws_df):
-        df.insert(0, TIME, [CERNDatetime(dt).cern_utc_string() for dt in df.index])
+        if df:
+            df.insert(0, TIME, [CERNDatetime(dt).cern_utc_string() for dt in df.index])
     try:
         tfs.write(out_dir / outfile_kick(plane), kick_df)
         tfs.write(out_dir / OUTFILE_INTENSITY, intensity_df)
