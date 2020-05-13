@@ -87,9 +87,8 @@ from pylhc.constants.general import get_proton_gamma, get_proton_beta, LHC_NOMIN
 
 from omc3.optics_measurements import toolbox
 from omc3.utils import logging_tools
-from omc3.plotting.utils import style
+from omc3.plotting.utils import style, lines, annotations, colors
 from omc3.utils.time_tools import CERNDatetime
-from pylhc.plotshop import lines, annotations, colors
 
 LOG = logging_tools.get_logger(__name__)
 
