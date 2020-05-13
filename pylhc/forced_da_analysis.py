@@ -161,6 +161,7 @@ def main(opt):
     # get data
     out_dir = _get_output_dir(opt.directory)
     kick_df = _get_kick_df(opt.directory, opt.plane)
+    # todo: write intensity_df, load a either of them from tfs
     intensity_df, emittance_df, emittance_bws_df = _get_dfs_from_timber(opt.fill, opt.beam, opt.plane,
                                                                         kick_df.index, opt.time_around_kicks)
     _check_all_times_in(kick_df.index, intensity_df.index[0], intensity_df.index[-1])

@@ -75,7 +75,7 @@ def bws_emittance_key(beam, plane, direction):
     return BWS_EMITTANCE_KEY.format(side=LR_MAP[beam], beam=beam, plane=PLANE_TO_HV[plane], direction=direction)
 
 # Headers ----------------------------------------------------------------------
-
+# TODO: tfs compatible headers
 HEADER_TIME_BEFORE = "Timespan before kick (for intensity averaging) [s]"
 HEADER_TIME_AFTER = "Timespan after kick (for intensity averaging) [s]"
 HEADER_BSRT_ROLLING_WINDOW = "Rolling window length for BSRT-Emittance averaging"
@@ -94,11 +94,11 @@ def header_da_error(plane, unit="m"):
 
 
 def header_nominal_emittance(plane):
-    return HEADER_NOMINAL_EMITTANCE.format(plane.upper())
+    return HEADER_NOMINAL_EMITTANCE.format(plane=plane.upper())
 
 
 def header_norm_nominal_emittance(plane):
-    return f"Normalized {HEADER_NOMINAL_EMITTANCE.format(plane.upper())}"
+    return f"Normalized {HEADER_NOMINAL_EMITTANCE.format(plane=plane.upper())}"
 
 # Columns ----------------------------------------------------------------------
 
