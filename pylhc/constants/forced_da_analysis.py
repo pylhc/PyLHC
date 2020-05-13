@@ -79,7 +79,6 @@ def bws_emittance_key(beam, plane, direction):
 HEADER_TIME_BEFORE = "Timespan before kick (for intensity averaging) [s]"
 HEADER_TIME_AFTER = "Timespan after kick (for intensity averaging) [s]"
 HEADER_BSRT_ROLLING_WINDOW = "Rolling window length for BSRT-Emittance averaging"
-HEADER_EMITTANCE_AVERAGE = "BSRT-Emittance average"
 HEADER_DA = "Forced DA Fit {plane:} [{unit:}]"
 HEADER_DA_ERROR = "Forced DA Fit Error {plane:} [{unit:}]"
 HEADER_ENERGY = "Beam Energy [GeV]"
@@ -95,11 +94,11 @@ def header_da_error(plane, unit="m"):
 
 
 def header_nominal_emittance(plane):
-    return HEADER_EMITTANCE_AVERAGE.format(plane.upper())
+    return HEADER_NOMINAL_EMITTANCE.format(plane.upper())
 
 
 def header_norm_nominal_emittance(plane):
-    return f"Normalized {HEADER_EMITTANCE_AVERAGE.format(plane.upper())}"
+    return f"Normalized {HEADER_NOMINAL_EMITTANCE.format(plane.upper())}"
 
 # Columns ----------------------------------------------------------------------
 
