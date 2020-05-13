@@ -13,6 +13,7 @@ from pylhc.constants.general import PLANE_TO_HV
 RESULTS_DIR = "forced_da_analysis"
 
 ROLLING_AVERAGE_WINDOW = 100
+OUTLIER_LIMIT = .5
 TIME_AROUND_KICKS_MIN = 10
 TIME_BEFORE_KICK_S = [30, 5]
 TIME_AFTER_KICK_S = [5, 30]
@@ -77,10 +78,10 @@ def bws_emittance_key(beam, plane, direction):
     return BWS_EMITTANCE_KEY.format(side=LR_MAP[beam], beam=beam, plane=PLANE_TO_HV[plane], direction=direction)
 
 # Headers ----------------------------------------------------------------------
-# TODO: tfs compatible headers
 HEADER_TIME_BEFORE = "Timespan_before_kick[s]"
 HEADER_TIME_AFTER = "Timespan_after_kick[s]"
 HEADER_BSRT_ROLLING_WINDOW = "Emittance_rolling_window_length"
+HEADER_BSRT_OUTLIER_LIMIT = "Emittance_outlier_limit"
 HEADER_DA = "Forced_DA_Fit_{plane:}[{unit:}]"
 HEADER_DA_ERROR = "Forced_DA_Fit_Error_{plane:}[{unit:}]"
 HEADER_ENERGY = "Beam_Energy[GeV]"

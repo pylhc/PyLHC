@@ -51,7 +51,6 @@ Runs the forced DA analysis, following the procedure described in `CarlierForced
 
 
 import os
-from contextlib import suppress
 from pathlib import Path
 
 import matplotlib as mpl
@@ -60,12 +59,17 @@ import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from pandas.plotting import register_matplotlib_converters
 import pytimber
 import scipy.odr
 import scipy.optimize
 import tfs
 from generic_parser import EntryPointParameters, entrypoint
+from omc3.optics_measurements import toolbox
+from omc3.plotting.utils import style, lines, annotations, colors
+from omc3.tune_analysis.bbq_tools import clean_outliers_moving_average
+from omc3.utils import logging_tools
+from omc3.utils.time_tools import CERNDatetime
+from pandas.plotting import register_matplotlib_converters
 from tfs.tools import significant_digits
 
 from pylhc.constants.forced_da_analysis import (bsrt_emittance_key, bws_emittance_key,
@@ -75,22 +79,18 @@ from pylhc.constants.forced_da_analysis import (bsrt_emittance_key, bws_emittanc
                                                 header_da, header_da_error, header_nominal_emittance,
                                                 header_norm_nominal_emittance,
                                                 outfile_emittance, outfile_emittance_bws, outfile_kick, outfile_plot,
-                                                TFS_SUFFIX, HEADER_ENERGY, HEADER_TIME_AFTER,
-                                                HEADER_TIME_BEFORE, HEADER_BSRT_ROLLING_WINDOW,
+                                                TFS_SUFFIX, HEADER_ENERGY,
+                                                HEADER_TIME_AFTER, HEADER_TIME_BEFORE,
+                                                HEADER_BSRT_ROLLING_WINDOW, HEADER_BSRT_OUTLIER_LIMIT,
                                                 TIME, TIME_AFTER_KICK_S, TIME_AROUND_KICKS_MIN, TIME_BEFORE_KICK_S,
                                                 PLOT_FILETYPES, INTENSITY, INITIAL_DA_FIT, INTENSITY_AFTER,
                                                 INTENSITY_BEFORE,
                                                 INTENSITY_KEY, INTENSITY_LOSSES,
                                                 ROLLING_AVERAGE_WINDOW, BSRT_EMITTANCE_TO_METER, BWS_DIRECTIONS,
                                                 BWS_EMITTANCE_TO_METER, KICKFILE, RESULTS_DIR, YPAD,
-                                                MAX_CURVEFIT_FEV, OUTFILE_INTENSITY,
+                                                MAX_CURVEFIT_FEV, OUTFILE_INTENSITY, OUTLIER_LIMIT,
                                                 )
 from pylhc.constants.general import get_proton_gamma, get_proton_beta, LHC_NOMINAL_EMITTANCE
-
-from omc3.optics_measurements import toolbox
-from omc3.utils import logging_tools
-from omc3.plotting.utils import style, lines, annotations, colors
-from omc3.utils.time_tools import CERNDatetime
 
 LOG = logging_tools.get_logger(__name__)
 
@@ -181,6 +181,16 @@ def get_params():
             choices=['exponential', 'linear'],
             help="Fitting function to use (rearranges parameters to make sense)."
         ),
+        emittance_window_length=dict(
+            help="Length of the moving average window. (# data points)",
+            type=int,
+            default=ROLLING_AVERAGE_WINDOW,
+        ),
+        emittance_outlier_limit=dict(
+            help="Limit, i.e. cut, on outliers.",
+            type=float,
+            default=OUTLIER_LIMIT,
+        ),
     )
 
 
@@ -192,11 +202,10 @@ def main(opt):
     # get data
     kick_dir, out_dir = _get_output_dir(opt.kick_directory, opt.output_directory)
     kick_df = _get_kick_df(kick_dir, opt.plane)
-    # todo: write intensity_df, load a either of them from tfs
     intensity_df, emittance_df, emittance_bws_df = _get_dataframes(kick_df.index,
                                                                    opt.get_subdict(['fill', 'beam', 'plane', 'time_around_kicks',
                                                                                     'emittance_tfs', 'intensity_tfs', 'show_wirescan_emittance',
-                                                                                    'timber_db']))
+                                                                                    'timber_db', 'emittance_window_length', 'emittance_outlier_limit']))
     _check_all_times_in(kick_df.index, intensity_df.index[0], intensity_df.index[-1])
 
     # add data to kicks
@@ -287,7 +296,8 @@ def _get_dataframes(kick_times, opt):
     if opt.emittance_tfs:
         emittance_df = _get_bsrt_bunch_emittances_from_timber(opt.beam, opt.plane, db, timespan)
     else:
-        intensity_df = _read_tfs(opt.emittance_tfs, timespan)
+        emittance_df = _read_tfs(opt.emittance_tfs, timespan)
+    emittance_df = _filter_emittance_data(emittance_df, opt.emittance_window_length, opt.emittance_outlier_limit)
 
     if opt.show_wirescan_emittance is True:
         emittance_bws_df = _get_bws_emittances_from_timber(opt.beam, opt.plane, db, timespan)
@@ -310,7 +320,31 @@ def _read_tfs(tfs_file_or_path, timespan):
 
     return tfs_df.loc[slice(timespan), :]
 
+
+def _filter_emittance_data(df, planes, window_length, limit):
+    for plane in planes:
+        col_nemittance = column_norm_emittance(plane)
+
+        mav, std, _ = clean_outliers_moving_average(df[col_nemittance],
+                                                    length=window_length,
+                                                    limit=limit)
+        df[mean_col(col_nemittance)] = mav
+        df[err_col(col_nemittance)] = std
+    df = df.dropna(axis='index')
+    if len(df.index) == 0:
+        raise IndexError("Not enough emittance data extracted. Try to give a fill number.")
+
+    df.headers[HEADER_BSRT_ROLLING_WINDOW] = window_length
+    df.headers[HEADER_BSRT_OUTLIER_LIMIT] = limit
+    df = _maybe_add_sum_for_planes(df, planes, column_norm_emittance)
+    df = _maybe_add_sum_for_planes(df, planes,
+                                   lambda p: mean_col(column_norm_emittance(p)),
+                                   lambda p: err_col(column_norm_emittance(p)))
+    return df
+
+
 # Timber Data ------------------------------------------------------------------
+
 
 def _get_fill_times(db, fill):
     LOG.debug(f"Getting Timespan from fill {fill}")
@@ -345,23 +379,12 @@ def _get_bsrt_bunch_emittances_from_timber(beam, planes, db, timespan):
 
         time_index = pd.Index(CERNDatetime.from_timestamp(t) for t in x)
         df = tfs.TfsDataFrame(index=time_index,
-                              columns=all_columns, dtype=float,
-                              headers={HEADER_BSRT_ROLLING_WINDOW: ROLLING_AVERAGE_WINDOW})
+                              columns=all_columns, dtype=float,)
         df[col_nemittance] = y * BSRT_EMITTANCE_TO_METER
 
-        rolling = df[col_nemittance].rolling(window=ROLLING_AVERAGE_WINDOW, center=True)
-        df[mean_col(col_nemittance)] = rolling.mean()
-        df[err_col(col_nemittance)] = rolling.std()
-        df = df.dropna(axis='index')
-        if len(df.index) == 0:
-            raise IndexError("Not enough emittance data extracted. Try to give a fill number.")
         dfs[plane] = df
 
     df = _merge_df_planes(dfs, planes)
-    df = _maybe_add_sum_for_planes(df, planes, column_norm_emittance)
-    df = _maybe_add_sum_for_planes(df, planes,
-                                   lambda p: mean_col(column_norm_emittance(p)),
-                                   lambda p: err_col(column_norm_emittance(p)))
     LOG.debug(f"  Returning dataframe of shape {df.shape}")
     return df
 
