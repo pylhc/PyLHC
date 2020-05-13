@@ -212,7 +212,7 @@ def main(opt):
     kick_df = _add_intensity_and_losses_to_kicks(kick_df, intensity_df,
                                                  opt.intensity_time_before_kick, opt.intensity_time_after_kick)
     kick_df = _add_emittance_to_kicks(opt.plane, opt.energy, kick_df, emittance_df, opt.normalized_emittance)
-    kick_df = _do_fit(opt.plane, kick_df, opt.fit_type)
+    kick_df = _do_fit(opt.plane, kick_df, opt.fit)
     kick_df = _convert_to_sigmas(opt.plane, kick_df)
 
     # output
@@ -250,7 +250,8 @@ def _write_tfs(out_dir, plane, kick_df, intensity_df, emittance_df, emittance_bw
         tfs.write(out_dir / outfile_kick(plane), kick_df)
         tfs.write(out_dir / OUTFILE_INTENSITY, intensity_df)
         tfs.write(out_dir / outfile_emittance(plane), emittance_df)
-        tfs.write(out_dir / outfile_emittance_bws(plane), emittance_bws_df)
+        if emittance_bws_df:
+            tfs.write(out_dir / outfile_emittance_bws(plane), emittance_bws_df)
     except (FileNotFoundError, IOError):
         LOG.error(f"Cannot write into kick_directory: {str(out_dir)} ")
 
@@ -781,7 +782,7 @@ def _plot_emittances(directory, beam, plane, emittance_df, emittance_bws_df, kic
                 marker='',
                 label=f'Moving Average (window = {ROLLING_AVERAGE_WINDOW})')
 
-    if len(emittance_bws_df.index):
+    if emittance_bws_df and len(emittance_bws_df.index):
         for d in BWS_DIRECTIONS:
             label = "__nolegend__" if d == BWS_DIRECTIONS[1] else f"From BWS"
             color = bws_color if d == BWS_DIRECTIONS[1] else colors.change_color_brightness(bws_color, 0.5)
