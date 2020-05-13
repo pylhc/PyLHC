@@ -452,36 +452,29 @@ def fun_exp_decay(p, x):
     return np.exp(-(p - x[0]/2) / x[1])
 
 
-def fun_exp_decay_for_curvefit(x, p):
-    """ Parameter Swapped. """
-    return fun_exp_decay(p, x)
+def fun_linear(p, x):
+    """ p = DA, x[0] = action (2J res), x[1] = emittance"""
+    return np.exp(-(p - x[0]/2) / x[1])
 
 
-def _fit_exponential(plane, kick_df):
+def swap_fun_parameters(fun):
+    """ Parameter swapped for Curvefit """
+    return lambda x, p: fun(p, x)
+
+
+def _do_fit(plane, kick_df):
     LOG.debug("Fitting forced da to exponential. ")
-    col_action = column_action(plane)
-    col_emittance = column_emittance(plane)
-    col_losses = rel_col(INTENSITY_LOSSES)
-
-    # get data
-    x = [kick_df[col_action], kick_df[col_emittance]]
-    y = kick_df[col_losses]
-
+    action, emittance, rel_losses = _get_fit_data(kick_df, plane)
     init_guess = [INITIAL_DA_FIT*kick_df.headers[header_nominal_emittance(plane)]]
 
+    # fit_fun, x, y, sx, sy = _linear_fit_parameters(action, emittance, rel_losses)
+    fit_fun, x, y, sx, sy = _exponential_fit_parameters(action, emittance, rel_losses)
+
     # do prelim fit
-    init_fit = _fit_curve(x, y, init_guess)
-
-    # get errors
-    err_action = _no_nonzero_errors(kick_df[err_col(col_action)])
-    err_emittance = _no_nonzero_errors(kick_df[err_col(col_emittance)])
-    err_losses = _no_nonzero_errors(kick_df[err_col(col_losses)])
-
-    sx = [err_action, err_emittance]
-    sy = err_losses
+    init_fit = _fit_curve(swap_fun_parameters(fit_fun), x, y, init_guess)
 
     # do odr
-    odr = _fit_odr(x, y, sx, sy, init_fit)
+    odr = _fit_odr(fit_fun, x, y, sx, sy, init_fit)
 
     # add DA to kick
     da = odr.beta[0], odr.sd_beta[0]
@@ -491,22 +484,54 @@ def _fit_exponential(plane, kick_df):
     return kick_df
 
 
-def _fit_curve(x, y, init):
-    """ Preliminary curve fit. """
-    fit, cov = scipy.optimize.curve_fit(fun_exp_decay_for_curvefit, x, y,
+def _get_fit_data(kick_df, plane):
+    col_action = column_action(plane)
+    col_emittance = column_emittance(plane)
+    col_losses = rel_col(INTENSITY_LOSSES)
+
+    # get data
+    action = kick_df[col_action], _no_nonzero_errors(kick_df[err_col(col_action)])
+    emittance = kick_df[col_emittance], _no_nonzero_errors(kick_df[err_col(col_emittance)])
+    rel_losses = kick_df[col_losses], _no_nonzero_errors(kick_df[err_col(col_losses)])
+    return action, emittance, rel_losses
+
+
+def _exponential_fit_parameters(action, emittance, rel_losses):
+    x = action[0], emittance[0]
+    y = rel_losses[0]
+
+    sx = [action[1], emittance[1]]
+    sy = rel_losses[1]
+    return fun_exp_decay, x, y, sx, sy
+
+
+def _linear_fit_parameters(action, emittance, rel_losses):
+    log_losses = np.log(rel_losses[0])
+    x = action[0]
+    y = emittance[0] * log_losses
+
+    sx = action[1]
+    sy = np.sqrt((log_losses * emittance[1])**2 +
+                 ((emittance[0] * rel_losses[1])/rel_losses[0])**2)
+    return fun_linear, x, y, sx, sy
+
+
+def _fit_curve(fun, x, y, init):
+    """ Preliminary curve fit, without errors. """
+    fit, cov = scipy.optimize.curve_fit(fun, x, y,
                                         p0=init, maxfev=MAX_CURVEFIT_FEV)
     LOG.info(f"Initial DA fit: {fit} with cov {cov}")
     return fit
 
 
-def _fit_odr(x, y, sx, sy, init):
+def _fit_odr(fun, x, y, sx, sy, init):
     """ ODR Fit """
     # fill zero errors with the minimum error - otherwise fit will not work
-    exp_decay_sigma_model = scipy.odr.Model(fun_exp_decay)
+    fit_model_sigma = scipy.odr.Model(fun)
     data_model_sigma = scipy.odr.RealData(
         x=x, y=y, sx=sx, sy=sy,
     )
-    da_odr = scipy.odr.ODR(data_model_sigma, exp_decay_sigma_model,
+    da_odr = scipy.odr.ODR(data_model_sigma, fit_model_sigma,
                            beta0=init)
     # da_odr.set_job(fit_type=2)
     odr_output = da_odr.run()
