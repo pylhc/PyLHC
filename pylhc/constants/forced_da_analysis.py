@@ -58,10 +58,10 @@ def outfile_plot(ptype, plane, ftype):
 INTENSITY_KEY = 'LHC.BCTFR.A6R4.B{beam:d}:BEAM_INTENSITY'
 
 BSRT_EMITTANCE_KEY = 'LHC.BSRT.5{side:s}4.B{beam:d}:AVERAGE_EMITTANCE_{plane:s}'
-BSRT_EMITTANCE_TO_METER = 1e-6  # Emittance is normalized an in um
+BSRT_EMITTANCE_TO_METER = 1e-6  # Emittance is normalized and in um
 
 BWS_EMITTANCE_KEY = 'LHC.BWS.5{side:s}4.B{beam:d}{plane:s}.APP.{direction:s}:EMITTANCE_NORM'
-BWS_EMITTANCE_TO_METER = 1e-6  # Emittance is normalized an in um
+BWS_EMITTANCE_TO_METER = 1e-6  # Emittance is normalized and in um
 
 
 LR_MAP = {1: "R", 2: "L"}
