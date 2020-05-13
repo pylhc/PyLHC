@@ -289,14 +289,14 @@ def _get_dataframes(kick_times, opt):
         timespan = tuple(t.timestamp() for t in timespan)
 
     if opt.intensity_tfs:
-        intensity_df = _get_bctrf_beam_intensity_from_timber(opt.beam, db, timespan)
-    else:
         intensity_df = _read_tfs(opt.intensity_tfs, timespan)
+    else:
+        intensity_df = _get_bctrf_beam_intensity_from_timber(opt.beam, db, timespan)
 
     if opt.emittance_tfs:
-        emittance_df = _get_bsrt_bunch_emittances_from_timber(opt.beam, opt.plane, db, timespan)
-    else:
         emittance_df = _read_tfs(opt.emittance_tfs, timespan)
+    else:
+        emittance_df = _get_bsrt_bunch_emittances_from_timber(opt.beam, opt.plane, db, timespan)
     emittance_df = _filter_emittance_data(emittance_df, opt.emittance_window_length, opt.emittance_outlier_limit)
 
     if opt.show_wirescan_emittance is True:
