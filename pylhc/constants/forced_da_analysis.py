@@ -13,7 +13,7 @@ from pylhc.constants.general import PLANE_TO_HV
 RESULTS_DIR = "forced_da_analysis"
 
 ROLLING_AVERAGE_WINDOW = 100
-OUTLIER_LIMIT = .5
+OUTLIER_LIMIT = .5 * 1e-6
 TIME_AROUND_KICKS_MIN = 10
 TIME_BEFORE_KICK_S = [30, 5]
 TIME_AFTER_KICK_S = [5, 30]

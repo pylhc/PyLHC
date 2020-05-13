@@ -187,7 +187,7 @@ def get_params():
             default=ROLLING_AVERAGE_WINDOW,
         ),
         emittance_outlier_limit=dict(
-            help="Limit, i.e. cut, on outliers.",
+            help="Limit, i.e. cut, on emittance outliers in meter.",
             type=float,
             default=OUTLIER_LIMIT,
         ),
@@ -245,7 +245,7 @@ def _write_tfs(out_dir, plane, kick_df, intensity_df, emittance_df, emittance_bw
     """ Write out gathered data. """
     LOG.debug("Writing tfs files.")
     for df in (kick_df, emittance_df, emittance_bws_df):
-        if df:
+        if df is not None:
             df.insert(0, TIME, [CERNDatetime(dt).cern_utc_string() for dt in df.index])
     try:
         tfs.write(out_dir / outfile_kick(plane), kick_df)
@@ -254,7 +254,7 @@ def _write_tfs(out_dir, plane, kick_df, intensity_df, emittance_df, emittance_bw
         if emittance_bws_df:
             tfs.write(out_dir / outfile_emittance_bws(plane), emittance_bws_df)
     except (FileNotFoundError, IOError):
-        LOG.error(f"Cannot write into kick_directory: {str(out_dir)} ")
+        LOG.error(f"Cannot write into directory: {str(out_dir)} ")
 
 
 def _check_all_times_in(series, start, end):
@@ -264,7 +264,15 @@ def _check_all_times_in(series, start, end):
                          "Check if correct kick-file or fill number are used.")
 
 
+def _string_to_cerntime_index(list_):
+    return pd.Index((CERNDatetime.from_cern_utc_string(t) for t in list_), dtype=object)
+
+
+def _timestamp_to_cerntime_index(list_):
+    return pd.Index((CERNDatetime.from_timestamp(t) for t in list_), dtype=object)
+
 # TFS Data Loading -------------------------------------------------------------
+
 
 def _get_dataframes(kick_times, opt):
     db = None
@@ -318,7 +326,7 @@ def _read_tfs(tfs_file_or_path, timespan):
     except IOError:
         tfs_df = tfs_file_or_path  # hopefully
     else:
-        tfs_df.index = pd.Index(CERNDatetime.from_cern_utc_string(t) for t in tfs_df.index)
+        tfs_df.index = _string_to_cerntime_index(tfs_df.index)
 
     return tfs_df.loc[slice(timespan), :]
 
@@ -359,8 +367,8 @@ def _get_bctrf_beam_intensity_from_timber(beam, db, timespan):
     intensity_key = INTENSITY_KEY.format(beam=beam)
     LOG.debug(f"  Key: {intensity_key}")
     x, y = db.get(intensity_key, *timespan)[intensity_key]
-    time_index = pd.Index(CERNDatetime.from_timestamp(t) for t in x)
-    df = tfs.TfsDataFrame(data=y, index=time_index, columns=[INTENSITY], dtype=float)
+    df = tfs.TfsDataFrame(data=y, index=_timestamp_to_cerntime_index(x),
+                          columns=[INTENSITY], dtype=float)
     LOG.debug(f"  Returning dataframe of shape {df.shape}")
     return df
 
@@ -379,8 +387,7 @@ def _get_bsrt_bunch_emittances_from_timber(beam, planes, db, timespan):
         # remove entries with zero emittance as unphysical
         x, y = x[y != 0], y[y != 0]
 
-        time_index = pd.Index(CERNDatetime.from_timestamp(t) for t in x)
-        df = tfs.TfsDataFrame(index=time_index,
+        df = tfs.TfsDataFrame(index=_timestamp_to_cerntime_index(x),
                               columns=all_columns, dtype=float,)
         df[col_nemittance] = y * BSRT_EMITTANCE_TO_METER
 
@@ -403,9 +410,8 @@ def _get_bws_emittances_from_timber(beam, planes, db, timespan):
             column_nemittance = column_bws_norm_emittance(plane, direction)
 
             x, y = db.get(emittance_key, *timespan)[emittance_key]
-            time_index = pd.Index(CERNDatetime.from_timestamp(t) for t in x)
             if df is None:
-                df = tfs.TfsDataFrame(index=time_index, columns=all_columns, dtype=float)
+                df = tfs.TfsDataFrame(index=_timestamp_to_cerntime_index(x), columns=all_columns, dtype=float)
             df[column_nemittance] = y * BWS_EMITTANCE_TO_METER
             df[column_nemittance] = df[column_nemittance].apply(np.mean)  # BWS can give multiple values
             df[err_col(column_nemittance)] = df[column_nemittance].apply(np.std)  # BWS can give multiple values
@@ -466,12 +472,13 @@ def _get_new_kick_file(kick_dir, planes):
 
 
 def _get_output_dir(kick_directory, output_directory):
+    kick_path = Path(kick_directory)
     if output_directory:
-        return Path(kick_directory), Path(output_directory)
-
-    path = Path(kick_directory) / RESULTS_DIR
-    path.mkdir(exist_ok=True)
-    return path.parent, path
+        output_path = Path(output_directory)
+    else:
+        output_path = kick_path / RESULTS_DIR
+    output_path.mkdir(exist_ok=True)
+    return kick_path, output_path
 
 
 # Intensity at Kicks -----------------------------------------------------------
