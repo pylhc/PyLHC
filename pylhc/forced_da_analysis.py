@@ -297,7 +297,7 @@ def _get_dataframes(kick_times, opt):
         emittance_df = _read_tfs(opt.emittance_tfs, timespan)
     else:
         emittance_df = _get_bsrt_bunch_emittances_from_timber(opt.beam, opt.plane, db, timespan)
-    emittance_df = _filter_emittance_data(emittance_df, opt.emittance_window_length, opt.emittance_outlier_limit)
+    emittance_df = _filter_emittance_data(emittance_df, opt.plane, opt.emittance_window_length, opt.emittance_outlier_limit)
 
     if opt.show_wirescan_emittance is True:
         emittance_bws_df = _get_bws_emittances_from_timber(opt.beam, opt.plane, db, timespan)
