@@ -170,7 +170,7 @@ def main(opt):
     kick_df = _add_intensity_and_losses_to_kicks(kick_df, intensity_df,
                                                  opt.intensity_time_before_kick, opt.intensity_time_after_kick)
     kick_df = _add_emittance_to_kicks(opt.plane, opt.energy, kick_df, emittance_df)
-    kick_df = _fit_exponential(opt.plane, kick_df)
+    kick_df = _do_fit(opt.plane, kick_df)
     kick_df = _convert_to_sigmas(opt.plane, kick_df)
 
     # output
