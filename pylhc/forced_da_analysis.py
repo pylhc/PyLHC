@@ -59,6 +59,7 @@ import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from pandas.plotting import register_matplotlib_converters
 import pytimber
 import scipy.odr
 import scipy.optimize
@@ -74,7 +75,7 @@ from pylhc.constants.forced_da_analysis import (bsrt_emittance_key, bws_emittanc
                                                 header_norm_nominal_emittance,
                                                 outfile_emittance, outfile_emittance_bws, outfile_kick, outfile_plot,
                                                 TFS_SUFFIX, HEADER_EMITTANCE_AVERAGE, HEADER_ENERGY, HEADER_TIME_AFTER,
-                                                HEADER_TIME_BEFORE,
+                                                HEADER_TIME_BEFORE, HEADER_BSRT_ROLLING_WINDOW,
                                                 TIME, TIME_AFTER_KICK_S, TIME_AROUND_KICKS_MIN, TIME_BEFORE_KICK_S,
                                                 PLOT_FILETYPES, INTENSITY, INITIAL_DA_FIT, INTENSITY_AFTER,
                                                 INTENSITY_BEFORE,
@@ -175,6 +176,7 @@ def main(opt):
     _write_tfs(out_dir, opt.plane, kick_df, emittance_df, emittance_bws_df)
 
     # plotting
+    register_matplotlib_converters()  # for datetime plotting
     _plot_emittances(out_dir, opt.beam, opt.plane, emittance_df, emittance_bws_df, kick_df.index)
     _plot_intensity(out_dir, opt.beam, opt.plane, kick_df, intensity_df)
     # _plot_losses(out_dir, beam, plane, kick_df)
@@ -265,7 +267,7 @@ def _get_bsrt_bunch_emittances(beam, planes, db, timespan):
         time_index = pd.Index(CERNDatetime.from_timestamp(t) for t in x)
         df = tfs.TfsDataFrame(index=time_index,
                               columns=all_columns, dtype=float,
-                              headers={HEADER_EMITTANCE_AVERAGE: ROLLING_AVERAGE_WINDOW})
+                              headers={HEADER_BSRT_ROLLING_WINDOW: ROLLING_AVERAGE_WINDOW})
         df[col_nemittance] = y * BSRT_EMITTANCE_TO_METER
 
         rolling = df[col_nemittance].rolling(window=ROLLING_AVERAGE_WINDOW, center=True)
