@@ -101,7 +101,7 @@ def header_nominal_emittance(plane):
 
 
 def header_norm_nominal_emittance(plane):
-    return f"Normalized {HEADER_NOMINAL_EMITTANCE.format(plane=plane.upper())}"
+    return f"Normalized_{HEADER_NOMINAL_EMITTANCE.format(plane=plane.upper())}"
 
 # Columns ----------------------------------------------------------------------
 
