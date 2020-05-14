@@ -163,7 +163,7 @@ def get_params():
         normalized_emittance=dict(
             type=float,
             default=LHC_NOMINAL_EMITTANCE,
-            help=("Assumed NORMALIZED emittance for the machine.")
+            help=("Assumed NORMALIZED nominal emittance for the machine.")
         ),
         emittance_tfs=dict(
             type=path_or_str_or_df,
@@ -229,7 +229,8 @@ def main(opt):
                                                                                     'timber_db', 'pagestore_db',
                                                                                     'emittance_window_length',
                                                                                     'emittance_outlier_limit',
-                                                                                    'emittance_type']))
+                                                                                    'emittance_type',
+                                                                                    'normalized_emittance']))
     _check_all_times_in(kick_df.index, intensity_df.index[0], intensity_df.index[-1])
 
     # add data to kicks
@@ -322,7 +323,8 @@ def _get_dataframes(kick_times, opt):
     if opt.emittance_tfs:
         emittance_df = _read_tfs(opt.emittance_tfs, timespan)
     else:
-        emittance_df = _get_bsrt_bunch_emittances_from_timber(opt.beam, opt.plane, db, timespan, opt.emittance_type)
+        emittance_df = _get_bsrt_bunch_emittances_from_timber(opt.beam, opt.plane, db, timespan,
+                                                              opt.emittance_type, opt.normalized_emittance)
     emittance_df = _filter_emittance_data(emittance_df, opt.plane, opt.emittance_window_length, opt.emittance_outlier_limit)
 
     if opt.show_wirescan_emittance is True:
@@ -446,7 +448,7 @@ def _get_bctrf_beam_intensity_from_timber(beam, db, timespan):
     return df
 
 
-def _get_bsrt_bunch_emittances_from_timber(beam, planes, db, timespan, key_type):
+def _get_bsrt_bunch_emittances_from_timber(beam, planes, db, timespan, key_type, nominal_emittance):
     dfs = {p: None for p in planes}
     for plane in planes:
         LOG.debug(f"Getting emittance from BSRT for beam {beam}  and plane {plane}.")
@@ -465,16 +467,19 @@ def _get_bsrt_bunch_emittances_from_timber(beam, planes, db, timespan, key_type)
 
             # get average and std per timestamp
             x = np.array([float(elem) for elem in y_new.keys()])
-            y = np.array([np.average(elem) for elem in y_new.values()])
-            y_std = np.array([np.std(elem) for elem in y_new.values()])
+            y = np.array([np.average(elem) for elem in y_new.values()]) * nominal_emittance
+            y_std = np.array([np.std(elem) for elem in y_new.values()]) * nominal_emittance
+        elif key_type == 'average':
+            y *= BSRT_EMITTANCE_TO_METER
+            y_std *= BSRT_EMITTANCE_TO_METER
 
         # remove entries with zero emittance as unphysical
         x, y, y_std = x[y != 0], y[y != 0], y_std[y != 0]
 
         df = tfs.TfsDataFrame(index=_timestamp_to_cerntime_index(x),
                               columns=all_columns, dtype=float,)
-        df[col_nemittance] = y * BSRT_EMITTANCE_TO_METER
-        df[err_col(col_nemittance)] = y_std * BSRT_EMITTANCE_TO_METER
+        df[col_nemittance] = y
+        df[err_col(col_nemittance)] = y_std
 
         dfs[plane] = df
 
