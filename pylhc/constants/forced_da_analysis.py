@@ -60,7 +60,8 @@ def outfile_plot(ptype, plane, ftype):
 
 INTENSITY_KEY = 'LHC.BCTFR.A6R4.B{beam:d}:BEAM_INTENSITY'
 
-BSRT_EMITTANCE_KEY = 'LHC.BSRT.5{side:s}4.B{beam:d}:AVERAGE_EMITTANCE_{plane:s}'
+BSRT_EMITTANCE_SIGMA_FIT_KEY = 'LHC.BSRT.5{side:s}4.B{beam:d}:FIT_SIGMA_{plane:s}'
+BSRT_EMITTANCE_AVERAGE_KEY = 'LHC.BSRT.5{side:s}4.B{beam:d}:AVERAGE_EMITTANCE_{plane:s}'
 BSRT_EMITTANCE_TO_METER = 1e-6  # Emittance is normalized and in um
 
 BWS_EMITTANCE_KEY = 'LHC.BWS.5{side:s}4.B{beam:d}{plane:s}.APP.{direction:s}:EMITTANCE_NORM'
@@ -70,12 +71,17 @@ BWS_EMITTANCE_TO_METER = 1e-6  # Emittance is normalized and in um
 LR_MAP = {1: "R", 2: "L"}
 
 
-def bsrt_emittance_key(beam, plane):
-    return BSRT_EMITTANCE_KEY.format(side=LR_MAP[beam], beam=beam, plane=PLANE_TO_HV[plane])
+def bsrt_emittance_key(beam, plane, type):
+    key = {
+        'fit_sigma': BSRT_EMITTANCE_SIGMA_FIT_KEY,
+        'average': BSRT_EMITTANCE_AVERAGE_KEY,
+    }[type]
+    return key.format(side=LR_MAP[beam], beam=beam, plane=PLANE_TO_HV[plane])
 
 
 def bws_emittance_key(beam, plane, direction):
     return BWS_EMITTANCE_KEY.format(side=LR_MAP[beam], beam=beam, plane=PLANE_TO_HV[plane], direction=direction)
+
 
 # Headers ----------------------------------------------------------------------
 HEADER_TIME_BEFORE = "Timespan_before_kick[s]"

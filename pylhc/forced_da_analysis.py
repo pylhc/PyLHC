@@ -51,6 +51,8 @@ Runs the forced DA analysis, following the procedure described in `CarlierForced
 
 
 import os
+from collections import defaultdict
+from contextlib import suppress
 from pathlib import Path
 
 import matplotlib as mpl
@@ -60,10 +62,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import pytimber
+from pytimber.pagestore import PageStore
 import scipy.odr
 import scipy.optimize
 import tfs
 from generic_parser import EntryPointParameters, entrypoint
+from generic_parser.entry_datatypes import get_multi_class
 from omc3.optics_measurements import toolbox
 from omc3.plotting.utils import style, lines, annotations, colors
 from omc3.tune_analysis.bbq_tools import clean_outliers_moving_average
@@ -94,24 +98,27 @@ from pylhc.constants.general import get_proton_gamma, get_proton_beta, LHC_NOMIN
 
 LOG = logging_tools.get_logger(__name__)
 
+path_or_str = get_multi_class(Path, str)
+path_or_str_or_df = get_multi_class(Path, str, tfs.TfsDataFrame, pd.DataFrame)
+path_or_str_or_db = get_multi_class(Path, str, PageStore)
 
 def get_params():
     return EntryPointParameters(
         kick_directory=dict(
             flags=['-k', "--kickdir"],
             required=True,
-            type=str,
+            type=get_multi_class(Path, str),
             help="Analysis kick_directory containing kick files."
         ),
         output_directory=dict(
             flags=['-o', "--outdir"],
-            type=str,
+            type=path_or_str,
             help="Output kick_directory, if not given subfolder in kick kick_directory",
         ),
         energy=dict(
             flags=['-e', "--energy"],
             required=True,
-            type=float,
+            type=get_multi_class(float, int),
             help="Beam energy in GeV."
         ),
         fill=dict(
@@ -129,7 +136,7 @@ def get_params():
         plane=dict(
             flags=["-p", "--plane"],
             choices=["X", "Y", "XY"],
-            default="XY",
+            required=True,
             type=str,
             help="Plane of the kicks. Give 'XY' for using both planes (e.g. diagonal kicks)."
         ),
@@ -159,9 +166,11 @@ def get_params():
             help=("Assumed NORMALIZED emittance for the machine.")
         ),
         emittance_tfs=dict(
+            type=path_or_str_or_df,
             help="Dataframe or Path of pre-saved emittance tfs.",
         ),
         intensity_tfs=dict(
+            type=path_or_str_or_df,
             help="Dataframe or Path of pre-saved intensity tfs.",
         ),
         show_wirescan_emittance=dict(
@@ -175,6 +184,10 @@ def get_params():
             choices=['all', 'mdb', 'ldb', 'nxcals'],
             help="Which timber database to use."
         ),
+        pagestore_db=dict(
+            type=path_or_str_or_db,
+            help="(Path to-) presaved timber database"
+        ),
         fit=dict(
             type=str,
             default='exponential',
@@ -187,9 +200,15 @@ def get_params():
             default=ROLLING_AVERAGE_WINDOW,
         ),
         emittance_outlier_limit=dict(
-            help="Limit, i.e. cut, on emittance outliers in meter.",
+            help="Limit, i.e. cut from mean, on emittance outliers in meter.",
             type=float,
             default=OUTLIER_LIMIT,
+        ),
+        emittance_type=dict(
+            type=str,
+            default='average',
+            choices=['fit_sigma', 'average'],
+            help="Which BSRT data to use."
         ),
     )
 
@@ -203,9 +222,14 @@ def main(opt):
     kick_dir, out_dir = _get_output_dir(opt.kick_directory, opt.output_directory)
     kick_df = _get_kick_df(kick_dir, opt.plane)
     intensity_df, emittance_df, emittance_bws_df = _get_dataframes(kick_df.index,
-                                                                   opt.get_subdict(['fill', 'beam', 'plane', 'time_around_kicks',
-                                                                                    'emittance_tfs', 'intensity_tfs', 'show_wirescan_emittance',
-                                                                                    'timber_db', 'emittance_window_length', 'emittance_outlier_limit']))
+                                                                   opt.get_subdict(['fill', 'beam', 'plane',
+                                                                                    'time_around_kicks',
+                                                                                    'emittance_tfs', 'intensity_tfs',
+                                                                                    'show_wirescan_emittance',
+                                                                                    'timber_db', 'pagestore_db',
+                                                                                    'emittance_window_length',
+                                                                                    'emittance_outlier_limit',
+                                                                                    'emittance_type']))
     _check_all_times_in(kick_df.index, intensity_df.index[0], intensity_df.index[-1])
 
     # add data to kicks
@@ -271,25 +295,17 @@ def _string_to_cerntime_index(list_):
 def _timestamp_to_cerntime_index(list_):
     return pd.Index((CERNDatetime.from_timestamp(t) for t in list_), dtype=object)
 
+
+def _drop_duplicate_indices(df):
+    duplicate_mask = [True] + [df.index[idx] != df.index[idx-1] for idx in range(1, len(df.index))]
+    return df.loc[duplicate_mask, :]
+
+
 # TFS Data Loading -------------------------------------------------------------
 
 
 def _get_dataframes(kick_times, opt):
-    db = None
-    try:
-        db = pytimber.LoggingDB(source=opt['timber_db'])
-    except AttributeError:
-        error_msg = ""
-        if opt.fill is not None:
-            error_msg += "'fill' is given, "
-        if opt.emittance_tfs is None:
-            error_msg += "'emittance_tfs' is not given, "
-        if opt.intensity_tfs is None:
-            error_msg += "'intensity_tfs' is not given, "
-        if opt.show_wirescan_emittance is True:
-            error_msg += 'wirescan emittance is requested, '
-        error_msg += "but there is no access to timber databases. Aborting."
-        raise EnvironmentError(error_msg)
+    db = _get_db(opt)
 
     if opt.fill is not None:
         timespan = _get_fill_times(db, opt.fill)
@@ -306,7 +322,7 @@ def _get_dataframes(kick_times, opt):
     if opt.emittance_tfs:
         emittance_df = _read_tfs(opt.emittance_tfs, timespan)
     else:
-        emittance_df = _get_bsrt_bunch_emittances_from_timber(opt.beam, opt.plane, db, timespan)
+        emittance_df = _get_bsrt_bunch_emittances_from_timber(opt.beam, opt.plane, db, timespan, opt.emittance_type)
     emittance_df = _filter_emittance_data(emittance_df, opt.plane, opt.emittance_window_length, opt.emittance_outlier_limit)
 
     if opt.show_wirescan_emittance is True:
@@ -334,12 +350,18 @@ def _read_tfs(tfs_file_or_path, timespan):
 def _filter_emittance_data(df, planes, window_length, limit):
     for plane in planes:
         col_nemittance = column_norm_emittance(plane)
+        col_err_nemittance = err_col(col_nemittance)
+        col_mean = mean_col(col_nemittance)
+        col_err_mean = err_col(col_mean)
 
-        mav, std, _ = clean_outliers_moving_average(df[col_nemittance],
-                                                    length=window_length,
-                                                    limit=limit)
-        df[mean_col(col_nemittance)] = mav
-        df[err_col(col_nemittance)] = std
+        mav, std, mask = clean_outliers_moving_average(df[col_nemittance],
+                                                       length=window_length,
+                                                       limit=limit)
+        df[col_mean] = mav
+        df[col_err_mean] = std
+        # if any(df[col_err_nemittance]):
+        #     df[col_err_mean] = _rolling_errors(df[col_err_nemittance], ~mask, window_length)
+
     df = df.dropna(axis='index')
     if len(df.index) == 0:
         raise IndexError("Not enough emittance data extracted. Try to give a fill number.")
@@ -353,7 +375,56 @@ def _filter_emittance_data(df, planes, window_length, limit):
     return df
 
 
+def _rolling_errors(data_series, clean_mask, length):
+    data = data_series.copy()
+    data[clean_mask] = np.NaN
+
+    # 'interpolate' fills nan based on index/values of neighbours
+    data = data.interpolate("index").fillna(method="bfill").fillna(method="ffill")
+
+    shift = -int((length-1)/2)  # Shift average to middle value
+
+    # calculate sqrt(sum(x**2))/N, fill NaNs at the ends
+    return np.sqrt(np.square(data).rolling(length).sum().shift(shift).fillna(
+        method="bfill").fillna(method="ffill")) / length
+
+
 # Timber Data ------------------------------------------------------------------
+
+
+def _get_db(opt):
+    db = None
+
+    if opt.pagestore_db:
+        db = opt.pagestore_db
+        try:
+            db_path = Path(db)
+        except TypeError:
+            pass
+        else:
+            db = PageStore(f'file:{str(db_path)}', str(db_path.with_suffix('')))
+            if opt.fill is not None:
+                raise EnvironmentError("'fill' can't be used with pagestore database.")
+    else:
+        try:
+            db = pytimber.LoggingDB(source=opt['timber_db'])
+        except AttributeError:
+            pass
+
+    if not db:
+        error_msg = ""
+        if opt.fill is not None:
+            error_msg += "'fill' is given, "
+        if opt.emittance_tfs is None:
+            error_msg += "'emittance_tfs' is not given, "
+        if opt.intensity_tfs is None:
+            error_msg += "'intensity_tfs' is not given, "
+        if opt.show_wirescan_emittance is True:
+            error_msg += 'wirescan emittance is requested, '
+        if len(error_msg):
+            error_msg += "but there is no database given and no access to timber databases. Aborting."
+            raise EnvironmentError(error_msg)
+    return db
 
 
 def _get_fill_times(db, fill):
@@ -369,27 +440,41 @@ def _get_bctrf_beam_intensity_from_timber(beam, db, timespan):
     x, y = db.get(intensity_key, *timespan)[intensity_key]
     df = tfs.TfsDataFrame(data=y, index=_timestamp_to_cerntime_index(x),
                           columns=[INTENSITY], dtype=float)
+
+    df = _drop_duplicate_indices(df)
     LOG.debug(f"  Returning dataframe of shape {df.shape}")
     return df
 
 
-def _get_bsrt_bunch_emittances_from_timber(beam, planes, db, timespan):
+def _get_bsrt_bunch_emittances_from_timber(beam, planes, db, timespan, key_type):
     dfs = {p: None for p in planes}
     for plane in planes:
         LOG.debug(f"Getting emittance from BSRT for beam {beam}  and plane {plane}.")
-        bunch_emittance_key = bsrt_emittance_key(beam, plane)
+        bunch_emittance_key = bsrt_emittance_key(beam, plane, key_type)
         LOG.debug(f"  Key: {bunch_emittance_key}")
         col_nemittance = column_norm_emittance(plane)
-        all_columns = [f(col_nemittance) for f in (lambda s: s, mean_col, err_col)]
+        all_columns = [f(col_nemittance) for f in (lambda s: s, mean_col, err_col)] + [err_col(mean_col(col_nemittance))]
 
         x, y = db.get(bunch_emittance_key, *timespan)[bunch_emittance_key]
+        y_std = np.zeros_like(x)
+        if key_type == "fit_sigma":
+            # add all data with the same timestamp
+            y_new = defaultdict(list)
+            for x_elem, y_elem in zip(x, y):
+                y_new[f"{x_elem:.3f}"] += y_elem.tolist()
+
+            # get average and std per timestamp
+            x = np.array([float(elem) for elem in y_new.keys()])
+            y = np.array([np.average(elem) for elem in y_new.values()])
+            y_std = np.array([np.std(elem) for elem in y_new.values()])
 
         # remove entries with zero emittance as unphysical
-        x, y = x[y != 0], y[y != 0]
+        x, y, y_std = x[y != 0], y[y != 0], y_std[y != 0]
 
         df = tfs.TfsDataFrame(index=_timestamp_to_cerntime_index(x),
                               columns=all_columns, dtype=float,)
         df[col_nemittance] = y * BSRT_EMITTANCE_TO_METER
+        df[err_col(col_nemittance)] = y_std * BSRT_EMITTANCE_TO_METER
 
         dfs[plane] = df
 
@@ -449,11 +534,27 @@ def _get_old_kick_file(kick_dir, plane):
     path = kick_dir / "getkickac.out"
     LOG.debug(f"Reading kickfile '{str(path)}'.'")
     df = tfs.read(path)
-    df = df.set_index("TIME")
-    df.index = pd.Index([CERNDatetime.from_timestamp(t) for t in df.index], dtype=object)
+    df = df.set_index(TIME)
+    new_index = None
+
+    with suppress(TypeError):
+       new_index = _string_to_cerntime_index(df.index)
+
+    if new_index is None:
+        with suppress(TypeError):
+            new_index = _timestamp_to_cerntime_index(df.index)
+
+    if new_index is None:
+        raise TypeError(f"Unrecognized format in column '{TIME}' in '{str(path)}'")
+
+    df.index = new_index
     rename_dict = {}
     for p in plane:
-        rename_dict.update({f"2J{p}RES": column_action(p), f"2J{p}STDRES": err_col(column_action(p))})
+        rename_dict.update({f"2J{p}RES": column_action(p),
+                            f"2J{p}STDRES": err_col(column_action(p)),
+                            f"J{p}2": column_action(p),  # pre 2017
+                            f"J{p}STD": err_col(column_action(p)),  # pre 2017
+                            })
     df = df.rename(rename_dict, axis="columns")
     df.loc[:, rename_dict.values()] = df.loc[:, rename_dict.values()] * 1e-6
     return df
@@ -477,7 +578,11 @@ def _get_output_dir(kick_directory, output_directory):
         output_path = Path(output_directory)
     else:
         output_path = kick_path / RESULTS_DIR
-    output_path.mkdir(exist_ok=True)
+    try:
+        output_path.mkdir(exist_ok=True)
+    except PermissionError:
+        LOG.warn(f"You have no writing permission in '{str(output_path)}', "
+                 f"output data might not be created.")
     return kick_path, output_path
 
 
@@ -776,16 +881,20 @@ def _plot_emittances(directory, beam, plane, emittance_df, emittance_bws_df, kic
     bsrt_color = colors.get_mpl_color(0)
     bws_color = colors.get_mpl_color(1)
 
-    ax.plot(emittance_df[col_norm_emittance] * 1e6,  # Actual BSRT measurement
-            color=bsrt_color,
-            marker='o',
-            markeredgewidth=2,
-            linestyle='None',
-            label=f'From BSRT')
+    times = [t.datetime for t in emittance_df.index]
 
-    ax.errorbar(emittance_df.index,
+    ax.errorbar(times,
+                emittance_df[col_norm_emittance] * 1e6,  # Actual BSRT measurement
+                yerr=emittance_df[err_col(col_norm_emittance)] * 1e6,
+                color=bsrt_color,
+                marker='o',
+                markeredgewidth=2,
+                linestyle='None',
+                label=f'From BSRT')
+
+    ax.errorbar(times,
                 emittance_df[mean_col(col_norm_emittance)] * 1e6,
-                yerr=emittance_df[err_col(col_norm_emittance)],
+                yerr=emittance_df[err_col(mean_col(col_norm_emittance))] * 1e6,
                 color=colors.change_color_brightness(bsrt_color, 0.7),
                 marker='',
                 label=f'Moving Average (window = {ROLLING_AVERAGE_WINDOW})')
