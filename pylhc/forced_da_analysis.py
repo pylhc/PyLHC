@@ -371,7 +371,7 @@ def _filter_emittance_data(df, planes, window_length, limit):
     df = _maybe_add_sum_for_planes(df, planes, column_norm_emittance)
     df = _maybe_add_sum_for_planes(df, planes,
                                    lambda p: mean_col(column_norm_emittance(p)),
-                                   lambda p: err_col(column_norm_emittance(p)))
+                                   lambda p: err_col(mean_col(column_norm_emittance(p))))
     return df
 
 
@@ -641,7 +641,7 @@ def _add_emittance_to_kicks(plane, energy, kick_df, emittance_df, nominal):
     kick_df.headers[HEADER_ENERGY] = energy
     kick_df.headers[HEADER_BSRT_ROLLING_WINDOW] = ROLLING_AVERAGE_WINDOW
     col_nemittance = column_norm_emittance(plane)
-    cols_emitt = [mean_col(col_nemittance), err_col(col_nemittance)]
+    cols_emitt = [mean_col(col_nemittance), err_col(mean_col(col_nemittance))]
     cols_kick = [col_nemittance, err_col(col_nemittance)]
 
     kick_df = kick_df.reindex(columns=kick_df.columns.tolist() + cols_kick)
@@ -656,8 +656,8 @@ def _add_emittance_to_kicks(plane, energy, kick_df, emittance_df, nominal):
 
     kick_df.headers[header_norm_nominal_emittance(plane)] = nominal
     kick_df.headers[header_nominal_emittance(plane)] = nominal / normalization
-    kick_df[col_emittance] = kick_df[col_nemittance] / normalization
-    kick_df[err_col(col_emittance)] = kick_df[err_col(col_nemittance)] / normalization
+    for col in cols_kick:
+        kick_df[col] = kick_df[col] / normalization
     return kick_df
 
 
