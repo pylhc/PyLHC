@@ -656,8 +656,8 @@ def _add_emittance_to_kicks(plane, energy, kick_df, emittance_df, nominal):
 
     kick_df.headers[header_norm_nominal_emittance(plane)] = nominal
     kick_df.headers[header_nominal_emittance(plane)] = nominal / normalization
-    for col in cols_kick:
-        kick_df[col] = kick_df[col] / normalization
+    kick_df[col_emittance] = kick_df[col_nemittance] / normalization
+    kick_df[err_col(col_emittance)] = kick_df[err_col(col_nemittance)] / normalization
     return kick_df
 
 
