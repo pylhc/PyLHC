@@ -268,7 +268,7 @@ def _log_opt(opt):
 def _write_tfs(out_dir, plane, kick_df, intensity_df, emittance_df, emittance_bws_df):
     """ Write out gathered data. """
     LOG.debug("Writing tfs files.")
-    for df in (kick_df, emittance_df, emittance_bws_df):
+    for df in (kick_df, intensity_df, emittance_df, emittance_bws_df):
         if df is not None:
             df.insert(0, TIME, [CERNDatetime(dt).cern_utc_string() for dt in df.index])
     try:
