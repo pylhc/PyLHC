@@ -67,7 +67,7 @@ import scipy.odr
 import scipy.optimize
 import tfs
 from generic_parser import EntryPointParameters, entrypoint
-from generic_parser.entry_datatypes import get_multi_class
+from generic_parser.entry_datatypes import get_multi_class, BoolOrString
 from omc3.optics_measurements import toolbox
 from omc3.plotting.utils import style, lines, annotations, colors
 from omc3.tune_analysis.bbq_tools import clean_outliers_moving_average
@@ -175,6 +175,7 @@ def get_params():
         ),
         show_wirescan_emittance=dict(
             default=False,
+            type=BoolOrString,
             help=("Flag if the emittance from wirescan should also be shown, "
                   "can also be a Dataframe or Path of pre-saved emittance bws tfs."),
         ),
@@ -276,7 +277,7 @@ def _write_tfs(out_dir, plane, kick_df, intensity_df, emittance_df, emittance_bw
         tfs.write(out_dir / outfile_kick(plane), kick_df)
         tfs.write(out_dir / OUTFILE_INTENSITY, intensity_df)
         tfs.write(out_dir / outfile_emittance(plane), emittance_df)
-        if emittance_bws_df:
+        if emittance_bws_df is not None:
             tfs.write(out_dir / outfile_emittance_bws(plane), emittance_bws_df)
     except (FileNotFoundError, IOError):
         LOG.error(f"Cannot write into directory: {str(out_dir)} ")
@@ -904,7 +905,7 @@ def _plot_emittances(directory, beam, plane, emittance_df, emittance_bws_df, kic
                 marker='',
                 label=f'Moving Average (window = {ROLLING_AVERAGE_WINDOW})')
 
-    if emittance_bws_df and len(emittance_bws_df.index):
+    if emittance_bws_df is not None and len(emittance_bws_df.index):
         for d in BWS_DIRECTIONS:
             label = "__nolegend__" if d == BWS_DIRECTIONS[1] else f"From BWS"
             color = bws_color if d == BWS_DIRECTIONS[1] else colors.change_color_brightness(bws_color, 0.5)

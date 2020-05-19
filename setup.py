@@ -26,7 +26,7 @@ DEPENDENCIES = [
     'htcondor>=8.9.2',
     'tfs-pandas>=1.0.3',
     'generic-parser>=1.0.6',
-    'JPype1==0.6.3',
+    'JPype1>=0.6.3',
     'ipython>=7.0.1',  # actually dependency of pytimber
     'omc3@https://github.com/pylhc/omc3/tarball/master'  # installed in travis.yml
 ]
@@ -34,7 +34,6 @@ DEPENDENCIES = [
 # Test dependencies that should only be installed for test purposes
 TEST_DEPENDENCIES = ['pytest>=5.2',
                      'pytest-cov>=2.6',
-                     'hypothesis>=4.36.2',
                      'attrs>=19.2.0'
                      ]
 
