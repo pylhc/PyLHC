@@ -677,7 +677,7 @@ def fun_exp_decay(p, x):
 
 def fun_linear(p, x):
     """ p = DA, x = action (2J res)"""
-    return x - p/2
+    return (x - p)*0.5
 
 
 def swap_fun_parameters(fun):
