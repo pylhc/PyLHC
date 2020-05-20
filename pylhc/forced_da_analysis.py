@@ -672,7 +672,7 @@ def _add_emittance_to_kicks(plane, energy, kick_df, emittance_df, nominal):
 
 def fun_exp_decay(p, x):
     """ p = DA, x[0] = action (2J res), x[1] = emittance"""
-    return np.exp(-(p - x[0]/2) / x[1])
+    return np.exp(-(p - x[0]) / (2*x[1]))
 
 
 def fun_linear(p, x):
