@@ -825,7 +825,7 @@ def _plot_intensity(directory, beam, plane, kick_df, intensity_df):
     normalized_losses_kick = kick_df.loc[:, [rel_col(INTENSITY_LOSSES), err_col(rel_col(INTENSITY_LOSSES))]]*100
 
     for idx, kick in enumerate(kick_df.index):
-        ax.errorbar([kick] * 2,  normalized_intensity.loc[kick, :],
+        ax.errorbar([kick] * 2, normalized_intensity.loc[kick, :],
                     yerr=normalized_intensity_error.loc[kick, :],
                     color=colors.get_mpl_color(1),
                     marker='.',
@@ -938,7 +938,7 @@ def _plot_da_fit(directory, beam, plane, kick_df):
     ax.errorbar(
         kick_df[col_action] * 1e6,
         kick_df[col_intensity] * 100,
-        xerr=kick_df[err_col(col_action)],
+        xerr=kick_df[err_col(col_action)]* 1e6,
         yerr=kick_df[err_col(col_intensity)] * 100,
         marker=".",
         color=colors.get_mpl_color(0),
@@ -992,7 +992,7 @@ def _plot_da_fit_normalized(directory, beam, plane, kick_df):
     )
 
     color = colors.get_mpl_color(1)
-    data = kick_df[col_action].sort_values(), np.mean(kick_df[col_emittance])
+    data = kick_df[col_action].sort_values(), np.mean(kick_df[col_emittance]) #<-- should be replaced with nominal emittance?
     da, da_err = kick_df.headers[header_da(plane)], kick_df.headers[header_da_error(plane)]
     da_sigma, da_err_sigma = (kick_df.headers[header_da(plane, unit="sigma")],
                               kick_df.headers[header_da_error(plane, unit="sigma")])
