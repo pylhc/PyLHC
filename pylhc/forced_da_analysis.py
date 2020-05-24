@@ -926,13 +926,16 @@ def _plot_emittances(directory, beam, plane, emittance_df, emittance_bws_df, kic
     _save_fig(directory, plane, fig, 'emittance')
 
 
-def _plot_da_fit(directory, beam, plane, kick_df):
+def _plot_da_fit(directory, beam, plane, k_df):
     """ Plot the Forced Dynamic Aperture fit. """
     LOG.debug("Plotting Dynamic Aperture Fit")
     style.set_style("standard")
     col_action = column_action(plane)
     col_emittance = column_emittance(plane)
     col_intensity = rel_col(INTENSITY_LOSSES)
+
+    kick_df = k_df.copy()
+    kick_df = kick_df.sort_values(by=col_action)
 
     fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(10.24, 7.68))
     ax.errorbar(
@@ -971,7 +974,7 @@ def _plot_da_fit(directory, beam, plane, kick_df):
     _save_fig(directory, plane, fig, 'dafit')
 
 
-def _plot_da_fit_normalized(directory, beam, plane, kick_df):
+def _plot_da_fit_normalized(directory, beam, plane, k_df):
     """ Plot the Forced Dynamic Aperture fit in normalized units (of sigma). """
     LOG.debug("Plotting Normalized Dynamic Aperture Fit")
     style.set_style("standard")
@@ -979,6 +982,9 @@ def _plot_da_fit_normalized(directory, beam, plane, kick_df):
     col_emittance = column_emittance(plane)
     col_action_sigma = sigma_col(col_action)
     col_intensity = rel_col(INTENSITY_LOSSES)
+
+    kick_df = k_df.copy()
+    kick_df = kick_df.sort_values(by=col_action)
 
     fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(10.24, 7.68))
     ax.errorbar(
@@ -992,7 +998,8 @@ def _plot_da_fit_normalized(directory, beam, plane, kick_df):
     )
 
     color = colors.get_mpl_color(1)
-    data = kick_df[col_action].sort_values(), np.mean(kick_df[col_emittance]) #<-- should be replaced with nominal emittance?
+    # data = kick_df[col_action], np.mean(kick_df[col_emittance]) #<-- should be replaced with nominal emittance?
+    data = kick_df[col_action], kick_df.headers[header_nominal_emittance(plane)]
     da, da_err = kick_df.headers[header_da(plane)], kick_df.headers[header_da_error(plane)]
     da_sigma, da_err_sigma = (kick_df.headers[header_da(plane, unit="sigma")],
                               kick_df.headers[header_da_error(plane, unit="sigma")])
@@ -1001,11 +1008,11 @@ def _plot_da_fit_normalized(directory, beam, plane, kick_df):
     exp_min = fun_exp_decay(da - da_err, data) * 100
     exp_max = fun_exp_decay(da + da_err, data) * 100
 
-    ax.fill_between(kick_df[col_action_sigma].sort_values(), exp_min, exp_max,
+    ax.fill_between(kick_df[col_action_sigma], exp_min, exp_max,
                     facecolor=mcolors.to_rgba(color, .3))
 
     da_significant = significant_digits(da_sigma, da_err_sigma)
-    ax.plot(kick_df[col_action_sigma].sort_values(), exp_mean, ls="--", c=color,
+    ax.plot(kick_df[col_action_sigma], exp_mean, ls="--", c=color,
             label=f'Fit: DA= ${da_significant[0]} \pm {da_significant[1]} N_{{\sigma}}$'
             )
 
