@@ -697,7 +697,7 @@ def _do_fit(plane, kick_df, fit_type):
     fit_fun, x, y, sx, sy = get_fit_param(action, emittance, rel_losses)
 
     # do prelim fit
-    init_fit = _fit_curve(swap_fun_parameters(fit_fun), x, y, init_guess)
+    init_fit, _ = _fit_curve(swap_fun_parameters(fit_fun), x, y, init_guess)
 
     # do odr
     odr = _fit_odr(fit_fun, x, y, sx, sy, init_fit)
@@ -747,7 +747,7 @@ def _fit_curve(fun, x, y, init):
     fit, cov = scipy.optimize.curve_fit(fun, x, y,
                                         p0=init, maxfev=MAX_CURVEFIT_FEV)
     LOG.info(f"Initial DA fit: {fit} with cov {cov}")
-    return fit
+    return fit, np.sqrt(np.diag(cov))
 
 
 def _fit_odr(fun, x, y, sx, sy, init):
