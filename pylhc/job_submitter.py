@@ -106,9 +106,9 @@ COLUMN_JOBID = "JobId"
 CONFIG_FILE = 'config.ini'
 
 SCRIPT_EXTENSIONS = {
-    'madx': 'madx',
-    'python3': 'py',
-    'python2': 'py',
+    'madx': '.madx',
+    'python3': '.py',
+    'python2': '.py',
 }
 
 LOG = logging_tools.get_logger(__name__)

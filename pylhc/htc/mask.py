@@ -41,10 +41,9 @@ def create_jobs_from_mask(job_df: DataFrame, maskfile: Path, replace_keys: dict,
         template = mfile.read()
 
     jobname = maskfile.with_suffix('').name
-    file_ext = file_ext.lstrip('.')
     jobs = [None] * len(job_df)
     for idx, (jobid, values) in enumerate(job_df.iterrows()):
-        jobfile_fullpath = (Path(values[COLUMN_JOB_DIRECTORY]) / jobname).with_suffix(f'.{file_ext}')
+        jobfile_fullpath = (Path(values[COLUMN_JOB_DIRECTORY]) / jobname).with_suffix(file_ext)
 
         with jobfile_fullpath.open('w') as madxjob:
             madxjob.write(template % dict(zip(replace_keys, values[list(replace_keys)])))
