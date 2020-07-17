@@ -120,7 +120,7 @@ def get_params():
         name="mask",
         type=str,
         required=True,
-        help="Madx mask to use",
+        help="Program mask to use",
     )
     params.add_parameter(
         name="working_directory",
@@ -226,7 +226,7 @@ def get_params():
 
 @entrypoint(get_params(), strict=True)
 def main(opt):
-    LOG.info("Starting MADX-submitter.")
+    LOG.info("Starting HTCondor Job-submitter.")
     opt = _check_opts(opt)
     opt = _convert_to_paths(opt, ('working_directory', 'job_output_dir', 'mask'))
     save_options_to_config(opt.working_directory / CONFIG_FILE, opt)
@@ -284,7 +284,7 @@ def _create_jobs(cwd, maskfile, jobid_mask, replace_dict, output_dir, append_job
 
     # creating all madx jobs
     script_extension = _get_script_extension(script_extension, executable, maskfile)
-    job_df = mask_processing.create_madx_jobs_from_mask(job_df, maskfile, replace_dict.keys(), script_extension)
+    job_df = mask_processing.create_jobs_from_mask(job_df, maskfile, replace_dict.keys(), script_extension)
 
     # creating all shell scripts
     job_df = htcutils.write_bash(job_df, output_dir, executable=executable, cmdline_arguments=script_args)

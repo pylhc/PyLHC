@@ -18,12 +18,12 @@ from pylhc.htc.utils import COLUMN_JOB_DIRECTORY, COLUMN_JOB_FILE
 LOG = logging.getLogger(__name__)
 
 
-def create_madx_jobs_from_mask(job_df: DataFrame, maskfile: Path, replace_keys: dict, file_ext: str = 'madx'):
+def create_jobs_from_mask(job_df: DataFrame, maskfile: Path, replace_keys: dict, file_ext: str):
     """
     Takes path to mask file, list of parameter to be replaced and pandas dataframe containg per job
     the job directory where processed mask is to be put, and columns containing the parameter values
     with column named like replace parameters. Job directories have to be created beforehand.
-    Processed madx mask has the same filename as mask but with the given file extension.
+    Processed (madx) mask has the same filename as mask but with the given file extension.
     Input Dataframe is returned with additional column containing path to the processed script files.
 
 
@@ -41,6 +41,7 @@ def create_madx_jobs_from_mask(job_df: DataFrame, maskfile: Path, replace_keys: 
         template = mfile.read()
 
     jobname = maskfile.with_suffix('').name
+    file_ext = file_ext.lstrip('.')
     jobs = [None] * len(job_df)
     for idx, (jobid, values) in enumerate(job_df.iterrows()):
         jobfile_fullpath = (Path(values[COLUMN_JOB_DIRECTORY]) / jobname).with_suffix(f'.{file_ext}')

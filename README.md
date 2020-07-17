@@ -40,7 +40,7 @@ The latter tools can be found in [OMC3](https://github.com/pylhc/omc3) (Python 3
 ## Functionality
 
 - *Machine Settings Info* - Prints an overview over the machine settings at a given time. ([**machine_settings_info.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/machine_settings_info.py))
-- *MAD-X Job Submitter* - Allows to generate jobs based on a MAD-X template and submit them to HTCondor. ([**madx_submitter.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/madx_submitter.py))
+- *HTCondor Job Submitter* - Allows to generate jobs based on a templates and submit them to HTCondor. ([**job_submitter.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/job_submitter.py))
 - *BSRT Logger* and *BSRT Analysis* - Saves data coming straight from LHC BSRT FESA class and allows subsequent analysis. ([**BSRT_logger.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/BSRT_logger.py) & [**BSRT_analysis.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/BSRT_analysis.py) )
 
 ### Tests
