@@ -90,7 +90,7 @@ def _test_output(args, post_run=True):
 
             assert job_dir_path.exists()
             assert job_dir_path.is_dir()
-            assert (job_dir_path / args.mask_name).with_suffix("." + args.ext).exists()
+            assert (job_dir_path / args.mask_name).with_suffix(args.ext).exists()
             assert out_dir_path.exists()
             if post_run:
                 assert out_dir_path.is_dir()
