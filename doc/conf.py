@@ -3,7 +3,7 @@
 # pyLHC documentation build configuration file, created by
 # sphinx-quickstart on Tue Feb  6 12:10:18 2018.
 #
-# This file is execfile()d with the current kick_directory set to its
+# This file is execfile()d with the current directory set to its
 # containing dir.
 #
 # Note that not all possible configuration values are present in this
@@ -19,8 +19,8 @@ warnings.filterwarnings("ignore", message="numpy.dtype size changed")
 warnings.filterwarnings("ignore", message="numpy.ufunc size changed")
 
 
-# If extensions (or modules to document with autodoc) are in another kick_directory,
-# add these directories to sys.path here. If the kick_directory is relative to the
+# If extensions (or modules to document with autodoc) are in another directory,
+# add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
 import os
@@ -45,7 +45,7 @@ extensions = ['sphinx.ext.autodoc',
     'sphinx.ext.githubpages',
     'sphinx.ext.napoleon']
 
-# Add any paths that contain templates here, relative to this kick_directory.
+# Add any paths that contain templates here, relative to this directory.
 # templates_path = ['_templates']
 
 # The suffix(es) of source filenames.
@@ -78,7 +78,7 @@ release = u'0.0alpha'
 # Usually you set "language" from the command line for these cases.
 language = None
 
-# List of patterns, relative to source kick_directory, that match files and
+# List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This patterns also effect to html_static_path and html_extra_path
 exclude_patterns = []
@@ -106,7 +106,7 @@ smartquotes_action = "qe"  # renders only quotes and ellipses (...) but not dash
 # html_theme_options = {}
 
 # Add any paths that contain custom static files (such as style sheets) here,
-# relative to this kick_directory. They are copied after the builtin static files,
+# relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 # html_static_path = ['_static']
 
