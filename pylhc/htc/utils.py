@@ -6,10 +6,10 @@ Functions allowing to create HTCondor jobs and submit them.
 
 write_bash creates bash scripts executing either a python or madx script. 
 Takes dataframe, job type, and optional additional cmd line arguments for script.
-A shell script is created in each job kick_directory in the dataframe.
+A shell script is created in each job directory in the dataframe.
 
 make_subfile takes the job dataframe and creates the .sub required for submissions to HTCondor.
-The .sub file will be put in the working kick_directory.
+The .sub file will be put in the working directory. 
 The maximum runtime of one job can be specified, standard is 8h.
 
 
@@ -17,10 +17,12 @@ The maximum runtime of one job can be specified, standard is 8h.
 :author: mihofer
 
 """
-import subprocess
-import os
-import htcondor
 import logging
+import subprocess
+from pathlib import Path
+
+import htcondor
+from pandas import DataFrame
 
 from pylhc.constants.external_paths import MADX_BIN, PYTHON2_BIN, PYTHON3_BIN
 
@@ -36,6 +38,7 @@ EXECUTEABLEPATH = {'madx': MADX_BIN,
                    'python3': PYTHON3_BIN,
                    'python2': PYTHON2_BIN,
                    }
+
 
 CMD_SUBMIT = "condor_submit"
 JOBFLAVOURS = ('espresso',  # 20 min
@@ -58,18 +61,21 @@ COLUMN_JOB_FILE = "JobFile"
 # Subprocess Methods ###########################################################
 
 
-def create_subfile_from_job(cwd, job):
+def create_subfile_from_job(cwd: Path, job: str):
     """ Write file to submit to htcondor """
-    subfile = os.path.join(cwd, SUBFILE)
-    LOG.debug(f"Writing sub-file '{subfile}'.")
-    with open(subfile, "w") as f:
+    subfile = cwd / SUBFILE
+    LOG.debug(f"Writing sub-file '{str(subfile)}'.")
+    with subfile.open("w") as f:
         f.write(str(job))
     return subfile
 
 
-def submit_jobfile(jobfile):
+def submit_jobfile(jobfile: Path, ssh: str):
     """ Submit subfile to htcondor via subprocess """
-    status = _start_subprocess([CMD_SUBMIT, jobfile])
+    proc_args = [CMD_SUBMIT, jobfile]
+    if ssh:
+        proc_args = ['ssh', ssh] + proc_args
+    status = _start_subprocess(proc_args)
     if status:
         raise RuntimeError("Submit to HTCondor was not successful!")
     else:
@@ -90,11 +96,11 @@ def _start_subprocess(command):
 # Job Creation #################################################################
 
 
-def create_multijob_for_bashfiles(job_df, **kwargs):
+def create_multijob_for_bashfiles(job_df: DataFrame, **kwargs):
     """ Function to create a HTCondor job assuming n_files bash-files.
 
     Keyword Args:
-        output_dir (str): output kick_directory that will be transferred. Default: None
+        output_dir (str): output directory that will be transferred. Default: None
         duration (str): max duration of the job. Needs to be one of the HTCondor Jobflavours. Default: 'workday'
         group (str): force use of accounting group. Default: None
         retries (int): maximum amount of retries. Default: 3
@@ -105,9 +111,9 @@ def create_multijob_for_bashfiles(job_df, **kwargs):
         "MyId": "htcondor",
         "universe": "vanilla",
         "arguments": "$(ClusterId) $(ProcId)",
-        "output": os.path.join("$(initialdir)", "$(MyId).$(ClusterId).$(ProcId).out"),
-        "error": os.path.join("$(initialdir)", "$(MyId).$(ClusterId).$(ProcId).err"),
-        "log": os.path.join("$(initialdir)", "$(MyId).$(ClusterId).$(ProcId).log"),
+        "output": Path("$(initialdir)", "$(MyId).$(ClusterId).$(ProcId).out"),
+        "error": Path("$(initialdir)", "$(MyId).$(ClusterId).$(ProcId).err"),
+        "log": Path("$(initialdir)", "$(MyId).$(ClusterId).$(ProcId).log"),
         "on_exit_remove": '(ExitBySignal == False) && (ExitCode == 0)',
         "requirements": 'Machine =!= LastRemoteHost',
     }
@@ -116,7 +122,7 @@ def create_multijob_for_bashfiles(job_df, **kwargs):
     job = htcondor.Submit(submit_dict)
 
     # add the multiple bash files
-    scripts = [os.path.join(*parts) for parts in zip(job_df[COLUMN_JOB_DIRECTORY], job_df[COLUMN_SHELL_SCRIPT])]
+    scripts = [str(Path(*parts)) for parts in zip(job_df[COLUMN_JOB_DIRECTORY], job_df[COLUMN_SHELL_SCRIPT])]
     args = [",".join(parts) for parts in zip(scripts, job_df[COLUMN_JOB_DIRECTORY])]
     queueArgs = ["queue executable, initialdir from (", *args, ")"]
 
@@ -129,7 +135,7 @@ def create_multijob_for_bashfiles(job_df, **kwargs):
 # Main functions ###############################################################
 
 
-def make_subfile(cwd, job_df, **kwargs):
+def make_subfile(cwd: Path, job_df: DataFrame, **kwargs):
     """ Creates submit-file for htc.
 
     For kwargs see create_multijob_for_bashfiles.
@@ -138,25 +144,30 @@ def make_subfile(cwd, job_df, **kwargs):
     return create_subfile_from_job(cwd, job)
 
 
-def write_bash(job_df, output_dir=None, jobtype='madx', cmdline_arguments={}):
+def write_bash(job_df: DataFrame, output_dir: Path = None, executable: str = 'madx', cmdline_arguments: dict = None):
     """ Write the bash-files to be called by HTCondor. """
     if len(job_df.index) > HTCONDOR_JOBLIMIT:
         raise AttributeError('Submitting too many jobs for HTCONDOR')
 
+    cmds = ''
+    if cmdline_arguments is not None:
+        cmds = ' '.join([f'{param} {val}' for param, val in cmdline_arguments.items()])
+
+    exec_path = EXECUTEABLEPATH.get(executable, executable)
     shell_scripts = [None] * len(job_df.index)
     for idx, (jobid, job) in enumerate(job_df.iterrows()):
-        bash_file = f'{BASH_FILENAME}.{jobid}.sh'
-        jobfile = os.path.join(job[COLUMN_JOB_DIRECTORY], bash_file)
+        job_dir = Path(job[COLUMN_JOB_DIRECTORY])
+        bash_file_name = f'{BASH_FILENAME}.{jobid}.sh'
+        jobfile = job_dir / bash_file_name
         LOG.debug(f"Writing bash-file {idx:d} '{jobfile}'.")
         with open(jobfile, 'w') as f:
             f.write(f"{SHEBANG}\n")
             if output_dir is not None:
-                f.write(f'mkdir {output_dir}\n')
-            cmds = ' '.join([f'--{param} {val}' for param, val in cmdline_arguments.items()])
+                f.write(f'mkdir {str(output_dir)}\n')
             f.write(
-                f'{EXECUTEABLEPATH[jobtype]} {os.path.join(job[COLUMN_JOB_DIRECTORY], job[COLUMN_JOB_FILE])} {cmds}\n'
+                f'{exec_path} {str(job_dir / job[COLUMN_JOB_FILE])} {cmds}\n'
             )
-        shell_scripts[idx] = bash_file
+        shell_scripts[idx] = bash_file_name
     job_df[COLUMN_SHELL_SCRIPT] = shell_scripts
     return job_df
 
@@ -173,8 +184,8 @@ def _map_kwargs(add_dict):
     # Predefined ones
     htc_map = {'duration': ('+JobFlavour', JOBFLAVOURS, "workday"),
                'output_dir': ('transfer_output_files', None, None),
-               'group': ('+AccountingGroup', None, None),
-               'retries': ('max_retries', None, 3),
+               'accounting_group': ('+AccountingGroup', None, None),
+               'max_retries': ('max_retries', None, 3),
                'notification': ('notification', NOTIFICATIONS, 'error'),
                }
     for key, (mapped, choices, default) in htc_map.items():

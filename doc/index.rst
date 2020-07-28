@@ -15,8 +15,6 @@ Contents:
    constants/index
    data_extract/index
    htc/index
-   madx/index
-   tools/index
 
 
 

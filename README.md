@@ -1,4 +1,6 @@
+
 # <img src="https://twiki.cern.ch/twiki/pub/BEABP/Logos/OMC_logo.png" height="28"> PyLHC Tools
+
 [![Travis (.com)](https://img.shields.io/travis/com/pylhc/PyLHC.svg?style=popout)](https://travis-ci.com/pylhc/PyLHC/)
 [![Code Climate coverage](https://img.shields.io/codeclimate/coverage/pylhc/PyLHC.svg?style=popout)](https://codeclimate.com/github/pylhc/PyLHC)
 [![Code Climate maintainability (percentage)](https://img.shields.io/codeclimate/maintainability-percentage/pylhc/PyLHC.svg?style=popout)](https://codeclimate.com/github/pylhc/PyLHC)
@@ -7,7 +9,7 @@
 
 This is the python-tool package of the optics measurements and corrections group (OMC).
 
-If you are not part of that group, you will most likely have no use for the codes provided here, 
+If you are not part of that group, you will most likely have no use for the codes provided here,
 unless you have a 9km wide accelerator at home.
 Feel free to use them anyway, if you wish!
 
@@ -20,20 +22,13 @@ Feel free to use them anyway, if you wish!
 
 ### Prerequisites
 
-The codes use a multitude of packages as can be found in the [setup.py](setup.py).
+The codes use a multitude of packages as can be found in the [setup.py](setup.py) file.
 
-Important ones are: ``tfs-pandas``,  ``generic_parser``, ``numpy``, ``pandas`` and ``scipy``.
+Important ones are: ``numpy``, ``pandas`` and ``scipy``.
 
 ### Installing
 
 This package is not deployed, hence you need to use the standard git-commands to get a local copy.
-
-As [OMC3](https://github.com/pylhc/omc3) is used as a submodule I recommend cloning with:
-
-```
-git clone --recurse-submodules https://github.com/pylhc/PyLHC.git
-```
-
 
 ## Description
 
@@ -44,25 +39,9 @@ The latter tools can be found in [OMC3](https://github.com/pylhc/omc3) (Python 3
 
 ## Functionality
 
-##### Analysis:
-
-- *Forced DA Analysis* - Script to analyse forced DA. ([**forced_da_analysis.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/forced_da_analysis.py))
-
-
-##### Quick Scripts
-
-- *Forced DA analysis* - Analysis of the dynamic aperture of forced kicks ([**forced_da_analysis.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/forced_da_analysis.py))
-- *Machine Settings Info* - Prints an overview over the machine settings at a given time. ([**machine_settings_info.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/machine_settings_info.py)) 
-- *Plot: Tfs* - Provides easy plotting fucntionality for tfs files. ([**plot_tfs.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/plot_tfs.py))
-- *Plot: Amplitude Detuning* - Plots the result of OMC3s amplitude detuning analysis ([**plot_amplitude_detuning.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/plot_amplitude_detuning.py))
-- *Plot: BBQ* - Plots the result of OMC3s amplitude detuning tune-analysis ([**plot_bbq.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/plot_bbq.py))
-
-##### Helper Functionality:
-
-- *Some plotting helpers* - found in [**post_processing.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/plotshop/post_processing.py),
- [**lines.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/plotshop/lines.py), 
- [**colors.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/plotshop/colors.py) and
- [**annotations.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/plotshop/annotations.py).
+- *Machine Settings Info* - Prints an overview over the machine settings at a given time. ([**machine_settings_info.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/machine_settings_info.py))
+- *HTCondor Job Submitter* - Allows to generate jobs based on a templates and submit them to HTCondor. ([**job_submitter.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/job_submitter.py))
+- *BSRT Logger* and *BSRT Analysis* - Saves data coming straight from LHC BSRT FESA class and allows subsequent analysis. ([**BSRT_logger.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/BSRT_logger.py) & [**BSRT_analysis.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/BSRT_analysis.py) )
 
 ### Tests
 

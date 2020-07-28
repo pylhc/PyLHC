@@ -31,17 +31,17 @@ Can be run from command line, parameters as given in :meth:`print_machine_settin
 :author: jdilly
 
 """
-import os
 import re
 from collections import OrderedDict
+from pathlib import Path
 
 import tfs
 from generic_parser import DotDict, entrypoint, EntryPointParameters
+from omc3.utils import logging_tools
+from omc3.utils.time_tools import AcceleratorDatetime, AccDatetime
 
 from pylhc.constants import machine_settings_info as const
 from pylhc.data_extract.lsa import LSA, COL_NAME as lsa_col_name
-from omc3.utils.time_tools import AcceleratorDatetime, AccDatetime
-from omc3.utils import logging_tools
 
 LOG = logging_tools.get_logger(__name__)
 
@@ -188,14 +188,14 @@ def write_summary(output_path: str, acc_time: AccDatetime, bp_info: DotDict, o_i
         (const.head_optics_start,           o_info.start.cern_utc_string()),
         ("Hint:",                           "All times given in UTC.")
     ])
-    tfs.write(os.path.join(output_path, const.info_name), info_tfs)
+    tfs.write(str(Path(output_path, const.info_name)), info_tfs)
 
 
-def write_knob_defitions(output_path:str, definitions: dict):
+def write_knob_defitions(output_path: str, definitions: dict):
     """ Write Knob definitions into file. """
     for knob, definition in definitions.items():
-        path = os.path.join(output_path, f"{knob.replace('/', '_')}{const.knobdef_suffix}")
-        tfs.write(path, definition, save_index=lsa_col_name)
+        path = Path(output_path, f"{knob.replace('/', '_')}{const.knobdef_suffix}")
+        tfs.write(str(path), definition, save_index=lsa_col_name)
 
 
 # Beamprocess ##################################################################
