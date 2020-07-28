@@ -50,7 +50,7 @@ def _create_setup(afs_path: Path = None):
             out_dir=out_dir,
             id='%(PARAM1)s.%(PARAM2)d',
             mask_name='test_script.mask',
-            ext='sh',
+            ext='.sh',
             out_file=Path(out_dir, out_name),
             p1_list=['a', 'b'],
             p2_list=[1, 2, 3],
@@ -90,7 +90,7 @@ def _test_output(args, post_run=True):
 
             assert job_dir_path.exists()
             assert job_dir_path.is_dir()
-            assert (job_dir_path / args.mask_name).with_suffix("." + args.ext).exists()
+            assert (job_dir_path / args.mask_name).with_suffix(args.ext).exists()
             assert out_dir_path.exists()
             if post_run:
                 assert out_dir_path.is_dir()

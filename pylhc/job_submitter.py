@@ -74,8 +74,10 @@ parameter per job and job directory for further post processing.
 - **script_extension** *(str)*: New extension for the scripts created from the masks.
   This is inferred automatically for ['madx', 'python3', 'python2']. Otherwise not changed.
 
+- **ssh** *(str)*: Run htcondor from this machine via ssh (needs access to the `working_directory`)
 
-:module: madx_submitter
+
+:module: job_submitter
 :author: mihofer, jdilly
 
 """
@@ -106,9 +108,9 @@ COLUMN_JOBID = "JobId"
 CONFIG_FILE = 'config.ini'
 
 SCRIPT_EXTENSIONS = {
-    'madx': 'madx',
-    'python3': 'py',
-    'python2': 'py',
+    'madx': '.madx',
+    'python3': '.py',
+    'python2': '.py',
 }
 
 LOG = logging_tools.get_logger(__name__)
@@ -120,7 +122,7 @@ def get_params():
         name="mask",
         type=str,
         required=True,
-        help="Madx mask to use",
+        help="Program mask to use",
     )
     params.add_parameter(
         name="working_directory",
@@ -220,13 +222,18 @@ def get_params():
         type=DictAsString,
         default={}
     )
+    params.add_parameter(
+        name="ssh",
+        help="Run htcondor from this machine via ssh (needs access to the `working_directory`)",
+        type=str,
+    )
 
     return params
 
 
 @entrypoint(get_params(), strict=True)
 def main(opt):
-    LOG.info("Starting MADX-submitter.")
+    LOG.info("Starting HTCondor Job-submitter.")
     opt = _check_opts(opt)
     opt = _convert_to_paths(opt, ('working_directory', 'job_output_dir', 'mask'))
     save_options_to_config(opt.working_directory / CONFIG_FILE, opt)
@@ -235,13 +242,15 @@ def main(opt):
                           opt.job_output_dir, opt.append_jobs, opt.executable,
                           opt.script_arguments, opt.script_extension)
     job_df, dropped_jobs = _drop_already_run_jobs(job_df, opt.resume_jobs or opt.append_jobs,
-                                             opt.job_output_dir, opt.check_files)
+                                                  opt.job_output_dir, opt.check_files)
 
-    if not opt.dryrun:
-        _run(job_df, opt.working_directory, opt.job_output_dir,
-             opt.jobflavour, opt.num_processes, opt.run_local, opt.htc_arguments)
-    else:
+    if opt.dryrun:
         _print_stats(job_df.index, dropped_jobs)
+    elif opt.run_local:
+        _run_local(job_df, opt.num_processes)
+    else:
+        _run_htc(job_df, opt.working_directory, opt.job_output_dir,
+                 opt.jobflavour, opt.ssh, opt.htc_arguments)
 
 
 # Main Functions ---------------------------------------------------------------
@@ -284,7 +293,7 @@ def _create_jobs(cwd, maskfile, jobid_mask, replace_dict, output_dir, append_job
 
     # creating all madx jobs
     script_extension = _get_script_extension(script_extension, executable, maskfile)
-    job_df = mask_processing.create_madx_jobs_from_mask(job_df, maskfile, replace_dict.keys(), script_extension)
+    job_df = mask_processing.create_jobs_from_mask(job_df, maskfile, replace_dict.keys(), script_extension)
 
     # creating all shell scripts
     job_df = htcutils.write_bash(job_df, output_dir, executable=executable, cmdline_arguments=script_args)
@@ -307,19 +316,19 @@ def _drop_already_run_jobs(job_df, drop_jobs, output_dir, check_files):
     return job_df, finished_jobs
 
 
-def _run(job_df, cwd, output_dir, flavour, num_processes, run_local, additional_htc_arguments):
-    if run_local:
-        LOG.info(f"Running {len(job_df.index)} jobs locally in {num_processes:d} processes.")
-        pool = multiprocessing.Pool(processes=num_processes)
-        pool.map(_execute_shell, job_df.iterrows())
+def _run_local(job_df, num_processes):
+    LOG.info(f"Running {len(job_df.index)} jobs locally in {num_processes:d} processes.")
+    pool = multiprocessing.Pool(processes=num_processes)
+    pool.map(_execute_shell, job_df.iterrows())
 
-    else:
-        LOG.info(f"Submitting {len(job_df.index)} jobs on htcondor, flavour '{flavour}'.")
-        # create submission file
-        subfile = htcutils.make_subfile(cwd, job_df, output_dir=output_dir, duration=flavour,
-                                        **additional_htc_arguments)
-        # submit to htcondor
-        htcutils.submit_jobfile(subfile)
+
+def _run_htc(job_df, cwd, output_dir, flavour, ssh, additional_htc_arguments):
+    LOG.info(f"Submitting {len(job_df.index)} jobs on htcondor, flavour '{flavour}'.")
+    # create submission file
+    subfile = htcutils.make_subfile(cwd, job_df, output_dir=output_dir, duration=flavour,
+                                    **additional_htc_arguments)
+    # submit to htcondor
+    htcutils.submit_jobfile(subfile, ssh)
 
 
 def _get_script_extension(script_extension, executable, mask):
