@@ -83,10 +83,10 @@ from pylhc.constants.forced_da_analysis import (bsrt_emittance_key, bws_emittanc
                                                 header_da, header_da_error, header_nominal_emittance,
                                                 header_norm_nominal_emittance,
                                                 outfile_emittance, outfile_emittance_bws, outfile_kick, outfile_plot,
-                                                TFS_SUFFIX, HEADER_ENERGY,
+                                                HEADER_ENERGY,
                                                 HEADER_TIME_AFTER, HEADER_TIME_BEFORE,
                                                 HEADER_BSRT_ROLLING_WINDOW, HEADER_BSRT_OUTLIER_LIMIT,
-                                                TIME, TIME_AFTER_KICK_S, TIME_AROUND_KICKS_MIN, TIME_BEFORE_KICK_S,
+                                                TIME_AFTER_KICK_S, TIME_AROUND_KICKS_MIN, TIME_BEFORE_KICK_S,
                                                 PLOT_FILETYPES, INTENSITY, INITIAL_DA_FIT, INTENSITY_AFTER,
                                                 INTENSITY_BEFORE,
                                                 INTENSITY_KEY, INTENSITY_LOSSES,
@@ -94,7 +94,7 @@ from pylhc.constants.forced_da_analysis import (bsrt_emittance_key, bws_emittanc
                                                 BWS_EMITTANCE_TO_METER, KICKFILE, RESULTS_DIR, YPAD,
                                                 MAX_CURVEFIT_FEV, OUTFILE_INTENSITY, OUTLIER_LIMIT,
                                                 )
-from pylhc.constants.general import get_proton_gamma, get_proton_beta, LHC_NOMINAL_EMITTANCE
+from pylhc.constants.general import get_proton_gamma, get_proton_beta, LHC_NOMINAL_EMITTANCE, TFS_SUFFIX, TIME_COLUMN
 
 LOG = logging_tools.get_logger(__name__)
 
@@ -272,7 +272,7 @@ def _write_tfs(out_dir, plane, kick_df, intensity_df, emittance_df, emittance_bw
     LOG.debug("Writing tfs files.")
     for df in (kick_df, intensity_df, emittance_df, emittance_bws_df):
         if df is not None:
-            df.insert(0, TIME, [CERNDatetime(dt).cern_utc_string() for dt in df.index])
+            df.insert(0, TIME_COLUMN, [CERNDatetime(dt).cern_utc_string() for dt in df.index])
     try:
         tfs.write(out_dir / outfile_kick(plane), kick_df)
         tfs.write(out_dir / OUTFILE_INTENSITY, intensity_df)
@@ -341,7 +341,7 @@ def _get_dataframes(kick_times, opt):
 def _read_tfs(tfs_file_or_path, timespan):
     """ Read previously gathered data (see :meth:`pylhc.forced_da_analysis._write_tfs`)"""
     try:
-        tfs_df = tfs.read_tfs(tfs_file_or_path, index=TIME)
+        tfs_df = tfs.read_tfs(tfs_file_or_path, index=TIME_COLUMN)
     except IOError:
         tfs_df = tfs_file_or_path  # hopefully
     else:
@@ -540,7 +540,7 @@ def _get_old_kick_file(kick_dir, plane):
     path = kick_dir / "getkickac.out"
     LOG.debug(f"Reading kickfile '{str(path)}'.'")
     df = tfs.read(path)
-    df = df.set_index(TIME)
+    df = df.set_index(TIME_COLUMN)
     new_index = None
 
     with suppress(TypeError):
@@ -551,7 +551,7 @@ def _get_old_kick_file(kick_dir, plane):
             new_index = _timestamp_to_cerntime_index(df.index)
 
     if new_index is None:
-        raise TypeError(f"Unrecognized format in column '{TIME}' in '{str(path)}'")
+        raise TypeError(f"Unrecognized format in column '{TIME_COLUMN}' in '{str(path)}'")
 
     df.index = new_index
     rename_dict = {}
@@ -572,7 +572,7 @@ def _get_new_kick_file(kick_dir, planes):
     for plane in planes:
         path = kick_dir / f"{KICKFILE}_{plane.lower()}{TFS_SUFFIX}"
         LOG.debug(f"Reading kickfile '{str(path)}'.'")
-        df = tfs.read(path, index=TIME)
+        df = tfs.read(path, index=TIME_COLUMN)
         df.index = pd.Index([CERNDatetime.from_cern_utc_string(t) for t in df.index], dtype=object)
         dfs[plane] = df
     return _merge_df_planes(dfs, planes)

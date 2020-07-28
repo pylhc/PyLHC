@@ -8,7 +8,7 @@ Constants and definitions for the forced DA analysis.
 :author: jdilly
 
 """
-from pylhc.constants.general import PLANE_TO_HV
+from pylhc.constants.general import PLANE_TO_HV, TFS_SUFFIX
 
 RESULTS_DIR = "forced_da_analysis"
 
@@ -29,8 +29,6 @@ BWS_DIRECTIONS = ("IN", "OUT")
 # Kick File Definitions --------------------------------------------------------
 
 KICKFILE = "kick"
-TFS_SUFFIX = ".tfs"
-TIME = "TIME"
 
 
 def outfile_kick(plane):
