@@ -48,8 +48,6 @@ Runs the forced DA analysis, following the procedure described in `CarlierForced
 :author: jdilly
 
 """
-
-
 import os
 from collections import defaultdict
 from contextlib import suppress
@@ -101,6 +99,7 @@ LOG = logging_tools.get_logger(__name__)
 path_or_str = get_multi_class(Path, str)
 path_or_str_or_df = get_multi_class(Path, str, tfs.TfsDataFrame, pd.DataFrame)
 path_or_str_or_db = get_multi_class(Path, str, PageStore)
+
 
 def get_params():
     return EntryPointParameters(
@@ -288,6 +287,16 @@ def _check_all_times_in(series, start, end):
     if any(s for s in series if s < start or s > end):
         raise ValueError("Some of the kick-times are outside of the fill times! "
                          "Check if correct kick-file or fill number are used.")
+
+
+def _convert_time_index(list_, path=None):
+    for index_convert in (_string_to_cerntime_index, _timestamp_to_cerntime_index):
+        with suppress(TypeError):
+            return index_convert(list_)
+    msg = f"Unrecognized format in column '{TIME_COLUMN}'"
+    if path:
+        msg += f" in '{str(path)}'"
+    raise TypeError(msg)
 
 
 def _string_to_cerntime_index(list_):
@@ -541,19 +550,7 @@ def _get_old_kick_file(kick_dir, plane):
     LOG.debug(f"Reading kickfile '{str(path)}'.'")
     df = tfs.read(path)
     df = df.set_index(TIME_COLUMN)
-    new_index = None
-
-    with suppress(TypeError):
-       new_index = _string_to_cerntime_index(df.index)
-
-    if new_index is None:
-        with suppress(TypeError):
-            new_index = _timestamp_to_cerntime_index(df.index)
-
-    if new_index is None:
-        raise TypeError(f"Unrecognized format in column '{TIME_COLUMN}' in '{str(path)}'")
-
-    df.index = new_index
+    df.index = _convert_time_index(df.index, path)
     rename_dict = {}
     for p in plane:
         rename_dict.update({f"2J{p}RES": column_action(p),
