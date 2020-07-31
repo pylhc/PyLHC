@@ -4,52 +4,16 @@ Forced DA Analysis
 
 Runs the forced DA analysis, following the procedure described in `CarlierForcedDA2019`_.
 
-*--Required--*
-
-- **beam** *(int)*: Beam to use.
-
-  Flags: **['-b', '--beam']**
-  Choices: ``[1, 2]``
-- **kick_directory** *(str)*: Analysis kick_directory containing kick files.
-
-  Flags: **['-d', '--dir']**
-- **energy** *(float)*: Beam energy in GeV.
-
-  Flags: **['-e', '--energy']**
-
-*--Optional--*
-
-- **fill** *(int)*: Fill that was used. If not given, check out time_around_kicks.
-
-  Flags: **['-f', '--fill']**
-- **intensity_time_after_kick** *(int)*: Defines the times after the kicks (in seconds) which is used for intensity averaging to calculate the losses.
-
-  Flags: **['--tafter']**
-  Default: ``[5, 30]``
-- **intensity_time_before_kick** *(int)*: Defines the times before the kicks (in seconds) which is used for intensity averaging to calculate the losses.
-
-  Flags: **['--tbefore']**
-  Default: ``[30, 5]``
-- **plane** *(str)*: Plane of the kicks. Give 'XY' for using both planes (e.g. diagonal kicks).
-
-  Flags: **['-p', '--plane']**
-  Choices: ``['X', 'Y', 'XY']``
-  Default: ``XY``
-- **time_around_kicks** *(int)*: If no fill is given, this defines the time (in minutes) when data before the first and after the last kick is extracted.
-
-  Flags: **['--taround']**
-  Default: ``10``
-
 
 .. _CarlierForcedDA2019: https://journals.aps.org/prab/pdf/10.1103/PhysRevAccelBeams.22.031002
 
 
 :module: forced_da_analysis
-:author: jdilly
+:author: jdilly, mihofer
 
 """
 import os
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 from contextlib import suppress
 from pathlib import Path
 
@@ -60,17 +24,19 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import pytimber
+from generic_parser.entrypoint_parser import save_options_to_config
 from pytimber.pagestore import PageStore
 import scipy.odr
 import scipy.optimize
 import tfs
 from generic_parser import EntryPointParameters, entrypoint
-from generic_parser.entry_datatypes import get_multi_class, BoolOrString
+from generic_parser.entry_datatypes import get_multi_class, get_instance_faker_meta, TRUE_ITEMS, FALSE_ITEMS
 from omc3.optics_measurements import toolbox
 from omc3.plotting.utils import style, lines, annotations, colors
 from omc3.tune_analysis.bbq_tools import clean_outliers_moving_average
 from omc3.utils import logging_tools
 from omc3.utils.time_tools import CERNDatetime
+from omc3.definitions.formats import get_config_filename
 from pandas.plotting import register_matplotlib_converters
 from tfs.tools import significant_digits
 
@@ -96,9 +62,29 @@ from pylhc.constants.general import get_proton_gamma, get_proton_beta, LHC_NOMIN
 
 LOG = logging_tools.get_logger(__name__)
 
+# Weird Datatypes
 path_or_str = get_multi_class(Path, str)
 path_or_str_or_df = get_multi_class(Path, str, tfs.TfsDataFrame, pd.DataFrame)
 path_or_str_or_db = get_multi_class(Path, str, PageStore)
+
+
+class BoolOrPathOrDataFrame(metaclass=get_instance_faker_meta(bool, Path, str, tfs.TfsDataFrame, pd.DataFrame)):
+    """ A class that behaves like a boolean when possible, otherwise like a Path, string or Dataframe."""
+    def __new__(cls, value):
+        if isinstance(value, str):
+            value = value.strip("\'\"")  # behavior like dict-parser
+
+        if value in TRUE_ITEMS:
+            return True
+
+        elif value in FALSE_ITEMS:
+            return False
+
+        else:
+            try:
+                return Path(value)
+            except TypeError:
+                return value
 
 
 def get_params():
@@ -174,7 +160,7 @@ def get_params():
         ),
         show_wirescan_emittance=dict(
             default=False,
-            type=BoolOrString,
+            type=BoolOrPathOrDataFrame,
             help=("Flag if the emittance from wirescan should also be shown, "
                   "can also be a Dataframe or Path of pre-saved emittance bws tfs."),
         ),
@@ -208,7 +194,7 @@ def get_params():
             type=str,
             default='average',
             choices=['fit_sigma', 'average'],
-            help="Which BSRT data to use."
+            help="Which BSRT data to use (from database)."
         ),
     )
 
@@ -216,6 +202,7 @@ def get_params():
 @entrypoint(get_params(), strict=True)
 def main(opt):
     LOG.debug("Starting Forced DA analysis.")
+    _save_options(opt)
     _log_opt(opt)
 
     # get data
@@ -248,7 +235,8 @@ def main(opt):
     _plot_emittances(out_dir, opt.beam, opt.plane, emittance_df, emittance_bws_df, kick_df.index)
     _plot_intensity(out_dir, opt.beam, opt.plane, kick_df, intensity_df)
     # _plot_losses(out_dir, beam, plane, kick_df)
-    _plot_da_fit(out_dir, opt.beam, opt.plane, kick_df)
+    for fit_type in ('exponential', 'linear'):
+        _plot_da_fit(out_dir, opt.beam, opt.plane, kick_df, fit_type)
     _plot_da_fit_normalized(out_dir, opt.beam, opt.plane, kick_df)
 
     plt.show()
@@ -264,6 +252,13 @@ def _log_opt(opt):
     LOG.info(f"  Beam: {opt.beam}")
     LOG.info(f"  Plane: {opt.plane}")
     LOG.info(f"  Analysis Directory: '{opt.kick_directory}'")
+
+
+def _save_options(opt):
+    if opt.output_directory:
+        out_path = Path(opt.output_directory)
+        out_path.mkdir(exist_ok=True, parents=True)
+        save_options_to_config(out_path / get_config_filename(__file__), OrderedDict(sorted(opt.items())))
 
 
 def _write_tfs(out_dir, plane, kick_df, intensity_df, emittance_df, emittance_bws_df):
@@ -290,7 +285,7 @@ def _check_all_times_in(series, start, end):
 
 
 def _convert_time_index(list_, path=None):
-    for index_convert in (_string_to_cerntime_index, _timestamp_to_cerntime_index):
+    for index_convert in (_datetime_to_cerntime_index, _string_to_cerntime_index, _timestamp_to_cerntime_index):
         with suppress(TypeError):
             return index_convert(list_)
     msg = f"Unrecognized format in column '{TIME_COLUMN}'"
@@ -307,6 +302,10 @@ def _timestamp_to_cerntime_index(list_):
     return pd.Index((CERNDatetime.from_timestamp(t) for t in list_), dtype=object)
 
 
+def _datetime_to_cerntime_index(list_):
+    return pd.Index((CERNDatetime(t) for t in list_), dtype=object)
+
+
 def _drop_duplicate_indices(df):
     duplicate_mask = [True] + [df.index[idx] != df.index[idx-1] for idx in range(1, len(df.index))]
     return df.loc[duplicate_mask, :]
@@ -319,28 +318,29 @@ def _get_dataframes(kick_times, opt):
     db = _get_db(opt)
 
     if opt.fill is not None:
-        timespan = _get_fill_times(db, opt.fill)
+        timespan_ts = _get_fill_times(db, opt.fill)
+        timespan_dt = _convert_time_index(timespan_ts)
     else:
         td = pd.Timedelta(minutes=opt.time_around_kicks)
-        timespan = (kick_times.min() - td, kick_times.max() + td)
-        timespan = tuple(t.timestamp() for t in timespan)
+        timespan_dt = (kick_times.min() - td, kick_times.max() + td)
+        timespan_ts = tuple(t.timestamp() for t in timespan_dt)
 
     if opt.intensity_tfs:
-        intensity_df = _read_tfs(opt.intensity_tfs, timespan)
+        intensity_df = _read_tfs(opt.intensity_tfs, timespan_dt)
     else:
-        intensity_df = _get_bctrf_beam_intensity_from_timber(opt.beam, db, timespan)
+        intensity_df = _get_bctrf_beam_intensity_from_timber(opt.beam, db, timespan_ts)
 
     if opt.emittance_tfs:
-        emittance_df = _read_tfs(opt.emittance_tfs, timespan)
+        emittance_df = _read_tfs(opt.emittance_tfs, timespan_dt)
     else:
-        emittance_df = _get_bsrt_bunch_emittances_from_timber(opt.beam, opt.plane, db, timespan,
+        emittance_df = _get_bsrt_bunch_emittances_from_timber(opt.beam, opt.plane, db, timespan_ts,
                                                               opt.emittance_type, opt.normalized_emittance)
     emittance_df = _filter_emittance_data(emittance_df, opt.plane, opt.emittance_window_length, opt.emittance_outlier_limit)
 
     if opt.show_wirescan_emittance is True:
-        emittance_bws_df = _get_bws_emittances_from_timber(opt.beam, opt.plane, db, timespan)
+        emittance_bws_df = _get_bws_emittances_from_timber(opt.beam, opt.plane, db, timespan_ts)
     elif opt.show_wirescan_emittance:
-        emittance_bws_df = _read_tfs(opt.show_wirescan_emittance, timespan)
+        emittance_bws_df = _read_tfs(opt.show_wirescan_emittance, timespan_dt)
     else:
         emittance_bws_df = None
 
@@ -353,10 +353,10 @@ def _read_tfs(tfs_file_or_path, timespan):
         tfs_df = tfs.read_tfs(tfs_file_or_path, index=TIME_COLUMN)
     except IOError:
         tfs_df = tfs_file_or_path  # hopefully
-    else:
-        tfs_df.index = _string_to_cerntime_index(tfs_df.index)
 
-    return tfs_df.loc[slice(timespan), :]
+    tfs_df.index = _convert_time_index(tfs_df.index)
+
+    return tfs_df.loc[slice(*timespan), :]
 
 
 def _filter_emittance_data(df, planes, window_length, limit):
@@ -669,12 +669,12 @@ def _add_emittance_to_kicks(plane, energy, kick_df, emittance_df, nominal):
 
 def fun_exp_decay(p, x):
     """ p = DA, x[0] = action (2J res), x[1] = emittance"""
-    return np.exp(-(p - x[0]) / (2*x[1]))
+    return np.exp(-(p - (0.5*x[0])) / x[1])
 
 
 def fun_linear(p, x):
     """ p = DA, x = action (2J res)"""
-    return (x - p)*0.5
+    return x*0.5 - p
 
 
 def swap_fun_parameters(fun):
@@ -702,7 +702,7 @@ def _do_fit(plane, kick_df, fit_type):
     # add DA to kick
     da = odr.beta[0], odr.sd_beta[0]
     kick_df.headers[header_da(plane)], kick_df.headers[header_da_error(plane)] = da
-    LOG.info(f"Forced DA in {plane} [m]: {da[0]} ± {da[1]}")
+    LOG.info(f"Forced DA (wrt. J) in {plane} [m]: {da[0]} ± {da[1]}")
 
     return kick_df
 
@@ -769,18 +769,17 @@ def _no_nonzero_errors(series):
 
 
 def _convert_to_sigmas(plane, kick_df):
-    """ Converts the DA and the Action into Sigma-Units.
-    Hint: Both are currently in units of 2J! """
+    """ Converts the DA and the Action into Sigma-Units. """
     LOG.debug("Calculating action and da in sigmas.")
     nominal_emittance = kick_df.headers[header_nominal_emittance(plane)]
 
-    # DA
+    # DA (in units of J) to DA_sigma
     da, da_err = kick_df.headers[header_da(plane)], kick_df.headers[header_da_error(plane)]
-    da_sigma = np.sqrt(da/nominal_emittance), .5 * da_err / np.sqrt(da * nominal_emittance)
+    da_sigma = np.sqrt(2*da/nominal_emittance), da_err / np.sqrt(2 * da * nominal_emittance)
     kick_df.headers[header_da(plane, unit="sigma")], kick_df.headers[header_da_error(plane, unit="sigma")] = da_sigma
     LOG.info(f"Forced DA {plane} in N-sigma: {da_sigma[0]} ± {da_sigma[1]}")
 
-    # Action
+    # Action (in units of 2J) to J_sigma
     col_action = column_action(plane)
     kick_df[sigma_col(col_action)] = np.sqrt(kick_df[col_action] / nominal_emittance)
     kick_df[err_col(sigma_col(col_action))] = (
@@ -808,7 +807,8 @@ def _plot_intensity(directory, beam, plane, kick_df, intensity_df):
     norm = intensity_start/100.
 
     # plot intensity
-    ax.plot(intensity_df[INTENSITY] / norm,
+    ax.plot(mdates.date2num(intensity_df.index),
+            intensity_df[INTENSITY] / norm,
             marker=".",
             markersize=mpl.rcParams["lines.markersize"] * 0.5,
             fillstyle="full",
@@ -822,14 +822,14 @@ def _plot_intensity(directory, beam, plane, kick_df, intensity_df):
     normalized_losses_kick = kick_df.loc[:, [rel_col(INTENSITY_LOSSES), err_col(rel_col(INTENSITY_LOSSES))]]*100
 
     for idx, kick in enumerate(kick_df.index):
-        ax.errorbar([kick] * 2, normalized_intensity.loc[kick, :],
+        ax.errorbar([mdates.date2num(kick)] * 2, normalized_intensity.loc[kick, :],
                     yerr=normalized_intensity_error.loc[kick, :],
                     color=colors.get_mpl_color(1),
                     marker='.',
                     linestyle="-",
                     label='__nolegend__' if idx > 0 else "Losses")
 
-        ax.text(kick, .5 * sum(normalized_intensity.loc[kick, :]),
+        ax.text(mdates.date2num(kick), .5 * sum(normalized_intensity.loc[kick, :]),
                 "  -{:.1f}$\pm${:.1f} %\n".format(*normalized_losses.loc[kick, :]) +
                 " (-{:.1f}$\pm${:.1f} %)".format(*normalized_losses_kick.loc[kick, :]),
                 va="bottom", color=colors.get_mpl_color(1),
@@ -884,9 +884,7 @@ def _plot_emittances(directory, beam, plane, emittance_df, emittance_bws_df, kic
     bsrt_color = colors.get_mpl_color(0)
     bws_color = colors.get_mpl_color(1)
 
-    times = [t.datetime for t in emittance_df.index]
-
-    ax.errorbar(times,
+    ax.errorbar(mdates.date2num(emittance_df.index),
                 emittance_df[col_norm_emittance] * 1e6,  # Actual BSRT measurement
                 yerr=emittance_df[err_col(col_norm_emittance)] * 1e6,
                 color=bsrt_color,
@@ -895,7 +893,7 @@ def _plot_emittances(directory, beam, plane, emittance_df, emittance_bws_df, kic
                 linestyle='None',
                 label=f'From BSRT')
 
-    ax.errorbar(times,
+    ax.errorbar(mdates.date2num(emittance_df.index),
                 emittance_df[mean_col(col_norm_emittance)] * 1e6,
                 yerr=emittance_df[err_col(mean_col(col_norm_emittance))] * 1e6,
                 color=colors.change_color_brightness(bsrt_color, 0.7),
@@ -908,7 +906,7 @@ def _plot_emittances(directory, beam, plane, emittance_df, emittance_bws_df, kic
             color = bws_color if d == BWS_DIRECTIONS[1] else colors.change_color_brightness(bws_color, 0.5)
             col_bws_nemittance = column_bws_norm_emittance(plane, d)
             ax.errorbar(
-                emittance_bws_df.index,
+                mdates.date2num(emittance_bws_df.index),
                 emittance_bws_df[col_bws_nemittance] * 1e6,
                 yerr=emittance_bws_df[err_col(col_bws_nemittance)] * 1e6,
                 linestyle='None', marker='o', color=color, label=label,
@@ -923,9 +921,9 @@ def _plot_emittances(directory, beam, plane, emittance_df, emittance_bws_df, kic
     _save_fig(directory, plane, fig, 'emittance')
 
 
-def _plot_da_fit(directory, beam, plane, k_df):
+def _plot_da_fit(directory, beam, plane, k_df, fit_type):
     """ Plot the Forced Dynamic Aperture fit. """
-    LOG.debug("Plotting Dynamic Aperture Fit")
+    LOG.debug(f"Plotting Dynamic Aperture Fit for {fit_type}")
     style.set_style("standard")
     col_action = column_action(plane)
     col_emittance = column_emittance(plane)
@@ -935,11 +933,20 @@ def _plot_da_fit(directory, beam, plane, k_df):
     kick_df = kick_df.sort_values(by=col_action)
 
     fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(10.24, 7.68))
+
+    ydata = kick_df[col_intensity]
+    yerr = kick_df[err_col(col_intensity)]
+    if fit_type == 'linear':
+        ydata = np.log(ydata)
+    else:
+        ydata *= 100
+        yerr *= 100
+
     ax.errorbar(
         kick_df[col_action] * 1e6,
-        kick_df[col_intensity] * 100,
-        xerr=kick_df[err_col(col_action)]* 1e6,
-        yerr=kick_df[err_col(col_intensity)] * 100,
+        ydata,
+        xerr=kick_df[err_col(col_action)] * 1e6,
+        yerr=yerr,
         marker=".",
         color=colors.get_mpl_color(0),
         label=f'Kicks'
@@ -949,31 +956,33 @@ def _plot_da_fit(directory, beam, plane, k_df):
     data = kick_df[col_action], kick_df[col_emittance]
     # data = kick_df[col_action], kick_df.headers[header_nominal_emittance(plane)]
     da, da_err = kick_df.headers[header_da(plane)], kick_df.headers[header_da_error(plane)]
-    exp_mean = fun_exp_decay(da, data) * 100
-    exp_min = fun_exp_decay(da - da_err, data) * 100
-    exp_max = fun_exp_decay(da + da_err, data) * 100
 
-    ax.fill_between(data[0]*1e6, exp_min, exp_max,
+    fit_mean, fit_min, fit_max = _get_fit_plot_data(da, da_err, data, fit_type)
+
+    ax.fill_between(data[0]*1e6, fit_min, fit_max,
                     facecolor=mcolors.to_rgba(color, .3))
 
     da_mu, da_err_mu = significant_digits(da*1e6, da_err*1e6)
-    ax.plot(data[0]*1e6, exp_mean, ls="--", c=color,
-            label=f'Fit: DA= ${da_mu} \pm {da_err_mu} \mu m$'
+    ax.plot(data[0]*1e6, fit_mean, ls="--", c=color,
+            label=f'Fit: DA$_J$= ${da_mu} \pm {da_err_mu} \mu m$'
             )
 
     ax.set_xlabel(f"$2J_{{{plane if len(plane) == 1 else ''}}} [\mu m]$")
-    ax.set_ylabel(r'Beam Losses [%]')
+    if fit_type == "linear":
+        ax.set_ylabel(r'ln($I/I_0$)')
+    else:
+        ax.set_ylabel(r'Beam Losses [%]')
+        ax.set_ylim([0, ydata.max() * (1 + YPAD)])
     ax.set_xlim([0, None])
-    ax.set_ylim([0, kick_df[col_intensity].max() * 100 * (1 + YPAD)])
     annotations.make_top_legend(ax, ncol=3)
     plt.tight_layout()
-    annotations.set_name(f"DA Fit {beam}, Plane {plane}", fig)
-    _save_fig(directory, plane, fig, 'dafit')
+    annotations.set_name(f"DA J {fit_type} Fit {beam}, Plane {plane}", fig)
+    _save_fig(directory, plane, fig, f'dafit_{fit_type}')
 
 
 def _plot_da_fit_normalized(directory, beam, plane, k_df):
     """ Plot the Forced Dynamic Aperture fit in normalized units (of sigma). """
-    LOG.debug("Plotting Normalized Dynamic Aperture Fit")
+    LOG.debug(f"Plotting Normalized Dynamic Aperture Fit")
     style.set_style("standard")
     col_action = column_action(plane)
     col_emittance = column_emittance(plane)
@@ -995,21 +1004,20 @@ def _plot_da_fit_normalized(directory, beam, plane, k_df):
     )
 
     color = colors.get_mpl_color(1)
-    # data = kick_df[col_action], np.mean(kick_df[col_emittance]) #<-- should be replaced with nominal emittance?
-    data = kick_df[col_action], kick_df.headers[header_nominal_emittance(plane)]
-    da, da_err = kick_df.headers[header_da(plane)], kick_df.headers[header_da_error(plane)]
+    # use J_sigma^2, emmitance = 1 (moved to J/DA_sigma) and DA_sigma**2/2 for fit
+    # da, da_err = kick_df.headers[header_da(plane)], kick_df.headers[header_da_error(plane)]
     da_sigma, da_err_sigma = (kick_df.headers[header_da(plane, unit="sigma")],
                               kick_df.headers[header_da_error(plane, unit="sigma")])
 
-    exp_mean = fun_exp_decay(da, data) * 100
-    exp_min = fun_exp_decay(da - da_err, data) * 100
-    exp_max = fun_exp_decay(da + da_err, data) * 100
+    fit_mean, fit_min, fit_max = _get_fit_plot_data((da_sigma**2)/2, np.abs(da_sigma) * da_err_sigma,
+                                                    (kick_df[col_action_sigma]**2, 1),
+                                                    'exponential')
 
-    ax.fill_between(kick_df[col_action_sigma], exp_min, exp_max,
+    ax.fill_between(kick_df[col_action_sigma], fit_min, fit_max,
                     facecolor=mcolors.to_rgba(color, .3))
 
     da_significant = significant_digits(da_sigma, da_err_sigma)
-    ax.plot(kick_df[col_action_sigma], exp_mean, ls="--", c=color,
+    ax.plot(kick_df[col_action_sigma], fit_mean, ls="--", c=color,
             label=f'Fit: DA= ${da_significant[0]} \pm {da_significant[1]} N_{{\sigma}}$'
             )
 
@@ -1020,21 +1028,39 @@ def _plot_da_fit_normalized(directory, beam, plane, k_df):
     annotations.make_top_legend(ax, ncol=3)
     plt.tight_layout()
     annotations.set_name(f"DA Fit Normalized {beam}, Plane {plane}", fig)
-    _save_fig(directory, plane, fig, 'dafit_norm')
+    _save_fig(directory, plane, fig, f'dafit_norm')
 
+
+def _get_fit_plot_data(da, da_err, data, fit_type):
+    fit_fun = {'exponential': fun_exp_decay, 'linear': fun_linear}[fit_type]
+    multiplier = 100  # for percentages
+    if fit_type == 'linear':
+        multiplier = 1/data[1]  # DA-J/emittance = -ln(I/Io)
+        data = data[0]
+    fit_mean = fit_fun(da, data) * multiplier
+    fit_min = fit_fun(da - da_err, data) * multiplier
+    fit_max = fit_fun(da + da_err, data) * multiplier
+    return fit_mean, fit_min, fit_max
 
 # Helper ---
 
 
 def _plot_kicks_and_scale_x(ax, kick_times, pad=20):
-    lines.vertical_lines(ax, kick_times, color='grey', linestyle='--', alpha=0.8, marker='', label="Kicks")
+    try:
+        lines.plot_vertical_lines_fast(ax, kick_times, color='grey', linestyle='--', alpha=0.8, marker='', label="Kicks")
+    except AttributeError:
+        # old version, before plot_optics_measurements (remove in future, jdilly 30.07.2020)
+        lines.vertical_lines(ax, mdates.date2num(kick_times), color='grey', linestyle='--', alpha=0.8, marker='', label="Kicks")
+
     first_kick, last_kick = kick_times.min(), kick_times.max()
     try:
         time_delta = [pd.Timedelta(seconds=pad[i]) for i in range(2)]
     except TypeError:
         time_delta = [pd.Timedelta(seconds=pad) for _ in range(2)]
 
-    ax.set_xlim([first_kick - time_delta[0], last_kick + time_delta[1]])
+    # ax.set_xlim([(first_kick - time_delta[0]).timestamp, last_kick + time_delta[1]])  # worked in the past
+    ax.set_xlim([mdates.date2num(first_kick - time_delta[0]),
+                 mdates.date2num(last_kick + time_delta[1])])
     ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M:%S'))
     ax.set_xlabel('Time')
     annotations.set_annotation(f"Date: {first_kick.strftime('%Y-%m-%d')}", ax, "left")
@@ -1055,7 +1081,7 @@ def _maybe_add_sum_for_planes(df, planes, col_fun, col_err_fun=None):
             x_cols, y_cols = [cols(p) for p in planes]
             df = df.reindex(columns=df.columns.to_list() + cols(planes))
             df[cols(planes)] = np.array(toolbox.df_sum_with_err(df, a_col=x_cols[0], b_col=y_cols[0],
-                                                       a_err_col=x_cols[1], b_err_col=y_cols[1])).T
+                                                                a_err_col=x_cols[1], b_err_col=y_cols[1])).T
         else:
             x_col, y_col = [col_fun(p) for p in planes]
             df[col_fun(planes)] = toolbox.df_sum(df, a_col=x_col, b_col=y_col)
