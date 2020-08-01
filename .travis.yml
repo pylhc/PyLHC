@@ -3,9 +3,12 @@ env:
     - CC_TEST_REPORTER_ID=0e27bf1c9efa4cf36ab9fcd5398fa2963e197abdb7b9e4bdd93668112809d89a
 
 stages:
-  - test
+  - name: test-basic
+    if: branch != master
+  - name: test-full
+    if: branch = master
   - name: documentation
-    if: tag =~ ^v\d+\.\d+\.\d+.*
+    if: branch = master
   - name: package
     if: tag =~ ^v\d+\.\d+\.\d+.*
 
@@ -20,9 +23,9 @@ email:
 
 jobs:
   include:
-    - &test-stage
-      stage: test
-      install: skip # override to not install requirements.txt (dependencies handled by setup.py)
+    # Tests ---
+    - &test-full
+      stage: test-full
       before_script:
         - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
         - chmod +x ./cc-test-reporter
@@ -34,11 +37,24 @@ jobs:
       after_script:
         - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
 
+    # Test only basic test classes
+    - &test-basic
+      stage: test-basic
+      script:
+        - python setup.py test --pytest-args='--mpl -o python_classes=BasicTests'
+
+
     # Define additional python versions for tests
-    - <<: *test-stage
+    - <<: *test-full
       python: 3.7
 
-#    - <<: *test-stage   # had to be removed as htcondor does not exists for 3.8 yet (check in future)
+#    - <<: *test-full
+#      python: 3.8
+
+    - <<: *test-basic
+      python: 3.7
+
+#    - <<: *test-basic
 #      python: 3.8
 
     - stage: documentation

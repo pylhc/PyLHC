@@ -10,7 +10,7 @@ import pytest
 
 
 INPUT = Path(__file__).parent.parent / 'inputs'
-DEBUG = True  # switch to local output instead of temp
+DEBUG = False  # switch to local output instead of temp
 
 
 class BasicTests:
