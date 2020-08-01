@@ -20,6 +20,7 @@ from pathlib import Path
 import matplotlib as mpl
 import matplotlib.colors as mcolors
 import matplotlib.dates as mdates
+import matplotlib.transforms as mtrans
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -235,9 +236,9 @@ def main(opt):
     _plot_emittances(out_dir, opt.beam, opt.plane, emittance_df, emittance_bws_df, kick_df.index)
     _plot_intensity(out_dir, opt.beam, opt.plane, kick_df, intensity_df)
     # _plot_losses(out_dir, beam, plane, kick_df)
-    for fit_type in ('exponential', 'linear'):
+    for fit_type in ('exponential', 'linear', 'norm'):
         _plot_da_fit(out_dir, opt.beam, opt.plane, kick_df, fit_type)
-    _plot_da_fit_normalized(out_dir, opt.beam, opt.plane, kick_df)
+    # _plot_da_fit_normalized(out_dir, opt.beam, opt.plane, kick_df)
 
     plt.show()
 
@@ -668,12 +669,17 @@ def _add_emittance_to_kicks(plane, energy, kick_df, emittance_df, nominal):
 
 
 def fun_exp_decay(p, x):
-    """ p = DA, x[0] = action (2J res), x[1] = emittance"""
+    """ p = DA_J, x[0] = action (2J res), x[1] = emittance"""
     return np.exp(-(p - (0.5*x[0])) / x[1])
 
 
+def fun_exp_sigma(p, x):
+    """ p = DA_sigma, x = action (J_sigma) """
+    return np.exp(-0.5*(p**2 - x**2))
+
+
 def fun_linear(p, x):
-    """ p = DA, x = action (2J res)"""
+    """ p = DA_J, x = action (2J res)"""
     return x*0.5 - p
 
 
@@ -922,10 +928,12 @@ def _plot_emittances(directory, beam, plane, emittance_df, emittance_bws_df, kic
 
 
 def _plot_da_fit(directory, beam, plane, k_df, fit_type):
-    """ Plot the Forced Dynamic Aperture fit. """
+    """ Plot the Forced Dynamic Aperture fit.
+    (I do not like the complexity of this function. jdilly)"""
     LOG.debug(f"Plotting Dynamic Aperture Fit for {fit_type}")
     style.set_style("standard")
     col_action = column_action(plane)
+    col_action_sigma = sigma_col(col_action)
     col_emittance = column_emittance(plane)
     col_intensity = rel_col(INTENSITY_LOSSES)
 
@@ -934,101 +942,118 @@ def _plot_da_fit(directory, beam, plane, k_df, fit_type):
 
     fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(10.24, 7.68))
 
-    ydata = kick_df[col_intensity]
-    yerr = kick_df[err_col(col_intensity)]
+    # Plot Measurement Data
+    intensity = kick_df[col_intensity]
+    intensity_err = kick_df[err_col(col_intensity)]
     if fit_type == 'linear':
-        ydata = np.log(ydata)
+        intensity_err = np.abs(1/intensity) * intensity_err
+        intensity = np.log(intensity)
     else:
-        ydata *= 100
-        yerr *= 100
+        intensity *= 100
+        intensity_err *= 100
+
+    if fit_type == 'norm':
+        action = kick_df[col_action_sigma]
+        action_err = kick_df[err_col(col_action_sigma)]
+        action_x = action
+        action_xerr = action_err
+    else:
+        action = kick_df[col_action]
+        action_err = kick_df[err_col(col_action)]
+        action_x = action * 1e6
+        action_xerr = action_err * 1e6
 
     ax.errorbar(
-        kick_df[col_action] * 1e6,
-        ydata,
-        xerr=kick_df[err_col(col_action)] * 1e6,
-        yerr=yerr,
+        action_x,
+        intensity,
+        xerr=action_xerr,
+        yerr=intensity_err,
         marker=".",
         color=colors.get_mpl_color(0),
         label=f'Kicks'
     )
 
-    color = colors.get_mpl_color(1)
-    data = kick_df[col_action], kick_df[col_emittance]
-    # data = kick_df[col_action], kick_df.headers[header_nominal_emittance(plane)]
+    # Plot Fit
+    emittance = kick_df[col_emittance]
     da, da_err = kick_df.headers[header_da(plane)], kick_df.headers[header_da_error(plane)]
+    da_mu, da_err_mu = significant_digits(da*1e6, da_err*1e6)
+    da_label = f'Fit: DA$_J$= ${da_mu} \pm {da_err_mu} \mu m$'
 
-    fit_mean, fit_min, fit_max = _get_fit_plot_data(da, da_err, data, fit_type)
+    fit_data = action
+    if fit_type == 'linear':
+        fit_fun = fun_linear
+        multiplier = 1/emittance  # DA-J/emittance = -ln(I/Io)
+    elif fit_type == 'exponential':
+        fit_fun = fun_exp_decay
+        fit_data = (action, emittance)
+        multiplier = 100  # for percentages
+    elif fit_type == 'norm':
+        fit_fun = fun_exp_sigma
+        da, da_err = (kick_df.headers[header_da(plane, unit="sigma")],
+                                  kick_df.headers[header_da_error(plane, unit="sigma")])
+        da_mu, da_err_mu = significant_digits(da, da_err)
+        da_label = f'Fit: DA= ${da_mu} \pm {da_err_mu} N_{{\sigma}}$'
+        multiplier = 100  # for percentages
 
-    ax.fill_between(data[0]*1e6, fit_min, fit_max,
+    fit_mean = fit_fun(da, fit_data) * multiplier
+    fit_min = fit_fun(da - da_err, fit_data) * multiplier
+    fit_max = fit_fun(da + da_err, fit_data) * multiplier
+
+    color = colors.get_mpl_color(1)
+    ax.fill_between(action_x, fit_min, fit_max,
                     facecolor=mcolors.to_rgba(color, .3))
 
-    da_mu, da_err_mu = significant_digits(da*1e6, da_err*1e6)
-    ax.plot(data[0]*1e6, fit_mean, ls="--", c=color,
-            label=f'Fit: DA$_J$= ${da_mu} \pm {da_err_mu} \mu m$'
-            )
+    ax.plot(action_x, fit_mean, ls="--", c=color, label=da_label)
 
-    ax.set_xlabel(f"$2J_{{{plane if len(plane) == 1 else ''}}} [\mu m]$")
+    # extend fit to 100% losses
+    color_ext = '#7f7f7f'
+    action_max = action.max()
+    emittance_at_max = emittance[action == action_max][0]
+
+    if fit_type in ['linear', 'exponential']:
+        da_x = da * 2*1e6
+        da_string = "2DA$_J$"
+    elif fit_type == 'norm':
+        da_x = da
+        da_string = "DA$_\sigma$"
+
+    if action_max < da:
+        if fit_type in ['linear', 'exponential']:
+            action_ext = np.linspace(action_max, 2*da, 10)
+            action_x_ext = action_ext * 1e6
+            if fit_type == 'exponential':
+                fit_data_ext = (action_ext, emittance_at_max)
+            elif fit_type == 'linear':
+                fit_data_ext = action_ext
+                multiplier = 1/emittance_at_max
+        else:
+            action_ext = np.linspace(action_max, da, 10)
+            action_x_ext = action_ext
+            fit_data_ext = action_ext
+
+        fit_ext = fit_fun(da, fit_data_ext) * multiplier
+        ax.plot(action_x_ext, fit_ext, ls='--', color=mcolors.to_rgba(color_ext, .3), label='__nolegend__')
+    # DA Marker
+    ax.axvline(da_x, ls='--', color=color_ext, marker='', label='__nolegend__')
+    trans = mtrans.blended_transform_factory(ax.transData, ax.transAxes)  # x is data, y is axes
+    ax.text(x=da_x, y=1.0, s=da_string, va='bottom', ha="center", zorder=-1, color=color_ext, transform=trans)
+
+    # Format figure
+    if fit_type == 'norm':
+        ax.set_xlabel(f"$N_{{\sigma}} = \sqrt{{2J_{{{plane if len(plane) == 1 else ''}}}/\epsilon_{{nominal}}}}$")
+    else:
+        ax.set_xlabel(f"$2J_{{{plane if len(plane) == 1 else ''}}} \; [\mu m]$")
+
     if fit_type == "linear":
         ax.set_ylabel(r'ln($I/I_0$)')
     else:
         ax.set_ylabel(r'Beam Losses [%]')
-        ax.set_ylim([0, ydata.max() * (1 + YPAD)])
+        ax.set_ylim([0, intensity.max() * (1 + YPAD)])
     ax.set_xlim([0, None])
     annotations.make_top_legend(ax, ncol=3)
     plt.tight_layout()
-    annotations.set_name(f"DA J {fit_type} Fit {beam}, Plane {plane}", fig)
+    annotations.set_name(f"DA {'' if fit_type == 'norm' else 'J'} {fit_type} Fit {beam}, Plane {plane}", fig)
     _save_fig(directory, plane, fig, f'dafit_{fit_type}')
-
-
-def _plot_da_fit_normalized(directory, beam, plane, k_df):
-    """ Plot the Forced Dynamic Aperture fit in normalized units (of sigma). """
-    LOG.debug(f"Plotting Normalized Dynamic Aperture Fit")
-    style.set_style("standard")
-    col_action = column_action(plane)
-    col_emittance = column_emittance(plane)
-    col_action_sigma = sigma_col(col_action)
-    col_intensity = rel_col(INTENSITY_LOSSES)
-
-    kick_df = k_df.copy()
-    kick_df = kick_df.sort_values(by=col_action)
-
-    fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(10.24, 7.68))
-    ax.errorbar(
-        kick_df[col_action_sigma],
-        kick_df[col_intensity] * 100,
-        xerr=kick_df[err_col(col_action_sigma)],
-        yerr=kick_df[err_col(col_intensity)] * 100,
-        marker=".",
-        color=colors.get_mpl_color(0),
-        label=f'Kicks'
-    )
-
-    color = colors.get_mpl_color(1)
-    # use J_sigma^2, emmitance = 1 (moved to J/DA_sigma) and DA_sigma**2/2 for fit
-    # da, da_err = kick_df.headers[header_da(plane)], kick_df.headers[header_da_error(plane)]
-    da_sigma, da_err_sigma = (kick_df.headers[header_da(plane, unit="sigma")],
-                              kick_df.headers[header_da_error(plane, unit="sigma")])
-
-    fit_mean, fit_min, fit_max = _get_fit_plot_data((da_sigma**2)/2, np.abs(da_sigma) * da_err_sigma,
-                                                    (kick_df[col_action_sigma]**2, 1),
-                                                    'exponential')
-
-    ax.fill_between(kick_df[col_action_sigma], fit_min, fit_max,
-                    facecolor=mcolors.to_rgba(color, .3))
-
-    da_significant = significant_digits(da_sigma, da_err_sigma)
-    ax.plot(kick_df[col_action_sigma], fit_mean, ls="--", c=color,
-            label=f'Fit: DA= ${da_significant[0]} \pm {da_significant[1]} N_{{\sigma}}$'
-            )
-
-    ax.set_xlabel(f"$N_{{\sigma}} = \sqrt{{2J_{{{plane if len(plane) == 1 else ''}}}/\epsilon_{{nominal}}}}$")
-    ax.set_ylabel(r'Beam Losses [%]')
-    ax.set_xlim([0, None])
-    ax.set_ylim([0, kick_df[col_intensity].max() * 100 * (1 + YPAD)])
-    annotations.make_top_legend(ax, ncol=3)
-    plt.tight_layout()
-    annotations.set_name(f"DA Fit Normalized {beam}, Plane {plane}", fig)
-    _save_fig(directory, plane, fig, f'dafit_norm')
 
 
 def _get_fit_plot_data(da, da_err, data, fit_type):
@@ -1041,6 +1066,7 @@ def _get_fit_plot_data(da, da_err, data, fit_type):
     fit_min = fit_fun(da - da_err, data) * multiplier
     fit_max = fit_fun(da + da_err, data) * multiplier
     return fit_mean, fit_min, fit_max
+
 
 # Helper ---
 
