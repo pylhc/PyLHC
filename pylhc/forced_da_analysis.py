@@ -778,18 +778,29 @@ def _convert_to_sigmas(plane, kick_df):
     """ Converts the DA and the Action into Sigma-Units. """
     LOG.debug("Calculating action and da in sigmas.")
     nominal_emittance = kick_df.headers[header_nominal_emittance(plane)]
+    emittance = kick_df[column_emittance(plane)]
+    emittance_mean, emittance_std = emittance.mean(), emittance.std()
+    emittance_sign, emittance_sign_std = significant_digits(emittance_mean*1e12, emittance_std*1e12)
+    LOG.info(f"Measured Emittance {emittance_sign} ± {emittance_sign_std} pm"
+             f" (Nominal {nominal_emittance*1e12: .2f} pm)")
 
     # DA (in units of J) to DA_sigma
     da, da_err = kick_df.headers[header_da(plane)], kick_df.headers[header_da_error(plane)]
-    da_sigma = np.sqrt(2*da/nominal_emittance), da_err / np.sqrt(2 * da * nominal_emittance)
-    kick_df.headers[header_da(plane, unit="sigma")], kick_df.headers[header_da_error(plane, unit="sigma")] = da_sigma
-    LOG.info(f"Forced DA {plane} in N-sigma: {da_sigma[0]} ± {da_sigma[1]}")
+    # da_sigma, da_sigma_err = np.sqrt(2*da/nominal_emittance), da_err / np.sqrt(2 * da * nominal_emittance)
+    da_sigma, da_sigma_err = np.sqrt(2*da/emittance_mean), da_err / np.sqrt(2 * da * emittance_mean)
+    kick_df.headers[header_da(plane, unit="sigma")] = da_sigma
+    kick_df.headers[header_da_error(plane, unit="sigma")] = da_sigma_err
+    LOG.info(f"Forced DA {plane} in N-sigma: {da_sigma} ± {da_sigma_err}")
 
     # Action (in units of 2J) to J_sigma
     col_action = column_action(plane)
-    kick_df[sigma_col(col_action)] = np.sqrt(kick_df[col_action] / nominal_emittance)
+    # kick_df[sigma_col(col_action)] = np.sqrt(kick_df[col_action] / nominal_emittance)
+    # kick_df[err_col(sigma_col(col_action))] = (
+    #         0.5 * kick_df[err_col(col_action)] / np.sqrt(kick_df[col_action] * nominal_emittance)
+    # )
+    kick_df[sigma_col(col_action)] = np.sqrt(kick_df[col_action] / emittance)
     kick_df[err_col(sigma_col(col_action))] = (
-            0.5 * kick_df[err_col(col_action)] / np.sqrt(kick_df[col_action] * nominal_emittance)
+            0.5 * kick_df[err_col(col_action)] / np.sqrt(kick_df[col_action] * emittance)
     )
     return kick_df
 
@@ -979,20 +990,21 @@ def _plot_da_fit(directory, beam, plane, k_df, fit_type):
     da_mu, da_err_mu = significant_digits(da*1e6, da_err*1e6)
     da_label = f'Fit: DA$_J$= ${da_mu} \pm {da_err_mu} \mu m$'
 
-    fit_data = action
     if fit_type == 'linear':
         fit_fun = fun_linear
+        fit_data = action
         multiplier = 1/emittance  # DA-J/emittance = -ln(I/Io)
     elif fit_type == 'exponential':
         fit_fun = fun_exp_decay
         fit_data = (action, emittance)
         multiplier = 100  # for percentages
     elif fit_type == 'norm':
-        fit_fun = fun_exp_sigma
         da, da_err = (kick_df.headers[header_da(plane, unit="sigma")],
-                                  kick_df.headers[header_da_error(plane, unit="sigma")])
-        da_mu, da_err_mu = significant_digits(da, da_err)
-        da_label = f'Fit: DA= ${da_mu} \pm {da_err_mu} N_{{\sigma}}$'
+                      kick_df.headers[header_da_error(plane, unit="sigma")])
+        da_round, da_err_round = significant_digits(da, da_err)
+        da_label = f'Fit: DA= ${da_round} \pm {da_err_round} N_{{\sigma}}$'
+        fit_fun = fun_exp_sigma
+        fit_data = action
         multiplier = 100  # for percentages
 
     fit_mean = fit_fun(da, fit_data) * multiplier
@@ -1040,7 +1052,17 @@ def _plot_da_fit(directory, beam, plane, k_df, fit_type):
 
     # Format figure
     if fit_type == 'norm':
-        ax.set_xlabel(f"$N_{{\sigma}} = \sqrt{{2J_{{{plane if len(plane) == 1 else ''}}}/\epsilon_{{nominal}}}}$")
+        nominal_emittance = kick_df.headers[header_nominal_emittance(plane)]
+        emittance_mean, emittance_std = emittance.mean(), emittance.std()
+        emittance_sign, emittance_sign_std = significant_digits(emittance_mean*1e12, emittance_std*1e12)
+        ax.text(
+            x=0, y=1.00,
+            s=(f"$\epsilon_{{mean}}$ = {emittance_sign} $\pm$ {emittance_sign_std} pm "
+               f"($\epsilon_{{nominal}}$ = {nominal_emittance*1e12: .2f} pm)"),
+            transform=ax.transAxes,
+            va='bottom', ha='left',
+        )
+        ax.set_xlabel(f"$N_{{\sigma}} = \sqrt{{2J_{{{plane if len(plane) == 1 else ''}}}/\epsilon}}$")
     else:
         ax.set_xlabel(f"$2J_{{{plane if len(plane) == 1 else ''}}} \; [\mu m]$")
 
