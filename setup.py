@@ -46,7 +46,8 @@ DEPENDENCIES = [
     'numpy>=1.18.0',
     'scipy>=1.4.0',
     'pandas==0.25.*',
-    'JPype1>=0.7.2 < 0.8.0',  # limit from pylsa
+    'JPype1>=0.7.2<0.8.0',  # limit from pylsa
+    'ipython>=7.0.1',  # actually dependency of pytimber
     'GitPython>=2.1.8',
     'matplotlib>=3.2.0',
     'ruamel.yaml>=0.15.94',
@@ -57,7 +58,6 @@ DEPENDENCIES = [
     'tfs-pandas>=1.0.3',
     'generic-parser>=1.0.6',
     'parse>=1.15.0',
-    'ipython>=7.0.1',  # actually dependency of pytimber
     'omc3@https://github.com/pylhc/omc3/tarball/master',  # installed in travis.yml
     # 'pyjapc@https://gitlab.cern.ch/scripting-tools/pyjapc/tarball/master'
 ]
