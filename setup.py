@@ -62,23 +62,28 @@ DEPENDENCIES = [
     # 'pyjapc@https://gitlab.cern.ch/scripting-tools/pyjapc/tarball/master'
 ]
 
-# Test dependencies that should only be installed for test purposes
-TEST_DEPENDENCIES = ['pytest>=5.2',
-                     'pytest-cov>=2.6',
-                     'pytest-regressions>=2.0.0',
-                     'pytest-mpl>=0.11',
-                     'hypothesis>=4.36.2',
-                     'attrs>=19.2.0'
-                     ]
 
-# pytest-runner to be able to run pytest via setuptools
-SETUP_REQUIRES = ['pytest-runner']
-
-# Extra dependencies for tools
-EXTRA_DEPENDENCIES = {'doc': ['sphinx',
-                              'travis-sphinx',
-                              'sphinx_rtd_theme']
-                      }
+EXTRA_DEPENDENCIES = {
+    "setup": [
+        "pytest-runner"
+    ],
+    "test": [
+        "pytest>=5.2",
+        "pytest-cov>=2.7",
+        'pytest-regressions>=2.0.0',
+        'pytest-mpl>=0.11',
+        "hypothesis>=5.0.0",
+        "attrs>=19.2.0",
+    ],
+    "doc": [
+        "sphinx",
+        "travis-sphinx",
+        "sphinx_rtd_theme"
+    ],
+}
+EXTRA_DEPENDENCIES.update(
+    {'all': [elem for list_ in EXTRA_DEPENDENCIES.values() for elem in list_]}
+)
 
 
 def get_version():
@@ -102,6 +107,7 @@ setup(
     url="https://github.com/pylhc/pylhc",
     author="pyLHC",
     author_email="pylhc@github.com",
+    python_requires=">=3.6",
     license="MIT",
     cmdclass={'pytest': PyTest},  # pass test arguments
     classifiers=[
@@ -111,7 +117,7 @@ setup(
     ],
     packages=find_packages(exclude=['tests*', 'doc']),
     install_requires=DEPENDENCIES,
-    tests_require=DEPENDENCIES + TEST_DEPENDENCIES,
+    tests_require=EXTRA_DEPENDENCIES['test'],
+    setup_requires=EXTRA_DEPENDENCIES['setup'],
     extras_require=EXTRA_DEPENDENCIES,
-    setup_requires=SETUP_REQUIRES,
 )
