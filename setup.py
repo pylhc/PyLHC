@@ -46,7 +46,7 @@ DEPENDENCIES = [
     'numpy>=1.18.0',
     'scipy>=1.4.0',
     'pandas==0.25.*',
-    'JPype1>=0.7.2<0.8.0',  # limit from pylsa
+    'jpype1<0.8.0,>=0.7.3',  # limit from pylsa
     'ipython>=7.0.1',  # actually dependency of pytimber
     'GitPython>=2.1.8',
     'matplotlib>=3.2.0',

@@ -26,6 +26,7 @@ jobs:
     # Tests ---
     - &test-full
       stage: test-full
+      install: skip
       before_script:
         - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
         - chmod +x ./cc-test-reporter
@@ -40,6 +41,7 @@ jobs:
     # Test only basic test classes
     - &test-basic
       stage: test-basic
+      install: skip
       script:
         - python setup.py test --pytest-args='--mpl -o python_classes=BasicTests'
 
