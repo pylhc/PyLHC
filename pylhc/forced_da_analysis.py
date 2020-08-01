@@ -197,6 +197,10 @@ def get_params():
             choices=['fit_sigma', 'average'],
             help="Which BSRT data to use (from database)."
         ),
+        show=dict(
+            action='store_true',
+            help="Show plots.",
+        )
     )
 
 
@@ -232,15 +236,16 @@ def main(opt):
     _write_tfs(out_dir, opt.plane, kick_df, intensity_df, emittance_df, emittance_bws_df)
 
     # plotting
+    figs = dict()
     register_matplotlib_converters()  # for datetime plotting
-    _plot_emittances(out_dir, opt.beam, opt.plane, emittance_df, emittance_bws_df, kick_df.index)
-    _plot_intensity(out_dir, opt.beam, opt.plane, kick_df, intensity_df)
-    # _plot_losses(out_dir, beam, plane, kick_df)
+    figs['emittance'] = _plot_emittances(out_dir, opt.beam, opt.plane, emittance_df, emittance_bws_df, kick_df.index)
+    figs['intensity'] = _plot_intensity(out_dir, opt.beam, opt.plane, kick_df, intensity_df)
     for fit_type in ('exponential', 'linear', 'norm'):
-        _plot_da_fit(out_dir, opt.beam, opt.plane, kick_df, fit_type)
-    # _plot_da_fit_normalized(out_dir, opt.beam, opt.plane, kick_df)
+        figs[f'da_fit_{fit_type}'] = _plot_da_fit(out_dir, opt.beam, opt.plane, kick_df, fit_type)
 
-    plt.show()
+    if opt.show:
+        plt.show()
+    return figs
 
 
 # Helper ---
@@ -867,28 +872,7 @@ def _plot_intensity(directory, beam, plane, kick_df, intensity_df):
         ax=ax, position='left'
     )
     _save_fig(directory, plane, fig, 'intensity')
-
-
-def _plot_losses(directory, beam, plane, kick_df):
-    LOG.debug("Plotting beam losses")
-    style.set_style("standard")
-    fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(10.24, 7.68))
-
-    ax.errorbar(
-        kick_df[column_action(plane)] * 1e6,
-        kick_df[rel_col(INTENSITY_LOSSES)] * 100,
-        xerr=kick_df[err_col(column_action(plane))] * 1e6,
-        yerr=kick_df[err_col(rel_col(INTENSITY_LOSSES))] * 100,
-        marker=".",
-        color=colors.get_mpl_color(0),
-        label=f'Kicks')
-
-    ax.set_xlabel(f"$2J_{plane}$ [$\mu$m]")
-    ax.set_ylabel(r'Beam Losses [%]')
-    annotations.make_top_legend(ax, ncol=3)
-    plt.tight_layout()
-    annotations.set_name(f"Losses Beam {beam}, Plane {plane}", fig)
-    _save_fig(directory, plane, fig, 'losses')
+    return fig
 
 
 def _plot_emittances(directory, beam, plane, emittance_df, emittance_bws_df, kick_times):
@@ -936,6 +920,7 @@ def _plot_emittances(directory, beam, plane, emittance_df, emittance_bws_df, kic
     plt.tight_layout()
     annotations.set_name(f"Emittance Beam {beam}, Plane {plane}", fig)
     _save_fig(directory, plane, fig, 'emittance')
+    return fig
 
 
 def _plot_da_fit(directory, beam, plane, k_df, fit_type):
@@ -1076,6 +1061,7 @@ def _plot_da_fit(directory, beam, plane, k_df, fit_type):
     plt.tight_layout()
     annotations.set_name(f"DA {'' if fit_type == 'norm' else 'J'} {fit_type} Fit {beam}, Plane {plane}", fig)
     _save_fig(directory, plane, fig, f'dafit_{fit_type}')
+    return fig
 
 
 def _get_fit_plot_data(da, da_err, data, fit_type):
