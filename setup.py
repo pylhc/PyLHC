@@ -32,6 +32,7 @@ class PyTest(TestCommand):
         errno = pytest.main(shlex.split(self.pytest_args))
         sys.exit(errno)
 
+
 # The directory containing this file
 HERE = pathlib.Path(__file__).parent
 
