@@ -20,25 +20,25 @@ from pathlib import Path
 import matplotlib as mpl
 import matplotlib.colors as mcolors
 import matplotlib.dates as mdates
-import matplotlib.transforms as mtrans
 import matplotlib.pyplot as plt
+import matplotlib.transforms as mtrans
 import numpy as np
 import pandas as pd
 import pytimber
-from generic_parser.entrypoint_parser import save_options_to_config
-from pytimber.pagestore import PageStore
 import scipy.odr
 import scipy.optimize
 import tfs
 from generic_parser import EntryPointParameters, entrypoint
 from generic_parser.entry_datatypes import get_multi_class, get_instance_faker_meta, TRUE_ITEMS, FALSE_ITEMS
+from generic_parser.entrypoint_parser import save_options_to_config
+from omc3.definitions.formats import get_config_filename
 from omc3.optics_measurements import toolbox
 from omc3.plotting.utils import style, lines, annotations, colors
 from omc3.tune_analysis.bbq_tools import clean_outliers_moving_average
 from omc3.utils import logging_tools
 from omc3.utils.time_tools import CERNDatetime
-from omc3.definitions.formats import get_config_filename
 from pandas.plotting import register_matplotlib_converters
+from pytimber.pagestore import PageStore
 from tfs.tools import significant_digits
 
 from pylhc.constants.forced_da_analysis import (bsrt_emittance_key, bws_emittance_key,
@@ -121,10 +121,12 @@ def get_params():
         ),
         plane=dict(
             flags=["-p", "--plane"],
-            choices=["X", "Y", "XY"],
+            choices=["X", "Y"],
             required=True,
             type=str,
-            help="Plane of the kicks. Give 'XY' for using both planes (e.g. diagonal kicks)."
+            help=("Plane of the kicks."
+                  # " Give 'XY' for using both planes (e.g. diagonal kicks)."  # Future release
+                  )
         ),
         time_around_kicks=dict(
             type=int,
