@@ -36,8 +36,8 @@ Important packages are: ``tfs-pandas``,  ``generic_parser``, ``numpy``, ``pandas
 Note, that `omc3` and `pyjapc` might need to be installed manually from local clones or via
 
 ```
-python -m pip install -e git+git://github.com/pylhc/omc3.git#egg=omc3
-python -m pip install -e git+https://gitlab.cern.ch/scripting-tools/pyjapc.git#egg=pyjapc
+python -m pip install git+git://github.com/pylhc/omc3.git#egg=omc3
+python -m pip install git+https://gitlab.cern.ch/scripting-tools/pyjapc.git#egg=pyjapc
 ```
 
 ## Description
@@ -84,7 +84,7 @@ are reflected immediately, without the need to reinstall.
 #### Dependencies 
 
 ```
-python -m pip install --editable pylhc
+python -m pip install -e pylhc
 ```
 
 will also hence install the required dependencies. 
@@ -92,10 +92,10 @@ will also hence install the required dependencies.
 If you want to install more dependencies, you can use for example:
 
 ```
-python -m pip install --editable pylhc[test]
-python -m pip install --editable pylhc[setup]
-python -m pip install --editable pylhc[test,doc]
-python -m pip install --editable pylhc[all]
+python -m pip install -e pylhc[test]
+python -m pip install -e pylhc[setup]
+python -m pip install -e pylhc[test,doc]
+python -m pip install -e pylhc[all]
 ```
 where the last one installs **all** dependencies defined in `setup.py`.
  
