@@ -31,8 +31,8 @@ jobs:
         - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
         - chmod +x ./cc-test-reporter
         - ./cc-test-reporter before-build
-        - python -m pip install -e git+git://github.com/pylhc/omc3.git#egg=omc3
-        - python -m pip install -e git+https://gitlab.cern.ch/scripting-tools/pyjapc.git#egg=pyjapc
+        - python -m pip install git+git://github.com/pylhc/omc3.git#egg=omc3
+        - python -m pip install git+https://gitlab.cern.ch/scripting-tools/pyjapc.git#egg=pyjapc
       script:
         - python setup.py test --pytest-args='--mpl'
       after_script:
