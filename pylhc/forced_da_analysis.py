@@ -418,7 +418,7 @@ def _drop_duplicate_indices(df):
 # TFS Data Loading -------------------------------------------------------------
 
 
-def _get_dataframes(kick_times: pd.Index(CERNDatetime), opt: DotDict) -> Tuple[TfsDataFrame, TfsDataFrame, TfsDataFrame]:
+def _get_dataframes(kick_times: pd.Index, opt: DotDict) -> Tuple[TfsDataFrame, TfsDataFrame, TfsDataFrame]:
     """ Gets the intensity and emittance dataframes from either input, files or (timber) database. """
     db = _get_db(opt)
 
