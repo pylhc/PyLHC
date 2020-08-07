@@ -330,7 +330,7 @@ def main(opt):
     # plotting
     figs = dict()
     register_matplotlib_converters()  # for datetime plotting
-    style.set_style(opt.plot_styles, opt.manual_style)
+    _set_plotstyle(opt.plot_styles, opt.manual_style)
     figs['emittance'] = _plot_emittances(out_dir, opt.beam, opt.plane, emittance_df, emittance_bws_df, kick_df.index)
     figs['intensity'] = _plot_intensity(out_dir, opt.beam, opt.plane, kick_df, intensity_df)
     for fit_type in ('exponential', 'linear', 'norm'):
@@ -1177,12 +1177,20 @@ def _get_fit_plot_data(da, da_err, data, fit_type):
 
 # Helper ---
 
+def _set_plotstyle(plot_styles, manual_style):
+    try:
+        style.set_style(plot_styles, manual_style)
+    except TypeError:
+        # old omc3 version, before plot_optics_measurements (remove in future, jdilly 30.07.2020)
+        LOG.warn("Using old omc3 version. Only first plotstyle (and manual) will be used.")
+        style.set_style(plot_styles[0], manual_style)
+
 
 def _plot_kicks_and_scale_x(ax, kick_times, pad=20):
     try:
         lines.plot_vertical_lines_fast(ax, kick_times, color='grey', linestyle='--', alpha=0.8, marker='', label="Kicks")
     except AttributeError:
-        # old version, before plot_optics_measurements (remove in future, jdilly 30.07.2020)
+        # old omc3 version, before plot_optics_measurements (remove in future, jdilly 30.07.2020)
         lines.vertical_lines(ax, mdates.date2num(kick_times), color='grey', linestyle='--', alpha=0.8, marker='', label="Kicks")
 
     first_kick, last_kick = kick_times.min(), kick_times.max()
