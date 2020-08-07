@@ -1,4 +1,5 @@
 # <img src="https://twiki.cern.ch/twiki/pub/BEABP/Logos/OMC_logo.png" height="28"> PyLHC Tools
+
 [![Travis (.com)](https://img.shields.io/travis/com/pylhc/PyLHC.svg?style=popout)](https://travis-ci.com/pylhc/PyLHC/)
 [![Code Climate coverage](https://img.shields.io/codeclimate/coverage/pylhc/PyLHC.svg?style=popout)](https://codeclimate.com/github/pylhc/PyLHC)
 [![Code Climate maintainability (percentage)](https://img.shields.io/codeclimate/maintainability-percentage/pylhc/PyLHC.svg?style=popout)](https://codeclimate.com/github/pylhc/PyLHC)
@@ -18,15 +19,26 @@ Feel free to use them anyway, if you wish!
 
 ## Getting Started
 
-### Prerequisites
+### Prerequisites and Installation
+This package is not deployed, hence you need to use the standard git-commands (below) to get a local copy.
 
-The codes use a multitude of packages as can be found in the [setup.py](setup.py) file.
+To install directly from git one can use
+```
+python -m pip install -e git+git://github.com/pylhc/pylhc.git#egg=pylhc
+```
+or install from a local copy (see [install in editable mode.](#install-in-editable-mode)).
 
-Important ones are: ``tfs-pandas``,  ``generic_parser``, ``numpy``, ``pandas`` and ``scipy``.
+The codes use a multitude of packages, which can be found in the [setup.py](setup.py) file.
+Hence, `pip` will install the required dependencies automatically, if not present.
 
-### Installing
+Important packages are: ``tfs-pandas``,  ``generic_parser``, ``numpy``, ``pandas`` and ``scipy``.
 
-This package is not deployed, hence you need to use the standard git-commands to get a local copy.
+Note, that `omc3` and `pyjapc` might need to be installed manually from local clones or via
+
+```
+python -m pip install -e git+git://github.com/pylhc/omc3.git#egg=omc3
+python -m pip install -e git+https://gitlab.cern.ch/scripting-tools/pyjapc.git#egg=pyjapc
+```
 
 ## Description
 
@@ -54,6 +66,41 @@ The latter tools can be found in [OMC3](https://github.com/pylhc/omc3) (Python 3
 
 - Direct commits to master are forbidden.
 
+## Hints for Developers
+
+### Install in Editable Mode
+
+In case you want to install `pylhc` as a development package
+from the current folder, you can use:
+
+```
+git clone https://github.com/pylhc/pylhc
+python -m pip install --editable pylhc
+```
+
+This installs the package as a link into the python environment and any changes 
+are reflected immediately, without the need to reinstall.
+
+#### Dependencies 
+
+```
+python -m pip install --editable pylhc
+```
+
+will also hence install the required dependencies. 
+
+If you want to install more dependencies, you can use for example:
+
+```
+python -m pip install --editable pylhc[test]
+python -m pip install --editable pylhc[setup]
+python -m pip install --editable pylhc[test,doc]
+python -m pip install --editable pylhc[all]
+```
+where the last one installs **all** dependencies defined in `setup.py`.
+ 
+Note that the default dependencies and pylhc-as-link are also always installed.
+ 
 ## Authors
 
 * **pyLHC/OMC-Team** - *Working Group* - [pyLHC](https://github.com/orgs/pylhc/teams/omc-team)
