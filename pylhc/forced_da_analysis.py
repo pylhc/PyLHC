@@ -930,7 +930,7 @@ def _plot_intensity(directory, beam, plane, kick_df, intensity_df):
     norm = intensity_start/100.
 
     # plot intensity
-    ax.plot(mdates.date2num(intensity_df.index),
+    ax.plot(_date2num(intensity_df.index),
             intensity_df[INTENSITY] / norm,
             marker=".",
             markersize=mpl.rcParams["lines.markersize"] * 0.5,
@@ -945,14 +945,14 @@ def _plot_intensity(directory, beam, plane, kick_df, intensity_df):
     normalized_losses_kick = kick_df.loc[:, [rel_col(INTENSITY_LOSSES), err_col(rel_col(INTENSITY_LOSSES))]]*100
 
     for idx, kick in enumerate(kick_df.index):
-        ax.errorbar([mdates.date2num(kick)] * 2, normalized_intensity.loc[kick, :],
+        ax.errorbar([_date2num(kick)] * 2, normalized_intensity.loc[kick, :],
                     yerr=normalized_intensity_error.loc[kick, :],
                     color=colors.get_mpl_color(1),
                     marker='.',
                     linestyle="-",
                     label='__nolegend__' if idx > 0 else "Losses")
 
-        ax.text(mdates.date2num(kick), .5 * sum(normalized_intensity.loc[kick, :]),
+        ax.text(_date2num(kick), .5 * sum(normalized_intensity.loc[kick, :]),
                 "  -{:.1f}$\pm${:.1f} %\n".format(*normalized_losses.loc[kick, :]) +
                 " (-{:.1f}$\pm${:.1f} %)".format(*normalized_losses_kick.loc[kick, :]),
                 va="bottom", color=colors.get_mpl_color(1),
@@ -985,7 +985,7 @@ def _plot_emittances(directory, beam, plane, emittance_df, emittance_bws_df, kic
     bsrt_color = colors.get_mpl_color(0)
     bws_color = colors.get_mpl_color(1)
 
-    ax.errorbar(mdates.date2num(emittance_df.index),
+    ax.errorbar(_date2num(emittance_df.index),
                 emittance_df[col_norm_emittance] * 1e6,  # Actual BSRT measurement
                 yerr=emittance_df[err_col(col_norm_emittance)] * 1e6,
                 color=bsrt_color,
@@ -994,7 +994,7 @@ def _plot_emittances(directory, beam, plane, emittance_df, emittance_bws_df, kic
                 linestyle='None',
                 label=f'From BSRT')
 
-    ax.errorbar(mdates.date2num(emittance_df.index),
+    ax.errorbar(_date2num(emittance_df.index),
                 emittance_df[mean_col(col_norm_emittance)] * 1e6,
                 yerr=emittance_df[err_col(mean_col(col_norm_emittance))] * 1e6,
                 color=colors.change_color_brightness(bsrt_color, 0.7),
@@ -1007,7 +1007,7 @@ def _plot_emittances(directory, beam, plane, emittance_df, emittance_bws_df, kic
             color = bws_color if d == BWS_DIRECTIONS[1] else colors.change_color_brightness(bws_color, 0.5)
             col_bws_nemittance = column_bws_norm_emittance(plane, d)
             ax.errorbar(
-                mdates.date2num(emittance_bws_df.index),
+                _date2num(emittance_bws_df.index),
                 emittance_bws_df[col_bws_nemittance] * 1e6,
                 yerr=emittance_bws_df[err_col(col_bws_nemittance)] * 1e6,
                 linestyle='None', marker='o', color=color, label=label,
@@ -1191,7 +1191,7 @@ def _plot_kicks_and_scale_x(ax, kick_times, pad=20):
         lines.plot_vertical_lines_fast(ax, kick_times, color='grey', linestyle='--', alpha=0.8, marker='', label="Kicks")
     except AttributeError:
         # old omc3 version, before plot_optics_measurements (remove in future, jdilly 30.07.2020)
-        lines.vertical_lines(ax, mdates.date2num(kick_times), color='grey', linestyle='--', alpha=0.8, marker='', label="Kicks")
+        lines.vertical_lines(ax, _date2num(kick_times), color='grey', linestyle='--', alpha=0.8, marker='', label="Kicks")
 
     first_kick, last_kick = kick_times.min(), kick_times.max()
     try:
@@ -1200,8 +1200,8 @@ def _plot_kicks_and_scale_x(ax, kick_times, pad=20):
         time_delta = [pd.Timedelta(seconds=pad) for _ in range(2)]
 
     # ax.set_xlim([(first_kick - time_delta[0]).timestamp, last_kick + time_delta[1]])  # worked in the past
-    ax.set_xlim([mdates.date2num(first_kick - time_delta[0]),
-                 mdates.date2num(last_kick + time_delta[1])])
+    ax.set_xlim([_date2num(first_kick - time_delta[0]),
+                 _date2num(last_kick + time_delta[1])])
     ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M:%S'))
     ax.set_xlabel('Time')
     annotations.set_annotation(f"Date: {first_kick.strftime('%Y-%m-%d')}", ax, "left")
@@ -1227,6 +1227,23 @@ def _maybe_add_sum_for_planes(df, planes, col_fun, col_err_fun=None):
             x_col, y_col = [col_fun(p) for p in planes]
             df[col_fun(planes)] = toolbox.df_sum(df, a_col=x_col, b_col=y_col)
     return df
+
+
+def _date2num(times):
+    """ Convert CERNDatetime to mpl-number (days).
+
+    Converts input times to plain-datetime first as date2num causes infinite
+    loop with CernDateTimes in python 3.8 """
+    try:
+        times = [cdt.datetime for cdt in times]
+    except AttributeError:
+        pass  # probably datetime already
+    except TypeError:
+        try:  # not iterable
+            times = times.datetime
+        except AttributeError:
+            pass  # probably datetime already
+    return mdates.date2num(times)
 
 
 def _save_fig(directory, plane, fig, ptype):
