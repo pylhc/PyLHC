@@ -59,8 +59,8 @@ DEPENDENCIES = [
     'tfs-pandas>=1.0.3',
     'generic-parser>=1.0.6',
     'parse>=1.15.0',
-    'omc3@https://github.com/pylhc/omc3/tarball/master',  # installed in travis.yml
-    # 'pyjapc@https://gitlab.cern.ch/scripting-tools/pyjapc/tarball/master'
+    'omc3@https://github.com/pylhc/omc3/tarball/master',  # to be installed by user (see travis.yml)
+    'pyjapc@https://gitlab.cern.ch/scripting-tools/pyjapc/tarball/master'  # to be installed by user (see travis.yml)
 ]
 
 
