@@ -29,7 +29,7 @@ class BasicTests:
                 output_directory=output_dir,
                 # show=True,
             )
-            check_output(output_dir, 'x')
+            check_output(output_dir)
 
     @staticmethod
     def test_md2162_timberdb():
@@ -47,7 +47,7 @@ class BasicTests:
                 show_wirescan_emittance=True,
                 # show=True,
             )
-            check_output(output_dir, 'x')
+            check_output(output_dir)
 
 
 class ExtendedTests:
@@ -66,8 +66,7 @@ class ExtendedTests:
                 show_wirescan_emittance=data_dir / 'emittance_bws_y.tfs',
                 output_directory=output_dir
             )
-            check_output(output_dir, 'y')
-
+            check_output(output_dir)
     @staticmethod
     def test_md3312_no_data_given():
         with pytest.raises(OSError):
@@ -104,8 +103,8 @@ def _output_dir():
             yield Path(dir_)
 
 
-def check_output(output_dir, plane):
+def check_output(output_dir):
     assert len(list(output_dir.glob('*.pdf'))) == 5
     assert len(list(output_dir.glob('*.tfs'))) == 4
     assert len(list(output_dir.glob('*.ini'))) == 1
-    assert len(list(output_dir.glob(f'*_{plane}*'))) == 13
+    assert len(list(output_dir.glob('*_[xy]*'))) == 13
