@@ -105,7 +105,5 @@ Note that the default dependencies and pylhc-as-link are also always installed.
 
 * **pyLHC/OMC-Team** - *Working Group* - [pyLHC](https://github.com/orgs/pylhc/teams/omc-team)
 
-<!--
 ## License
-This project is licensed under the  License - see the [LICENSE.md](LICENSE.md) file for details
--->
+This project is licensed under the MIT License - see the [LICENSE](LICENSE.md) file for details.

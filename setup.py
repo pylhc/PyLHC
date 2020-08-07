@@ -34,13 +34,18 @@ class PyTest(TestCommand):
 
 
 # The directory containing this file
-HERE = pathlib.Path(__file__).parent
+TOPLEVEL_DIR = pathlib.Path(__file__).parent.absolute()
+ABOUT_FILE = TOPLEVEL_DIR / "pylhc" / "__init__.py"
+README = TOPLEVEL_DIR / "README.md"
 
-# The text of the README file
-README = (HERE / "README.md").read_text()
+# Information on the omc3 package
+ABOUT: dict = {}
+with ABOUT_FILE.open("r") as f:
+    exec(f.read(), ABOUT)
 
-# Name of the module
-MODULE_NAME = 'pylhc'
+with README.open("r") as docs:
+    long_description = docs.read()
+
 
 # Dependencies for the module itself
 DEPENDENCIES = [
@@ -87,34 +92,30 @@ EXTRA_DEPENDENCIES.update(
 )
 
 
-def get_version():
-    """ Reads package version number from package's __init__.py. """
-    with open(os.path.join(
-            os.path.dirname(__file__), MODULE_NAME, '__init__.py'
-    )) as init:
-        for line in init.readlines():
-            res = re.match(r'^__version__ = [\'"](.*)[\'"]$', line)
-            if res:
-                return res.group(1)
-
-
 # This call to setup() does all the work
 setup(
-    name=MODULE_NAME,
-    version=get_version(),
-    description="Useful tools in particular for accelerator physicists at CERN",
-    long_description=README,
+    name=ABOUT["__title__"],
+    version=ABOUT["__version__"],
+    description=ABOUT["__description__"],
+    long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/pylhc/pylhc",
-    author="pyLHC",
-    author_email="pylhc@github.com",
+    author=ABOUT["__author__"],
+    author_email=ABOUT["__author_email__"],
+    url=ABOUT["__url__"],
     python_requires=">=3.6",
-    license="MIT",
+    license=ABOUT["__license__"],
     cmdclass={'pytest': PyTest},  # pass test arguments
     classifiers=[
+        "Intended Audience :: Science/Research",
         "License :: OSI Approved :: MIT License",
-        "Programming Language :: Python :: 3",
+        "Natural Language :: English",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Topic :: Scientific/Engineering :: Physics",
+        "Topic :: Scientific/Engineering :: Visualization",
     ],
     packages=find_packages(exclude=['tests*', 'doc']),
     install_requires=DEPENDENCIES,
