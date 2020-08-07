@@ -1,6 +1,4 @@
-
 # <img src="https://twiki.cern.ch/twiki/pub/BEABP/Logos/OMC_logo.png" height="28"> PyLHC Tools
-
 [![Travis (.com)](https://img.shields.io/travis/com/pylhc/PyLHC.svg?style=popout)](https://travis-ci.com/pylhc/PyLHC/)
 [![Code Climate coverage](https://img.shields.io/codeclimate/coverage/pylhc/PyLHC.svg?style=popout)](https://codeclimate.com/github/pylhc/PyLHC)
 [![Code Climate maintainability (percentage)](https://img.shields.io/codeclimate/maintainability-percentage/pylhc/PyLHC.svg?style=popout)](https://codeclimate.com/github/pylhc/PyLHC)
@@ -24,7 +22,7 @@ Feel free to use them anyway, if you wish!
 
 The codes use a multitude of packages as can be found in the [setup.py](setup.py) file.
 
-Important ones are: ``numpy``, ``pandas`` and ``scipy``.
+Important ones are: ``tfs-pandas``,  ``generic_parser``, ``numpy``, ``pandas`` and ``scipy``.
 
 ### Installing
 
@@ -39,6 +37,7 @@ The latter tools can be found in [OMC3](https://github.com/pylhc/omc3) (Python 3
 
 ## Functionality
 
+- *Forced DA Analysis* - Script to analyse forced DA. ([**forced_da_analysis.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/forced_da_analysis.py))
 - *Machine Settings Info* - Prints an overview over the machine settings at a given time. ([**machine_settings_info.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/machine_settings_info.py))
 - *HTCondor Job Submitter* - Allows to generate jobs based on a templates and submit them to HTCondor. ([**job_submitter.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/job_submitter.py))
 - *BSRT Logger* and *BSRT Analysis* - Saves data coming straight from LHC BSRT FESA class and allows subsequent analysis. ([**BSRT_logger.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/BSRT_logger.py) & [**BSRT_analysis.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/BSRT_analysis.py) )

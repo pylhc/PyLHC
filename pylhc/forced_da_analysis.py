@@ -73,7 +73,13 @@ Arguments:
 - **time_around_kicks** *(int)*: If no fill is given, this defines the time (in minutes) when data before the first and after the last kick is extracted.
 
   Default: ``10``
+- **plot_styles** *(str)*: Which plotting styles to use,
+  either from omc3.plotting.utils.*.mplstyles or default mpl.
 
+  Default: ``['standard']``
+- **manual_style** *(DictAsString)*: Additional style rcParameters which update the set of predefined ones.
+
+  Default: ``{}``
 
 .. _CarlierForcedDA2019: https://journals.aps.org/prab/pdf/10.1103/PhysRevAccelBeams.22.031002
 
@@ -85,6 +91,7 @@ import os
 from collections import defaultdict, OrderedDict
 from contextlib import suppress
 from pathlib import Path
+from typing import Tuple
 
 import matplotlib as mpl
 import matplotlib.colors as mcolors
@@ -98,17 +105,20 @@ import scipy.odr
 import scipy.optimize
 import tfs
 from generic_parser import EntryPointParameters, entrypoint
-from generic_parser.entry_datatypes import get_multi_class, get_instance_faker_meta, TRUE_ITEMS, FALSE_ITEMS
+from generic_parser.entry_datatypes import (get_multi_class, get_instance_faker_meta,
+                                            TRUE_ITEMS, FALSE_ITEMS, DictAsString)
 from generic_parser.entrypoint_parser import save_options_to_config
 from omc3.definitions.formats import get_config_filename
 from omc3.optics_measurements import toolbox
-from omc3.plotting.utils import style, lines, annotations, colors
+from omc3.plotting.utils import lines, annotations, colors, style
 from omc3.tune_analysis.bbq_tools import clean_outliers_moving_average
 from omc3.utils import logging_tools
 from omc3.utils.time_tools import CERNDatetime
+from pandas import DataFrame, Series
 from pandas.plotting import register_matplotlib_converters
 from pytimber.pagestore import PageStore
-from tfs.tools import significant_digits
+from tfs import TfsDataFrame
+from tfs.tools import significant_digits, DotDict
 
 from pylhc.constants.forced_da_analysis import (bsrt_emittance_key, bws_emittance_key,
                                                 column_action, column_bws_norm_emittance, column_emittance,
@@ -271,7 +281,18 @@ def get_params():
         show=dict(
             action='store_true',
             help="Show plots.",
-        )
+        ),
+        plot_styles=dict(
+            type=str,
+            nargs="+",
+            default=['standard'],
+            help='Which plotting styles to use, either from omc3.plotting.utils.*.mplstyles or default mpl.'
+        ),
+        manual_style=dict(
+            type=DictAsString,
+            default={},
+            help='Additional style rcParameters which update the set of predefined ones.'
+        ),
     )
 
 
@@ -309,6 +330,7 @@ def main(opt):
     # plotting
     figs = dict()
     register_matplotlib_converters()  # for datetime plotting
+    style.set_style(opt.plot_styles, opt.manual_style)
     figs['emittance'] = _plot_emittances(out_dir, opt.beam, opt.plane, emittance_df, emittance_bws_df, kick_df.index)
     figs['intensity'] = _plot_intensity(out_dir, opt.beam, opt.plane, kick_df, intensity_df)
     for fit_type in ('exponential', 'linear', 'norm'):
@@ -316,12 +338,14 @@ def main(opt):
 
     if opt.show:
         plt.show()
+    LOG.debug("Forced DA analysis finished.")
     return figs
 
 
 # Helper ---
 
-def _log_opt(opt):
+def _log_opt(opt: DotDict):
+    """ Show options in log. """
     LOG.info("Performing ForcedDA Analysis for:")
     if opt.fill is not None:
         LOG.info(f"  Fill: {opt.fill}")
@@ -331,14 +355,16 @@ def _log_opt(opt):
     LOG.info(f"  Analysis Directory: '{opt.kick_directory}'")
 
 
-def _save_options(opt):
+def _save_options(opt: DotDict):
+    """ Save Options to ini. """
     if opt.output_directory:
         out_path = Path(opt.output_directory)
         out_path.mkdir(exist_ok=True, parents=True)
         save_options_to_config(out_path / get_config_filename(__file__), OrderedDict(sorted(opt.items())))
 
 
-def _write_tfs(out_dir, plane, kick_df, intensity_df, emittance_df, emittance_bws_df):
+def _write_tfs(out_dir: Path, plane: str, kick_df: DataFrame, intensity_df: DataFrame,
+               emittance_df: DataFrame, emittance_bws_df: DataFrame):
     """ Write out gathered data. """
     LOG.debug("Writing tfs files.")
     for df in (kick_df, intensity_df, emittance_df, emittance_bws_df):
@@ -354,14 +380,15 @@ def _write_tfs(out_dir, plane, kick_df, intensity_df, emittance_df, emittance_bw
         LOG.error(f"Cannot write into directory: {str(out_dir)} ")
 
 
-def _check_all_times_in(series, start, end):
+def _check_all_times_in(series: Series, start: CERNDatetime, end: CERNDatetime):
     """ Check if all times in series are between start and end. """
     if any(s for s in series if s < start or s > end):
         raise ValueError("Some of the kick-times are outside of the fill times! "
                          "Check if correct kick-file or fill number are used.")
 
 
-def _convert_time_index(list_, path=None):
+def _convert_time_index(list_: list, path: Path = None) -> pd.Index:
+    """ Tries to convert time index to cerntime, first from datetime, then string, then timestamp. """
     for index_convert in (_datetime_to_cerntime_index, _string_to_cerntime_index, _timestamp_to_cerntime_index):
         with suppress(TypeError):
             return index_convert(list_)
@@ -391,7 +418,8 @@ def _drop_duplicate_indices(df):
 # TFS Data Loading -------------------------------------------------------------
 
 
-def _get_dataframes(kick_times, opt):
+def _get_dataframes(kick_times: pd.Index(CERNDatetime), opt: DotDict) -> Tuple[TfsDataFrame, TfsDataFrame, TfsDataFrame]:
+    """ Gets the intensity and emittance dataframes from either input, files or (timber) database. """
     db = _get_db(opt)
 
     if opt.fill is not None:
@@ -437,7 +465,9 @@ def _read_tfs(tfs_file_or_path, timespan):
 
 
 def _filter_emittance_data(df, planes, window_length, limit):
+    """ Cleans emittance data via outlier filter and moving average. """
     for plane in planes:
+        LOG.debug(f"Filtering emittance data in plane {plane}.")
         col_nemittance = column_norm_emittance(plane)
         col_err_nemittance = err_col(col_nemittance)
         col_mean = mean_col(col_nemittance)
@@ -464,24 +494,11 @@ def _filter_emittance_data(df, planes, window_length, limit):
     return df
 
 
-def _rolling_errors(data_series, clean_mask, length):
-    data = data_series.copy()
-    data[clean_mask] = np.NaN
-
-    # 'interpolate' fills nan based on index/values of neighbours
-    data = data.interpolate("index").fillna(method="bfill").fillna(method="ffill")
-
-    shift = -int((length-1)/2)  # Shift average to middle value
-
-    # calculate sqrt(sum(x**2))/N, fill NaNs at the ends
-    return np.sqrt(np.square(data).rolling(length).sum().shift(shift).fillna(
-        method="bfill").fillna(method="ffill")) / length
-
-
 # Timber Data ------------------------------------------------------------------
 
 
 def _get_db(opt):
+    """ Get the database either presaved or from timber. """
     db = None
 
     if opt.pagestore_db:
@@ -491,14 +508,16 @@ def _get_db(opt):
         except TypeError:
             pass
         else:
+            LOG.debug(f"Loading database from file {str(db_path)}")
             db = PageStore(f'file:{str(db_path)}', str(db_path.with_suffix('')))
             if opt.fill is not None:
                 raise EnvironmentError("'fill' can't be used with pagestore database.")
     else:
+        LOG.debug(f" Trying to load database from timber.")
         try:
             db = pytimber.LoggingDB(source=opt['timber_db'])
         except AttributeError:
-            pass
+            LOG.debug(f" Loading from timber failed.")
 
     if not db:
         error_msg = ""
@@ -517,6 +536,7 @@ def _get_db(opt):
 
 
 def _get_fill_times(db, fill):
+    """ Extract Fill times from database. """
     LOG.debug(f"Getting Timespan from fill {fill}")
     filldata = db.getLHCFillData(fill)
     return filldata['startTime'], filldata['endTime']
@@ -663,6 +683,7 @@ def _get_output_dir(kick_directory, output_directory):
     except PermissionError:
         LOG.warn(f"You have no writing permission in '{str(output_path)}', "
                  f"output data might not be created.")
+    LOG.info(f"All output will be written to {str(output_path)}")
     return kick_path, output_path
 
 
@@ -744,17 +765,17 @@ def _add_emittance_to_kicks(plane, energy, kick_df, emittance_df, nominal):
 # Forced DA Fitting ------------------------------------------------------------
 
 
-def fun_exp_decay(p, x):
+def fun_exp_decay(p, x):  # fit and plot
     """ p = DA_J, x[0] = action (2J res), x[1] = emittance"""
     return np.exp(-(p - (0.5*x[0])) / x[1])
 
 
-def fun_exp_sigma(p, x):
+def fun_exp_sigma(p, x):  # only used for plotting
     """ p = DA_sigma, x = action (J_sigma) """
     return np.exp(-0.5*(p**2 - x**2))
 
 
-def fun_linear(p, x):
+def fun_linear(p, x):  # fit and plot
     """ p = DA_J, x = action (2J res)"""
     return x*0.5 - p
 
@@ -790,6 +811,8 @@ def _do_fit(plane, kick_df, fit_type):
 
 
 def _get_fit_data(kick_df, plane):
+    """ Extracts necessary data from kick-df.
+    Returns tri-tuple of tuples (data, std)"""
     col_action = column_action(plane)
     col_emittance = column_emittance(plane)
     col_losses = rel_col(INTENSITY_LOSSES)
@@ -802,6 +825,8 @@ def _get_fit_data(kick_df, plane):
 
 
 def _exponential_fit_parameters(action, emittance, rel_losses):
+    """ Returns exponential fit function and parameters.
+    All inputs are tuples of (data, std). """
     x = action[0], emittance[0]
     y = rel_losses[0]
 
@@ -811,6 +836,8 @@ def _exponential_fit_parameters(action, emittance, rel_losses):
 
 
 def _linear_fit_parameters(action, emittance, rel_losses):
+    """ Returns linear fit function and parameters.
+    All inputs are tuples of (data, std). """
     log_losses = np.log(rel_losses[0])
     x = action[0]
     y = emittance[0] * log_losses
@@ -822,7 +849,7 @@ def _linear_fit_parameters(action, emittance, rel_losses):
 
 
 def _fit_curve(fun, x, y, init):
-    """ Preliminary curve fit, without errors. """
+    """ Initial curve fit, without errors. """
     fit, cov = scipy.optimize.curve_fit(fun, x, y,
                                         p0=init, maxfev=MAX_CURVEFIT_FEV)
     LOG.info(f"Initial DA fit: {fit} with cov {cov}")
@@ -830,7 +857,7 @@ def _fit_curve(fun, x, y, init):
 
 
 def _fit_odr(fun, x, y, sx, sy, init):
-    """ ODR Fit """
+    """ ODR Fit (includes errors) """
     # fill zero errors with the minimum error - otherwise fit will not work
     fit_model_sigma = scipy.odr.Model(fun)
     data_model_sigma = scipy.odr.RealData(
@@ -845,7 +872,11 @@ def _fit_odr(fun, x, y, sx, sy, init):
 
 
 def _no_nonzero_errors(series):
+    """ removes all zero-erros and replaces them with minimum errors in set. """
     series = series.copy()
+    nonzero = series[series != 0]
+    if len(nonzero) == 0:
+        raise ValueError("All errors are exact zero. Can't do ODR fit.")
     series[series == 0] = np.abs(series[series != 0]).min()
     return series
 
@@ -888,7 +919,6 @@ def _plot_intensity(directory, beam, plane, kick_df, intensity_df):
     """ Plots beam intensity. For losses the absolute values are used and then normalized
     to the Intensity before the kicks, to get the percentage relative to that (global) value."""
     LOG.debug("Plotting beam intensity")
-    style.set_style("standard")
     fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(16.80, 7.68))
 
     x_span = (kick_df.index.max() - kick_df.index.min()).seconds * np.array([0.03, 0.09])  # defines x-limits
@@ -948,7 +978,6 @@ def _plot_intensity(directory, beam, plane, kick_df, intensity_df):
 
 def _plot_emittances(directory, beam, plane, emittance_df, emittance_bws_df, kick_times):
     LOG.debug("Plotting normalized emittances")
-    style.set_style("standard")
     fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(10.24, 7.68))
 
     col_norm_emittance = column_norm_emittance(plane)
@@ -998,7 +1027,6 @@ def _plot_da_fit(directory, beam, plane, k_df, fit_type):
     """ Plot the Forced Dynamic Aperture fit.
     (I do not like the complexity of this function. jdilly)"""
     LOG.debug(f"Plotting Dynamic Aperture Fit for {fit_type}")
-    style.set_style("standard")
     col_action = column_action(plane)
     col_action_sigma = sigma_col(col_action)
     col_emittance = column_emittance(plane)
