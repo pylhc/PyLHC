@@ -21,18 +21,24 @@ email:
   on_success: never
   on_failure: never
 
+
+# Install omc3 and pyjapc manually
+_manual_install: &manual_install
+  install:
+    - python -m pip install -e git+git://github.com/pylhc/omc3.git#egg=omc3
+    - python -m pip install -e git+https://gitlab.cern.ch/scripting-tools/pyjapc.git#egg=pyjapc
+
+
 jobs:
   include:
     # Tests ---
     - &test-full
       stage: test-full
-      install: skip
+      <<: *manual_install
       before_script:
         - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
         - chmod +x ./cc-test-reporter
         - ./cc-test-reporter before-build
-        - python -m pip install -e git+git://github.com/pylhc/omc3.git#egg=omc3
-        - python -m pip install -e git+https://gitlab.cern.ch/scripting-tools/pyjapc.git#egg=pyjapc
       script:
         - python setup.py test --pytest-args='--mpl'
       after_script:
@@ -41,7 +47,7 @@ jobs:
     # Test only basic test classes
     - &test-basic
       stage: test-basic
-      install: skip
+      <<: *manual_install
       before_script:
         - python -m pip install -e git+git://github.com/pylhc/omc3.git#egg=omc3
         - python -m pip install -e git+https://gitlab.cern.ch/scripting-tools/pyjapc.git#egg=pyjapc
@@ -63,7 +69,8 @@ jobs:
       python: 3.8
 
     - stage: documentation
-      install:
+      <<: *manual_install
+      before_script:  #  could be install, but don't want to override manual_install
         - pip install '.[doc]'
       script:
         - travis-sphinx build --source=doc/ --nowarn
