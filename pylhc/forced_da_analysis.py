@@ -74,7 +74,7 @@ Arguments:
 
   Default: ``10``
 - **plot_styles** *(str)*: Which plotting styles to use,
-  either from omc3.plotting.utils.*.mplstyles or default mpl.
+  either from omc3 styles or default mpl.
 
   Default: ``['standard']``
 - **manual_style** *(DictAsString)*: Additional style rcParameters which update the set of predefined ones.
@@ -286,7 +286,7 @@ def get_params():
             type=str,
             nargs="+",
             default=['standard'],
-            help='Which plotting styles to use, either from omc3.plotting.utils.*.mplstyles or default mpl.'
+            help='Which plotting styles to use, either from omc3 styles or default mpl.'
         ),
         manual_style=dict(
             type=DictAsString,
