@@ -88,7 +88,7 @@ Arguments:
 :author: jdilly, mihofer
 """
 import os
-from collections import defaultdict, OrderedDict
+from collections import defaultdict
 from contextlib import suppress
 from pathlib import Path
 from typing import Tuple
@@ -107,12 +107,11 @@ import tfs
 from generic_parser import EntryPointParameters, entrypoint
 from generic_parser.entry_datatypes import (get_multi_class, get_instance_faker_meta,
                                             TRUE_ITEMS, FALSE_ITEMS, DictAsString)
-from generic_parser.entrypoint_parser import save_options_to_config
-from omc3.definitions.formats import get_config_filename
 from omc3.optics_measurements import toolbox
 from omc3.plotting.utils import lines, annotations, colors, style
 from omc3.tune_analysis.bbq_tools import clean_outliers_moving_average
 from omc3.utils import logging_tools
+from omc3.utils.iotools import save_config
 from omc3.utils.time_tools import CERNDatetime
 from pandas import DataFrame, Series
 from pandas.plotting import register_matplotlib_converters
@@ -142,13 +141,10 @@ from pylhc.constants.general import get_proton_gamma, get_proton_beta, LHC_NOMIN
 
 LOG = logging_tools.get_logger(__name__)
 
+
 # Weird Datatypes
-path_or_str = get_multi_class(Path, str)
-path_or_str_or_df = get_multi_class(Path, str, tfs.TfsDataFrame, pd.DataFrame)
-path_or_str_or_db = get_multi_class(Path, str, PageStore)
-
-
-class BoolOrPathOrDataFrame(metaclass=get_instance_faker_meta(bool, Path, str, tfs.TfsDataFrame, pd.DataFrame)):
+class BoolOrPathOrDataFrame(metaclass=get_instance_faker_meta(bool, Path, str,
+                                                              tfs.TfsDataFrame, pd.DataFrame, type(None))):
     """ A class that behaves like a boolean when possible, otherwise like a Path, string or Dataframe."""
     def __new__(cls, value):
         if isinstance(value, str):
@@ -167,17 +163,37 @@ class BoolOrPathOrDataFrame(metaclass=get_instance_faker_meta(bool, Path, str, t
                 return value
 
 
+def _get_pathclass(*other_classes):
+    class SomethingOrPath(metaclass=get_instance_faker_meta(Path, str, *other_classes, type(None))):
+        """ A class that behaves like a if possible Path, string or something else."""
+        def __new__(cls, value):
+            if isinstance(value, str):
+                value = value.strip("\'\"")  # Needs to be done for strings in config-files
+
+            try:
+                return Path(value)
+            except TypeError:
+                return value
+
+    return SomethingOrPath
+
+
+PathOrDataframe = _get_pathclass(tfs.TfsDataFrame, pd.DataFrame)
+PathOrPagestore = _get_pathclass(PageStore)
+PathOrString = _get_pathclass()
+
+
 def get_params():
     return EntryPointParameters(
         kick_directory=dict(
             flags=['-k', "--kickdir"],
             required=True,
-            type=get_multi_class(Path, str),
+            type=PathOrString,
             help="Analysis kick_directory containing kick files."
         ),
         output_directory=dict(
             flags=['-o', "--outdir"],
-            type=path_or_str,
+            type=PathOrString,
             help="Output kick_directory, if not given subfolder in kick kick_directory",
         ),
         energy=dict(
@@ -188,7 +204,7 @@ def get_params():
         ),
         fill=dict(
             flags=['-f', "--fill"],
-            type=int,
+            type=get_multi_class(int, type(None)),
             help="Fill that was used. If not given, check out time_around_kicks."
         ),
         beam=dict(
@@ -233,11 +249,11 @@ def get_params():
             help=("Assumed NORMALIZED nominal emittance for the machine.")
         ),
         emittance_tfs=dict(
-            type=path_or_str_or_df,
+            type=PathOrDataframe,
             help="Dataframe or Path of pre-saved emittance tfs.",
         ),
         intensity_tfs=dict(
-            type=path_or_str_or_df,
+            type=PathOrDataframe,
             help="Dataframe or Path of pre-saved intensity tfs.",
         ),
         show_wirescan_emittance=dict(
@@ -253,7 +269,7 @@ def get_params():
             help="Which timber database to use."
         ),
         pagestore_db=dict(
-            type=path_or_str_or_db,
+            type=PathOrPagestore,
             help="(Path to-) presaved timber database"
         ),
         fit=dict(
@@ -299,11 +315,13 @@ def get_params():
 @entrypoint(get_params(), strict=True)
 def main(opt):
     LOG.debug("Starting Forced DA analysis.")
-    _save_options(opt)
     _log_opt(opt)
 
-    # get data
     kick_dir, out_dir = _get_output_dir(opt.kick_directory, opt.output_directory)
+    with suppress(PermissionError):
+        save_config(out_dir, opt, __file__)
+
+    # get data
     kick_df = _get_kick_df(kick_dir, opt.plane)
     intensity_df, emittance_df, emittance_bws_df = _get_dataframes(kick_df.index,
                                                                    opt.get_subdict(['fill', 'beam', 'plane',
@@ -330,7 +348,7 @@ def main(opt):
     # plotting
     figs = dict()
     register_matplotlib_converters()  # for datetime plotting
-    _set_plotstyle(opt.plot_styles, opt.manual_style)
+    style.set_style(opt.plot_styles, opt.manual_style)
     figs['emittance'] = _plot_emittances(out_dir, opt.beam, opt.plane, emittance_df, emittance_bws_df, kick_df.index)
     figs['intensity'] = _plot_intensity(out_dir, opt.beam, opt.plane, kick_df, intensity_df)
     for fit_type in ('exponential', 'linear', 'norm'):
@@ -353,14 +371,6 @@ def _log_opt(opt: DotDict):
     LOG.info(f"  Beam: {opt.beam}")
     LOG.info(f"  Plane: {opt.plane}")
     LOG.info(f"  Analysis Directory: '{opt.kick_directory}'")
-
-
-def _save_options(opt: DotDict):
-    """ Save Options to ini. """
-    if opt.output_directory:
-        out_path = Path(opt.output_directory)
-        out_path.mkdir(exist_ok=True, parents=True)
-        save_options_to_config(out_path / get_config_filename(__file__), OrderedDict(sorted(opt.items())))
 
 
 def _write_tfs(out_dir: Path, plane: str, kick_df: DataFrame, intensity_df: DataFrame,
@@ -1177,21 +1187,8 @@ def _get_fit_plot_data(da, da_err, data, fit_type):
 
 # Helper ---
 
-def _set_plotstyle(plot_styles, manual_style):
-    try:
-        style.set_style(plot_styles, manual_style)
-    except TypeError:
-        # old omc3 version, before plot_optics_measurements (remove in future, jdilly 30.07.2020)
-        LOG.warn("Using old omc3 version. Only first plotstyle (and manual) will be used.")
-        style.set_style(plot_styles[0], manual_style)
-
-
 def _plot_kicks_and_scale_x(ax, kick_times, pad=20):
-    try:
-        lines.plot_vertical_lines_fast(ax, kick_times, color='grey', linestyle='--', alpha=0.8, marker='', label="Kicks")
-    except AttributeError:
-        # old omc3 version, before plot_optics_measurements (remove in future, jdilly 30.07.2020)
-        lines.vertical_lines(ax, _date2num(kick_times), color='grey', linestyle='--', alpha=0.8, marker='', label="Kicks")
+    lines.plot_vertical_lines_fast(ax, kick_times, color='grey', linestyle='--', alpha=0.8, marker='', label="Kicks")
 
     first_kick, last_kick = kick_times.min(), kick_times.max()
     try:
