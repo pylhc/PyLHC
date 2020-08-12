@@ -23,7 +23,7 @@ import parse
 import tfs
 from generic_parser import EntryPointParameters, entrypoint
 from omc3.utils import logging_tools, time_tools
-from pylhc.constants.general import FILE_SUFFIX, TIME_COLUMN
+from pylhc.constants.general import TFS_SUFFIX, TIME_COLUMN
 
 LOG = logging_tools.get_logger(__name__)
 PLOT_FILE_SUFFIX = '.pdf'
@@ -112,7 +112,7 @@ def _get_bsrt_logger_fname(beam, timestamp):
 
 
 def _get_bsrt_tfs_fname(beam):
-    return f'data_BSRT_{beam}{FILE_SUFFIX}'
+    return f'data_BSRT_{beam}{TFS_SUFFIX}'
 
 
 def _get_fitvar_plot_fname(beam):

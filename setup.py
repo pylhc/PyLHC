@@ -32,20 +32,28 @@ class PyTest(TestCommand):
         errno = pytest.main(shlex.split(self.pytest_args))
         sys.exit(errno)
 
+
 # The directory containing this file
-HERE = pathlib.Path(__file__).parent
+TOPLEVEL_DIR = pathlib.Path(__file__).parent.absolute()
+ABOUT_FILE = TOPLEVEL_DIR / "pylhc" / "__init__.py"
+README = TOPLEVEL_DIR / "README.md"
 
-# The text of the README file
-README = (HERE / "README.md").read_text()
+# Information on the omc3 package
+ABOUT: dict = {}
+with ABOUT_FILE.open("r") as f:
+    exec(f.read(), ABOUT)
 
-# Name of the module
-MODULE_NAME = 'pylhc'
+with README.open("r") as docs:
+    long_description = docs.read()
+
 
 # Dependencies for the module itself
 DEPENDENCIES = [
     'numpy>=1.18.0',
     'scipy>=1.4.0',
     'pandas==0.25.*',
+    'jpype1<0.8.0,>=0.7.3',  # limit from pylsa
+    'ipython>=7.0.1',  # actually dependency of pytimber
     'GitPython>=2.1.8',
     'matplotlib>=3.2.0',
     'ruamel.yaml>=0.15.94',
@@ -55,63 +63,64 @@ DEPENDENCIES = [
     'htcondor>=8.9.2',
     'tfs-pandas>=1.0.3',
     'generic-parser>=1.0.6',
-    'JPype1>=0.7.2',
     'parse>=1.15.0',
-    'ipython>=7.0.1',  # actually dependency of pytimber
-    'omc3@https://github.com/pylhc/omc3/tarball/master',  # installed in travis.yml
-    # 'pyjapc@https://gitlab.cern.ch/scripting-tools/pyjapc/tarball/master'
+    # to be installed by user (see travis.yml and README):
+    'omc3@https://github.com/pylhc/omc3/tarball/master',
+    'pyjapc@https://gitlab.cern.ch/scripting-tools/pyjapc/repository/archive.tar.gz?ref=master'
 ]
 
-# Test dependencies that should only be installed for test purposes
-TEST_DEPENDENCIES = ['pytest>=5.2',
-                     'pytest-cov>=2.6',
-                     'pytest-regressions>=2.0.0',
-                     'pytest-mpl>=0.11',
-                     'hypothesis>=4.36.2',
-                     'attrs>=19.2.0'
-                     ]
 
-# pytest-runner to be able to run pytest via setuptools
-SETUP_REQUIRES = ['pytest-runner']
-
-# Extra dependencies for tools
-EXTRA_DEPENDENCIES = {'doc': ['sphinx',
-                              'travis-sphinx',
-                              'sphinx_rtd_theme']
-                      }
-
-
-def get_version():
-    """ Reads package version number from package's __init__.py. """
-    with open(os.path.join(
-            os.path.dirname(__file__), MODULE_NAME, '__init__.py'
-    )) as init:
-        for line in init.readlines():
-            res = re.match(r'^__version__ = [\'"](.*)[\'"]$', line)
-            if res:
-                return res.group(1)
+EXTRA_DEPENDENCIES = {
+    "setup": [
+        "pytest-runner"
+    ],
+    "test": [
+        "pytest>=5.2",
+        "pytest-cov>=2.7",
+        'pytest-regressions>=2.0.0',
+        'pytest-mpl>=0.11',
+        "hypothesis>=5.0.0",
+        "attrs>=19.2.0",
+    ],
+    "doc": [
+        "sphinx",
+        "travis-sphinx",
+        "sphinx_rtd_theme"
+    ],
+}
+EXTRA_DEPENDENCIES.update(
+    {'all': [elem for list_ in EXTRA_DEPENDENCIES.values() for elem in list_]}
+)
 
 
 # This call to setup() does all the work
 setup(
-    name=MODULE_NAME,
-    version=get_version(),
-    description="Useful tools in particular for accelerator physicists at CERN",
-    long_description=README,
+    name=ABOUT["__title__"],
+    version=ABOUT["__version__"],
+    description=ABOUT["__description__"],
+    long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/pylhc/pylhc",
-    author="pyLHC",
-    author_email="pylhc@github.com",
-    license="MIT",
+    author=ABOUT["__author__"],
+    author_email=ABOUT["__author_email__"],
+    url=ABOUT["__url__"],
+    python_requires=">=3.6",
+    license=ABOUT["__license__"],
     cmdclass={'pytest': PyTest},  # pass test arguments
     classifiers=[
+        "Intended Audience :: Science/Research",
         "License :: OSI Approved :: MIT License",
-        "Programming Language :: Python :: 3",
+        "Natural Language :: English",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Topic :: Scientific/Engineering :: Physics",
+        "Topic :: Scientific/Engineering :: Visualization",
     ],
     packages=find_packages(exclude=['tests*', 'doc']),
     install_requires=DEPENDENCIES,
-    tests_require=DEPENDENCIES + TEST_DEPENDENCIES,
+    tests_require=EXTRA_DEPENDENCIES['test'],
+    setup_requires=EXTRA_DEPENDENCIES['setup'],
     extras_require=EXTRA_DEPENDENCIES,
-    setup_requires=SETUP_REQUIRES,
 )
