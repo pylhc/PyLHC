@@ -9,6 +9,7 @@ Package to resolve script masks.
 
 """
 import logging
+import re
 from pathlib import Path
 
 from pandas import DataFrame
@@ -52,5 +53,11 @@ def create_jobs_from_mask(job_df: DataFrame, maskfile: Path, replace_keys: dict,
     return job_df
 
 
+def find_named_variables_in_mask(mask):
+    return set(re.findall(r"%\((\w+)\)", mask))
+
+
 if __name__ == '__main__':
     raise EnvironmentError(f"{__file__} is not supposed to run as main.")
+
+

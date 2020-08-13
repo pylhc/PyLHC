@@ -83,7 +83,6 @@ parameter per job and job directory for further post processing.
 """
 import itertools
 import multiprocessing
-import re
 import subprocess
 from functools import partial
 from pathlib import Path
@@ -99,6 +98,7 @@ from omc3.utils import logging_tools
 
 import pylhc.htc.mask as mask_processing
 import pylhc.htc.utils as htcutils
+from pylhc.htc.mask import find_named_variables_in_mask
 from pylhc.htc.utils import (COLUMN_SHELL_SCRIPT, COLUMN_JOB_DIRECTORY,
                              JOBFLAVOURS, HTCONDOR_JOBLIMIT, EXECUTEABLEPATH)
 
@@ -396,7 +396,7 @@ def _check_opts(opt):
         mask = inputmask.read()
 
     dict_keys = set(opt.replace_dict.keys())
-    mask_keys = _find_named_variables_in_mask(mask)
+    mask_keys = find_named_variables_in_mask(mask)
     not_in_mask = dict_keys - mask_keys
     not_in_dict = mask_keys - dict_keys
 
@@ -441,10 +441,6 @@ def _print_stats(new_jobs, finished_jobs):
 
 def _set_auto_tfs_column_types(df):
     return df.apply(partial(pd.to_numeric, errors='ignore'))
-
-
-def _find_named_variables_in_mask(mask):
-    return set(re.findall(r"%\((\w+)\)", mask))
 
 
 # Script Mode ------------------------------------------------------------------
