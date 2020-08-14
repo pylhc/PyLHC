@@ -1,4 +1,5 @@
 import subprocess
+from collections import OrderedDict
 from pathlib import Path
 
 from generic_parser import DotDict
@@ -41,6 +42,7 @@ SIXENV_REQUIRED = ['BEAM', 'TURNS', 'AMPMIN', 'AMPMAX', 'AMPSTEP', 'ANGLES']
 STAGE_ORDER = ['create_jobs', 'submit_mask', 'submit_sixtrack', 'analyse']
 STAGES = DotDict({key: key for key in STAGE_ORDER})
 
+HEADER_BASEDIR = 'BASEDIR'
 
 # Paths ------------------------------------------------------------------------
 
@@ -65,7 +67,15 @@ def get_stagefile_path(jobname: str, basedir: Path):
     return get_sixjobs_path(jobname, basedir) / 'stages_completed.txt'
 
 
-# Check Mask -------------------------------------------------------------------
+def get_sixtrack_input_path(jobname: str, basedir: Path):
+    return get_sixjobs_path(jobname, basedir) / 'sixtrack_input'
+
+
+def get_mad6t_mask_path(jobname: str, basedir: Path):
+    return get_sixtrack_input_path(jobname, basedir) / 'mad6t.sh'
+
+
+# Checks  ----------------------------------------------------------------------
 
 def check_mask(mask_text: str, replace_args: dict):
     dict_keys = set(replace_args.keys())
@@ -79,15 +89,23 @@ def check_mask(mask_text: str, replace_args: dict):
 
 # Stages -----------------------------------------------------------------------
 
+class StageSkip(Exception):
+    pass
+
+
 def stage_function(stage: str):
     """ Wrapper for stage functions to add stage to stagefile. """
     def outside_wrap(func):  # needs to be wrapped twice, because of stage-arg
         def stage_wrap(*args, **kwargs):
             if not run_stage(*args[:2], stage):
                 return
-            retval = func(*args, **kwargs)
-            stage_done(*args[:2], stage)
-            return retval
+            try:
+                retval = func(*args, **kwargs)
+            except StageSkip as e:
+                LOG.info(str(e))
+            else:
+                stage_done(*args[:2], stage)
+                return retval
         return stage_wrap
     return outside_wrap
 
@@ -143,13 +161,10 @@ def is_locked(jobname: str, basedir: Path, unlock: bool = False):
             LOG.info(f"{str(lock.parent)}: {txt}")
 
         if unlock:
-            LOG.info("Do you want to unlock? [y/N]")
-            user_answer = input()
-            if user_answer.lower().startswith('y'):
-                for lock in locks:
-                    LOG.debug(f'Removing lock {str(lock)}')
-                    lock.unlink()
-                return False
+            for lock in locks:
+                LOG.debug(f'Removing lock {str(lock)}')
+                lock.unlink()
+            return False
         return True
     return False
 

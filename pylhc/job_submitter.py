@@ -84,6 +84,7 @@ parameter per job and job directory for further post processing.
 import itertools
 import multiprocessing
 import subprocess
+from collections import OrderedDict, Iterable
 from functools import partial
 from pathlib import Path
 
@@ -92,13 +93,13 @@ import pandas as pd
 import tfs
 from generic_parser import entrypoint, EntryPointParameters
 from generic_parser.entry_datatypes import DictAsString
-from generic_parser.entrypoint_parser import save_options_to_config
 from generic_parser.tools import print_dict_tree
 from omc3.utils import logging_tools
+from omc3.utils.iotools import PathOrStr, save_config
 
 import pylhc.htc.mask as mask_processing
 import pylhc.htc.utils as htcutils
-from pylhc.htc.mask import find_named_variables_in_mask
+from pylhc.htc.mask import find_named_variables_in_mask, generate_jobdf_index
 from pylhc.htc.utils import (COLUMN_SHELL_SCRIPT, COLUMN_JOB_DIRECTORY,
                              JOBFLAVOURS, HTCONDOR_JOBLIMIT, EXECUTEABLEPATH)
 
@@ -120,20 +121,20 @@ def get_params():
     params = EntryPointParameters()
     params.add_parameter(
         name="mask",
-        type=str,
+        type=PathOrStr,
         required=True,
         help="Program mask to use",
     )
     params.add_parameter(
         name="working_directory",
-        type=str,
+        type=PathOrStr,
         required=True,
         help="Directory where data should be put",
     )
     params.add_parameter(
         name="executable",
         default='madx',
-        type=str,
+        type=PathOrStr,
         help="Path to executable or job-type "
              f"(of {str(list(EXECUTEABLEPATH.keys()))}) to use.",
     )
@@ -235,8 +236,7 @@ def get_params():
 def main(opt):
     LOG.info("Starting HTCondor Job-submitter.")
     opt = _check_opts(opt)
-    opt = _convert_to_paths(opt, ('working_directory', 'job_output_dir', 'mask'))
-    save_options_to_config(opt.working_directory / CONFIG_FILE, opt)
+    save_config(opt.working_directory, opt, __file__)
 
     job_df = _create_jobs(opt.working_directory, opt.mask, opt.jobid_mask, opt.replace_dict,
                           opt.job_output_dir, opt.append_jobs, opt.executable,
@@ -258,7 +258,7 @@ def main(opt):
 
 def _create_jobs(cwd, maskfile, jobid_mask, replace_dict, output_dir, append_jobs,
                  executable, script_args, script_extension):
-    LOG.debug("Creating MADX-Jobs")
+    LOG.debug("Creating Jobs")
     values_grid = np.array(list(itertools.product(*replace_dict.values())), dtype=object)
 
     if append_jobs:
@@ -284,7 +284,7 @@ def _create_jobs(cwd, maskfile, jobid_mask, replace_dict, output_dir, append_job
     LOG.debug(f'Initial number of jobs: {njobs:d}')
 
     data_df = pd.DataFrame(
-        index=_generate_index(job_df, jobid_mask, replace_dict.keys(), values_grid),
+        index=generate_jobdf_index(job_df, jobid_mask, replace_dict.keys(), values_grid),
         columns=list(replace_dict.keys()),
         data=values_grid)
     job_df = job_df.append(data_df, sort=False)
@@ -366,14 +366,6 @@ def _job_was_successful(job_row, output_dir, files):
     return success
 
 
-def _generate_index(old_df, mask, keys, values):
-    if not mask:
-        nold = len(old_df.index)
-        start = nold-1 if nold > 0 else 0
-        return range(start, start + values.shape[0])
-    return [mask % dict(zip(keys, v)) for v in values]
-
-
 def _execute_shell(df_row):
     idx, column = df_row
     with Path(column[COLUMN_JOB_DIRECTORY], 'log.tmp').open('w') as logfile:
@@ -395,6 +387,9 @@ def _check_opts(opt):
     with open(opt.mask, "r") as inputmask:  # checks that mask and dir are there
         mask = inputmask.read()
 
+    if str(opt.executable) in EXECUTEABLEPATH.keys():
+        opt.executable = str(opt.executable)
+
     dict_keys = set(opt.replace_dict.keys())
     mask_keys = find_named_variables_in_mask(mask)
     not_in_mask = dict_keys - mask_keys
@@ -414,14 +409,8 @@ def _check_opts(opt):
             raise KeyError('Empty replace-dictionary')
 
     print_dict_tree(opt, name="Input parameter", print_fun=LOG.debug)
+    opt.replace_dict = check_replace_dict(opt.replace_dict)
 
-    return opt
-
-
-def _convert_to_paths(opt, keys):
-    """ Converts strings (defined by keys) that should be paths to Path. """
-    for key in keys:
-        opt[key] = Path(opt[key])
     return opt
 
 
@@ -441,6 +430,17 @@ def _print_stats(new_jobs, finished_jobs):
 
 def _set_auto_tfs_column_types(df):
     return df.apply(partial(pd.to_numeric, errors='ignore'))
+
+
+# Other ------------------------------------------------------------------------
+
+
+def check_replace_dict(replace_dict: dict) -> OrderedDict:
+    """ Makes all entries in replace-dict iterable. """
+    for key, value in replace_dict.items():
+        if isinstance(value, str) or not isinstance(value, Iterable):
+            replace_dict[key] = [value]
+    return OrderedDict(replace_dict)  # for python 3.6
 
 
 # Script Mode ------------------------------------------------------------------

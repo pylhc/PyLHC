@@ -2,7 +2,8 @@ from pathlib import Path
 from omc3.utils import logging_tools
 from pylhc.sixdesk_tools.utils import (RUNSIX_SH, MAD_TO_SIXTRACK_SH,
                                        STAGES, stage_function,
-                                       get_sixjobs_path, start_subprocess,)
+                                       get_sixjobs_path, start_subprocess,
+                                       StageSkip)
 
 LOG = logging_tools.get_logger(__name__)
 
@@ -28,6 +29,7 @@ def submit_sixtrack(jobname: str, basedir: Path, ssh: str = None):
     try:
         start_subprocess([RUNSIX_SH, '-a'], cwd=sixjobs_path, ssh=ssh)  # throws OSError if failed
     except OSError as e:
-        raise OSError('Submit to sixtrack ended in error. Input generation possibly not finished. Check your Scheduler.') from e
+        raise StageSkip(f'Submit to sixtrack for {jobname} ended in error.'
+                        f' Input generation possibly not finished. Check your Scheduler.') from e
 
 

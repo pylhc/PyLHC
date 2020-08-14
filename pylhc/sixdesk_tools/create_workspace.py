@@ -11,7 +11,7 @@ from pylhc.sixdesk_tools.utils import (MADX_PATH, SIXENV_REQUIRED, SIXENV_DEFAUL
                                        STAGES, stage_function,
                                        start_subprocess,
                                        get_sixjobs_path, get_workspace_path,
-                                       get_scratch_path, get_masks_path, check_mask)
+                                       get_scratch_path, get_masks_path, check_mask, get_mad6t_mask_path)
 
 
 LOG = logging_tools.get_logger(__name__)
@@ -22,10 +22,7 @@ def create_jobs(jobname: str, basedir: Path, mask_text: str, **kwargs):
     binary_path = kwargs.pop('binary_path', MADX_PATH)
     ssh = kwargs.pop('ssh', None)
 
-    check_mask(mask_text, kwargs)
-
     sixjobs_path = get_sixjobs_path(jobname, basedir)
-
     _create_workspace(jobname, basedir, ssh=ssh)
     _create_sysenv(jobname, basedir, binary_path=binary_path)
     _create_sixdeskenv(jobname, basedir, **kwargs)
@@ -126,3 +123,24 @@ def _write_mask(jobname: str, basedir: Path, mask_text: str, **kwargs):
 
     with open(masks_path / f'{jobname}.mask', 'w') as mask_out:
         mask_out.write(mask_filled)
+
+
+def _remove_twiss_fail_check(jobname: str, basedir: Path):
+    """ Removes the "Twiss fail" check from mad6t.sh """
+    mad6t_path = get_mad6t_mask_path(jobname, basedir)
+    with open(mad6t_path, 'r') as f:
+        lines = f.readlines()
+
+    idx_start = None
+    for idx, line in enumerate(lines):
+        if line.startswith('grep -i "TWISS fail"'):
+            idx_start = idx
+        elif idx_start is not None and line.startswith('fi'):
+            idx_end = idx
+            break
+    else:
+        raise IOError("'TWISS fail' not found in mad6t.sh")
+    lines = lines[:idx_start] + lines[idx_end+1:]
+
+    with open(mad6t_path, 'w') as f:
+        f.writelines(lines)
