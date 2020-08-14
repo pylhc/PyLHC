@@ -27,6 +27,7 @@ def main():
                 AMPMIN=2, AMPMAX=20, AMPSTEP=5,
                 ANGLES=50,
                 B6viaB4=False,
+                SEED='%SEEDRAN'
                 )
 
     submit_mask(jobname, basedir, ssh=ssh)

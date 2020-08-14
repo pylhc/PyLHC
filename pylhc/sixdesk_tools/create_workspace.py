@@ -117,7 +117,7 @@ def _write_mask(jobname: str, basedir: Path, mask_text: str, **kwargs):
     seed_range = [kwargs.get(key, SIXENV_DEFAULT[key]) for key in ('FIRSTSEED', 'LASTSEED')]
 
     # seed_vars = re.findall(r'%\(?SEEDRAN\)?', mask_text)
-    if ('%SEEDRAN' not in mask_text) and (seed_range[0] != seed_range[1]):
+    if ('%SEEDRAN' not in mask_text) and ('%SEEDRAN' not in kwargs.values()) and (seed_range[0] != seed_range[1]):
         raise ValueError("First and Lastseed are given, but no seed-variable '%SEEDRAN' found in mask.")
 
     mask_text = mask_text.replace('%SEEDRAN', '#!#SEEDRAN')  # otherwise next line will complain

@@ -111,10 +111,11 @@ def run_stage(jobname: str, basedir: Path, stage: str):
             return False
 
     with open(stage_file, 'r') as f:
-        txt = f.readlines()
+        txt = f.read().split('\n')
+    txt = [line.strip() for line in txt if line.strip()]
 
     if stage in txt:
-        LOG.info(f'Stage {stage} has already been run. SKipping.')
+        LOG.info(f'Stage {stage} has already been run. Skipping.')
         return False
 
     if stage_idx == 0:
