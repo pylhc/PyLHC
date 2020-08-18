@@ -11,7 +11,7 @@ from omc3.utils import logging_tools
 from omc3.utils.iotools import PathOrStr, save_config
 
 from pylhc.htc.mask import generate_jobdf_index
-from pylhc.job_submitter import JOBSUMMARY_FILE, COLUMN_JOBID, check_replace_dict
+from pylhc.job_submitter import JOBSUMMARY_FILE, COLUMN_JOBID, check_replace_dict, keys_to_path
 from pylhc.sixdesk_tools.create_workspace import create_jobs, remove_twiss_fail_check
 from pylhc.sixdesk_tools.submit import submit_mask, submit_sixtrack, check_generated_input_files
 from pylhc.sixdesk_tools.utils import is_locked, MADX_PATH, check_mask, HEADER_BASEDIR, STAGES, check_stage
@@ -154,6 +154,7 @@ def setup_and_run(jobname, basedir, mask, **kwargs):
 
 
 def _check_opts(mask_text, opt):
+    opt = keys_to_path(opt, 'mask', 'working_directory', 'executable')
     check_mask(mask_text, opt.replace_dict)
     opt.replace_dict = check_replace_dict(opt.replace_dict)
     return opt

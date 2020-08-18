@@ -384,12 +384,16 @@ def _check_opts(opt):
     if opt.resume_jobs and opt.append_jobs:
         raise ValueError('Select either Resume jobs or Append jobs')
 
-    with open(opt.mask, "r") as inputmask:  # checks that mask and dir are there
-        mask = inputmask.read()
+    # Paths ---
+    opt = keys_to_path(opt, 'mask', 'working_directory', 'executable')
 
     if str(opt.executable) in EXECUTEABLEPATH.keys():
         opt.executable = str(opt.executable)
 
+    with open(opt.mask, "r") as inputmask:  # checks that mask and dir are there
+        mask = inputmask.read()
+
+    # Replace dict ---
     dict_keys = set(opt.replace_dict.keys())
     mask_keys = find_named_variables_in_mask(mask)
     not_in_mask = dict_keys - mask_keys
@@ -441,6 +445,13 @@ def check_replace_dict(replace_dict: dict) -> OrderedDict:
         if isinstance(value, str) or not isinstance(value, Iterable):
             replace_dict[key] = [value]
     return OrderedDict(replace_dict)  # for python 3.6
+
+
+def keys_to_path(dict_, *keys):
+    """ Convert all keys to Path """
+    for key in keys:
+        dict_[key] = Path(key)
+    return dict_
 
 
 # Script Mode ------------------------------------------------------------------
