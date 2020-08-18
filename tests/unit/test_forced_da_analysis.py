@@ -1,5 +1,3 @@
-from pylhc.forced_da_analysis import main as fda_analysis
-
 import inspect
 import shutil
 import tempfile
@@ -7,7 +5,9 @@ from contextlib import contextmanager
 from pathlib import Path
 
 import pytest
+from pytimber import pytimber
 
+from pylhc.forced_da_analysis import main as fda_analysis
 
 INPUT = Path(__file__).parent.parent / 'inputs'
 DEBUG = False  # switch to local output instead of temp
@@ -67,9 +67,24 @@ class ExtendedTests:
                 output_directory=output_dir
             )
             check_output(output_dir)
+
     @staticmethod
     def test_md3312_no_data_given():
-        with pytest.raises(OSError):
+        try:
+            pytimber.LoggingDB(source='all')
+        except AttributeError:
+            # Outside of CERN network, so this should fail
+            with pytest.raises(OSError):
+                with _output_dir() as output_dir:
+                    fda_analysis(
+                        beam=1,
+                        kick_directory=INPUT / 'kicks_vertical_md3312',
+                        energy=6500.,
+                        plane='Y',
+                        output_directory=output_dir
+                    )
+        else:
+            # We should be in CERN network and run should succeed
             with _output_dir() as output_dir:
                 fda_analysis(
                     beam=1,
@@ -78,7 +93,6 @@ class ExtendedTests:
                     plane='Y',
                     output_directory=output_dir
                 )
-
 
 # Helper -----------------------------------------------------------------------
 
