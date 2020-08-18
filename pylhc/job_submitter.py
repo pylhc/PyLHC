@@ -450,7 +450,7 @@ def check_replace_dict(replace_dict: dict) -> OrderedDict:
 def keys_to_path(dict_, *keys):
     """ Convert all keys to Path """
     for key in keys:
-        dict_[key] = Path(key)
+        dict_[key] = Path(dict_[key])
     return dict_
 
 
