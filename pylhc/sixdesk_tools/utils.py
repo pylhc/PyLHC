@@ -1,5 +1,6 @@
 import subprocess
 from collections import OrderedDict
+from contextlib import contextmanager
 from pathlib import Path
 
 from generic_parser import DotDict
@@ -39,7 +40,7 @@ SIXENV_DEFAULT = dict(
 )
 SIXENV_REQUIRED = ['BEAM', 'TURNS', 'AMPMIN', 'AMPMAX', 'AMPSTEP', 'ANGLES']
 
-STAGE_ORDER = ['create_jobs', 'submit_mask', 'submit_sixtrack', 'analyse']
+STAGE_ORDER = ['create_jobs', 'submit_mask', 'check_input', 'submit_sixtrack', 'analyse']
 STAGES = DotDict({key: key for key in STAGE_ORDER})
 
 HEADER_BASEDIR = 'BASEDIR'
@@ -93,27 +94,24 @@ class StageSkip(Exception):
     pass
 
 
-def stage_function(stage: str):
+@contextmanager
+def check_stage(stage: str, jobname: str, basedir: Path):
     """ Wrapper for stage functions to add stage to stagefile. """
-    def outside_wrap(func):  # needs to be wrapped twice, because of stage-arg
-        def stage_wrap(*args, **kwargs):
-            if not run_stage(*args[:2], stage):
-                return
-            try:
-                retval = func(*args, **kwargs)
-            except StageSkip as e:
-                LOG.info(str(e))
-            else:
-                stage_done(*args[:2], stage)
-                return retval
-        return stage_wrap
-    return outside_wrap
+    if not run_stage(jobname, basedir, stage):
+        yield False
+    else:
+        try:
+            yield True
+        except StageSkip as e:
+            LOG.info(str(e))
+        else:
+            stage_done(jobname, basedir, stage)
 
 
 def stage_done(jobname: str, basedir: Path, stage: str):
     stage_file = get_stagefile_path(jobname, basedir)
     with open(stage_file, 'a+') as f:
-        txt = f.write(f'{stage}\n')
+        f.write(f'{stage}\n')
 
 
 def run_stage(jobname: str, basedir: Path, stage: str):
@@ -125,7 +123,7 @@ def run_stage(jobname: str, basedir: Path, stage: str):
         if stage_idx == 0:
             return True
         else:
-            LOG.info(f'Stage {stage} not run because previous stages missing,')
+            LOG.debug(f'Stage {stage} not run because previous stage(s) missing.')
             return False
 
     with open(stage_file, 'r') as f:
@@ -139,10 +137,11 @@ def run_stage(jobname: str, basedir: Path, stage: str):
     if stage_idx == 0:
         return True
 
+    # check if last run stage is also the stage before current stage in stage order
     if txt[-1] == STAGE_ORDER[stage_idx-1]:
         return True
 
-    LOG.info(f'Stage {stage} not run because previous stages missing,')
+    LOG.debug(f'Stage {stage} not run because previous stage(s) missing.')
     return False
 
 

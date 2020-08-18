@@ -1,14 +1,12 @@
 from pathlib import Path
 from omc3.utils import logging_tools
 from pylhc.sixdesk_tools.utils import (RUNSIX_SH, MAD_TO_SIXTRACK_SH,
-                                       STAGES, stage_function,
                                        get_sixjobs_path, start_subprocess,
                                        StageSkip)
 
 LOG = logging_tools.get_logger(__name__)
 
 
-@stage_function(STAGES.submit_mask)
 def submit_mask(jobname: str, basedir: Path, ssh: str = None):
     """ Run the mask (probably Madx) and generate sixtrack input files. """
     LOG.info("Submitting mask to run for sixtrack input generation.")
@@ -16,14 +14,26 @@ def submit_mask(jobname: str, basedir: Path, ssh: str = None):
     start_subprocess([MAD_TO_SIXTRACK_SH, '-s'], cwd=sixjobs_path, ssh=ssh)
 
 
-@stage_function(STAGES.submit_sixtrack)
-def submit_sixtrack(jobname: str, basedir: Path, ssh: str = None):
-    """ Generate simulation files (-g) and check if runnable (-c) and submit (-s).
+def check_generated_input_files(jobname: str, basedir: Path, ssh: str = None, resubmit: bool = False):
+    """ Checks the generated input files needed by sixtrack and resubmits, if requested. """
+    LOG.info("Checking if input files are present.")
+    sixjobs_path = get_sixjobs_path(jobname, basedir)
+    try:
+        start_subprocess([MAD_TO_SIXTRACK_SH, '-c'], cwd=sixjobs_path, ssh=ssh)
+    except OSError as e:
+        if resubmit:
+            LOG.info("Resubmitting mask to run wrong seeds for sixtrack input generation.")
+            start_subprocess([MAD_TO_SIXTRACK_SH, '-w'], cwd=sixjobs_path, ssh=ssh)
+            raise StageSkip("Resubmitted input generation jobs.")
+        else:
+            raise StageSkip("Checking input files failed. Check (debug-) logs. "
+                            "Maybe restart with 'resubmit' flag.") from e
+    else:
+        LOG.info("Check for input files was successful.")
 
-    > /afs/cern.ch/project/sixtrack/SixDesk_utilities/pro/utilities/bash/run_six.sh -g -c -s
-    or (shorthand)
-    > /afs/cern.ch/project/sixtrack/SixDesk_utilities/pro/utilities/bash/run_six.sh -a
-    """
+
+def submit_sixtrack(jobname: str, basedir: Path, ssh: str = None, resubmit=False):
+    """ Generate simulation files and check if runnable and submit. """
     LOG.info("Submitting to sixtrack.")
     sixjobs_path = get_sixjobs_path(jobname, basedir)
     try:
