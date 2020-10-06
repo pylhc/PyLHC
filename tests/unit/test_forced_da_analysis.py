@@ -1,5 +1,3 @@
-from pylhc.forced_da_analysis import main as fda_analysis
-
 import inspect
 import shutil
 import tempfile
@@ -8,6 +6,7 @@ from pathlib import Path
 
 import pytest
 
+from pylhc.forced_da_analysis import main as fda_analysis
 
 INPUT = Path(__file__).parent.parent / 'inputs'
 DEBUG = False  # switch to local output instead of temp

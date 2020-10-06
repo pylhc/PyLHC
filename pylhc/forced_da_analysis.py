@@ -105,10 +105,11 @@ import scipy.odr
 import scipy.optimize
 import tfs
 from generic_parser import EntryPointParameters, entrypoint
-from generic_parser.entry_datatypes import (get_multi_class, get_instance_faker_meta,
-                                            TRUE_ITEMS, FALSE_ITEMS, DictAsString)
+from generic_parser.entry_datatypes import (DictAsString, FALSE_ITEMS, TRUE_ITEMS,
+                                            get_instance_faker_meta, get_multi_class)
+from generic_parser.tools import DotDict
 from omc3.optics_measurements import toolbox
-from omc3.plotting.utils import lines, annotations, colors, style
+from omc3.plotting.utils import annotations, colors, lines, style
 from omc3.tune_analysis.bbq_tools import clean_outliers_moving_average
 from omc3.utils import logging_tools
 from omc3.utils.iotools import save_config
@@ -117,27 +118,28 @@ from pandas import DataFrame, Series
 from pandas.plotting import register_matplotlib_converters
 from pytimber.pagestore import PageStore
 from tfs import TfsDataFrame
-from tfs.tools import significant_digits, DotDict
+from tfs.tools import significant_digits
 
-from pylhc.constants.forced_da_analysis import (bsrt_emittance_key, bws_emittance_key,
-                                                column_action, column_bws_norm_emittance, column_emittance,
-                                                column_norm_emittance,
-                                                err_col, mean_col, rel_col, sigma_col,
-                                                header_da, header_da_error, header_nominal_emittance,
-                                                header_norm_nominal_emittance,
-                                                outfile_emittance, outfile_emittance_bws, outfile_kick, outfile_plot,
-                                                HEADER_ENERGY,
+from pylhc.constants.forced_da_analysis import (BSRT_EMITTANCE_TO_METER, BWS_DIRECTIONS,
+                                                BWS_EMITTANCE_TO_METER, HEADER_BSRT_OUTLIER_LIMIT,
+                                                HEADER_BSRT_ROLLING_WINDOW, HEADER_ENERGY,
                                                 HEADER_TIME_AFTER, HEADER_TIME_BEFORE,
-                                                HEADER_BSRT_ROLLING_WINDOW, HEADER_BSRT_OUTLIER_LIMIT,
-                                                TIME_AFTER_KICK_S, TIME_AROUND_KICKS_MIN, TIME_BEFORE_KICK_S,
-                                                PLOT_FILETYPES, INTENSITY, INITIAL_DA_FIT, INTENSITY_AFTER,
-                                                INTENSITY_BEFORE,
-                                                INTENSITY_KEY, INTENSITY_LOSSES,
-                                                ROLLING_AVERAGE_WINDOW, BSRT_EMITTANCE_TO_METER, BWS_DIRECTIONS,
-                                                BWS_EMITTANCE_TO_METER, KICKFILE, RESULTS_DIR, YPAD,
-                                                MAX_CURVEFIT_FEV, OUTFILE_INTENSITY, OUTLIER_LIMIT,
-                                                )
-from pylhc.constants.general import get_proton_gamma, get_proton_beta, LHC_NOMINAL_EMITTANCE, TFS_SUFFIX, TIME_COLUMN
+                                                INITIAL_DA_FIT, INTENSITY, INTENSITY_AFTER,
+                                                INTENSITY_BEFORE, INTENSITY_KEY, INTENSITY_LOSSES,
+                                                KICKFILE, MAX_CURVEFIT_FEV, OUTFILE_INTENSITY,
+                                                OUTLIER_LIMIT, PLOT_FILETYPES, RESULTS_DIR,
+                                                ROLLING_AVERAGE_WINDOW, TIME_AFTER_KICK_S,
+                                                TIME_AROUND_KICKS_MIN, TIME_BEFORE_KICK_S, YPAD,
+                                                bsrt_emittance_key, bws_emittance_key,
+                                                column_action, column_bws_norm_emittance,
+                                                column_emittance, column_norm_emittance, err_col,
+                                                header_da, header_da_error,
+                                                header_nominal_emittance,
+                                                header_norm_nominal_emittance, mean_col,
+                                                outfile_emittance, outfile_emittance_bws,
+                                                outfile_kick, outfile_plot, rel_col, sigma_col)
+from pylhc.constants.general import (LHC_NOMINAL_EMITTANCE, TFS_SUFFIX, TIME_COLUMN,
+                                     get_proton_beta, get_proton_gamma)
 
 LOG = logging_tools.get_logger(__name__)
 

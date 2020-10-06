@@ -9,13 +9,16 @@ Proper testing requires communication with FESA class, possible only from the TN
 
 Original authors: E. H. Maclean, T. Persson, G. Trad
 '''
-import sys
-import os
-import time
 import datetime as dt
+import os
 import pickle
+import sys
+import time
+
 import pyjapc
 from omc3.definitions import formats
+
+
 #export PATH="/user/bdisoft/operational/bin/Python/PRO/bin:$PATH
 
 ##########################################

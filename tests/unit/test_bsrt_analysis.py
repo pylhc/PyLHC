@@ -1,8 +1,10 @@
 import os
 from ast import literal_eval
+
 import numpy as np
 import pandas as pd
 import pytest
+
 from pylhc import BSRT_analysis
 
 CURRENT_DIR = os.path.dirname(__file__)

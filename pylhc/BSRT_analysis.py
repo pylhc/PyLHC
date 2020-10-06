@@ -10,19 +10,21 @@ Provided a tfs file with timestamps, plots of the 2D distribution and comparisio
 of fit parameter to cross sections are added.
 Plots functions return figures and can be imported in e.g. IPython notebooks for plot tweaking.
 '''
+import datetime
 import glob
-from pathlib import Path
 import gzip
 import pickle
-import datetime
-import pytz
+from pathlib import Path
+
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 import parse
+import pytz
 import tfs
 from generic_parser import EntryPointParameters, entrypoint
 from omc3.utils import logging_tools, time_tools
+
 from pylhc.constants.general import TFS_SUFFIX, TIME_COLUMN
 
 LOG = logging_tools.get_logger(__name__)
