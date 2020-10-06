@@ -49,7 +49,7 @@ jobs:
       stage: test-basic
       <<: *manual_install
       script:
-        - python setup.py test --pytest-args='--mpl -o python_classes=BasicTests'
+        - python -m pytest --mpl -m "BasicTests"
 
 
     # Define additional python versions for tests
