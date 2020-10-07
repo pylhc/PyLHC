@@ -12,71 +12,72 @@ INPUT = Path(__file__).parent.parent / 'inputs'
 DEBUG = False  # switch to local output instead of temp
 
 
-class BasicTests:
-    @staticmethod
-    def test_md3312_data():
-        data_dir = INPUT / 'kicks_vertical_md3312'
+@pytest.mark.basic
+def test_md3312_data():
+    data_dir = INPUT / 'kicks_vertical_md3312'
+    with _output_dir() as output_dir:
+        fda_analysis(
+            beam=1,
+            kick_directory=data_dir,
+            energy=6500.,
+            plane='Y',
+            intensity_tfs=data_dir / 'intensity.tfs',
+            emittance_tfs=data_dir / 'emittance_y.tfs',
+            show_wirescan_emittance=data_dir / 'emittance_bws_y.tfs',
+            output_directory=output_dir,
+            # show=True,
+        )
+        check_output(output_dir)
+
+
+@pytest.mark.basic
+def test_md2162_timberdb():
+    data_dir = INPUT / 'kicks_horizontal_md2162'
+    with _output_dir() as output_dir:
+        fda_analysis(
+            fit='linear',
+            beam=1,
+            kick_directory=data_dir,
+            energy=6500.,
+            plane='X',
+            output_directory=output_dir,
+            pagestore_db=data_dir / 'MD2162_ACD_TimberDB_Fill6196.db',
+            emittance_type='fit_sigma',
+            show_wirescan_emittance=True,
+            # show=True,
+        )
+        check_output(output_dir)
+
+
+@pytest.mark.extended
+def test_md3312_data_linear():
+    data_dir = INPUT / 'kicks_vertical_md3312'
+    with _output_dir() as output_dir:
+        fda_analysis(
+            fit='linear',
+            beam=1,
+            kick_directory=data_dir,
+            energy=6500.,
+            plane='Y',
+            intensity_tfs=data_dir / 'intensity.tfs',
+            emittance_tfs=data_dir / 'emittance_y.tfs',
+            show_wirescan_emittance=data_dir / 'emittance_bws_y.tfs',
+            output_directory=output_dir
+        )
+        check_output(output_dir)
+
+
+@pytest.mark.extended
+def test_md3312_no_data_given():
+    with pytest.raises(OSError):
         with _output_dir() as output_dir:
             fda_analysis(
                 beam=1,
-                kick_directory=data_dir,
+                kick_directory=INPUT / 'kicks_vertical_md3312',
                 energy=6500.,
                 plane='Y',
-                intensity_tfs=data_dir / 'intensity.tfs',
-                emittance_tfs=data_dir / 'emittance_y.tfs',
-                show_wirescan_emittance=data_dir / 'emittance_bws_y.tfs',
-                output_directory=output_dir,
-                # show=True,
-            )
-            check_output(output_dir)
-
-    @staticmethod
-    def test_md2162_timberdb():
-        data_dir = INPUT / 'kicks_horizontal_md2162'
-        with _output_dir() as output_dir:
-            fda_analysis(
-                fit='linear',
-                beam=1,
-                kick_directory=data_dir,
-                energy=6500.,
-                plane='X',
-                output_directory=output_dir,
-                pagestore_db=data_dir / 'MD2162_ACD_TimberDB_Fill6196.db',
-                emittance_type='fit_sigma',
-                show_wirescan_emittance=True,
-                # show=True,
-            )
-            check_output(output_dir)
-
-
-class ExtendedTests:
-    @staticmethod
-    def test_md3312_data_linear():
-        data_dir = INPUT / 'kicks_vertical_md3312'
-        with _output_dir() as output_dir:
-            fda_analysis(
-                fit='linear',
-                beam=1,
-                kick_directory=data_dir,
-                energy=6500.,
-                plane='Y',
-                intensity_tfs=data_dir / 'intensity.tfs',
-                emittance_tfs=data_dir / 'emittance_y.tfs',
-                show_wirescan_emittance=data_dir / 'emittance_bws_y.tfs',
                 output_directory=output_dir
             )
-            check_output(output_dir)
-    @staticmethod
-    def test_md3312_no_data_given():
-        with pytest.raises(OSError):
-            with _output_dir() as output_dir:
-                fda_analysis(
-                    beam=1,
-                    kick_directory=INPUT / 'kicks_vertical_md3312',
-                    energy=6500.,
-                    plane='Y',
-                    output_directory=output_dir
-                )
 
 
 # Helper -----------------------------------------------------------------------
