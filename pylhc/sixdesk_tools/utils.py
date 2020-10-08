@@ -15,6 +15,7 @@ SIXDESK_UTILS = Path('/afs/cern.ch/project/sixtrack/SixDesk_utilities/pro/utilit
 SETENV_SH = SIXDESK_UTILS / 'set_env.sh'
 MAD_TO_SIXTRACK_SH = SIXDESK_UTILS / 'mad6t.sh'
 RUNSIX_SH = SIXDESK_UTILS / 'run_six.sh'
+RUNSTATUS_SH = SIXDESK_UTILS / 'run_status'
 
 SIXDESKLOCKFILE = 'sixdesklock'
 
@@ -40,7 +41,7 @@ SIXENV_DEFAULT = dict(
 )
 SIXENV_REQUIRED = ['BEAM', 'TURNS', 'AMPMIN', 'AMPMAX', 'AMPSTEP', 'ANGLES']
 
-STAGE_ORDER = ['create_jobs', 'submit_mask', 'check_input', 'submit_sixtrack', 'analyse']
+STAGE_ORDER = ['create_jobs', 'submit_mask', 'check_input', 'submit_sixtrack', 'check_sixtrack_output']
 STAGES = DotDict({key: key for key in STAGE_ORDER})
 
 HEADER_BASEDIR = 'BASEDIR'
@@ -74,6 +75,10 @@ def get_sixtrack_input_path(jobname: str, basedir: Path):
 
 def get_mad6t_mask_path(jobname: str, basedir: Path):
     return get_sixtrack_input_path(jobname, basedir) / 'mad6t.sh'
+
+
+def get_mad6t1_mask_path(jobname: str, basedir: Path):
+    return get_sixtrack_input_path(jobname, basedir) / 'mad6t1.sh'
 
 
 # Checks  ----------------------------------------------------------------------
@@ -155,9 +160,13 @@ def is_locked(jobname: str, basedir: Path, unlock: bool = False):
     if locks:
         LOG.info('The follwing folders are locked:')
         for lock in locks:
+            LOG.info(f"{str(lock.parent)}")
+
             with open(lock, 'r') as f:
                 txt = f.read()
-            LOG.info(f"{str(lock.parent)}: {txt}")
+            txt = txt.replace(str(SIXDESK_UTILS), "$SIXUTILS").strip("\n")
+            if txt:
+                LOG.debug(f' -> locked by: {txt}')
 
         if unlock:
             for lock in locks:
@@ -181,7 +190,7 @@ def start_subprocess(command, cwd=None, ssh: str=None):
         # Send command to remote machine
         command = " ".join(command)
         if cwd:
-            command = f'cd "{cwd}" && ' + command
+            command = f'cd "{cwd}" && {command}'
         LOG.debug(f"Executing command '{command}' on {ssh}")
         process = subprocess.Popen(['ssh', ssh, command], shell=False,
                                    stdout=subprocess.PIPE, stderr=subprocess.STDOUT,

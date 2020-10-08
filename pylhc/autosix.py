@@ -13,7 +13,7 @@ from omc3.utils.iotools import PathOrStr, save_config
 from pylhc.htc.mask import generate_jobdf_index
 from pylhc.job_submitter import JOBSUMMARY_FILE, COLUMN_JOBID, check_replace_dict, keys_to_path
 from pylhc.sixdesk_tools.create_workspace import create_jobs, remove_twiss_fail_check
-from pylhc.sixdesk_tools.submit import submit_mask, submit_sixtrack, check_generated_input_files
+from pylhc.sixdesk_tools.submit import submit_mask, submit_sixtrack, check_sixtrack_input, check_sixtrack_output
 from pylhc.sixdesk_tools.utils import is_locked, MADX_PATH, check_mask, HEADER_BASEDIR, STAGES, check_stage
 
 LOG = logging_tools.get_logger(__name__, level_console=logging_tools.DEBUG, force_color=True)
@@ -70,7 +70,7 @@ def get_params():
 
 @entrypoint(get_params(), strict=True)
 def main(opt):
-    LOG.info("Starting HTCondor Job-submitter.")
+    LOG.info("Starting autosix.")
     with open(opt.mask, 'r') as mask_f:
         mask = mask_f.read()
     opt = _check_opts(mask, opt)
@@ -104,9 +104,8 @@ def setup_and_run(jobname, basedir, mask, **kwargs):
         > cd $basedir
         > /afs/cern.ch/project/sixtrack/SixDesk_utilities/pro/utilities/bash/set_env.sh -N workspace-$jobname
          
-        write sixdeskenv, sysenv, filled mask
-        (manual)
-         
+        write sixdeskenv, sysenv, filled mask (manual)
+        
         initialize workspace
         > cd $basedir/workspace-$jobname/sixjobs
         > /afs/cern.ch/project/sixtrack/SixDesk_utilities/pro/utilities/bash/set_env.sh -s
@@ -125,7 +124,8 @@ def setup_and_run(jobname, basedir, mask, **kwargs):
         > /afs/cern.ch/project/sixtrack/SixDesk_utilities/pro/utilities/bash/mad6t.sh -s
         """
         if run:
-            submit_mask(jobname, basedir, ssh=ssh)  # takes a while
+            submit_mask(jobname, basedir, ssh=ssh)
+            return  # takes a while, so we interrupt here
 
     with check_stage(STAGES.check_input, jobname, basedir) as run:
         """
@@ -137,8 +137,7 @@ def setup_and_run(jobname, basedir, mask, **kwargs):
         > /afs/cern.ch/project/sixtrack/SixDesk_utilities/pro/utilities/bash/mad6t.sh -w
         """
         if run:
-            check_generated_input_files(jobname, basedir,
-                                        ssh=ssh, resubmit=resubmit)
+            check_sixtrack_input(jobname, basedir, ssh=ssh, resubmit=resubmit)
 
     with check_stage(STAGES.submit_sixtrack, jobname, basedir) as run:
         """
@@ -147,8 +146,14 @@ def setup_and_run(jobname, basedir, mask, **kwargs):
         > /afs/cern.ch/project/sixtrack/SixDesk_utilities/pro/utilities/bash/run_six.sh -a
         """
         if run:
-            submit_sixtrack(jobname, basedir, ssh=ssh)  # takes even longer
+            submit_sixtrack(jobname, basedir, ssh=ssh)
+            return  # takes even longer
 
+    with check_stage(STAGES.check_sixtrack_output, jobname, basedir) as run:
+        """
+        """
+        if run:
+            check_sixtrack_output(jobname, basedir, ssh=ssh, resubmit=resubmit)
 
 # Helper for main --------------------------------------------------------------
 
@@ -188,12 +193,12 @@ if __name__ == '__main__':
         replace_dict=dict(
             BEAM=1,
             TURNS=100000,
-            AMPMIN=2, AMPMAX=20, AMPSTEP=5,
-            ANGLES=50,
+            AMPMIN=5, AMPMAX=20, AMPSTEP=5,
+            ANGLES=5,
             B6viaB4=False,
             SEED='%SEEDRAN'
         ),
-        jobid_mask="B%(BEAM)d_B6viaB4_%(B6viaB4)s",
+        jobid_mask="B%(BEAM)d-B6viaB4-%(B6viaB4)s",
         # unlock=True,
         # resubmit=True,
     )

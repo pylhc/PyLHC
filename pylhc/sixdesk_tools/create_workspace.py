@@ -8,7 +8,7 @@ from pylhc.sixdesk_tools.utils import (MADX_PATH, SIXENV_REQUIRED, SIXENV_DEFAUL
                                        SYSENV_MASK, SIXDESKENV_MASK, SETENV_SH,
                                        start_subprocess,
                                        get_sixjobs_path, get_workspace_path,
-                                       get_scratch_path, get_masks_path, get_mad6t_mask_path)
+                                       get_scratch_path, get_masks_path, get_mad6t_mask_path, get_mad6t1_mask_path)
 
 LOG = logging_tools.get_logger(__name__)
 
@@ -32,25 +32,25 @@ def create_jobs(jobname: str, basedir: Path, mask_text: str, **kwargs):
 def remove_twiss_fail_check(jobname: str, basedir: Path):
     """ Comments the "Twiss fail" check from mad6t.sh """
     LOG.info("Applying twiss-fail hack.")
-    mad6t_path = get_mad6t_mask_path(jobname, basedir)
-    with open(mad6t_path, 'r') as f:
-        lines = f.readlines()
+    for mad6t_path in (get_mad6t_mask_path(jobname, basedir), get_mad6t1_mask_path(jobname, basedir)):
+        with open(mad6t_path, 'r') as f:
+            lines = f.readlines()
 
-    check_started = False
-    for idx, line in enumerate(lines):
-        if line.startswith('grep -i "TWISS fail"'):
-            check_started = True
+        check_started = False
+        for idx, line in enumerate(lines):
+            if line.startswith('grep -i "TWISS fail"'):
+                check_started = True
 
-        if check_started:
-            lines[idx] = f'# {line}'
-            if line.startswith('fi'):
-                break
-    else:
-        LOG.info("'TWISS fail' not found in mad6t.sh")
-        return
+            if check_started:
+                lines[idx] = f'# {line}'
+                if line.startswith('fi'):
+                    break
+        else:
+            LOG.info(f"'TWISS fail' not found in {mad6t_path.name}")
+            continue
 
-    with open(mad6t_path, 'w') as f:
-        f.writelines(lines)
+        with open(mad6t_path, 'w') as f:
+            f.writelines(lines)
 
 
 # Helper -----------------------------------------------------------------------
