@@ -16,6 +16,8 @@ SETENV_SH = SIXDESK_UTILS / 'set_env.sh'
 MAD_TO_SIXTRACK_SH = SIXDESK_UTILS / 'mad6t.sh'
 RUNSIX_SH = SIXDESK_UTILS / 'run_six.sh'
 RUNSTATUS_SH = SIXDESK_UTILS / 'run_status'
+DOT_PROFILE = SIXDESK_UTILS / 'dot_profile'
+SIXDB = SIXDESK_UTILS.parent / 'externals' / 'SixDeskDB' / 'sixdb'
 
 SIXDESKLOCKFILE = 'sixdesklock'
 
@@ -41,7 +43,9 @@ SIXENV_DEFAULT = dict(
 )
 SIXENV_REQUIRED = ['BEAM', 'TURNS', 'AMPMIN', 'AMPMAX', 'AMPSTEP', 'ANGLES']
 
-STAGE_ORDER = ['create_jobs', 'submit_mask', 'check_input', 'submit_sixtrack', 'check_sixtrack_output']
+STAGE_ORDER = ['create_jobs', 'submit_mask', 'check_input',
+               'submit_sixtrack', 'check_sixtrack_output', 'sixdb_load',
+               'sixdb_da']
 STAGES = DotDict({key: key for key in STAGE_ORDER})
 
 HEADER_BASEDIR = 'BASEDIR'

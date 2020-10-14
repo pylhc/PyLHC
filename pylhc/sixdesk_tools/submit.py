@@ -2,7 +2,7 @@ from pathlib import Path
 from omc3.utils import logging_tools
 from pylhc.sixdesk_tools.utils import (RUNSIX_SH, MAD_TO_SIXTRACK_SH,
                                        get_sixjobs_path, start_subprocess,
-                                       StageSkip, get_workspace_path, RUNSTATUS_SH)
+                                       StageSkip, get_workspace_path, RUNSTATUS_SH, SIXDB, DOT_PROFILE)
 
 LOG = logging_tools.get_logger(__name__)
 
@@ -33,17 +33,19 @@ def check_sixtrack_input(jobname: str, basedir: Path, ssh: str = None, resubmit:
         LOG.info("Check for input files was successful.")
 
 
-def submit_sixtrack(jobname: str, basedir: Path, ssh: str = None, resubmit=False):
+def submit_sixtrack(jobname: str, basedir: Path, ssh: str = None, resubmit: bool = False):
     """ Generate simulation files and check if runnable and submit. """
-    LOG.info("Submitting to sixtrack.")
+    re_str = "Re-" if resubmit else ""
+    LOG.info(f"{re_str}Submitting to sixtrack.")
     sixjobs_path = get_sixjobs_path(jobname, basedir)
     try:
-        start_subprocess([RUNSIX_SH, '-a'], cwd=sixjobs_path, ssh=ssh)  # throws OSError if failed
+        args = ['-i'] if resubmit else ['-a']
+        start_subprocess([RUNSIX_SH] + args, cwd=sixjobs_path, ssh=ssh)  # throws OSError if failed
     except OSError as e:
-        raise StageSkip(f'Submit to sixtrack for {jobname} ended in error.'
+        raise StageSkip(f'{re_str}Submit to sixtrack for {jobname} ended in error.'
                         f' Input generation possibly not finished. Check your Scheduler.') from e
     else:
-        LOG.info("Submitted jobs to Sixtrack")
+        LOG.info(f"{re_str}Submitted jobs to Sixtrack")
 
 
 def check_sixtrack_output(jobname: str, basedir: Path, ssh: str = None, resubmit: bool = False):
@@ -52,7 +54,22 @@ def check_sixtrack_output(jobname: str, basedir: Path, ssh: str = None, resubmit
     try:
         start_subprocess([RUNSTATUS_SH], cwd=sixjobs_path, ssh=ssh)
     except OSError as e:
-        raise StageSkip(f'Sixtrack for {jobname} seems to be incomplete.'
-                        f'Run possibly not finished. Check (debug-) log or your Scheduler.') from e
+        if resubmit:
+            submit_sixtrack(jobname, basedir, ssh, resubmit=True)
+            raise StageSkip("Resubmitted incomplete sixtrack jobs.")
+        else:
+            raise StageSkip(f'Sixtrack for {jobname} seems to be incomplete.'
+                            f'Run possibly not finished. Check (debug-) log or your Scheduler.') from e
     else:
         LOG.info("Sixtrack results are all present.")
+
+
+def sixdb_load(jobname: str, basedir: Path, python: Path, ssh: str = None):
+    LOG.info("Loading study into database.")
+    sixjobs_path = get_sixjobs_path(jobname, basedir)
+    try:
+        start_subprocess([python, SIXDB, '.', 'load_dir'], cwd=sixjobs_path, ssh=ssh)
+    except OSError as e:
+        raise StageSkip(f'Sixdb loading for {jobname} failed. Check (debug-) log.') from e
+    else:
+        LOG.info("Created database for study.")

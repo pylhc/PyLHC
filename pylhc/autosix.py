@@ -13,7 +13,8 @@ from omc3.utils.iotools import PathOrStr, save_config
 from pylhc.htc.mask import generate_jobdf_index
 from pylhc.job_submitter import JOBSUMMARY_FILE, COLUMN_JOBID, check_replace_dict, keys_to_path
 from pylhc.sixdesk_tools.create_workspace import create_jobs, remove_twiss_fail_check
-from pylhc.sixdesk_tools.submit import submit_mask, submit_sixtrack, check_sixtrack_input, check_sixtrack_output
+from pylhc.sixdesk_tools.submit import submit_mask, submit_sixtrack, check_sixtrack_input, check_sixtrack_output, \
+    sixdb_load
 from pylhc.sixdesk_tools.utils import is_locked, MADX_PATH, check_mask, HEADER_BASEDIR, STAGES, check_stage
 
 LOG = logging_tools.get_logger(__name__, level_console=logging_tools.DEBUG, force_color=True)
@@ -44,6 +45,12 @@ def get_params():
         default=MADX_PATH,
         type=PathOrStr,
         help="Path to executable.",
+    )
+    params.add_parameter(
+        name="python",
+        default='python3',
+        type=PathOrStr,
+        help="Path to python to use with sixdb (python3 with requirements installed).",
     )
     params.add_parameter(
         name="jobid_mask",
@@ -83,6 +90,7 @@ def main(opt):
                       mask=mask,
                       binary_path=opt.executable,
                       ssh=opt.ssh,
+                      python=opt.python,
                       unlock=opt.unlock,
                       resubmit=opt.resubmit,
                       **job_args[1])
@@ -93,12 +101,13 @@ def setup_and_run(jobname, basedir, mask, **kwargs):
     LOG.info(f"Job {jobname} -----------")
     unlock = kwargs.pop('unlock', False)
     ssh = kwargs.pop('ssh', None)
+    python = kwargs.pop('python', 'python3')
     resubmit = kwargs.pop('resubmit', False)
 
     if is_locked(jobname, basedir, unlock=unlock):
         LOG.info(f"{jobname} is locked. Try 'unlock' flag if this causes errors.")
 
-    with check_stage(STAGES.create_jobs, jobname, basedir) as run:
+    with check_stage(STAGES.create_jobs, jobname, basedir) as check_ok:
         """ 
         create workspace
         > cd $basedir
@@ -113,47 +122,66 @@ def setup_and_run(jobname, basedir, mask, **kwargs):
         remove the twiss-fail check in sixtrack_input
         (manual)
         """
-        if run:
+        if check_ok:
             create_jobs(jobname, basedir, mask, ssh=ssh, **kwargs)
             remove_twiss_fail_check(jobname, basedir)  # Hack
 
-    with check_stage(STAGES.submit_mask, jobname, basedir) as run:
+    with check_stage(STAGES.submit_mask, jobname, basedir) as check_ok:
         """
         submit for input generation
         > cd $basedir/workspace-$jobname/sixjobs
         > /afs/cern.ch/project/sixtrack/SixDesk_utilities/pro/utilities/bash/mad6t.sh -s
         """
-        if run:
+        if check_ok:
             submit_mask(jobname, basedir, ssh=ssh)
             return  # takes a while, so we interrupt here
 
-    with check_stage(STAGES.check_input, jobname, basedir) as run:
+    with check_stage(STAGES.check_input, jobname, basedir) as check_ok:
         """
         Check if input files have been generated properly
         > cd $basedir/workspace-$jobname/sixjobs
         > /afs/cern.ch/project/sixtrack/SixDesk_utilities/pro/utilities/bash/mad6t.sh -c
         
-        If not, resubmit
+        If not, and resubmit is active
         > /afs/cern.ch/project/sixtrack/SixDesk_utilities/pro/utilities/bash/mad6t.sh -w
         """
-        if run:
+        if check_ok:
             check_sixtrack_input(jobname, basedir, ssh=ssh, resubmit=resubmit)
 
-    with check_stage(STAGES.submit_sixtrack, jobname, basedir) as run:
+    with check_stage(STAGES.submit_sixtrack, jobname, basedir) as check_ok:
         """
         Generate simulation files (-g) and check if runnable (-c) and submit (-s) (-g -c -s == -a).
         > cd $basedir/workspace-$jobname/sixjobs
         > /afs/cern.ch/project/sixtrack/SixDesk_utilities/pro/utilities/bash/run_six.sh -a
         """
-        if run:
+        if check_ok:
             submit_sixtrack(jobname, basedir, ssh=ssh)
             return  # takes even longer
 
-    with check_stage(STAGES.check_sixtrack_output, jobname, basedir) as run:
+    with check_stage(STAGES.check_sixtrack_output, jobname, basedir) as check_ok:
         """
+        Checks sixtrack output via run_status. If this fails even though all 
+        jobs have finished on the scheduler, check the log-output (run_status
+        messages are logged to debug).
+        > cd $basedir/workspace-$jobname/sixjobs
+        > /afs/cern.ch/project/sixtrack/SixDesk_utilities/pro/utilities/bash/run_status
+        
+        If not, and resubmit is active
+        > cd $basedir/workspace-$jobname/sixjobs
+        > /afs/cern.ch/project/sixtrack/SixDesk_utilities/pro/utilities/bash/run_six.sh -i
         """
-        if run:
+        if check_ok:
             check_sixtrack_output(jobname, basedir, ssh=ssh, resubmit=resubmit)
+
+    with check_stage(STAGES.sixdb_load, jobname, basedir) as check_ok:
+        """
+        Gather results into database via sixdb.
+        > cd $basedir/workspace-$jobname/sixjobs
+        > python3 /afs/cern.ch/project/sixtrack/SixDesk_utilities/pro/utilities/externals/SixDeskDB/sixdb . load_dir
+        """
+        if check_ok:
+            sixdb_load(jobname, basedir, python=python, ssh=ssh)
+
 
 # Helper for main --------------------------------------------------------------
 
@@ -189,6 +217,7 @@ if __name__ == '__main__':
         working_directory=Path('/afs/cern.ch/work/j/jdilly/sixdeskbase'),
         mask=Path('/home/jdilly/Work/study.20.irnl_correction_with_feeddown/code.full_study/python_mask.py'),
         executable=Path('/afs/cern.ch/work/j/jdilly/public/venvs/for_htc/bin/python'),
+        python=Path('/afs/cern.ch/work/j/jdilly/public/venvs/for_htc/bin/python'),
         ssh='lxplus',
         replace_dict=dict(
             BEAM=1,
