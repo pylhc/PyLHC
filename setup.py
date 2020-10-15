@@ -74,7 +74,7 @@ setuptools.setup(
     author=ABOUT_PYLHC["__author__"],
     author_email=ABOUT_PYLHC["__author_email__"],
     url=ABOUT_PYLHC["__url__"],
-    python_requires=">=3.6",
+    python_requires=">=3.7",
     license=ABOUT_PYLHC["__license__"],
     classifiers=[
         "Intended Audience :: Science/Research",
