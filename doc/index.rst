@@ -15,6 +15,7 @@ Contents:
    constants/index
    data_extract/index
    htc/index
+   sixdesk_tools/index
 
 
 

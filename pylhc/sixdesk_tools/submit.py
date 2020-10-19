@@ -1,10 +1,21 @@
+"""
+SixDesk Submission Utils
+---------------------------
+
+Individual functions to call SixDesk functionality.
+
+:module: sixdesk_tools.submit
+:author: jdilly
+"""
 from pathlib import Path
+from typing import Union
 
 from omc3.utils import logging_tools
+from omc3.utils.iotools import PathOrStr
 
-from pylhc.sixdesk_tools.utils import (RUNSIX_SH, MAD_TO_SIXTRACK_SH,
-                                       get_sixjobs_path, start_subprocess,
-                                       StageSkip, RUNSTATUS_SH, SIXDB)
+from pylhc.sixdesk_tools.utils import start_subprocess, StageSkip
+from pylhc.constants.autosix import (MAD_TO_SIXTRACK_SH, RUNSIX_SH,
+                                     RUNSTATUS_SH, SIXDB, get_sixjobs_path)
 
 LOG = logging_tools.get_logger(__name__)
 
@@ -67,7 +78,7 @@ def check_sixtrack_output(jobname: str, basedir: Path, ssh: str = None, resubmit
         LOG.info("Sixtrack results are all present.")
 
 
-def sixdb_load(jobname: str, basedir: Path, python: Path, ssh: str = None):
+def sixdb_load(jobname: str, basedir: Path, python: Union[Path, str], ssh: str = None):
     """ Creates sixdb database and loads the study results into it. """
     LOG.info("Loading study into database.")
     sixjobs_path = get_sixjobs_path(jobname, basedir)
@@ -79,7 +90,7 @@ def sixdb_load(jobname: str, basedir: Path, python: Path, ssh: str = None):
         LOG.info("Created database for study.")
 
 
-def sixdb_cmd(jobname: str, basedir: Path, python: Path, cmd: list, ssh: str = None):
+def sixdb_cmd(jobname: str, basedir: Path, python: Union[Path, str], cmd: list, ssh: str = None):
     """ Performs analysis on the sixdb database. """
     cmd_str = " ".join(cmd)
     LOG.info(f"Performing sixdb command `{cmd_str}`.")

@@ -1,24 +1,34 @@
+"""
+Create SixDesk Workspace
+-----------------------------------
+
+Tools to setup the workspace for sixdesk.
+
+:module: sixdesk_tools.create_workspace
+:author: jdilly
+"""
 import shutil
 from pathlib import Path
 
 import numpy as np
 from omc3.utils import logging_tools
 
-from pylhc.sixdesk_tools.utils import (MADX_PATH, SIXENV_REQUIRED, SIXENV_DEFAULT,
-                                       SYSENV_MASK, SIXDESKENV_MASK, SETENV_SH,
-                                       start_subprocess,
-                                       get_sixjobs_path, get_workspace_path,
-                                       get_scratch_path, get_masks_path, get_mad6t_mask_path, get_mad6t1_mask_path)
+from pylhc.constants.autosix import (
+    SETENV_SH, SYSENV_MASK, SIXDESKENV_MASK,
+    SIXENV_DEFAULT, SIXENV_REQUIRED,
+    get_workspace_path, get_scratch_path,
+    get_sixjobs_path, get_masks_path,
+    get_mad6t_mask_path, get_mad6t1_mask_path,
+)
+from pylhc.sixdesk_tools.utils import start_subprocess
 
 LOG = logging_tools.get_logger(__name__)
 
 
 # Main -------------------------------------------------------------------------
 
-def create_jobs(jobname: str, basedir: Path, mask_text: str, **kwargs):
-    binary_path = kwargs.pop('binary_path', MADX_PATH)
-    ssh = kwargs.pop('ssh', None)
-
+def create_jobs(jobname: str, basedir: Path, mask_text: str, binary_path: Path, ssh: str = None, **kwargs):
+    """ Create environment and individual jobs/masks for sixdesk to send to HTC. """
     sixjobs_path = get_sixjobs_path(jobname, basedir)
     _create_workspace(jobname, basedir, ssh=ssh)
     _create_sysenv(jobname, basedir, binary_path=binary_path)
@@ -30,7 +40,7 @@ def create_jobs(jobname: str, basedir: Path, mask_text: str, **kwargs):
 
 
 def remove_twiss_fail_check(jobname: str, basedir: Path):
-    """ Comments the "Twiss fail" check from mad6t.sh """
+    """ Comments out the "Twiss fail" check from mad6t.sh """
     LOG.info("Applying twiss-fail hack.")
     for mad6t_path in (get_mad6t_mask_path(jobname, basedir), get_mad6t1_mask_path(jobname, basedir)):
         with open(mad6t_path, 'r') as f:
@@ -109,7 +119,7 @@ def _create_sixdeskenv(jobname: str, basedir: Path, **kwargs):
     LOG.debug("sixdeskenv written.")
 
 
-def _create_sysenv(jobname: str, basedir: Path, binary_path: Path = MADX_PATH):
+def _create_sysenv(jobname: str, basedir: Path, binary_path: Path):
     """ Fills sysenv mask and copies it to workspace """
     LOG.info(f"Chosen binary for mask '{str(binary_path)}'")
     sixjobs_path = get_sixjobs_path(jobname, basedir)

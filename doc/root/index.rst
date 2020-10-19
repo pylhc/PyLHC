@@ -1,6 +1,10 @@
 Main Scripts
 **************************
 
+.. automodule:: pylhc.autosix
+    :members:
+
+
 .. automodule:: pylhc.forced_da_analysis
     :members:
 
@@ -11,5 +15,6 @@ Main Scripts
 
 .. automodule:: pylhc.job_submitter
     :members:
+
 
 
