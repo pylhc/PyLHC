@@ -13,11 +13,13 @@ from omc3.utils.iotools import PathOrStr, save_config
 from pylhc.htc.mask import generate_jobdf_index
 from pylhc.job_submitter import JOBSUMMARY_FILE, COLUMN_JOBID, check_replace_dict, keys_to_path
 from pylhc.sixdesk_tools.create_workspace import create_jobs, remove_twiss_fail_check
-from pylhc.sixdesk_tools.submit import submit_mask, submit_sixtrack, check_sixtrack_input, check_sixtrack_output, \
-    sixdb_load
-from pylhc.sixdesk_tools.utils import is_locked, MADX_PATH, check_mask, HEADER_BASEDIR, STAGES, check_stage
+from pylhc.sixdesk_tools.submit import (
+    submit_mask, submit_sixtrack, check_sixtrack_input, check_sixtrack_output,
+    sixdb_cmd, sixdb_load)
+from pylhc.sixdesk_tools.utils import is_locked, MADX_PATH, check_mask, HEADER_BASEDIR, STAGES, check_stage, StageSkip, \
+    get_stagefile_path
 
-LOG = logging_tools.get_logger(__name__, level_console=logging_tools.DEBUG, force_color=True)
+LOG = logging_tools.get_logger(__name__)
 
 
 def get_params():
@@ -72,6 +74,12 @@ def get_params():
         help="Resubmits if needed.",
         action="store_true",
     )
+    params.add_parameter(
+        name="da_turnstep",
+        type=int,
+        help="Step between turns used in DA-vs-Turns plot.",
+        default=100,
+    )
     return params
 
 
@@ -93,16 +101,18 @@ def main(opt):
                       python=opt.python,
                       unlock=opt.unlock,
                       resubmit=opt.resubmit,
+                      da_turnstep=opt.da_turnstep,
                       **job_args[1])
 
 
-def setup_and_run(jobname, basedir, mask, **kwargs):
+def setup_and_run(jobname: str, basedir: Path, mask: str, **kwargs):
     """ Main submitting procedure for single job. """
     LOG.info(f"Job {jobname} -----------")
-    unlock = kwargs.pop('unlock', False)
-    ssh = kwargs.pop('ssh', None)
-    python = kwargs.pop('python', 'python3')
-    resubmit = kwargs.pop('resubmit', False)
+    unlock: bool = kwargs.pop('unlock', False)
+    ssh: str = kwargs.pop('ssh', None)
+    python: PathOrStr = kwargs.pop('python', 'python3')
+    resubmit: bool = kwargs.pop('resubmit', False)
+    da_turnstep: int = kwargs.pop('da_turnstep')
 
     if is_locked(jobname, basedir, unlock=unlock):
         LOG.info(f"{jobname} is locked. Try 'unlock' flag if this causes errors.")
@@ -182,6 +192,28 @@ def setup_and_run(jobname, basedir, mask, **kwargs):
         if check_ok:
             sixdb_load(jobname, basedir, python=python, ssh=ssh)
 
+    with check_stage(STAGES.sixdb_cmd, jobname, basedir) as check_ok:
+        """
+        Gather results into database via sixdb.
+        > cd $basedir/workspace-$jobname/sixjobs
+        > python3 /afs/cern.ch/project/sixtrack/SixDesk_utilities/pro/utilities/externals/SixDeskDB/sixdb $jobname da 
+        > python3 /afs/cern.ch/project/sixtrack/SixDesk_utilities/pro/utilities/externals/SixDeskDB/sixdb $jobname da_vs_turns -turnstep 100 -outfile
+        > python3 /afs/cern.ch/project/sixtrack/SixDesk_utilities/pro/utilities/externals/SixDeskDB/sixdb $jobname plot_da_vs_turns
+        """
+        if check_ok:
+            pass
+            sixdb_cmd(jobname, basedir, cmd=['da'], python=python, ssh=ssh)
+            sixdb_cmd(jobname, basedir, cmd=['da_vs_turns', '-turnstep', str(da_turnstep), '-outfile'],
+                      python=python, ssh=ssh)
+            sixdb_cmd(jobname, basedir, cmd=['plot_da_vs_turns'], python=python, ssh=ssh)
+
+    with check_stage(STAGES.final, jobname, basedir) as check_ok:
+        """ Just info about finishing this script and where to check the stagefile."""
+        if check_ok:
+            stage_file = get_stagefile_path(jobname, basedir)
+            LOG.info(f"All stages run. Check stagefile {str(stage_file)} "
+                     "in case you want to rerun some stages.")
+            raise StageSkip()
 
 # Helper for main --------------------------------------------------------------
 
@@ -193,7 +225,8 @@ def _check_opts(mask_text, opt):
     return opt
 
 
-def _generate_jobs(basedir, jobid_mask, **kwargs):
+def _generate_jobs(basedir, jobid_mask, **kwargs) -> tfs.TfsDataFrame:
+    """ Generates product matrix for job-values and stores it as TfsDataFrame. """
     LOG.debug("Creating Jobs")
     values_grid = np.array(list(itertools.product(*kwargs.values())), dtype=object)
     job_df = tfs.TfsDataFrame(
@@ -213,22 +246,4 @@ def _generate_jobs(basedir, jobid_mask, **kwargs):
 
 
 if __name__ == '__main__':
-    main(
-        working_directory=Path('/afs/cern.ch/work/j/jdilly/sixdeskbase'),
-        mask=Path('/home/jdilly/Work/study.20.irnl_correction_with_feeddown/code.full_study/python_mask.py'),
-        executable=Path('/afs/cern.ch/work/j/jdilly/public/venvs/for_htc/bin/python'),
-        python=Path('/afs/cern.ch/work/j/jdilly/public/venvs/for_htc/bin/python'),
-        ssh='lxplus',
-        replace_dict=dict(
-            BEAM=1,
-            TURNS=100000,
-            AMPMIN=5, AMPMAX=20, AMPSTEP=5,
-            ANGLES=5,
-            B6viaB4=False,
-            SEED='%SEEDRAN'
-        ),
-        jobid_mask="B%(BEAM)d-B6viaB4-%(B6viaB4)s",
-        # unlock=True,
-        # resubmit=True,
-    )
-
+    main()

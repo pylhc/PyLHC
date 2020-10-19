@@ -1,8 +1,10 @@
 from pathlib import Path
+
 from omc3.utils import logging_tools
+
 from pylhc.sixdesk_tools.utils import (RUNSIX_SH, MAD_TO_SIXTRACK_SH,
                                        get_sixjobs_path, start_subprocess,
-                                       StageSkip, get_workspace_path, RUNSTATUS_SH, SIXDB, DOT_PROFILE)
+                                       StageSkip, RUNSTATUS_SH, SIXDB)
 
 LOG = logging_tools.get_logger(__name__)
 
@@ -49,6 +51,7 @@ def submit_sixtrack(jobname: str, basedir: Path, ssh: str = None, resubmit: bool
 
 
 def check_sixtrack_output(jobname: str, basedir: Path, ssh: str = None, resubmit: bool = False):
+    """ Checks if the sixtrack output is all there. """
     LOG.info("Checking if sixtrack has finished.")
     sixjobs_path = get_sixjobs_path(jobname, basedir)
     try:
@@ -65,6 +68,7 @@ def check_sixtrack_output(jobname: str, basedir: Path, ssh: str = None, resubmit
 
 
 def sixdb_load(jobname: str, basedir: Path, python: Path, ssh: str = None):
+    """ Creates sixdb database and loads the study results into it. """
     LOG.info("Loading study into database.")
     sixjobs_path = get_sixjobs_path(jobname, basedir)
     try:
@@ -73,3 +77,16 @@ def sixdb_load(jobname: str, basedir: Path, python: Path, ssh: str = None):
         raise StageSkip(f'Sixdb loading for {jobname} failed. Check (debug-) log.') from e
     else:
         LOG.info("Created database for study.")
+
+
+def sixdb_cmd(jobname: str, basedir: Path, python: Path, cmd: list, ssh: str = None):
+    """ Performs analysis on the sixdb database. """
+    cmd_str = " ".join(cmd)
+    LOG.info(f"Performing sixdb command `{cmd_str}`.")
+    sixjobs_path = get_sixjobs_path(jobname, basedir)
+    try:
+        start_subprocess([python, SIXDB, jobname] + cmd, cwd=sixjobs_path, ssh=ssh)
+    except OSError as e:
+        raise StageSkip(f'SixBD command {cmd_str} for {jobname} failed. Check (debug-) log.') from e
+    else:
+        LOG.info(f"SixDB command '{cmd_str}' successfully run.")

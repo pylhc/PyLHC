@@ -1,5 +1,4 @@
 import subprocess
-from collections import OrderedDict
 from contextlib import contextmanager
 from pathlib import Path
 
@@ -44,14 +43,14 @@ SIXENV_DEFAULT = dict(
 SIXENV_REQUIRED = ['BEAM', 'TURNS', 'AMPMIN', 'AMPMAX', 'AMPSTEP', 'ANGLES']
 
 STAGE_ORDER = ['create_jobs', 'submit_mask', 'check_input',
-               'submit_sixtrack', 'check_sixtrack_output', 'sixdb_load',
-               'sixdb_da']
+               'submit_sixtrack', 'check_sixtrack_output',
+               'sixdb_load', 'sixdb_cmd', 'final']
 STAGES = DotDict({key: key for key in STAGE_ORDER})
 
 HEADER_BASEDIR = 'BASEDIR'
 
-# Paths ------------------------------------------------------------------------
 
+# Paths ------------------------------------------------------------------------
 
 def get_workspace_path(jobname: str, basedir: Path) -> Path:
     return basedir / f'workspace-{jobname}'
@@ -88,6 +87,7 @@ def get_mad6t1_mask_path(jobname: str, basedir: Path):
 # Checks  ----------------------------------------------------------------------
 
 def check_mask(mask_text: str, replace_args: dict):
+    """ Checks validity/compatibility of the mask and replacement dict. """
     dict_keys = set(replace_args.keys())
     mask_keys = find_named_variables_in_mask(mask_text)
     not_in_dict = mask_keys - dict_keys
@@ -106,24 +106,26 @@ class StageSkip(Exception):
 @contextmanager
 def check_stage(stage: str, jobname: str, basedir: Path):
     """ Wrapper for stage functions to add stage to stagefile. """
-    if not run_stage(jobname, basedir, stage):
+    if not should_run_stage(jobname, basedir, stage):
         yield False
     else:
         try:
             yield True
         except StageSkip as e:
-            LOG.info(str(e))
+            if str(e):
+                LOG.error(str(e))
         else:
             stage_done(jobname, basedir, stage)
 
 
 def stage_done(jobname: str, basedir: Path, stage: str):
+    """ Append current stage name to stagefile. """
     stage_file = get_stagefile_path(jobname, basedir)
     with open(stage_file, 'a+') as f:
         f.write(f'{stage}\n')
 
 
-def run_stage(jobname: str, basedir: Path, stage: str):
+def should_run_stage(jobname: str, basedir: Path, stage: str):
     """ Checks if the stage should be run. """
     stage_idx = STAGE_ORDER.index(stage)
 
