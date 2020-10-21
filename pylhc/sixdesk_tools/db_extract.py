@@ -6,10 +6,14 @@ import numpy as np
 import pandas as pd
 from generic_parser import DotDict
 from tfs import TfsDataFrame, write_tfs
-from matplotlib import pyplot as plt
+from matplotlib import pyplot as plt, rcParams
+import matplotlib.lines as mlines
+from scipy.interpolate import interp1d
 
 from pylhc.constants.autosix import (
-    get_database_path, get_tfs_da_path, get_tfs_da_seed_stats_path, get_tfs_da_angle_stats_path
+    get_database_path,
+    get_tfs_da_path, get_tfs_da_seed_stats_path, get_tfs_da_angle_stats_path,
+    get_autosix_results_path
 )
 
 HEADER_NTOTAL, HEADER_INFO, HEADER_HINT = "NTOTAL", "INFO", "HINT"
@@ -23,6 +27,8 @@ INFO = ('Statistics over the N={n:d} {over:s} per {per:s}. '
 HINT = '{param:s} {val:} is the respective value calculated over all other {param:s}s.'
 
 OVER_WHICH = {SEED: 'angles', ANGLE: 'seeds'}
+
+N_INTERPOLATE = 500
 
 
 def post_process_da(jobname: str, basedir: Path):
@@ -96,30 +102,74 @@ def _create_stats_df(df: TfsDataFrame, parameter: str, global_index: Any = None)
 # Single Plots -----------------------------------------------------------------
 
 def create_polar_plots(jobname: str, basedir: Path, df_da: TfsDataFrame, df_angles: TfsDataFrame):
+    outdir_path = get_autosix_results_path(jobname, basedir)
     for da_col in DA_COLUMNS:
-        fig = plot_polar(df_da, df_angles, da_col)
+        fig = plot_polar(df_angles, da_col, jobname, df_da)
+        fig.tight_layout(), fig.tight_layout()
+        fig.savefig(outdir_path / fig.canvas.get_default_filename())
+    plt.show()
 
 
-def plot_polar(df_da: TfsDataFrame, df_angles: TfsDataFrame, da_col: str) -> plt.Figure:
+def plot_polar(df_angles: TfsDataFrame, da_col: str, jobname: str, df_da: TfsDataFrame = None) -> plt.Figure:
     fig, ax = plt.subplots(nrows=1, ncols=1, subplot_kw={'projection': 'polar'})
+    fig.canvas.set_window_title(f"{jobname} polar plot for {da_col}")
 
-    for seed in sorted(set(df_da[SEED])):
-        seed_mask = df_da[SEED] == seed
-        angles = np.deg2rad(df_da.loc[seed_mask, ANGLE])
-        da_data = df_da.loc[seed_mask, da_col]
-        da_data.loc[da_data == 0] = np.NaN
-        ax.plot(angles, da_data, c='grey', ls='-', label=f'seed {seed:d}', alpha=0.5)
+    seed_h = []
+    seed_l = []
+    if df_da is not None:
+        for seed in sorted(set(df_da[SEED])):
+            seed_mask = df_da[SEED] == seed
+            angles = np.deg2rad(df_da.loc[seed_mask, ANGLE])
+            da_data = df_da.loc[seed_mask, da_col]
+            da_data.loc[da_data == 0] = np.NaN
+            seed_h, = ax.plot(angles, da_data, c='grey', ls='-', label=f'Seed {seed:d}', alpha=0.5)
+        seed_h = [seed_h]
+        seed_l = ['DA per Seed']
 
     angles = np.deg2rad(df_angles.index)
-    da_min = df_angles[f'{MIN}{da_col}']
-    da_mean = df_angles[f'{MEAN}{da_col}']
-    da_max = df_angles[f'{MAX}{da_col}']
-    ax.plot(angles, da_min, c='black', ls='--', label='Minimum DA')
-    ax.plot(angles, da_max, c='black', ls='--', label='Maximum DA')
+    da_min, da_mean, da_max = (df_angles[f'{name}{da_col}'] for name in (MIN, MEAN, MAX))
+    min_h, = ax.plot(angles, da_min, c='black', ls='--', label='Minimum DA')
+    max_h, = ax.plot(angles, da_max, c='black', ls='--', label='Maximum DA')
     ax.fill_between(angles, da_min.astype(float), da_max.astype(float),  # weird conversion to obj happening
                     color='blue', alpha=0.2)
-    ax.plot(angles, da_mean, c='red', ls='-', label='Mean DA')
+    mean_h, = ax.plot(angles, da_mean, c='red', ls='-', label='Mean DA')
+
     ax.set_thetamin(0)
     ax.set_thetamax(90)
     ax.set_rlim([0, None])
-    plt.show()
+
+    ax.legend(
+        loc='upper right',
+        bbox_to_anchor=(.9, .95),
+        bbox_transform=fig.transFigure,
+        # frameon=False,
+        handles=seed_h + [mean_h, max_h],
+        labels=seed_l + ['Mean DA', 'Limits'],
+        ncol=1,
+    )
+
+    return fig
+
+
+def _polar_line(ax, x, y, **kwargs):
+    ls = kwargs.pop('linestyle', kwargs.pop('ls', rcParams['lines.linestyle']))
+    marker = kwargs.pop('marker', rcParams['lines.marker'])
+    label = kwargs.pop('label')
+
+    handle_line = None
+    if ls.lower() not in ['none', '']:
+        ip_x = np.linspace(x[0], x[-1], N_INTERPOLATE)
+        ip_y = interp1d(x, y)(ip_x)
+        handle_line, = ax.plot(ip_x, ip_y, marker='None', ls=ls, label=f'_{label}_line', **kwargs)
+
+    handle_marker = None
+    if marker.lower() not in ['none', '']:
+        handle_marker, = ax.plot(x, y, ls='None', marker=marker, label=f'_{label}_markers', **kwargs)
+
+    color = None
+    if handle_line:
+        color = handle_line.get_color()
+    elif handle_marker:
+        color = handle_marker.get_color()
+
+    return mlines.Line2D([], [], color=color, ls=ls, marker=marker, label=label)
