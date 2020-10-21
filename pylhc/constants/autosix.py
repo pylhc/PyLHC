@@ -61,6 +61,7 @@ STAGES = DotDict({key: key for key in STAGE_ORDER})
 
 # Workspace Paths --------------------------------------------------------------
 
+# Input ---
 def get_workspace_path(jobname: str, basedir: Path) -> Path:
     return basedir / f'workspace-{jobname}'
 
@@ -77,17 +78,39 @@ def get_masks_path(jobname: str, basedir: Path) -> Path:
     return get_sixjobs_path(jobname, basedir) / 'mask'
 
 
-def get_stagefile_path(jobname: str, basedir: Path):
-    return get_sixjobs_path(jobname, basedir) / 'stages_completed.txt'
+def get_database_path(jobname: str, basedir: Path) -> Path:
+    return get_sixjobs_path(jobname, basedir) / f'{jobname}.db'
 
 
-def get_sixtrack_input_path(jobname: str, basedir: Path):
+def get_sixtrack_input_path(jobname: str, basedir: Path) -> Path:
     return get_sixjobs_path(jobname, basedir) / 'sixtrack_input'
 
 
-def get_mad6t_mask_path(jobname: str, basedir: Path):
+def get_mad6t_mask_path(jobname: str, basedir: Path) -> Path:
     return get_sixtrack_input_path(jobname, basedir) / 'mad6t.sh'
 
 
-def get_mad6t1_mask_path(jobname: str, basedir: Path):
+def get_mad6t1_mask_path(jobname: str, basedir: Path) -> Path:
     return get_sixtrack_input_path(jobname, basedir) / 'mad6t1.sh'
+
+
+# Output ---
+
+def get_autosix_results_path(jobname: str, basedir: Path) -> Path:
+    return get_sixjobs_path(jobname, basedir) / 'autosix_output'
+
+
+def get_stagefile_path(jobname: str, basedir: Path) -> Path:
+    return get_autosix_results_path(jobname, basedir) / 'stages_completed.txt'
+
+
+def get_tfs_da_path(jobname: str, basedir: Path) -> Path:
+    return get_autosix_results_path(jobname, basedir) / f'{jobname}_da.tfs'
+
+
+def get_tfs_da_seed_stats_path(jobname: str, basedir: Path) -> Path:
+    return get_autosix_results_path(jobname, basedir) / f'{jobname}_da_per_seed.tfs'
+
+
+def get_tfs_da_angle_stats_path(jobname: str, basedir: Path) -> Path:
+    return get_autosix_results_path(jobname, basedir) / f'{jobname}_da_per_angle.tfs'

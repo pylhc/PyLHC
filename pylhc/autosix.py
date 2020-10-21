@@ -25,10 +25,11 @@ from omc3.utils import logging_tools
 from omc3.utils.iotools import PathOrStr, save_config
 
 from pylhc.constants.autosix import (STAGES, HEADER_BASEDIR, get_stagefile_path,
-                                     DEFAULTS, SIXENV_REQUIRED, SIXENV_DEFAULT)
+                                     DEFAULTS, SIXENV_REQUIRED, SIXENV_DEFAULT, get_autosix_results_path)
 from pylhc.htc.mask import generate_jobdf_index
 from pylhc.job_submitter import JOBSUMMARY_FILE, COLUMN_JOBID, check_replace_dict, keys_to_path
 from pylhc.sixdesk_tools.create_workspace import create_jobs, remove_twiss_fail_check
+from pylhc.sixdesk_tools.db_extract import post_process_da
 from pylhc.sixdesk_tools.submit import (
     submit_mask, submit_sixtrack, check_sixtrack_input, check_sixtrack_output,
     sixdb_cmd, sixdb_load)
@@ -168,6 +169,8 @@ def setup_and_run(jobname: str, basedir: Path, **kwargs):
     da_turnstep: int = kwargs.pop('da_turnstep', DEFAULTS['da_turnstep'])
     ignore_twissfail_check: bool = kwargs.pop('ignore_twissfail_check', False)
 
+    get_autosix_results_path(jobname, basedir).mkdir(exist_ok=True)
+
     if is_locked(jobname, basedir, unlock=unlock):
         LOG.info(f"{jobname} is locked. Try 'unlock' flag if this causes errors.")
 
@@ -258,13 +261,14 @@ def setup_and_run(jobname: str, basedir: Path, **kwargs):
         > python3 /afs/cern.ch/project/sixtrack/SixDesk_utilities/pro/utilities/externals/SixDeskDB/sixdb $jobname plot_da_vs_turns
         """
         if check_ok:
-            pass
             sixdb_cmd(jobname, basedir, cmd=['da'], python=python, ssh=ssh)
 
             # da_vs_turns is broken at the moment (jdilly, 19.10.2020)
             # sixdb_cmd(jobname, basedir, cmd=['da_vs_turns', '-turnstep', str(da_turnstep), '-outfile'],
             #           python=python, ssh=ssh)
             # sixdb_cmd(jobname, basedir, cmd=['plot_da_vs_turns'], python=python, ssh=ssh)
+
+    post_process_da(jobname, basedir)
 
     with check_stage(STAGES.final, jobname, basedir) as check_ok:
         """ Just info about finishing this script and where to check the stagefile. """
