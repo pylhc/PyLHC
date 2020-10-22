@@ -40,7 +40,7 @@ jobs:
         - chmod +x ./cc-test-reporter
         - ./cc-test-reporter before-build
       script:
-        - python -m pytest --mpl
+        - python -m pytest --mpl --cov-report xml --cov=pylhc
       after_script:
         - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
 
