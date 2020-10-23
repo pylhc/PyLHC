@@ -1,0 +1,430 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Main Scripts &mdash; pylhc 0.0.3 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Constants Definitions" href="../constants/index.html" />
+    <link rel="prev" title="Welcome to pyLHC’s documentation!" href="../index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> pylhc
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Main Scripts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#forced-da-analysis">Forced DA Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#job-submitter">Job-Submitter</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../constants/index.html">Constants Definitions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_extract/index.html">Data Extraction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../htc/index.html">HTC-Condor Tools</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pylhc</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Main Scripts</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/root/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-pylhc.forced_da_analysis">
+<span id="main-scripts"></span><h1>Main Scripts<a class="headerlink" href="#module-pylhc.forced_da_analysis" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="forced-da-analysis">
+<h2>Forced DA Analysis<a class="headerlink" href="#forced-da-analysis" title="Permalink to this headline">¶</a></h2>
+<p>Runs the forced DA analysis, following the procedure described in <a class="reference external" href="https://journals.aps.org/prab/pdf/10.1103/PhysRevAccelBeams.22.031002">CarlierForcedDA2019</a>.</p>
+<p>Arguments:</p>
+<p><em>--Required--</em></p>
+<ul>
+<li><p><strong>beam</strong> <em>(int)</em>: Beam to use.</p>
+<p>Flags: <strong>[‘-b’, ‘--beam’]</strong>
+Choices: <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">2]</span></code></p>
+</li>
+<li><p><strong>energy</strong> <em>(MultiClass)</em>: Beam energy in GeV.</p>
+<p>Flags: <strong>[‘-e’, ‘--energy’]</strong></p>
+</li>
+<li><p><strong>kick_directory</strong> <em>(MultiClass)</em>: Analysis kick_directory containing kick files.</p>
+<p>Flags: <strong>[‘-k’, ‘--kickdir’]</strong></p>
+</li>
+<li><p><strong>plane</strong> <em>(str)</em>: Plane of the kicks.</p>
+<p>Flags: <strong>[‘-p’, ‘--plane’]</strong>
+Choices: <code class="docutils literal notranslate"><span class="pre">['X',</span> <span class="pre">'Y']</span></code></p>
+</li>
+</ul>
+<p><em>--Optional--</em></p>
+<ul>
+<li><p><strong>emittance_outlier_limit</strong> <em>(float)</em>: Limit, i.e. cut from mean, on emittance outliers in meter.</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">5e-07</span></code></p>
+</li>
+<li><p><strong>emittance_tfs</strong> <em>(MultiClass)</em>: Dataframe or Path of pre-saved emittance tfs.</p></li>
+<li><p><strong>emittance_type</strong> <em>(str)</em>: Which BSRT data to use (from database).</p>
+<p>Choices: <code class="docutils literal notranslate"><span class="pre">['fit_sigma',</span> <span class="pre">'average']</span></code>
+Default: <code class="docutils literal notranslate"><span class="pre">average</span></code></p>
+</li>
+<li><p><strong>emittance_window_length</strong> <em>(int)</em>: Length of the moving average window. (# data points)</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">100</span></code></p>
+</li>
+<li><p><strong>fill</strong> <em>(int)</em>: Fill that was used. If not given, check out time_around_kicks.</p>
+<p>Flags: <strong>[‘-f’, ‘--fill’]</strong></p>
+</li>
+<li><p><strong>fit</strong> <em>(str)</em>: Fitting function to use (rearranges parameters to make sense).</p>
+<p>Choices: <code class="docutils literal notranslate"><span class="pre">['exponential',</span> <span class="pre">'linear']</span></code>
+Default: <code class="docutils literal notranslate"><span class="pre">exponential</span></code></p>
+</li>
+<li><p><strong>intensity_tfs</strong> <em>(MultiClass)</em>: Dataframe or Path of pre-saved intensity tfs.</p></li>
+<li><p><strong>intensity_time_after_kick</strong> <em>(int)</em>: Defines the times after the kicks (in seconds) which is used for intensity averaging to calculate the losses.</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">[5,</span> <span class="pre">30]</span></code></p>
+</li>
+<li><p><strong>intensity_time_before_kick</strong> <em>(int)</em>: Defines the times before the kicks (in seconds) which is used for intensity averaging to calculate the losses.</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">[30,</span> <span class="pre">5]</span></code></p>
+</li>
+<li><p><strong>normalized_emittance</strong> <em>(float)</em>: Assumed NORMALIZED nominal emittance for the machine.</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">3.7499999999999997e-06</span></code></p>
+</li>
+<li><p><strong>output_directory</strong> <em>(MultiClass)</em>: Output kick_directory, if not given subfolder in kick kick_directory</p>
+<p>Flags: <strong>[‘-o’, ‘--outdir’]</strong></p>
+</li>
+<li><p><strong>pagestore_db</strong> <em>(MultiClass)</em>: (Path to-) presaved timber database</p></li>
+<li><p><strong>show</strong>: Show plots.</p>
+<p>Action: <code class="docutils literal notranslate"><span class="pre">store_true</span></code></p>
+</li>
+<li><p><strong>show_wirescan_emittance</strong> <em>(BoolOrPathOrDataFrame)</em>: Flag if the emittance from wirescan should also be shown, can also be a Dataframe or Path of pre-saved emittance bws tfs.</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</li>
+<li><p><strong>timber_db</strong> <em>(str)</em>: Which timber database to use.</p>
+<p>Choices: <code class="docutils literal notranslate"><span class="pre">['all',</span> <span class="pre">'mdb',</span> <span class="pre">'ldb',</span> <span class="pre">'nxcals']</span></code>
+Default: <code class="docutils literal notranslate"><span class="pre">all</span></code></p>
+</li>
+<li><p><strong>time_around_kicks</strong> <em>(int)</em>: If no fill is given, this defines the time (in minutes) when data before the first and after the last kick is extracted.</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">10</span></code></p>
+</li>
+<li><p><strong>plot_styles</strong> <em>(str)</em>: Which plotting styles to use,
+either from omc3 styles or default mpl.</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">['standard']</span></code></p>
+</li>
+<li><p><strong>manual_style</strong> <em>(DictAsString)</em>: Additional style rcParameters which update the set of predefined ones.</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">{}</span></code></p>
+</li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">module</dt>
+<dd class="field-odd"><p>forced_da_analysis</p>
+</dd>
+<dt class="field-even">author</dt>
+<dd class="field-even"><p>jdilly, mihofer</p>
+</dd>
+</dl>
+<dl class="py class">
+<dt id="pylhc.forced_da_analysis.BoolOrPathOrDataFrame">
+<em class="property">class </em><code class="sig-prename descclassname">pylhc.forced_da_analysis.</code><code class="sig-name descname">BoolOrPathOrDataFrame</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/forced_da_analysis.html#BoolOrPathOrDataFrame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pylhc.forced_da_analysis.BoolOrPathOrDataFrame" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class that behaves like a boolean when possible, otherwise like a Path, string or Dataframe.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pylhc.forced_da_analysis.PathOrDataframe">
+<code class="sig-prename descclassname">pylhc.forced_da_analysis.</code><code class="sig-name descname">PathOrDataframe</code><a class="headerlink" href="#pylhc.forced_da_analysis.PathOrDataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pylhc.forced_da_analysis._get_pathclass.&lt;locals&gt;.SomethingOrPath</span></code></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pylhc.forced_da_analysis.PathOrPagestore">
+<code class="sig-prename descclassname">pylhc.forced_da_analysis.</code><code class="sig-name descname">PathOrPagestore</code><a class="headerlink" href="#pylhc.forced_da_analysis.PathOrPagestore" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pylhc.forced_da_analysis._get_pathclass.&lt;locals&gt;.SomethingOrPath</span></code></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="pylhc.forced_da_analysis.PathOrString">
+<code class="sig-prename descclassname">pylhc.forced_da_analysis.</code><code class="sig-name descname">PathOrString</code><a class="headerlink" href="#pylhc.forced_da_analysis.PathOrString" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">pylhc.forced_da_analysis._get_pathclass.&lt;locals&gt;.SomethingOrPath</span></code></p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pylhc.forced_da_analysis.fun_exp_decay">
+<code class="sig-prename descclassname">pylhc.forced_da_analysis.</code><code class="sig-name descname">fun_exp_decay</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span></em>, <em class="sig-param"><span class="n">x</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/forced_da_analysis.html#fun_exp_decay"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pylhc.forced_da_analysis.fun_exp_decay" title="Permalink to this definition">¶</a></dt>
+<dd><p>p = DA_J, x[0] = action (2J res), x[1] = emittance</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pylhc.forced_da_analysis.fun_exp_sigma">
+<code class="sig-prename descclassname">pylhc.forced_da_analysis.</code><code class="sig-name descname">fun_exp_sigma</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span></em>, <em class="sig-param"><span class="n">x</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/forced_da_analysis.html#fun_exp_sigma"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pylhc.forced_da_analysis.fun_exp_sigma" title="Permalink to this definition">¶</a></dt>
+<dd><p>p = DA_sigma, x = action (J_sigma)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pylhc.forced_da_analysis.fun_linear">
+<code class="sig-prename descclassname">pylhc.forced_da_analysis.</code><code class="sig-name descname">fun_linear</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span></em>, <em class="sig-param"><span class="n">x</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/forced_da_analysis.html#fun_linear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pylhc.forced_da_analysis.fun_linear" title="Permalink to this definition">¶</a></dt>
+<dd><p>p = DA_J, x = action (2J res)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pylhc.forced_da_analysis.swap_fun_parameters">
+<code class="sig-prename descclassname">pylhc.forced_da_analysis.</code><code class="sig-name descname">swap_fun_parameters</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fun</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/forced_da_analysis.html#swap_fun_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pylhc.forced_da_analysis.swap_fun_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parameter swapped for Curvefit</p>
+</dd></dl>
+
+</div>
+<span class="target" id="module-pylhc.job_submitter"></span><div class="section" id="job-submitter">
+<h2>Job-Submitter<a class="headerlink" href="#job-submitter" title="Permalink to this headline">¶</a></h2>
+<p>Allows to execute a parametric study using a script-mask and a dictionary with parameters to replace.
+Parameters to be replaced must be present in mask as <cite>%(PARAMETER)s</cite>
+(other types apart from string also allowed).</p>
+<p>The type of script and executable is freely choosable, but defaults to madx - for which
+this submitter was originally written.</p>
+<p>When submitting to HTCondor, data to be transferred back to the working directory
+must be written in a sub-folder defined by <cite>job_output_directory</cite> which defaults to <cite>Outputdata</cite>.</p>
+<p>Script also allows to check if all htcondor job finished successfully,
+resubmissions with a different parameter grid, and local execution.</p>
+<p>A <cite>Jobs.tfs</cite> is created in the working directory containing the Job Id,
+parameter per job and job directory for further post processing.</p>
+<p><em>--Required--</em></p>
+<ul class="simple">
+<li><p><strong>mask</strong> <em>(str)</em>: Script Mask to use</p></li>
+<li><p><strong>replace_dict</strong> <em>(DictAsString)</em>: Dict containing the str to replace as
+keys and values a list of parameters to replace</p></li>
+<li><p><strong>working_directory</strong> <em>(str)</em>: Directory where data should be put</p></li>
+</ul>
+<p><em>--Optional--</em></p>
+<ul>
+<li><p><strong>append_jobs</strong>: Flag to rerun job with finer/wider grid,
+already existing points will not be reexecuted.</p>
+<p>Action: <code class="docutils literal notranslate"><span class="pre">store_true</span></code></p>
+</li>
+<li><p><strong>check_files</strong> <em>(str)</em>: List of files/file-name-masks expected to be in the
+‘job_output_dir’ after a successful job (for appending/resuming). Uses the ‘glob’
+function, so unix-wildcards (*) are allowed. If not given, only the presence of the folder itself is checked.</p></li>
+<li><p><strong>dryrun</strong>: Flag to only prepare folders and scripts,
+but does not start madx/submit jobs.
+Together with <cite>resume_jobs</cite> this can be use to check which jobs succeeded and which failed.</p>
+<p>Action: <code class="docutils literal notranslate"><span class="pre">store_true</span></code></p>
+</li>
+<li><p><strong>executable</strong> <em>(str)</em>: Path to executable or job-type (of [‘madx’, ‘python3’, ‘python2’]) to use.</p></li>
+<li><p><strong>htc_arguments</strong> <em>(DictAsString)</em>: Additional arguments for htcondor, as Dict-String.
+For AccountingGroup please use ‘accounting_group’. ‘max_retries’ and ‘notification’ have defaults (if not given).
+Others are just passed on.</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">{}</span></code></p>
+</li>
+<li><p><strong>job_output_dir</strong> <em>(str)</em>: The name of the output dir of the job. (Make sure your script puts its data there!)</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">Outputdata</span></code></p>
+</li>
+<li><p><strong>jobflavour</strong> <em>(str)</em>: Jobflavour to give rough estimate of runtime of one job</p>
+<p>Choices: <code class="docutils literal notranslate"><span class="pre">('espresso',</span> <span class="pre">'microcentury',</span> <span class="pre">'longlunch',</span> <span class="pre">'workday',</span> <span class="pre">'tomorrow',</span> <span class="pre">'testmatch',</span> <span class="pre">'nextweek')</span></code>
+Default: <code class="docutils literal notranslate"><span class="pre">workday</span></code></p>
+</li>
+<li><p><strong>jobid_mask</strong> <em>(str)</em>: Mask to name jobs from replace_dict</p></li>
+<li><p><strong>num_processes</strong> <em>(int)</em>: Number of processes to be used if run locally</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">4</span></code></p>
+</li>
+<li><p><strong>resume_jobs</strong>: Only do jobs that did not work.</p>
+<p>Action: <code class="docutils literal notranslate"><span class="pre">store_true</span></code></p>
+</li>
+<li><p><strong>run_local</strong>: Flag to run the jobs on the local machine. Not suggested.</p>
+<p>Action: <code class="docutils literal notranslate"><span class="pre">store_true</span></code></p>
+</li>
+<li><p><strong>script_arguments</strong> <em>(DictAsString)</em>: Additional arguments to pass to the script,
+as dict in key-value pairs (‘--‘ need to be included in the keys).</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">{}</span></code></p>
+</li>
+<li><p><strong>script_extension</strong> <em>(str)</em>: New extension for the scripts created from the masks.
+This is inferred automatically for [‘madx’, ‘python3’, ‘python2’]. Otherwise not changed.</p></li>
+<li><p><strong>ssh</strong> <em>(str)</em>: Run htcondor from this machine via ssh (needs access to the <cite>working_directory</cite>)</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">module</dt>
+<dd class="field-odd"><p>job_submitter</p>
+</dd>
+<dt class="field-even">author</dt>
+<dd class="field-even"><p>mihofer, jdilly</p>
+</dd>
+</dl>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../constants/index.html" class="btn btn-neutral float-right" title="Constants Definitions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../index.html" class="btn btn-neutral float-left" title="Welcome to pyLHC’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,418 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pylhc.data_extract.lsa &mdash; pylhc 0.0.3 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> pylhc
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../root/index.html">Main Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../constants/index.html">Constants Definitions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data_extract/index.html">Data Extraction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../htc/index.html">HTC-Condor Tools</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pylhc</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>pylhc.data_extract.lsa</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pylhc.data_extract.lsa</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">PyLSA</span>
+<span class="sd">---------------------------</span>
+
+<span class="sd">Provides additional functionality for pjlsa.</span>
+
+
+<span class="sd">:module: data_extract.lsa</span>
+<span class="sd">:author: jdilly</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">suppress</span>
+
+<span class="kn">import</span> <span class="nn">jpype</span>
+<span class="kn">import</span> <span class="nn">tfs</span>
+<span class="kn">from</span> <span class="nn">generic_parser</span> <span class="kn">import</span> <span class="n">DotDict</span>
+<span class="kn">from</span> <span class="nn">omc3.utils.time_tools</span> <span class="kn">import</span> <span class="n">AccDatetime</span>
+
+<span class="n">LOG</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">pjlsa</span> <span class="kn">import</span> <span class="n">pjlsa</span>  <span class="c1"># need to import submodule as it otherwise catches the ImportError...</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="c1"># Problematic when running setup.py (as this class is not tested), mock class</span>
+    <span class="n">LOG</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;pjLSA not properly imported. Mocking class, but will fail if used!&quot;</span><span class="p">)</span>
+    <span class="n">pjlsa</span> <span class="o">=</span> <span class="n">DotDict</span><span class="p">(</span><span class="n">LSAClient</span><span class="o">=</span><span class="nb">object</span><span class="p">,</span> <span class="n">ParametersRequestBuilder</span><span class="o">=</span><span class="nb">object</span><span class="p">,</span> <span class="n">Acclerators</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
+
+<span class="n">RELEVANT_BP_CONTEXTS</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;OPERATIONAL&quot;</span><span class="p">,</span> <span class="s2">&quot;MD&quot;</span><span class="p">)</span>
+<span class="n">RELEVANT_BP_CATEGORIES</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;DISCRETE&quot;</span><span class="p">,)</span>
+
+<span class="n">HEAD_KNOB</span> <span class="o">=</span> <span class="s2">&quot;Knob&quot;</span>
+<span class="n">HEAD_OPTICS</span> <span class="o">=</span> <span class="s2">&quot;Optics&quot;</span>
+<span class="n">HEAD_INFO</span> <span class="o">=</span> <span class="s2">&quot;Info&quot;</span>
+<span class="n">COL_NAME</span> <span class="o">=</span> <span class="s2">&quot;NAME&quot;</span>
+<span class="n">COL_CIRCUIT</span> <span class="o">=</span> <span class="s2">&quot;CIRCUIT&quot;</span>
+<span class="n">PREF_DELTA</span> <span class="o">=</span> <span class="s2">&quot;DELTA_&quot;</span>
+
+
+<div class="viewcode-block" id="LSAClient"><a class="viewcode-back" href="../../../data_extract/index.html#pylhc.data_extract.lsa.LSAClient">[docs]</a><span class="k">class</span> <span class="nc">LSAClient</span><span class="p">(</span><span class="n">pjlsa</span><span class="o">.</span><span class="n">LSAClient</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Extension of the LSAClient. &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="LSAClient.find_knob_names"><a class="viewcode-back" href="../../../data_extract/index.html#pylhc.data_extract.lsa.LSAClient.find_knob_names">[docs]</a>    <span class="k">def</span> <span class="nf">find_knob_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">accelerator</span><span class="p">:</span><span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;lhc&#39;</span><span class="p">,</span> <span class="n">regexp</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Return knobs for accelerator.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            accelerator: Accelerator name</span>
+<span class="sd">            regexp: Rgular Expression to filter knob names</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Sorted list of knob names.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">req</span> <span class="o">=</span> <span class="n">pjlsa</span><span class="o">.</span><span class="n">ParametersRequestBuilder</span><span class="p">()</span>
+        <span class="n">req</span><span class="o">.</span><span class="n">setAccelerator</span><span class="p">(</span><span class="n">pjlsa</span><span class="o">.</span><span class="n">Accelerators</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">accelerator</span><span class="p">,</span> <span class="n">accelerator</span><span class="p">))</span>
+        <span class="n">req</span><span class="o">.</span><span class="n">setParameterTypeName</span><span class="p">(</span><span class="s1">&#39;KNOB&#39;</span><span class="p">)</span>
+        <span class="n">lst</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameterService</span><span class="o">.</span><span class="n">findParameters</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">build</span><span class="p">())</span>
+        <span class="n">reg</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">regexp</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">reg</span><span class="o">.</span><span class="n">search</span><span class="p">,</span> <span class="p">[</span><span class="n">pp</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span> <span class="k">for</span> <span class="n">pp</span> <span class="ow">in</span> <span class="n">lst</span><span class="p">]))</span></div>
+
+<div class="viewcode-block" id="LSAClient.find_last_fill"><a class="viewcode-back" href="../../../data_extract/index.html#pylhc.data_extract.lsa.LSAClient.find_last_fill">[docs]</a>    <span class="k">def</span> <span class="nf">find_last_fill</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">acc_time</span><span class="p">:</span> <span class="n">AccDatetime</span><span class="p">,</span> <span class="n">accelerator</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;lhc&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Return last fill name and content.</span>
+
+<span class="sd">         Args:</span>
+<span class="sd">            acc_time: (AccDatetime): Accelerator datetime object</span>
+<span class="sd">            accelerator (str): Name of the accelerator</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tupel: Last fill name (str), Beamprocesses of last fill (list)</span>
+
+<span class="sd">         &quot;&quot;&quot;</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">acc_time</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># assumes a fill is not longer than a day</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">fills</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">findBeamProcessHistory</span><span class="p">(</span><span class="n">t1</span><span class="o">=</span><span class="n">start_time</span><span class="o">.</span><span class="n">local_string</span><span class="p">(),</span>
+                                                <span class="n">t2</span><span class="o">=</span><span class="n">acc_time</span><span class="o">.</span><span class="n">local_string</span><span class="p">(),</span>
+                                                <span class="n">accelerator</span><span class="o">=</span><span class="n">accelerator</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No beamprocesses found in the day before </span><span class="si">{</span><span class="n">acc_time</span><span class="o">.</span><span class="n">cern_utc_string</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">last_fill</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">fills</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">last_fill</span><span class="p">,</span> <span class="n">fills</span><span class="p">[</span><span class="n">last_fill</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="LSAClient.find_trims_at_time"><a class="viewcode-back" href="../../../data_extract/index.html#pylhc.data_extract.lsa.LSAClient.find_trims_at_time">[docs]</a>    <span class="k">def</span> <span class="nf">find_trims_at_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beamprocess</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">knobs</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">acc_time</span><span class="p">:</span> <span class="n">AccDatetime</span><span class="p">,</span> <span class="n">accelerator</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;lhc&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Get trims for knobs at specific time.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            beamprocess (str): Name of the beamprocess</span>
+<span class="sd">            knobs (list): List of strings of the knobs to check</span>
+<span class="sd">            acc_time: (AccDatetime): Accelerator datetime object</span>
+<span class="sd">            accelerator (str): Name of the accelerator</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Dictionary of knob names and their values</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">knobs</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">knobs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">knobs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_knob_names</span><span class="p">(</span><span class="n">accelerator</span><span class="p">)</span>
+        <span class="n">trims</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getTrims</span><span class="p">(</span><span class="n">beamprocess</span><span class="p">,</span> <span class="n">knobs</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">acc_time</span><span class="o">.</span><span class="n">timestamp</span><span class="p">())</span>
+        <span class="n">trims_not_found</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">knobs</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">trims</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">trims_not_found</span><span class="p">):</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The following knobs were not found in &#39;</span><span class="si">{</span><span class="n">beamprocess</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="n">trims_not_found</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">trim</span><span class="p">:</span> <span class="n">trims</span><span class="p">[</span><span class="n">trim</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">trim</span> <span class="ow">in</span> <span class="n">trims</span><span class="o">.</span><span class="n">keys</span><span class="p">()}</span>  <span class="c1"># return last set value</span></div>
+
+<div class="viewcode-block" id="LSAClient.get_beamprocess_info"><a class="viewcode-back" href="../../../data_extract/index.html#pylhc.data_extract.lsa.LSAClient.get_beamprocess_info">[docs]</a>    <span class="k">def</span> <span class="nf">get_beamprocess_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beamprocess</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get context info of the given beamprocess.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            beamprocess (str): Name of the beamprocess.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Dictionary with context info.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">bp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contextService</span><span class="o">.</span><span class="n">findStandAloneBeamProcess</span><span class="p">(</span><span class="n">beamprocess</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_beamprocess_to_dict</span><span class="p">(</span><span class="n">bp</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="LSAClient.find_active_beamprocess_at_time"><a class="viewcode-back" href="../../../data_extract/index.html#pylhc.data_extract.lsa.LSAClient.find_active_beamprocess_at_time">[docs]</a>    <span class="k">def</span> <span class="nf">find_active_beamprocess_at_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">acc_time</span><span class="p">:</span> <span class="n">AccDatetime</span><span class="p">,</span> <span class="n">accelerator</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;lhc&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Find the active beam process at the time given.</span>
+
+<span class="sd">        Same as what online model extractor (KnobExtractor) does, but returns empty map for some reason.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;This function does not work yet!&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">accelerator</span> <span class="o">!=</span> <span class="s1">&#39;lhc&#39;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Active-Beamprocess retrieval is only implemented for LHC&quot;</span><span class="p">)</span>
+        <span class="n">beamprocessmap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lhcService</span><span class="o">.</span><span class="n">findResidentStandAloneBeamProcessesByTime</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">acc_time</span><span class="o">.</span><span class="n">timestamp</span><span class="p">()))</span>
+        <span class="c1"># print(str(beamprocessmap))</span>
+        <span class="n">beamprocess</span> <span class="o">=</span> <span class="n">beamprocessmap</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;POWERCONVERTERS&quot;</span><span class="p">)</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Active Beamprocess at time &#39;</span><span class="si">{</span><span class="n">acc_time</span><span class="o">.</span><span class="n">cern_utc_string</span><span class="p">()</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="n">beamprocess</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">beamprocess</span></div>
+
+<div class="viewcode-block" id="LSAClient.get_knob_circuits"><a class="viewcode-back" href="../../../data_extract/index.html#pylhc.data_extract.lsa.LSAClient.get_knob_circuits">[docs]</a>    <span class="k">def</span> <span class="nf">get_knob_circuits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">knob_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">optics</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">tfs</span><span class="o">.</span><span class="n">TfsDataFrame</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Get a dataframe of the structure of the knob.</span>
+<span class="sd">        (Similar to online model extractor KnobExtractor.getKnobHiercarchy)</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            knob: name of the knob</span>
+<span class="sd">            optics: name of the optics</span>
+
+<span class="sd">        Returns: TfsDataFrame</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Getting knob defintions for &#39;</span><span class="si">{</span><span class="n">knob_name</span><span class="si">}</span><span class="s2">&#39;, optics &#39;</span><span class="si">{</span><span class="n">optics</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">tfs</span><span class="o">.</span><span class="n">TfsDataFrame</span><span class="p">()</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="n">HEAD_KNOB</span><span class="p">]</span> <span class="o">=</span> <span class="n">knob_name</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="n">HEAD_OPTICS</span><span class="p">]</span> <span class="o">=</span> <span class="n">optics</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="n">HEAD_INFO</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;In MAD-X it should be &#39;name = name + DELTA * knobValue&#39;&quot;</span>
+        <span class="n">knob</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_knobService</span><span class="o">.</span><span class="n">findKnob</span><span class="p">(</span><span class="n">knob_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">knob</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Knob &#39;</span><span class="si">{</span><span class="n">knob_name</span><span class="si">}</span><span class="s2">&#39; does not exist&quot;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">knob_settings</span> <span class="o">=</span> <span class="n">knob</span><span class="o">.</span><span class="n">getKnobFactors</span><span class="p">()</span><span class="o">.</span><span class="n">getFactorsForOptic</span><span class="p">(</span><span class="n">optics</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">jpype</span><span class="o">.</span><span class="n">JException</span><span class="p">(</span><span class="n">jpype</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">lang</span><span class="o">.</span><span class="n">IllegalArgumentException</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Knob &#39;</span><span class="si">{</span><span class="n">knob_name</span><span class="si">}</span><span class="s2">&#39; not available for optics &#39;</span><span class="si">{</span><span class="n">optics</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">knob_factor</span> <span class="ow">in</span> <span class="n">knob_settings</span><span class="p">:</span>
+            <span class="n">circuit</span> <span class="o">=</span> <span class="n">knob_factor</span><span class="o">.</span><span class="n">componentName</span>
+            <span class="n">param</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameterService</span><span class="o">.</span><span class="n">findParameterByName</span><span class="p">(</span><span class="n">circuit</span><span class="p">)</span>
+            <span class="nb">type</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">getParameterType</span><span class="p">()</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span>
+            <span class="n">madx_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_madx_name_from_circuit</span><span class="p">(</span><span class="n">circuit</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">madx_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">LOG</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Circuit &#39;</span><span class="si">{</span><span class="n">circuit</span><span class="si">}</span><span class="s2">&#39; could not be resolved to a MADX name in LSA! &quot;</span>
+                          <span class="s2">&quot;It will not be found in knob-definition!&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Found component &#39;</span><span class="si">{</span><span class="n">circuit</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="n">madx_name</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">knob_factor</span><span class="o">.</span><span class="n">factor</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">madx_name</span><span class="p">,</span> <span class="n">COL_CIRCUIT</span><span class="p">]</span> <span class="o">=</span> <span class="n">circuit</span>
+                <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">madx_name</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">PREF_DELTA</span><span class="si">}{</span><span class="nb">type</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">knob_factor</span><span class="o">.</span><span class="n">factor</span>
+        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="LSAClient.get_madx_name_from_circuit"><a class="viewcode-back" href="../../../data_extract/index.html#pylhc.data_extract.lsa.LSAClient.get_madx_name_from_circuit">[docs]</a>    <span class="k">def</span> <span class="nf">get_madx_name_from_circuit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">circuit</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the MAD-X Strength Name (Circuit/Knob) from the circuit name. &quot;&quot;&quot;</span>
+        <span class="n">logical_name</span> <span class="o">=</span> <span class="n">circuit</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">slist</span> <span class="o">=</span> <span class="n">jpype</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">Collections</span><span class="o">.</span><span class="n">singletonList</span><span class="p">(</span><span class="n">logical_name</span><span class="p">)</span>  <span class="c1"># python lists did not work (jdilly)</span>
+        <span class="n">madx_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_deviceService</span><span class="o">.</span><span class="n">findMadStrengthNamesByLogicalNames</span><span class="p">(</span><span class="n">slist</span><span class="p">)</span>  <span class="c1"># returns a map</span>
+        <span class="k">return</span> <span class="n">madx_name</span><span class="p">[</span><span class="n">logical_name</span><span class="p">]</span></div></div>
+
+
+<span class="c1"># Single Instance LSAClient ####################################################</span>
+
+
+<div class="viewcode-block" id="LSAMeta"><a class="viewcode-back" href="../../../data_extract/index.html#pylhc.data_extract.lsa.LSAMeta">[docs]</a><span class="k">class</span> <span class="nc">LSAMeta</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Metaclass for single instance LSAClient. &quot;&quot;&quot;</span>
+    <span class="n">_client</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_client</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Creating LSA Client (only once).&quot;</span><span class="p">)</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_client</span> <span class="o">=</span> <span class="n">LSAClient</span><span class="p">()</span>
+
+        <span class="n">client_attr</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">client_attr</span><span class="p">):</span>
+            <span class="k">def</span> <span class="nf">hooked</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">client_attr</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="k">with</span> <span class="n">suppress</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>  <span class="c1"># happens with e.g. numpy arrays as return value</span>
+                    <span class="k">if</span> <span class="n">result</span> <span class="o">==</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_client</span><span class="p">:</span>
+                        <span class="c1"># prevent client from becoming unwrapped</span>
+                        <span class="k">return</span> <span class="bp">cls</span>
+                <span class="k">return</span> <span class="n">result</span>
+            <span class="k">return</span> <span class="n">hooked</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">client_attr</span></div>
+
+
+<div class="viewcode-block" id="LSA"><a class="viewcode-back" href="../../../data_extract/index.html#pylhc.data_extract.lsa.LSA">[docs]</a><span class="k">class</span> <span class="nc">LSA</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">LSAMeta</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Import this class to use LSA like the client without the need to instantiate it.&quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+
+<span class="c1"># Helper Functions #############################################################</span>
+
+
+<span class="k">def</span> <span class="nf">_beamprocess_to_dict</span><span class="p">(</span><span class="n">bp</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Converts some fields of the beamprocess (java) to a dictionary &quot;&quot;&quot;</span>
+    <span class="n">variables</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;category&quot;</span><span class="p">,</span> <span class="s2">&quot;contextCategory&quot;</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">,</span> <span class="s2">&quot;contextFamily&quot;</span><span class="p">,</span> <span class="s2">&quot;user&quot;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">var</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">bp</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="n">var</span><span class="p">))</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">}</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
