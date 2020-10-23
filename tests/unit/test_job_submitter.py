@@ -2,6 +2,7 @@ import tempfile
 from contextlib import contextmanager
 from pathlib import Path
 
+import pytest
 from generic_parser import DotDict
 
 from pylhc.job_submitter import main as job_submit
@@ -14,10 +15,11 @@ def test_job_creation_and_localrun():
         _test_output(args)
 
 
+@pytest.mark.cern_network
 def test_htc_submit():
     """ This test is here for local testing only. You need to adapt the path
     and delete the results afterwards manually (so you can check them before."""
-    user = 'jdilly'
+    user = 'fesoubel'
     path = Path('/', 'afs', 'cern.ch', 'user', user[0], user, 'htc_temp')
 
     try:
@@ -99,5 +101,3 @@ def _test_output(args, post_run=True):
 
                 with out_file_path.open("r") as f:
                     assert f.read().strip('\n') == current_id
-
-

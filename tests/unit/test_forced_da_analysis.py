@@ -1,7 +1,3 @@
-import inspect
-import shutil
-import tempfile
-from contextlib import contextmanager
 from pathlib import Path
 
 import pytest
@@ -11,24 +7,49 @@ from pylhc.forced_da_analysis import main as fda_analysis
 INPUT = Path(__file__).parent.parent / 'inputs'
 
 
-@pytest.mark.basic
-def test_md3312_data(tmp_path):
-    data_dir = INPUT / 'kicks_vertical_md3312'
-    fda_analysis(
-        beam=1,
-        kick_directory=data_dir,
-        energy=6500.,
-        plane='Y',
-        intensity_tfs=data_dir / 'intensity.tfs',
-        emittance_tfs=data_dir / 'emittance_y.tfs',
-        show_wirescan_emittance=data_dir / 'emittance_bws_y.tfs',
-        output_directory=tmp_path,
-        # show=True,
-    )
-    check_output(tmp_path)
+@pytest.mark.cern_network
+class TestOnCernNetwork:
+    def test_md3312_data(self, tmp_path):
+        data_dir = INPUT / 'kicks_vertical_md3312'
+        fda_analysis(
+            beam=1,
+            kick_directory=data_dir,
+            energy=6500.,
+            plane='Y',
+            intensity_tfs=data_dir / 'intensity.tfs',
+            emittance_tfs=data_dir / 'emittance_y.tfs',
+            show_wirescan_emittance=data_dir / 'emittance_bws_y.tfs',
+            output_directory=tmp_path,
+            # show=True,
+        )
+        check_output(tmp_path)
+
+    def test_md3312_data_linear(self, tmp_path):
+        data_dir = INPUT / 'kicks_vertical_md3312'
+        fda_analysis(
+            fit='linear',
+            beam=1,
+            kick_directory=data_dir,
+            energy=6500.,
+            plane='Y',
+            intensity_tfs=data_dir / 'intensity.tfs',
+            emittance_tfs=data_dir / 'emittance_y.tfs',
+            show_wirescan_emittance=data_dir / 'emittance_bws_y.tfs',
+            output_directory=tmp_path
+        )
+        check_output(tmp_path)
+
+    def test_md3312_no_data_given(self, tmp_path):
+        with pytest.raises(OSError):
+            fda_analysis(
+                beam=1,
+                kick_directory=INPUT / 'kicks_vertical_md3312',
+                energy=6500.,
+                plane='Y',
+                output_directory=tmp_path
+            )
 
 
-@pytest.mark.basic
 def test_md2162_timberdb(tmp_path):
     data_dir = INPUT / 'kicks_horizontal_md2162'
     fda_analysis(
@@ -44,35 +65,6 @@ def test_md2162_timberdb(tmp_path):
         # show=True,
     )
     check_output(tmp_path)
-
-
-@pytest.mark.extended
-def test_md3312_data_linear(tmp_path):
-    data_dir = INPUT / 'kicks_vertical_md3312'
-    fda_analysis(
-        fit='linear',
-        beam=1,
-        kick_directory=data_dir,
-        energy=6500.,
-        plane='Y',
-        intensity_tfs=data_dir / 'intensity.tfs',
-        emittance_tfs=data_dir / 'emittance_y.tfs',
-        show_wirescan_emittance=data_dir / 'emittance_bws_y.tfs',
-        output_directory=tmp_path
-    )
-    check_output(tmp_path)
-
-
-@pytest.mark.extended
-def test_md3312_no_data_given(tmp_path):
-    with pytest.raises(OSError):
-        fda_analysis(
-            beam=1,
-            kick_directory=INPUT / 'kicks_vertical_md3312',
-            energy=6500.,
-            plane='Y',
-            output_directory=tmp_path
-        )
 
 
 # Helper -----------------------------------------------------------------------
