@@ -50,6 +50,24 @@ The latter tools can be found in [omc3](https://github.com/pylhc/omc3) (Python 3
 - Additional checks for code-complexity, design-rules, test-coverage and duplication are made through [CodeClimate](https://codeclimate.com/github/pylhc/PyLHC).
 - Pull requests implementing functionality or fixes are merged into the master branch after passing CI, and a reviewer's approval.
 
+### Hints for Developers
+
+In case you want to contribute to `PyLHC`'s development, you should install it in `editable` mode:
+```
+git clone https://github.com/pylhc/PyLHC
+pip install --editable PyLHC
+```
+
+You can install extra dependencies (as defined in `setup.py`) suited to your use case with the following commands:
+```
+pip install --editable PyLHC[tech]
+pip install --editable omc3[test]
+pip install --editable omc3[test,doc]
+pip install --editable omc3[all]
+```
+
+Open an issue, make your changes in a branch and submit a pull request.
+
 ## Authors
 
 * **pyLHC/OMC-Team** - *Working Group* - [pyLHC](https://github.com/orgs/pylhc/teams/omc-team)
