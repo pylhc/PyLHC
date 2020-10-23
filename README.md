@@ -16,7 +16,7 @@ This package is a collection of useful scripts and tools for the Optics Measurem
 ## Getting Started
 
 This  package is `Python 3.7+` compatible, but not yet deployed to PyPI.
-The best way to install is though pip and VCS:
+The best way to install is through pip and VCS:
 ```bash
 git clone https://github.com/pylhc/PyLHC
 pip install /path/to/PyLHC
