@@ -41,6 +41,7 @@ COLOR_FILL = 'blue'
 ALPHA_SEED = 0.5
 ALPHA_FILL = 0.2
 
+
 def post_process_da(jobname: str, basedir: Path):
     """ Post process the DA results into dataframes and DA plots. """
     df_da, df_angle, df_seed = create_da_tfs(jobname, basedir)
@@ -139,6 +140,7 @@ def plot_polar(df_angles: TfsDataFrame, da_col: str, jobname: str = '',
     Keyword Args (Optional):
         plot_styles (Iterable[str]): Iterable over plots styles to be applied
         interpolated (bool): If true, uses interpolation to plot the lines curved
+        fill (bool): If true, fills the area between min and max with light blue
         angle_ticks (Iterable[numeric]): Positions in degree of the angle ticks (and lines)
         amplitude ticks (Iterable[numeric]): Positions of the amplitude ticks.
         remaining args: any rcParams to be set.
@@ -147,6 +149,7 @@ def plot_polar(df_angles: TfsDataFrame, da_col: str, jobname: str = '',
         Figure of the polar plot.
     """
     interpolated: bool = kwargs.pop('interpolated', True)
+    fill: bool = kwargs.pop('fill', df_da is None)
     angle_ticks: Iterable[np.numeric] = kwargs.pop('angle_ticks', None)
     amplitude_ticks: Iterable[np.numeric] = kwargs.pop('amplitude_ticks', None)
     plot_styles: Iterable[Union[Path, str]] = kwargs.pop('plot_styles', {})
@@ -175,13 +178,15 @@ def plot_polar(df_angles: TfsDataFrame, da_col: str, jobname: str = '',
     if interpolated:
         _, _, ip_min = _interpolated_line(ax, angles, da_min, c=COLOR_LIM, ls='--', label='Minimum DA')
         max_h, ip_x, ip_max = _interpolated_line(ax, angles, da_max, c=COLOR_LIM, ls='--', label='Maximum DA')
-        ax.fill_between(ip_x, ip_min, ip_max, color=COLOR_FILL, alpha=ALPHA_FILL)
+        if fill:
+            ax.fill_between(ip_x, ip_min, ip_max, color=COLOR_FILL, alpha=ALPHA_FILL)
         mean_h, _, _ = _interpolated_line(ax, angles, da_mean, c=COLOR_MEAN, ls='-', label='Mean DA')
     else:
         _, = ax.plot(angles, da_min, c=COLOR_LIM, ls='--', label='Minimum DA')
         max_h, = ax.plot(angles, da_max, c=COLOR_LIM, ls='--', label='Maximum DA')
-        ax.fill_between(angles, da_min.astype(float), da_max.astype(float),  # weird conversion to obj otherwise
-                        color=COLOR_FILL, alpha=ALPHA_FILL)
+        if fill:
+            ax.fill_between(angles, da_min.astype(float), da_max.astype(float),  # weird conversion to obj otherwise
+                            color=COLOR_FILL, alpha=ALPHA_FILL)
         mean_h, = ax.plot(angles, da_mean, c=COLOR_MEAN, ls='-', label='Mean DA')
 
     ax.set_thetamin(0)
