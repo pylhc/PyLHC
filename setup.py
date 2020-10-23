@@ -32,12 +32,7 @@ DEPENDENCIES = [
     "numpy>=1.19",
     "scipy>=1.4.0",
     "pandas>=1.0",
-    "jpype1<0.8.0,>=0.7.3",  # limit from pylsa
-    "ipython>=7.0.1",  # actually dependency of pytimber
-    "GitPython>=2.1.8",
     "matplotlib>=3.2.0",
-    "ruamel.yaml>=0.15.94",
-    "cmmnbuild-dep-manager>=2.2.2<=2.3.0",
     "pjlsa>=0.0.14",
     "pytimber>=2.8.0",
     "htcondor>=8.9.2",
@@ -46,10 +41,14 @@ DEPENDENCIES = [
     "parse>=1.15.0",
     # to be installed by user (see travis.yml and README):
     "omc3@https://github.com/pylhc/omc3/tarball/master",
-    "pyjapc@https://gitlab.cern.ch/scripting-tools/pyjapc/repository/archive.tar.gz?ref=master",
 ]
 
 EXTRA_DEPENDENCIES = {
+    "tech": [
+        "jpype1<0.8.0,>=0.7.3",  # limit from pylsa
+        # "cmmnbuild-dep-manager/@https://gitlab.cern.ch/scripting-tools/cmmnbuild-dep-manager/repository/archive.tar.gz?ref=master",
+        "pyjapc@https://gitlab.cern.ch/scripting-tools/pyjapc/repository/archive.tar.gz?ref=master",
+    ],
     "test": [
         "pytest>=5.2",
         "pytest-cov>=2.7",
@@ -82,7 +81,6 @@ setuptools.setup(
         "Natural Language :: English",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3 :: Only",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Topic :: Scientific/Engineering :: Physics",
