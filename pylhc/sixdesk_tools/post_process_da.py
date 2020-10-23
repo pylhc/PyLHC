@@ -5,10 +5,10 @@ from typing import Any, Tuple
 import numpy as np
 import pandas as pd
 from generic_parser import DotDict
-from tfs import TfsDataFrame, write_tfs
-from matplotlib import pyplot as plt, rcParams
-import matplotlib.lines as mlines
+from matplotlib import pyplot as plt
+from matplotlib import rcParams, lines as mlines
 from scipy.interpolate import interp1d
+from tfs import TfsDataFrame, write_tfs
 
 from pylhc.constants.autosix import (
     get_database_path,
@@ -28,7 +28,10 @@ HINT = '{param:s} {val:} is the respective value calculated over all other {para
 
 OVER_WHICH = {SEED: 'angles', ANGLE: 'seeds'}
 
-N_INTERPOLATE = 500
+COLOR_MEAN = 'red'
+COLOR_SEED = 'grey'
+COLOR_LIM = 'black'
+ALPHA_SEED = 0.5
 
 
 def post_process_da(jobname: str, basedir: Path):
@@ -55,7 +58,9 @@ def extract_da_data_from_db(jobname: str, basedir: Path) -> TfsDataFrame:
     """ Extract data directly from the database. """
     db_path = get_database_path(jobname, basedir)
     db = sql.connect(db_path)
-    df_da = pd.read_sql("SELECT seed, angle, alost1, alost2, Amin, Amax FROM da_post ORDER BY seed, angle", db)
+    df_da = pd.read_sql(
+        "SELECT seed, angle, alost1, alost2, Amin, Amax FROM da_post ORDER BY seed, angle", db
+    )
     df_da = df_da.rename(columns={'seed': SEED, 'angle': ANGLE,
                                   'alost1': ALOST1, 'alost2': ALOST2,
                                   'Amin': f'{MIN}{AMP}', 'Amax': f'{MAX}{AMP}'})
@@ -110,7 +115,8 @@ def create_polar_plots(jobname: str, basedir: Path, df_da: TfsDataFrame, df_angl
     plt.show()
 
 
-def plot_polar(df_angles: TfsDataFrame, da_col: str, jobname: str, df_da: TfsDataFrame = None) -> plt.Figure:
+def plot_polar(df_angles: TfsDataFrame, da_col: str, jobname: str,
+               df_da: TfsDataFrame = None, interpolated: bool = True) -> plt.Figure:
     fig, ax = plt.subplots(nrows=1, ncols=1, subplot_kw={'projection': 'polar'})
     fig.canvas.set_window_title(f"{jobname} polar plot for {da_col}")
 
@@ -122,21 +128,31 @@ def plot_polar(df_angles: TfsDataFrame, da_col: str, jobname: str, df_da: TfsDat
             angles = np.deg2rad(df_da.loc[seed_mask, ANGLE])
             da_data = df_da.loc[seed_mask, da_col]
             da_data.loc[da_data == 0] = np.NaN
-            seed_h, = ax.plot(angles, da_data, c='grey', ls='-', label=f'Seed {seed:d}', alpha=0.5)
+            if interpolated:
+                seed_h = _interpolated_line(ax, angles, da_data, c=COLOR_SEED, ls='-', label=f'Seed {seed:d}', alpha=ALPHA_SEED)
+            else:
+                seed_h, = ax.plot(angles, da_data, c=COLOR_SEED, ls='-', label=f'Seed {seed:d}', alpha=ALPHA_SEED)
         seed_h = [seed_h]
         seed_l = ['DA per Seed']
 
     angles = np.deg2rad(df_angles.index)
     da_min, da_mean, da_max = (df_angles[f'{name}{da_col}'] for name in (MIN, MEAN, MAX))
-    min_h, = ax.plot(angles, da_min, c='black', ls='--', label='Minimum DA')
-    max_h, = ax.plot(angles, da_max, c='black', ls='--', label='Maximum DA')
-    ax.fill_between(angles, da_min.astype(float), da_max.astype(float),  # weird conversion to obj happening
-                    color='blue', alpha=0.2)
-    mean_h, = ax.plot(angles, da_mean, c='red', ls='-', label='Mean DA')
+    if interpolated:
+        min_h = _interpolated_line(ax, angles, da_min, c=COLOR_LIM, ls='--', label='Minimum DA')
+        max_h = _interpolated_line(ax, angles, da_max, c=COLOR_LIM, ls='--', label='Maximum DA')
+        mean_h = _interpolated_line(ax, angles, da_mean, c=COLOR_MEAN, ls='-', label='Mean DA')
+    else:
+        min_h, = ax.plot(angles, da_min, c=COLOR_LIM, ls='--', label='Minimum DA')
+        max_h, = ax.plot(angles, da_max, c=COLOR_LIM, ls='--', label='Maximum DA')
+        # ax.fill_between(angles, da_min.astype(float), da_max.astype(float),  # weird conversion to obj otherwise
+        #                 color='blue', alpha=0.2)
+        mean_h, = ax.plot(angles, da_mean, c=COLOR_MEAN, ls='-', label='Mean DA')
 
     ax.set_thetamin(0)
     ax.set_thetamax(90)
     ax.set_rlim([0, None])
+    ax.set_xlabel(r'$\sigma_{x}~[\sigma_{nominal}]$', labelpad=15)
+    ax.set_ylabel(r'$\sigma_{y}~[\sigma_{nominal}]$')
 
     ax.legend(
         loc='upper right',
@@ -151,14 +167,16 @@ def plot_polar(df_angles: TfsDataFrame, da_col: str, jobname: str, df_da: TfsDat
     return fig
 
 
-def _polar_line(ax, x, y, **kwargs):
+def _interpolated_line(ax, x, y, npoints: int = 100, **kwargs):
+    """ Plot a line that interpolates linearly between points.
+    Useful for polar plots with sparse points. """
     ls = kwargs.pop('linestyle', kwargs.pop('ls', rcParams['lines.linestyle']))
     marker = kwargs.pop('marker', rcParams['lines.marker'])
     label = kwargs.pop('label')
 
     handle_line = None
     if ls.lower() not in ['none', '']:
-        ip_x = np.linspace(x[0], x[-1], N_INTERPOLATE)
+        ip_x = np.linspace(min(x), max(x), npoints)
         ip_y = interp1d(x, y)(ip_x)
         handle_line, = ax.plot(ip_x, ip_y, marker='None', ls=ls, label=f'_{label}_line', **kwargs)
 
