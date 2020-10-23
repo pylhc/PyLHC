@@ -6,11 +6,7 @@
 [![GitHub last commit](https://img.shields.io/github/last-commit/pylhc/PyLHC.svg?style=popout)](https://github.com/pylhc/PyLHC/)
 [![GitHub release](https://img.shields.io/github/release/pylhc/PyLHC.svg?style=popout)](https://github.com/pylhc/PyLHC/)
 
-This is the python-tool package of the optics measurements and corrections group (OMC).
-
-If you are not part of that group, you will most likely have no use for the codes provided here,
-unless you have a 9km wide accelerator at home.
-Feel free to use them anyway, if you wish!
+This package is a collection of useful scripts and tools for the Optics Measurements and Corrections group (OMC) at CERN.
 
 ## Documentation
 
@@ -18,92 +14,46 @@ Feel free to use them anyway, if you wish!
 - General documentation of the OMC-Teams software on <https://twiki.cern.ch/twiki/bin/view/BEABP/OMC>
 
 ## Getting Started
+## Getting Started
 
-### Prerequisites and Installation
-This package is not deployed, hence you need to use the standard git-commands (below) to get a local copy.
-
-To install directly from git one can use
+This  package is `Python 3.7+` compatible, but not yet deployed to PyPI.
+The best way to install is though pip and VCS:
+```bash
+git clone https://github.com/pylhc/PyLHC
+pip install /path/to/PyLHC
 ```
-python -m pip install -e git+git://github.com/pylhc/pylhc.git#egg=pylhc
+
+Or simply from the online master branch, which is stable:
+```bash
+pip install git+https://github.com/pylhc/PyLHC.git#egg=pylhc
 ```
-or install from a local copy (see [install in editable mode.](#install-in-editable-mode)).
 
-The codes use a multitude of packages, which can be found in the [setup.py](setup.py) file.
-Hence, `pip` will install the required dependencies automatically, if not present.
+After installing, codes can be run with either `python -m pylhc.SCRIPT --FLAG ARGUMENT` or calling path to the `.py` file directly.
 
-Important packages are: ``tfs-pandas``,  ``generic_parser``, ``numpy``, ``pandas`` and ``scipy``.
-
-Note, that `omc3` and `pyjapc` might need to be installed manually from local clones or via
-
-```
-python -m pip install git+git://github.com/pylhc/omc3.git#egg=omc3
-python -m pip install git+https://gitlab.cern.ch/scripting-tools/pyjapc.git#egg=pyjapc
-```
+Note: some of the scripts access functionality only available on the CERN Technical Network.
+To use those, you should make sure to install the relevant extra dependencies with `pip install path/to/Pylhc[tech]`.
 
 ## Description
 
-This package provides tools which can be useful for working with accelerators, but are not neccessary for
-optics measurements analysis.
-
-The latter tools can be found in [OMC3](https://github.com/pylhc/omc3) (Python 3.7+) or [Beta-Beat.src](https://github.com/pylhc/Beta-Beat.src) (Python 2.7)
+This package provides tools which can be useful for working with accelerators, but are not neccessary for optics measurements analysis.
+The latter tools can be found in [omc3](https://github.com/pylhc/omc3) (Python 3.7+) or [Beta-Beat.src](https://github.com/pylhc/Beta-Beat.src) (Python 2.7)
 
 ## Functionality
 
-- *Forced DA Analysis* - Script to analyse forced DA. ([**forced_da_analysis.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/forced_da_analysis.py))
-- *Machine Settings Info* - Prints an overview over the machine settings at a given time. ([**machine_settings_info.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/machine_settings_info.py))
-- *HTCondor Job Submitter* - Allows to generate jobs based on a templates and submit them to HTCondor. ([**job_submitter.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/job_submitter.py))
-- *BSRT Logger* and *BSRT Analysis* - Saves data coming straight from LHC BSRT FESA class and allows subsequent analysis. ([**BSRT_logger.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/BSRT_logger.py) & [**BSRT_analysis.py**](https://github.com/pylhc/PyLHC/blob/master/pylhc/BSRT_analysis.py) )
+- *Forced DA Analysis* - Script to analyse forced DA. ([**forced_da_analysis.py**](pylhc/forced_da_analysis.py))
+- *Machine Settings Info* - Prints an overview over the machine settings at a given time. ([**machine_settings_info.py**](pylhc/machine_settings_info.py))
+- *HTCondor Job Submitter* - Allows to generate jobs based on a templates and submit them to HTCondor. ([**job_submitter.py**](pylhc/job_submitter.py))
+- *BSRT Logger* and *BSRT Analysis* - Saves data coming straight from LHC BSRT FESA class and allows subsequent analysis. ([**BSRT_logger.py**](pylhc/BSRT_logger.py) & [**BSRT_analysis.py**](pylhc/BSRT_analysis.py) )
 
-### Tests
+## Quality checks
 
-- Pytest unit tests are run automatically after each commit via 
-[Travis-CI](https://travis-ci.com/pylhc/PyLHC). 
+- Pytest unit tests are run automatically after each commit via [Travis-CI](https://travis-ci.com/pylhc/PyLHC).
+- Additional checks for code-complexity, design-rules, test-coverage and duplication are made through [CodeClimate](https://codeclimate.com/github/pylhc/PyLHC).
+- Pull requests implementing functionality or fixes are merged into the master branch after passing CI, and a reviewer's approval.
 
-### Maintainability
-
-- Additional checks for code-complexity, design-rules, test-coverage, duplication on 
-[CodeClimate](https://codeclimate.com/github/pylhc/PyLHC)
-
-- Direct commits to master are forbidden.
-
-## Hints for Developers
-
-### Install in Editable Mode
-
-In case you want to install `pylhc` as a development package
-from the current folder, you can use:
-
-```
-git clone https://github.com/pylhc/pylhc
-python -m pip install --editable pylhc
-```
-
-This installs the package as a link into the python environment and any changes 
-are reflected immediately, without the need to reinstall.
-
-#### Dependencies 
-
-```
-python -m pip install -e pylhc
-```
-
-will also hence install the required dependencies. 
-
-If you want to install more dependencies, you can use for example:
-
-```
-python -m pip install -e pylhc[test]
-python -m pip install -e pylhc[setup]
-python -m pip install -e pylhc[test,doc]
-python -m pip install -e pylhc[all]
-```
-where the last one installs **all** dependencies defined in `setup.py`.
- 
-Note that the default dependencies and pylhc-as-link are also always installed.
- 
 ## Authors
 
 * **pyLHC/OMC-Team** - *Working Group* - [pyLHC](https://github.com/orgs/pylhc/teams/omc-team)
 
 ## License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE.md) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
