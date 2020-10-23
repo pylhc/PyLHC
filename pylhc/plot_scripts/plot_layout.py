@@ -1,5 +1,5 @@
-import tfs
 import pandas as pd 
+import numpy as np
 
 ELEMENTSTYLE = {
     'QUADRUPOLE': {'color': 'royalblue'},
