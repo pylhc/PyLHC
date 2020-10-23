@@ -5,14 +5,13 @@ Constants: Machine Settings Info
 Constants for the machine settings info.
 
 :module: constants.machine_settings_info
-:author: jdilly
 
 """
+from pylhc.constants.general import TFS_SUFFIX
 # TFS-File Conventions #########################################################
 # Filename
-ext = ".tfs"
-info_name = f"machine_settings{ext}"
-knobdef_suffix = f"_definition{ext}"
+info_name = f"machine_settings{TFS_SUFFIX}"
+knobdef_suffix = f"_definition{TFS_SUFFIX}"
 
 # Columns
 column_knob = "KNOB"

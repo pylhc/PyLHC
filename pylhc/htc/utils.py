@@ -70,9 +70,12 @@ def create_subfile_from_job(cwd: Path, job: str):
     return subfile
 
 
-def submit_jobfile(jobfile: Path):
+def submit_jobfile(jobfile: Path, ssh: str):
     """ Submit subfile to htcondor via subprocess """
-    status = _start_subprocess([CMD_SUBMIT, jobfile])
+    proc_args = [CMD_SUBMIT, jobfile]
+    if ssh:
+        proc_args = ['ssh', ssh] + proc_args
+    status = _start_subprocess(proc_args)
     if status:
         raise RuntimeError("Submit to HTCondor was not successful!")
     else:
