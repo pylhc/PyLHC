@@ -15,6 +15,7 @@ from generic_parser import DotDict
 from pylhc.constants.external_paths import SIXDESK_UTILS, MADX_BIN
 
 # Program Paths ----------------------------------------------------------------
+from pylhc.sixdesk_tools.post_process_da import ALOST1, ALOST2, SEED, ANGLE
 
 SETENV_SH = SIXDESK_UTILS / 'set_env.sh'
 MAD_TO_SIXTRACK_SH = SIXDESK_UTILS / 'mad6t.sh'
@@ -57,6 +58,13 @@ STAGE_ORDER = ['create_jobs', 'submit_mask', 'check_input',
                'submit_sixtrack', 'check_sixtrack_output',
                'sixdb_load', 'sixdb_cmd', 'final']
 STAGES = DotDict({key: key for key in STAGE_ORDER})
+
+
+# SixDB and Postprocess ---
+
+HEADER_NTOTAL, HEADER_INFO, HEADER_HINT = "NTOTAL", "INFO", "HINT"
+MEAN, STD, MIN, MAX, N = 'MEAN', 'STD', 'MIN', 'MAX', "N"
+SEED, ANGLE, ALOST1, ALOST2, AMP = 'SEED', 'ANGLE', 'ALOST1', 'ALOST2', 'A'
 
 
 # Workspace Paths --------------------------------------------------------------
@@ -114,3 +122,5 @@ def get_tfs_da_seed_stats_path(jobname: str, basedir: Path) -> Path:
 
 def get_tfs_da_angle_stats_path(jobname: str, basedir: Path) -> Path:
     return get_autosix_results_path(jobname, basedir) / f'{jobname}_da_per_angle.tfs'
+
+
