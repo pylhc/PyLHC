@@ -1,6 +1,6 @@
 # <img src="https://twiki.cern.ch/twiki/pub/BEABP/Logos/OMC_logo.png" height="28"> PyLHC Tools
 
-[![Travis (.com)](https://img.shields.io/travis/com/pylhc/PyLHC.svg?style=popout)](https://travis-ci.com/pylhc/PyLHC/)
+[![Cron Testing](https://github.com/pylhc/PyLHC/workflows/Cron%20Testing/badge.svg)](https://github.com/pylhc/PyLHC/actions?query=workflow%3A%22Cron+Testing%22)
 [![Code Climate coverage](https://img.shields.io/codeclimate/coverage/pylhc/PyLHC.svg?style=popout)](https://codeclimate.com/github/pylhc/PyLHC)
 [![Code Climate maintainability (percentage)](https://img.shields.io/codeclimate/maintainability-percentage/pylhc/PyLHC.svg?style=popout)](https://codeclimate.com/github/pylhc/PyLHC)
 [![GitHub last commit](https://img.shields.io/github/last-commit/pylhc/PyLHC.svg?style=popout)](https://github.com/pylhc/PyLHC/)
