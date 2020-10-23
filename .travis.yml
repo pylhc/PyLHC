@@ -15,7 +15,7 @@ stages:
 # Default python version that will be inherited
 # Additional ones can be defined later
 language: python
-python: 3.6
+python: 3.7
 
 email:
   on_success: never
@@ -25,8 +25,8 @@ email:
 # Install omc3 and pyjapc manually
 _manual_install: &manual_install
   install:
-    - python -m pip install -e git+git://github.com/pylhc/omc3.git#egg=omc3
-    - python -m pip install -e git+https://gitlab.cern.ch/scripting-tools/pyjapc.git#egg=pyjapc
+#    - python -m pip install -e git+git://github.com/pylhc/omc3.git#egg=omc3
+    - python -m pip install ".[test]"
 
 
 jobs:
@@ -40,7 +40,7 @@ jobs:
         - chmod +x ./cc-test-reporter
         - ./cc-test-reporter before-build
       script:
-        - python setup.py test --pytest-args='--mpl'
+        - python -m pytest -m "not cern_network" --mpl --cov-report xml --cov=pylhc
       after_script:
         - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
 
@@ -49,18 +49,12 @@ jobs:
       stage: test-basic
       <<: *manual_install
       script:
-        - python setup.py test --pytest-args='--mpl -o python_classes=BasicTests'
+        - python -m pytest -m "not cern_network" --mpl --cov-report xml --cov=pylhc
 
 
     # Define additional python versions for tests
     - <<: *test-full
-      python: 3.7
-
-    - <<: *test-full
       python: 3.8
-
-    - <<: *test-basic
-      python: 3.7
 
     - <<: *test-basic
       python: 3.8

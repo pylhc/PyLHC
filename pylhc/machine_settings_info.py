@@ -36,12 +36,12 @@ from collections import OrderedDict
 from pathlib import Path
 
 import tfs
-from generic_parser import DotDict, entrypoint, EntryPointParameters
+from generic_parser import DotDict, EntryPointParameters, entrypoint
 from omc3.utils import logging_tools
-from omc3.utils.time_tools import AcceleratorDatetime, AccDatetime
+from omc3.utils.time_tools import AccDatetime, AcceleratorDatetime
 
 from pylhc.constants import machine_settings_info as const
-from pylhc.data_extract.lsa import LSA, COL_NAME as lsa_col_name
+from pylhc.data_extract.lsa import COL_NAME as lsa_col_name, LSA
 
 LOG = logging_tools.get_logger(__name__)
 

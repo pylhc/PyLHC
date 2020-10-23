@@ -91,7 +91,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import tfs
-from generic_parser import entrypoint, EntryPointParameters
+from generic_parser import EntryPointParameters, entrypoint
 from generic_parser.entry_datatypes import DictAsString
 from generic_parser.entrypoint_parser import save_options_to_config
 from generic_parser.tools import print_dict_tree
@@ -99,8 +99,8 @@ from omc3.utils import logging_tools
 
 import pylhc.htc.mask as mask_processing
 import pylhc.htc.utils as htcutils
-from pylhc.htc.utils import (COLUMN_SHELL_SCRIPT, COLUMN_JOB_DIRECTORY,
-                             JOBFLAVOURS, HTCONDOR_JOBLIMIT, EXECUTEABLEPATH)
+from pylhc.htc.utils import (COLUMN_JOB_DIRECTORY, COLUMN_SHELL_SCRIPT, EXECUTEABLEPATH,
+                             HTCONDOR_JOBLIMIT, JOBFLAVOURS)
 
 JOBSUMMARY_FILE = 'Jobs.tfs'
 JOBDIRECTORY_PREFIX = 'Job'
