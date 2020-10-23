@@ -46,7 +46,7 @@ The latter tools can be found in [omc3](https://github.com/pylhc/omc3) (Python 3
 
 ## Quality checks
 
-- Pytest unit tests are run automatically after each commit via [Travis-CI](https://travis-ci.com/pylhc/PyLHC).
+- Unit and accuracy tests are run automatically through CI [Github Actions](https://github.com/pylhc/PyLHC/actions). See our workflows in this [readme](.github/workflows/README.md).
 - Additional checks for code-complexity, design-rules, test-coverage and duplication are made through [CodeClimate](https://codeclimate.com/github/pylhc/PyLHC).
 - Pull requests implementing functionality or fixes are merged into the master branch after passing CI, and a reviewer's approval.
 
