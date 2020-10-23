@@ -26,7 +26,7 @@ email:
 _manual_install: &manual_install
   install:
     - python -m pip install -e git+git://github.com/pylhc/omc3.git#egg=omc3
-    - python -m pip install -e git+https://gitlab.cern.ch/scripting-tools/pyjapc.git#egg=pyjapc
+    - python -m pip install .
 
 
 jobs:
