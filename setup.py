@@ -57,7 +57,7 @@ EXTRA_DEPENDENCIES = {
         "hypothesis>=5.0.0",
         "attrs>=19.2.0",
     ],
-    "doc": ["sphinx", "travis-sphinx", "sphinx_rtd_theme"],
+    "doc": ["sphinx", "sphinx_rtd_theme"],
 }
 EXTRA_DEPENDENCIES.update(
     {"all": [elem for list_ in EXTRA_DEPENDENCIES.values() for elem in list_]}
