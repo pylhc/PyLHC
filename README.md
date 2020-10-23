@@ -14,7 +14,6 @@ This package is a collection of useful scripts and tools for the Optics Measurem
 - General documentation of the OMC-Teams software on <https://twiki.cern.ch/twiki/bin/view/BEABP/OMC>
 
 ## Getting Started
-## Getting Started
 
 This  package is `Python 3.7+` compatible, but not yet deployed to PyPI.
 The best way to install is though pip and VCS:

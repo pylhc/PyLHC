@@ -18,8 +18,6 @@ import pathlib
 import sys
 import warnings
 
-# warnings.filterwarnings("ignore", message="numpy.dtype size changed")
-# warnings.filterwarnings("ignore", message="numpy.ufunc size changed")
 
 TOPLEVEL_DIR = pathlib.Path(__file__).parent.parent.absolute()
 ABOUT_FILE = TOPLEVEL_DIR / "pylhc" / "__init__.py"

@@ -19,7 +19,7 @@ def test_job_creation_and_localrun():
 def test_htc_submit():
     """ This test is here for local testing only. You need to adapt the path
     and delete the results afterwards manually (so you can check them before."""
-    user = 'fesoubel'
+    user = 'jdilly'
     path = Path('/', 'afs', 'cern.ch', 'user', user[0], user, 'htc_temp')
 
     try:
