@@ -1,4 +1,4 @@
-# Build documentation
+# Build and publish documentation
 name: Build and upload documentation
 
 defaults:

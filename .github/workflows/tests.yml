@@ -1,5 +1,5 @@
-# Runs all tests not flagged as "extended" with a pytest marker
-name: Basic Tests
+# Runs all tests not flagged as "cern_network" with a pytest marker
+name: Tests
 
 defaults:
   run:
