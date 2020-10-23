@@ -45,7 +45,7 @@ python -m pip install git+https://gitlab.cern.ch/scripting-tools/pyjapc.git#egg=
 This package provides tools which can be useful for working with accelerators, but are not neccessary for
 optics measurements analysis.
 
-The latter tools can be found in [OMC3](https://github.com/pylhc/omc3) (Python 3.6) or [Beta-Beat.src](https://github.com/pylhc/Beta-Beat.src) (Python 2.7)
+The latter tools can be found in [OMC3](https://github.com/pylhc/omc3) (Python 3.7+) or [Beta-Beat.src](https://github.com/pylhc/Beta-Beat.src) (Python 2.7)
 
 ## Functionality
 
