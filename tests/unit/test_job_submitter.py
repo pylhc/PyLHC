@@ -4,9 +4,12 @@ from contextlib import contextmanager
 from pathlib import Path
 
 import pytest
-
 from generic_parser import DotDict
-from pylhc.job_submitter import main as job_submit
+
+try:
+    from pylhc.job_submitter import main as job_submit
+except SystemExit:  # might have triggered exit() because htcondor not found if not on linux
+    pass  # let the skipif marker take care if the rest
 
 
 @pytest.mark.skipif(
