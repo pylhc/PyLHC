@@ -35,7 +35,7 @@ DEPENDENCIES = [
     "matplotlib>=3.2.0",
     "pjlsa>=0.0.14",
     "pytimber>=2.8.0",
-    "htcondor>=8.9.2",
+    "htcondor>=8.9.2 ; sys_platform=='linux'",
     "tfs-pandas>=2.0",
     "generic-parser>=1.0.6",
     "parse>=1.15.0",
