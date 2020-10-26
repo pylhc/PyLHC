@@ -61,9 +61,9 @@ pip install --editable PyLHC
 You can install extra dependencies (as defined in `setup.py`) suited to your use case with the following commands:
 ```
 pip install --editable PyLHC[tech]
-pip install --editable omc3[test]
-pip install --editable omc3[test,doc]
-pip install --editable omc3[all]
+pip install --editable PyLHC[test]
+pip install --editable PyLHC[test,doc]
+pip install --editable PyLHC[all]
 ```
 
 Open an issue, make your changes in a branch and submit a pull request.
