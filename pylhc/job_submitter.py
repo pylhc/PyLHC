@@ -85,6 +85,7 @@ import itertools
 import multiprocessing
 import re
 import subprocess
+import sys
 from functools import partial
 from pathlib import Path
 
@@ -114,6 +115,13 @@ SCRIPT_EXTENSIONS = {
 }
 
 LOG = logging_tools.get_logger(__name__)
+
+try:
+    import htcondor
+except ImportError:
+    platform = "macOS" if sys.platform == "darwin" else "windows"
+    LOG.error(f"htcondor python bindings are linux-only, this module is not callable on {platform}")
+    exit()
 
 
 def get_params():

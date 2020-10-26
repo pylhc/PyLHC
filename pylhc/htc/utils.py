@@ -33,6 +33,7 @@ try:
 except ImportError:
     platform = "macOS" if sys.platform == "darwin" else "windows"
     LOG.error(f"htcondor python bindings are linux-only, this module is not callable on {platform}")
+    exit()
 
 SHEBANG = "#!/bin/bash"
 SUBFILE = "queuehtc.sub"
