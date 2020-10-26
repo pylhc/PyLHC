@@ -19,14 +19,20 @@ The maximum runtime of one job can be specified, standard is 8h.
 """
 import logging
 import subprocess
+import sys
 from pathlib import Path
 
-import htcondor
 from pandas import DataFrame
 
 from pylhc.constants.external_paths import MADX_BIN, PYTHON2_BIN, PYTHON3_BIN
 
 LOG = logging.getLogger(__name__)
+
+try:
+    import htcondor
+except ImportError:
+    platform = "macOS" if sys.platform == "darwin" else "windows"
+    LOG.error(f"htcondor python bindings are linux-only, this module is not callable on {platform}")
 
 SHEBANG = "#!/bin/bash"
 SUBFILE = "queuehtc.sub"
