@@ -23,7 +23,11 @@ from pathlib import Path
 
 from pandas import DataFrame
 
-import htcondor
+try:
+    import htcondor
+except ImportError:  # will be handled by job_submitter
+    pass
+
 from pylhc.constants.external_paths import MADX_BIN, PYTHON2_BIN, PYTHON3_BIN
 
 LOG = logging.getLogger(__name__)
