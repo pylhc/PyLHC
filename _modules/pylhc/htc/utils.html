@@ -176,12 +176,17 @@
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">import</span> <span class="nn">htcondor</span>
 <span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">DataFrame</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">htcondor</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>  <span class="c1"># will be handled by job_submitter</span>
+    <span class="k">pass</span>
 
 <span class="kn">from</span> <span class="nn">pylhc.constants.external_paths</span> <span class="kn">import</span> <span class="n">MADX_BIN</span><span class="p">,</span> <span class="n">PYTHON2_BIN</span><span class="p">,</span> <span class="n">PYTHON3_BIN</span>
 
 <span class="n">LOG</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
 
 <span class="n">SHEBANG</span> <span class="o">=</span> <span class="s2">&quot;#!/bin/bash&quot;</span>
 <span class="n">SUBFILE</span> <span class="o">=</span> <span class="s2">&quot;queuehtc.sub&quot;</span>
