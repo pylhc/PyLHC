@@ -13,7 +13,7 @@ except SystemExit:  # might have triggered exit() because htcondor not found if 
 
 
 @pytest.mark.skipif(
-    sys.platform != "linux", reason="htcondor python bindings from PyPI are only " "on linux"
+    sys.platform != "linux", reason="htcondor python bindings from PyPI are only on linux"
 )
 class TestHTCondorSubmitter:
     def test_job_creation_and_localrun(self):
