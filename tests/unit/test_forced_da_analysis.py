@@ -1,8 +1,12 @@
 from pathlib import Path
 
+import matplotlib
 import pytest
 
 from pylhc.forced_da_analysis import main as fda_analysis
+
+# Forcing non-interactive Agg backend so rendering is done similarly across platforms during tests
+matplotlib.use("Agg")
 
 INPUT = Path(__file__).parent.parent / 'inputs'
 

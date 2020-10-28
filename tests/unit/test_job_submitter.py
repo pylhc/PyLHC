@@ -1,3 +1,4 @@
+import sys
 import tempfile
 from contextlib import contextmanager
 from pathlib import Path
@@ -5,32 +6,38 @@ from pathlib import Path
 import pytest
 from generic_parser import DotDict
 
-from pylhc.job_submitter import main as job_submit
+try:
+    from pylhc.job_submitter import main as job_submit
+except SystemExit:  # might have triggered exit() because htcondor not found if not on linux
+    pass  # let the skipif marker take care if the rest
 
 
-def test_job_creation_and_localrun():
-    with _create_setup() as (args, setup):
-        setup.update(run_local=True)
-        job_submit(**setup)
-        _test_output(args)
-
-
-@pytest.mark.cern_network
-def test_htc_submit():
-    """ This test is here for local testing only. You need to adapt the path
-    and delete the results afterwards manually (so you can check them before."""
-    user = 'jdilly'
-    path = Path('/', 'afs', 'cern.ch', 'user', user[0], user, 'htc_temp')
-
-    try:
-        path.mkdir(exist_ok=True)
-    except IOError:
-        return
-    else:
-        with _create_setup(path) as (args, setup):
+@pytest.mark.skipif(
+    sys.platform != "linux", reason="htcondor python bindings from PyPI are only on linux"
+)
+class TestHTCondorSubmitter:
+    def test_job_creation_and_localrun(self):
+        with _create_setup() as (args, setup):
+            setup.update(run_local=True)
             job_submit(**setup)
-            _test_output(args, post_run=False)
-    # _test_output(args, post_run=True)  # you can use this if you like after htcondor is done
+            _test_output(args)
+
+    @pytest.mark.cern_network
+    def test_htc_submit(self):
+        """ This test is here for local testing only. You need to adapt the path
+        and delete the results afterwards manually (so you can check them before."""
+        user = "jdilly"
+        path = Path("/", "afs", "cern.ch", "user", user[0], user, "htc_temp")
+
+        try:
+            path.mkdir(exist_ok=True)
+        except IOError:
+            return
+        else:
+            with _create_setup(path) as (args, setup):
+                job_submit(**setup)
+                _test_output(args, post_run=False)
+        # _test_output(args, post_run=True)  # you can use this if you like after htcondor is done
 
 
 # Helper -----------------------------------------------------------------------
@@ -38,7 +45,7 @@ def test_htc_submit():
 
 @contextmanager
 def _create_setup(afs_path: Path = None):
-    out_name = 'out.txt'
+    out_name = "out.txt"
     out_dir = "Outputdir"
 
     with tempfile.TemporaryDirectory() as cwd:
@@ -50,11 +57,11 @@ def _create_setup(afs_path: Path = None):
             cwd=cwd,
             out_name=out_name,
             out_dir=out_dir,
-            id='%(PARAM1)s.%(PARAM2)d',
-            mask_name='test_script.mask',
-            ext='.sh',
+            id="%(PARAM1)s.%(PARAM2)d",
+            mask_name="test_script.mask",
+            ext=".sh",
             out_file=Path(out_dir, out_name),
-            p1_list=['a', 'b'],
+            p1_list=["a", "b"],
             p2_list=[1, 2, 3],
         )
 
@@ -63,14 +70,11 @@ def _create_setup(afs_path: Path = None):
             f.write(f'echo "{args.id}" > "{args.out_file}"\n')
 
         setup = dict(
-            executable='/bin/bash',
+            executable="/bin/bash",
             script_extension=args.ext,
             job_output_dir=out_dir,
             mask=str(mask_path),
-            replace_dict=dict(
-                PARAM1=args.p1_list,
-                PARAM2=args.p2_list,
-            ),
+            replace_dict=dict(PARAM1=args.p1_list, PARAM2=args.p2_list,),
             jobid_mask=args.id,
             jobflavour="workday",
             resume_jobs=True,
@@ -100,4 +104,4 @@ def _test_output(args, post_run=True):
                 assert out_file_path.is_file()
 
                 with out_file_path.open("r") as f:
-                    assert f.read().strip('\n') == current_id
+                    assert f.read().strip("\n") == current_id

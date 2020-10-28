@@ -35,11 +35,10 @@ DEPENDENCIES = [
     "matplotlib>=3.2.0",
     "pjlsa>=0.0.14",
     "pytimber>=2.8.0",
-    "htcondor>=8.9.2",
+    "htcondor>=8.9.2 ; sys_platform=='linux'",  # no bindings for macOS or windows on PyPI
     "tfs-pandas>=2.0",
     "generic-parser>=1.0.6",
     "parse>=1.15.0",
-    # to be installed by user (see travis.yml and README):
     "omc3@https://github.com/pylhc/omc3/tarball/master",
 ]
 
@@ -57,7 +56,7 @@ EXTRA_DEPENDENCIES = {
         "hypothesis>=5.0.0",
         "attrs>=19.2.0",
     ],
-    "doc": ["sphinx", "travis-sphinx", "sphinx_rtd_theme"],
+    "doc": ["sphinx", "sphinx_rtd_theme"],
 }
 EXTRA_DEPENDENCIES.update(
     {"all": [elem for list_ in EXTRA_DEPENDENCIES.values() for elem in list_]}

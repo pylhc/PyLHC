@@ -1,6 +1,6 @@
 # <img src="https://twiki.cern.ch/twiki/pub/BEABP/Logos/OMC_logo.png" height="28"> PyLHC Tools
 
-[![Travis (.com)](https://img.shields.io/travis/com/pylhc/PyLHC.svg?style=popout)](https://travis-ci.com/pylhc/PyLHC/)
+[![Cron Testing](https://github.com/pylhc/PyLHC/workflows/Cron%20Testing/badge.svg)](https://github.com/pylhc/PyLHC/actions?query=workflow%3A%22Cron+Testing%22)
 [![Code Climate coverage](https://img.shields.io/codeclimate/coverage/pylhc/PyLHC.svg?style=popout)](https://codeclimate.com/github/pylhc/PyLHC)
 [![Code Climate maintainability (percentage)](https://img.shields.io/codeclimate/maintainability-percentage/pylhc/PyLHC.svg?style=popout)](https://codeclimate.com/github/pylhc/PyLHC)
 [![GitHub last commit](https://img.shields.io/github/last-commit/pylhc/PyLHC.svg?style=popout)](https://github.com/pylhc/PyLHC/)
@@ -46,7 +46,7 @@ The latter tools can be found in [omc3](https://github.com/pylhc/omc3) (Python 3
 
 ## Quality checks
 
-- Pytest unit tests are run automatically after each commit via [Travis-CI](https://travis-ci.com/pylhc/PyLHC).
+- Unit and accuracy tests are run automatically through CI [Github Actions](https://github.com/pylhc/PyLHC/actions). See our workflows in this [readme](.github/workflows/README.md).
 - Additional checks for code-complexity, design-rules, test-coverage and duplication are made through [CodeClimate](https://codeclimate.com/github/pylhc/PyLHC).
 - Pull requests implementing functionality or fixes are merged into the master branch after passing CI, and a reviewer's approval.
 
@@ -61,9 +61,9 @@ pip install --editable PyLHC
 You can install extra dependencies (as defined in `setup.py`) suited to your use case with the following commands:
 ```
 pip install --editable PyLHC[tech]
-pip install --editable omc3[test]
-pip install --editable omc3[test,doc]
-pip install --editable omc3[all]
+pip install --editable PyLHC[test]
+pip install --editable PyLHC[test,doc]
+pip install --editable PyLHC[all]
 ```
 
 Open an issue, make your changes in a branch and submit a pull request.
