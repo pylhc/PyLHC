@@ -42,7 +42,8 @@ The latter tools can be found in [omc3](https://github.com/pylhc/omc3) (Python 3
 - *Forced DA Analysis* - Script to analyse forced DA. ([**forced_da_analysis.py**](pylhc/forced_da_analysis.py))
 - *Machine Settings Info* - Prints an overview over the machine settings at a given time. ([**machine_settings_info.py**](pylhc/machine_settings_info.py))
 - *HTCondor Job Submitter* - Allows to generate jobs based on a templates and submit them to HTCondor. ([**job_submitter.py**](pylhc/job_submitter.py))
-- *BSRT Logger* and *BSRT Analysis* - Saves data coming straight from LHC BSRT FESA class and allows subsequent analysis. ([**BSRT_logger.py**](pylhc/BSRT_logger.py) & [**BSRT_analysis.py**](pylhc/BSRT_analysis.py) )
+- *BSRT Logger* and *BSRT Analysis* - Saves data coming straight from LHC BSRT FESA class and allows subsequent analysis. ([**BSRT_logger.py**](pylhc/BSRT_logger.py) & [**BSRT_analysis.py**](pylhc/BSRT_analysis.py))
+- *BPM Calibration Factors* - Compute the BPM calibration factors using ballistic optics. Two methods are available: using the beta function and using the dispersion. ([**BPM_calibration.py**](pylhc/BPM_calibration.py))
 
 ## Quality checks
 
