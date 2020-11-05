@@ -19,6 +19,8 @@ from pylhc.constants.calibration import (
     CALIBRATION,
     IPS,
     LABELS,
+    METHODS,
+    MODEL_TFS,
     TFS_INDEX,
 )
 from pylhc.constants.general import (
@@ -39,17 +41,25 @@ def _get_params() -> dict:
             flags=["--input", "-i"],
             required=True,
             type=Path,
-            help="Measurements path"),
+            help="Measurements path."),
         model_path=dict(
             flags=["--model", "-m"],
             type=Path,
             required=True,
-            help="Model's path"),
+            help="Model path associated to the measurements."),
         output_path=dict(
             flags=["--outputdir", "-o"],
             type=Path,
             required=True,
-            help="Output directory where to write the calibration factors"),
+            help="Output directory where to write the calibration factors."),
+        method=dict(
+            flags=["--method"],
+            type=str,
+            required=False,
+            choices=METHODS,
+            default=METHODS[0],
+            help=("Method to be used to compute the calibration factors. "
+                  "The Beta function is used by default.")),
     )
 
 
@@ -200,7 +210,7 @@ def main(opt):
     # Load the tfs for beta from phase, beta from amp and from the model
     beta_phase_tfs = _get_beta_from_phase(opt.input_path)
     beta_amp_tfs = _get_beta_from_amp(opt.input_path)
-    model_tfs = tfs.read(opt.model_path, index=TFS_INDEX)
+    model_tfs = tfs.read(opt.model_path / MODEL_TFS, index=TFS_INDEX)
 
     # Compute the calibration factors and their errors for each plane
     c_factors = dict()

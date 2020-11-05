@@ -16,9 +16,13 @@ BETA_FREE_PHASE = 'getbeta{}_free.out'
 BETA_FREE_AMP = 'getampbeta{}_free.out'
 BETA_PHASE = 'getbeta{}.out'
 BETA_AMP = 'getampbeta{}.out'
+MODEL_TFS = 'twiss.dat'
 
 # File name for calibration output
 CALIBRATION = 'calibration_{}.out'
+
+# Methods to be used to compulte the calibration factors
+METHODS = ('beta', 'dispersion')
 
 # Define BPMs to be used for a combination of IP and Beam
 BPMS = {1: {1: ['BPMR.5L1.B1',
