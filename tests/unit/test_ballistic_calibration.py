@@ -69,7 +69,7 @@ def test_no_model_tfs(tmp_path):
                          model_path=pathlib.Path('oopsie'),
                          output_path=tmp_path)
     
-    assert "No such file or directory: 'oopsie/twiss.dat'" in str(e.value)
+    assert "No such file or directory" in str(e.value)
 
 
 def test_bad_beam():
