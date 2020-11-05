@@ -20,12 +20,12 @@ def test_calibration_same_betabeat(tmp_path):
                                output_path=tmp_path)
 
     # Let's open the tfs files we just created
-    x_tfs = tfs.read(tmp_path / 'calibration_x.out')
-    y_tfs = tfs.read(tmp_path / 'calibration_y.out')
+    x_tfs = tfs.read(tmp_path / 'calibration_x.tfs')
+    y_tfs = tfs.read(tmp_path / 'calibration_y.tfs')
     
     # And the ones created by BetaBeat.src for the same measurements
-    expected_x_tfs = tfs.read(EXPECTED_OUTPUT / 'calibration_x.out')
-    expected_y_tfs = tfs.read(EXPECTED_OUTPUT / 'calibration_y.out')
+    expected_x_tfs = tfs.read(EXPECTED_OUTPUT / 'calibration_x.tfs')
+    expected_y_tfs = tfs.read(EXPECTED_OUTPUT / 'calibration_y.tfs')
 
     # Check all the BPMs are indeed the same 
     assert x_tfs['NAME'].equals(expected_x_tfs['NAME'])
@@ -60,7 +60,7 @@ def test_no_beta_tfs(tmp_path):
                          model_path=MODEL,
                          output_path=tmp_path)
 
-    assert "File getbetax.out couldn't be found in directory" in str(e.value)
+    assert "File beta_phase_x.tfs couldn't be found in directory" in str(e.value)
 
 
 def test_no_model_tfs(tmp_path):

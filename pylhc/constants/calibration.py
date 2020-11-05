@@ -2,24 +2,21 @@
 IPS = [1, 4, 5]
 
 # Constants for TFS files
-LABELS = ['S', 'CALIBRATION', 'ERROR_CALIBRATION', 'CALIBRATION_PHASE_FIT', 'ERROR_CALIBRATION_PHASE_FIT']
+LABELS = ['S',
+          'CALIBRATION',
+          'ERROR_CALIBRATION',
+          'CALIBRATION_PHASE_FIT',
+          'ERROR_CALIBRATION_PHASE_FIT']
 TFS_INDEX = 'NAME'
-BETA = 'BET{}'
-BETA_ERR = 'ERRBET{}'
-BETA_AMP_ERR = 'BET{}STD'
 
 # Estimation for the curve fit
 BETA_STAR_ESTIMATION = 200
 
-# File names for beta tfs
-BETA_FREE_PHASE = 'getbeta{}_free.out'
-BETA_FREE_AMP = 'getampbeta{}_free.out'
-BETA_PHASE = 'getbeta{}.out'
-BETA_AMP = 'getampbeta{}.out'
+# File names for the tfs model
 MODEL_TFS = 'twiss.dat'
 
 # File name for calibration output
-CALIBRATION = 'calibration_{}.out'
+CALIBRATION_NAME = 'calibration_'
 
 # Methods to be used to compulte the calibration factors
 METHODS = ('beta', 'dispersion')

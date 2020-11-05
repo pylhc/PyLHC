@@ -6,26 +6,26 @@ from scipy.optimize import curve_fit
 
 from generic_parser import EntryPointParameters, entrypoint
 from omc3.utils import logging_tools
+from omc3.optics_measurements.constants import (
+    AMP_BETA_NAME,
+    BETA,
+    BETA_NAME,
+    ERR,
+    EXT
+)
 from pylhc.constants.calibration import (
     BPMS,
-    BETA,
-    BETA_AMP,
-    BETA_AMP_ERR,
-    BETA_ERR,
-    BETA_PHASE,
-    BETA_FREE_AMP,
-    BETA_FREE_PHASE,
     BETA_STAR_ESTIMATION,
-    CALIBRATION,
+    CALIBRATION_NAME,
     IPS,
     LABELS,
     METHODS,
     MODEL_TFS,
-    TFS_INDEX,
+    TFS_INDEX
 )
 from pylhc.constants.general import (
     BEAMS,
-    PLANES,
+    PLANES
 )
 import tfs
 
@@ -66,7 +66,7 @@ def _get_params() -> dict:
 def _get_beta(beta, input_path):
     tfs_files = dict()
     for plane in PLANES:
-        beta_file = beta.format(plane.lower())
+        beta_file = f'{beta}{plane.lower()}{EXT}'
         expected_path = input_path / beta_file
 
         if not expected_path.is_file():
@@ -79,11 +79,11 @@ def _get_beta(beta, input_path):
 
 
 def _get_beta_from_phase(input_path):
-    return _get_beta(BETA_PHASE, input_path)
+    return _get_beta(BETA_NAME, input_path)
 
 
 def _get_beta_from_amp(input_path):
-    return _get_beta(BETA_AMP, input_path)
+    return _get_beta(AMP_BETA_NAME, input_path)
 
 
 def _get_beam_from_model(model_tfs):
@@ -159,10 +159,10 @@ def _get_calibration_factors(ip, plane, beta_phase_tfs, beta_amp_tfs, model_tfs)
 
     # Get the positions and the beta values for those BPMs
     positions = beta_phase_tfs.loc[bpms, 'S'].dropna()
-    beta_phase = beta_phase_tfs.loc[bpms, BETA.format(plane)].dropna()
-    beta_phase_err = beta_phase_tfs.loc[bpms, BETA_ERR.format(plane)].dropna()
-    beta_amp = beta_amp_tfs.loc[bpms, BETA.format(plane)].dropna()
-    beta_amp_err = beta_amp_tfs.loc[bpms, BETA_AMP_ERR.format(plane)].dropna()
+    beta_phase = beta_phase_tfs.loc[bpms, f'{BETA}{plane}'].dropna()
+    beta_phase_err = beta_phase_tfs.loc[bpms, f'{ERR}{BETA}{plane}'].dropna()
+    beta_amp = beta_amp_tfs.loc[bpms, f'{BETA}{plane}'].dropna()
+    beta_amp_err = beta_amp_tfs.loc[bpms, f'{ERR}{BETA}{plane}'].dropna()
 
     # Curve fit the beta from phase values
     beta_phase_fit, beta_phase_fit_err = _get_beta_fit(positions,
@@ -201,7 +201,7 @@ def _write_calibration_tfs(calibration_factors, plane, output_path):
     calibration_factors = calibration_factors.reset_index()
 
     # Write the TFS files for this plane
-    file_path = output_path / CALIBRATION.format(plane.lower())
+    file_path = output_path / f'{CALIBRATION_NAME}{plane.lower()}{EXT}'
     tfs.write_tfs(file_path, calibration_factors, save_index=False)
 
 
