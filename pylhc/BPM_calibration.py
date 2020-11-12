@@ -1,8 +1,8 @@
 from pathlib import Path
+from scipy.optimize import curve_fit
 import numpy as np
 import os
 import pandas as pd
-from scipy.optimize import curve_fit
 
 from generic_parser import EntryPointParameters, entrypoint
 from omc3.utils import logging_tools
@@ -151,7 +151,7 @@ def _get_factors_from_phase_fit(beta_phase_fit, beta_amp, beta_phase_fit_err, be
     return ratio_phasefit_amplitude, calibration_error
 
 
-def _get_calibration_factors(ip, plane, beta_phase_tfs, beta_amp_tfs, model_tfs):
+def _get_calibration_factors_beta(ip, plane, beta_phase_tfs, beta_amp_tfs, model_tfs):
     beam = _get_beam_from_model(model_tfs)
 
     # Filter our TFS files to only keep the BPMs for the selected IR
@@ -192,7 +192,7 @@ def _get_calibration_factors(ip, plane, beta_phase_tfs, beta_amp_tfs, model_tfs)
     return calibration_factors
 
 
-def _write_calibration_tfs(calibration_factors, plane, output_path):
+def _write_calibration_tfs(calibration_factors, plane, method, output_path):
     # Create the output directory
     os.makedirs(output_path.absolute(), exist_ok=True)
 
@@ -201,7 +201,9 @@ def _write_calibration_tfs(calibration_factors, plane, output_path):
     calibration_factors = calibration_factors.reset_index()
 
     # Write the TFS files for this plane
-    file_path = output_path / f'{CALIBRATION_NAME}{plane.lower()}{EXT}'
+    # The method chosen will change the tfs name
+    tfs_name = f'{CALIBRATION_NAME[method]}{plane.lower()}{EXT}'
+    file_path = output_path / tfs_name
     tfs.write_tfs(file_path, calibration_factors, save_index=False)
 
 
@@ -217,16 +219,22 @@ def main(opt):
     for plane in PLANES:
         c_factors[plane] = tfs.TfsDataFrame()
         for ip in IPS:
-            factors = _get_calibration_factors(ip,
-                                               plane,
-                                               beta_phase_tfs[plane],
-                                               beta_amp_tfs[plane],
-                                               model_tfs)
+            if opt.method == 'beta':
+                factors = _get_calibration_factors_beta(ip,
+                                                        plane,
+                                                        beta_phase_tfs[plane],
+                                                        beta_amp_tfs[plane],
+                                                        model_tfs)
+            elif opt.method == 'dispersion':
+                factors = 'lol fix me plz'
 
             c_factors[plane] = c_factors[plane].append(factors)
 
         # Write the TFS file to the desired output directory
-        _write_calibration_tfs(c_factors[plane], plane, opt.output_path)
+        _write_calibration_tfs(c_factors[plane], 
+                               plane, 
+                               opt.method, 
+                               opt.output_path)
 
     return c_factors
 

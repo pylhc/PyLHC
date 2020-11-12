@@ -15,11 +15,12 @@ BETA_STAR_ESTIMATION = 200
 # File names for the tfs model
 MODEL_TFS = 'twiss.dat'
 
-# File name for calibration output
-CALIBRATION_NAME = 'calibration_'
-
 # Methods to be used to compulte the calibration factors
 METHODS = ('beta', 'dispersion')
+
+# File name prefix for calibration output
+# end result example: {'beta': 'calibration_beta_.tfs', 'dispersion' ... }
+CALIBRATION_NAME = {m: f'calibration_{m}_' for m in METHODS}
 
 # Define BPMs to be used for a combination of IP and Beam
 BPMS = {1: {1: ['BPMR.5L1.B1',

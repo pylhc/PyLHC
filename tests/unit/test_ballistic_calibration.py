@@ -20,12 +20,12 @@ def test_calibration_same_betabeat(tmp_path):
                                output_path=tmp_path)
 
     # Let's open the tfs files we just created
-    x_tfs = tfs.read(tmp_path / 'calibration_x.tfs')
-    y_tfs = tfs.read(tmp_path / 'calibration_y.tfs')
+    x_tfs = tfs.read(tmp_path / 'calibration_beta_x.tfs')
+    y_tfs = tfs.read(tmp_path / 'calibration_beta_y.tfs')
     
     # And the ones created by BetaBeat.src for the same measurements
-    expected_x_tfs = tfs.read(EXPECTED_OUTPUT / 'calibration_x.tfs')
-    expected_y_tfs = tfs.read(EXPECTED_OUTPUT / 'calibration_y.tfs')
+    expected_x_tfs = tfs.read(EXPECTED_OUTPUT / 'calibration_beta_x.tfs')
+    expected_y_tfs = tfs.read(EXPECTED_OUTPUT / 'calibration_beta_y.tfs')
 
     # Check all the BPMs are indeed the same 
     assert x_tfs['NAME'].equals(expected_x_tfs['NAME'])
