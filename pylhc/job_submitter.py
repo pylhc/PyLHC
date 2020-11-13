@@ -159,7 +159,10 @@ def get_params():
     params.add_parameter(
         name="append_jobs",
         action="store_true",
-        help="Flag to rerun job with finer/wider grid, already existing points will not be reexecuted.",
+        help=(
+            "Flag to rerun job with finer/wider grid, already existing points will not be "
+            "reexecuted."
+        ),
     )
     params.add_parameter(
         name="dryrun",
@@ -170,7 +173,10 @@ def get_params():
     )
     params.add_parameter(
         name="replace_dict",
-        help="Dict containing the str to replace as keys and values a list of parameters to replace",
+        help=(
+            "Dict containing the str to replace as keys and values a list of parameters to "
+            "replace"
+        ),
         type=DictAsString,
         required=True,
     )

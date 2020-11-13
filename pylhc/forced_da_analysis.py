@@ -291,7 +291,7 @@ def get_params():
         normalized_emittance=dict(
             type=float,
             default=LHC_NOMINAL_EMITTANCE,
-            help=("Assumed NORMALIZED nominal emittance for the machine."),
+            help="Assumed NORMALIZED nominal emittance for the machine.",
         ),
         emittance_tfs=dict(
             type=PathOrDataframe, help="Dataframe or Path of pre-saved emittance tfs.",
@@ -553,7 +553,7 @@ def _filter_emittance_data(df, planes, window_length, limit):
     for plane in planes:
         LOG.debug(f"Filtering emittance data in plane {plane}.")
         col_nemittance = column_norm_emittance(plane)
-        col_err_nemittance = err_col(col_nemittance)
+        # col_err_nemittance = err_col(col_nemittance)
         col_mean = mean_col(col_nemittance)
         col_err_mean = err_col(col_mean)
 
@@ -906,7 +906,7 @@ def _do_fit(plane, kick_df, fit_type):
     action, emittance, rel_losses = _get_fit_data(kick_df, plane)
     init_guess = [INITIAL_DA_FIT * kick_df.headers[header_nominal_emittance(plane)]]
 
-    get_fit_param = {"linear": _linear_fit_parameters, "exponential": _exponential_fit_parameters,}[
+    get_fit_param = {"linear": _linear_fit_parameters, "exponential": _exponential_fit_parameters}[
         fit_type
     ]
 
@@ -1008,7 +1008,6 @@ def _convert_to_sigmas(plane, kick_df):
 
     # DA (in units of J) to DA_sigma
     da, da_err = kick_df.headers[header_da(plane)], kick_df.headers[header_da_error(plane)]
-    # da_sigma, da_sigma_err = np.sqrt(2*da/nominal_emittance), da_err / np.sqrt(2 * da * nominal_emittance)
     da_sigma, da_sigma_err = (
         np.sqrt(2 * da / emittance_mean),
         da_err / np.sqrt(2 * da * emittance_mean),

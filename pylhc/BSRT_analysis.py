@@ -54,7 +54,10 @@ def get_params():
             flags=["-o", "--outputdir"],
             type=str,
             default=None,
-            help="Directory in which plots and dataframe will be saved in. If omitted, no data will be saved.",
+            help=(
+                "Directory in which plots and dataframe will be saved in. If omitted, "
+                "no data will be saved."
+            ),
         ),
         starttime=dict(
             flags=["--starttime"],
@@ -69,7 +72,10 @@ def get_params():
         kick_df=dict(
             flags=["--kick_df"],
             default=None,
-            help=f"TFS with column {TIME_COLUMN} with time stamps to be added in the plots. Additionally, cross section at these timestamps will be plotted.",
+            help=(
+                f"TFS with column {TIME_COLUMN} with time stamps to be added in the plots. "
+                f"Additionally, cross section at these timestamps will be plotted.",
+            ),
         ),
         show_plots=dict(flags=["--show_plots"], type=bool, default=False, help="Show BSRT plots."),
     )

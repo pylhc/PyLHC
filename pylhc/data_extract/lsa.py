@@ -160,7 +160,7 @@ class LSAClient(pjlsa.LSAClient):
         for knob_factor in knob_settings:
             circuit = knob_factor.componentName
             param = self._parameterService.findParameterByName(circuit)
-            type = param.getParameterType().getName()
+            type_ = param.getParameterType().getName()
             madx_name = self.get_madx_name_from_circuit(circuit)
             if madx_name is None:
                 LOG.error(
@@ -170,7 +170,7 @@ class LSAClient(pjlsa.LSAClient):
             else:
                 LOG.debug(f"  Found component '{circuit}': {madx_name}, {knob_factor.factor}")
                 df.loc[madx_name, COL_CIRCUIT] = circuit
-                df.loc[madx_name, f"{PREF_DELTA}{type.upper()}"] = knob_factor.factor
+                df.loc[madx_name, f"{PREF_DELTA}{type_.upper()}"] = knob_factor.factor
         return df.fillna(0)
 
     def get_madx_name_from_circuit(self, circuit: str):

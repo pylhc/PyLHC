@@ -42,8 +42,7 @@ def parse_timestamp(thistime):
     sys.tracebacklimit = 0
     raise ValueError(
         "No appropriate input format found for start time of scan (-s).\n "
-        "---> Accepted input formats are:   "
-        + timefmatstring
+        "---> Accepted input formats are:   " + timefmatstring
     )
 
 
@@ -91,7 +90,7 @@ while True:
     allB1data.append(B1_image)
     allB2data.append(B2_image)
     t += 1
-    if t == (acquesitions_per_file):
+    if t == acquesitions_per_file:
         j += 1
         f1name = "data_BSRT_B1_" + B1_IMGtime_st + ".dat"
         f2name = "data_BSRT_B2_" + B2_IMGtime_st + ".dat"

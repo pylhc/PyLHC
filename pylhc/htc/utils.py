@@ -211,7 +211,8 @@ def _map_kwargs(add_dict):
         else:
             if choices is not None and value not in choices:
                 raise TypeError(
-                    f"{key} needs to be one of '{str(choices).strip('[]')}' but instead was '{value}'"
+                    f"{key} needs to be one of '{str(choices).strip('[]')}' but "
+                    f"instead was '{value}'"
                 )
             new[mapped] = _maybe_put_in_quotes(mapped, value)
 

@@ -67,7 +67,7 @@ LR_MAP = {1: "R", 2: "L"}
 
 
 def bsrt_emittance_key(beam, plane, type_):
-    key = {"fit_sigma": BSRT_EMITTANCE_SIGMA_FIT_KEY, "average": BSRT_EMITTANCE_AVERAGE_KEY,}[type_]
+    key = {"fit_sigma": BSRT_EMITTANCE_SIGMA_FIT_KEY, "average": BSRT_EMITTANCE_AVERAGE_KEY}[type_]
     return key.format(side=LR_MAP[beam], beam=beam, plane=PLANE_TO_HV[plane])
 
 

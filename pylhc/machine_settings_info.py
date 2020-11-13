@@ -192,9 +192,7 @@ def _get_beamprocess(acc_time: AccDatetime, regexp: str, accel: str) -> DotDict:
     fill_no, fill_bps = LSA.find_last_fill(acc_time, accel)
     beamprocess, start_time = _get_last_beamprocess(fill_bps, acc_time, regexp)
     bp_info = LSA.get_beamprocess_info(beamprocess)
-    bp_info.update(
-        {"name": beamprocess, "fill": fill_no, "start": start_time,}
-    )
+    bp_info.update({"name": beamprocess, "fill": fill_no, "start": start_time})
     return DotDict(bp_info)
 
 
@@ -226,7 +224,7 @@ def _get_optics(acc_time: AccDatetime, beamprocess: str, bp_start: AccDatetime) 
     """Get the info about the active optics at ``acc_time``."""
     optics_table = LSA.getOpticTable(beamprocess)
     optics, start_time = _get_last_optics(optics_table, beamprocess, bp_start, acc_time)
-    return DotDict({"name": optics, "start": start_time,})
+    return DotDict({"name": optics, "start": start_time})
 
 
 def _get_last_optics(
