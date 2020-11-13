@@ -25,4 +25,3 @@ head_context_category = "ContextCategory"
 head_beamprcess_description = "Description"
 head_optics = "Optics"
 head_optics_start = "Optics_Start"
-

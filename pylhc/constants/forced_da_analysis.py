@@ -10,14 +10,14 @@ from pylhc.constants.general import PLANE_TO_HV, TFS_SUFFIX
 RESULTS_DIR = "forced_da_analysis"
 
 ROLLING_AVERAGE_WINDOW = 100
-OUTLIER_LIMIT = .5 * 1e-6
+OUTLIER_LIMIT = 0.5 * 1e-6
 TIME_AROUND_KICKS_MIN = 10
 TIME_BEFORE_KICK_S = [30, 5]
 TIME_AFTER_KICK_S = [5, 30]
 YPAD = 0.05  # additional padding of the y axis for DA plots
 
 INITIAL_DA_FIT = 12  # initial DA for fitting in values of nominal emittance
-MAX_CURVEFIT_FEV = 10000    # Max number of curve_fit iterations
+MAX_CURVEFIT_FEV = 10000  # Max number of curve_fit iterations
 
 
 BWS_DIRECTIONS = ("IN", "OUT")
@@ -29,18 +29,18 @@ KICKFILE = "kick"
 
 
 def outfile_kick(plane) -> str:
-    return f'{KICKFILE}_fda_{plane.lower()}{TFS_SUFFIX}'
+    return f"{KICKFILE}_fda_{plane.lower()}{TFS_SUFFIX}"
 
 
 def outfile_emittance(plane) -> str:
-    return f'emittance_{plane.lower()}{TFS_SUFFIX}'
+    return f"emittance_{plane.lower()}{TFS_SUFFIX}"
 
 
 def outfile_emittance_bws(plane) -> str:
-    return f'emittance_bws_{plane.lower()}{TFS_SUFFIX}'
+    return f"emittance_bws_{plane.lower()}{TFS_SUFFIX}"
 
 
-OUTFILE_INTENSITY = f'intensity{TFS_SUFFIX}'
+OUTFILE_INTENSITY = f"intensity{TFS_SUFFIX}"
 
 # Plotting ---------------------------------------------------------------------
 
@@ -53,13 +53,13 @@ def outfile_plot(ptype, plane, ftype) -> str:
 
 # Timber Keys ------------------------------------------------------------------
 
-INTENSITY_KEY = 'LHC.BCTFR.A6R4.B{beam:d}:BEAM_INTENSITY'
+INTENSITY_KEY = "LHC.BCTFR.A6R4.B{beam:d}:BEAM_INTENSITY"
 
-BSRT_EMITTANCE_SIGMA_FIT_KEY = 'LHC.BSRT.5{side:s}4.B{beam:d}:FIT_SIGMA_{plane:s}'
-BSRT_EMITTANCE_AVERAGE_KEY = 'LHC.BSRT.5{side:s}4.B{beam:d}:AVERAGE_EMITTANCE_{plane:s}'
+BSRT_EMITTANCE_SIGMA_FIT_KEY = "LHC.BSRT.5{side:s}4.B{beam:d}:FIT_SIGMA_{plane:s}"
+BSRT_EMITTANCE_AVERAGE_KEY = "LHC.BSRT.5{side:s}4.B{beam:d}:AVERAGE_EMITTANCE_{plane:s}"
 BSRT_EMITTANCE_TO_METER = 1e-6  # Emittance is normalized and in um
 
-BWS_EMITTANCE_KEY = 'LHC.BWS.5{side:s}4.B{beam:d}{plane:s}.APP.{direction:s}:EMITTANCE_NORM'
+BWS_EMITTANCE_KEY = "LHC.BWS.5{side:s}4.B{beam:d}{plane:s}.APP.{direction:s}:EMITTANCE_NORM"
 BWS_EMITTANCE_TO_METER = 1e-6  # Emittance is normalized and in um
 
 
@@ -67,15 +67,14 @@ LR_MAP = {1: "R", 2: "L"}
 
 
 def bsrt_emittance_key(beam, plane, type_):
-    key = {
-        'fit_sigma': BSRT_EMITTANCE_SIGMA_FIT_KEY,
-        'average': BSRT_EMITTANCE_AVERAGE_KEY,
-    }[type_]
+    key = {"fit_sigma": BSRT_EMITTANCE_SIGMA_FIT_KEY, "average": BSRT_EMITTANCE_AVERAGE_KEY,}[type_]
     return key.format(side=LR_MAP[beam], beam=beam, plane=PLANE_TO_HV[plane])
 
 
 def bws_emittance_key(beam, plane, direction) -> str:
-    return BWS_EMITTANCE_KEY.format(side=LR_MAP[beam], beam=beam, plane=PLANE_TO_HV[plane], direction=direction)
+    return BWS_EMITTANCE_KEY.format(
+        side=LR_MAP[beam], beam=beam, plane=PLANE_TO_HV[plane], direction=direction
+    )
 
 
 # Headers ----------------------------------------------------------------------
