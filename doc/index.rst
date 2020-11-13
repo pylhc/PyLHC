@@ -1,21 +1,27 @@
-.. omc3 documentation master file, created by
-   sphinx-quickstart on Tue Oct  8 13:32:26 2013.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+Welcome to PyLHC's documentation!
+=================================
 
-Welcome to pyLHC's documentation!
-=====================================
+``PyLHC`` is a collection of useful scripts and tools for the OMC Team at CERN. `CERN <https://home.cern/>`_.
 
-Contents:
+
+Package Reference
+=================
 
 .. toctree::
-   :maxdepth: 2
+   :caption: Entrypoints
+   :maxdepth: 1
+   :glob:
 
-   root/index
-   constants/index
-   data_extract/index
-   htc/index
+   entrypoints/*
 
+
+.. toctree::
+   :caption: Modules
+   :maxdepth: 1
+   :glob:
+
+
+   modules/*
 
 
 Indices and tables
