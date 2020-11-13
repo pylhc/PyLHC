@@ -55,7 +55,7 @@ def _get_params() -> dict:
             flags=["--time", "-t"], default=None, type=str, help="Time as 'Y-m-d H:M:S.f' format."
         ),
         knobs=dict(
-            flags=["--knobs", "-k"], default=(), nargs="+", type=str, help="List of knobnames."
+            flags=["--knobs", "-k"], default=None, nargs="+", type=str, help="List of knobnames."
         ),
         bp_regexp=dict(
             flags=["--bp_regexp", "-r"],
