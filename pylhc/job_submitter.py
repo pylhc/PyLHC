@@ -1,22 +1,22 @@
 """
-Job-Submitter
---------------------
+Job Submitter
+-------------
 
-Allows to execute a parametric study using a script-mask and a dictionary with parameters to replace.
-Parameters to be replaced must be present in mask as `%(PARAMETER)s`
-(other types apart from string also allowed).
+Allows to execute a parametric study using a script-mask and a `dictionary` with parameters to
+replace, from the command line. The parameters to be replaced must be present in the given mask as
+``%(PARAMETER)s`` (other types apart from string also allowed).
 
-The type of script and executable is freely choosable, but defaults to madx - for which
-this submitter was originally written.
+The type of script and executable is freely choosable, but defaults to ``madx`` - for which this
+submitter was originally written.
 
-When submitting to HTCondor, data to be transferred back to the working directory
-must be written in a sub-folder defined by `job_output_directory` which defaults to `Outputdata`.
+When submitting to ``HTCondor``, data to be transferred back to the working directory must be
+written in a sub-folder defined by ``job_output_directory`` which defaults to **Outputdata**.
 
-Script also allows to check if all htcondor job finished successfully,
-resubmissions with a different parameter grid, and local execution.
+This script also allows to check if all ``HTCondor`` jobs finished successfully, for resubmissions
+with a different parameter grid, and for local execution.
 
-A `Jobs.tfs` is created in the working directory containing the Job Id,
-parameter per job and job directory for further post processing.
+A **Jobs.tfs** file is created in the working directory containing the Job Id, parameter per job
+and job directory for further post processing.
 
 *--Required--*
 
@@ -75,11 +75,6 @@ parameter per job and job directory for further post processing.
   This is inferred automatically for ['madx', 'python3', 'python2']. Otherwise not changed.
 
 - **ssh** *(str)*: Run htcondor from this machine via ssh (needs access to the `working_directory`)
-
-
-:module: job_submitter
-:author: mihofer, jdilly
-
 """
 import itertools
 import multiprocessing
@@ -467,14 +462,14 @@ def _check_opts(opt):
 
 
 def _convert_to_paths(opt, keys):
-    """ Converts strings (defined by keys) that should be paths to Path. """
+    """Converts strings (defined by keys) that should be paths to `Path` objects."""
     for key in keys:
         opt[key] = Path(opt[key])
     return opt
 
 
 def _print_stats(new_jobs, finished_jobs):
-    """ Print some quick statistics. """
+    """Print some quick statistics."""
     LOG.info("------------- QUICK STATS ----------------")
     LOG.info(f"Jobs total:{len(new_jobs) + len(finished_jobs):d}")
     LOG.info(f"Jobs to run: {len(new_jobs):d}")
