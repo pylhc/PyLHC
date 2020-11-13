@@ -1,12 +1,8 @@
 """
 Constants: External Paths
-----------------------------------
+-------------------------
 
-Collections of external paths used in this package.
-
-:module: constants.forced_da_analysis
-:author: jdilly
-
+Specific constants relating to external paths to be used in ``PyLHC``, to help with consistency.
 """
 import os
 

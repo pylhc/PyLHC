@@ -1,12 +1,9 @@
 """
 Constants: Forced DA Analysis
-----------------------------------
+-----------------------------
 
-Constants and definitions for the forced DA analysis.
-
-:module: constants.forced_da_analysis
-:author: jdilly
-
+Specific constants relating to the forced DA analysis to be used in ``PyLHC``, to help with
+consistency.
 """
 from pylhc.constants.general import PLANE_TO_HV, TFS_SUFFIX
 
@@ -31,15 +28,15 @@ BWS_DIRECTIONS = ("IN", "OUT")
 KICKFILE = "kick"
 
 
-def outfile_kick(plane):
+def outfile_kick(plane) -> str:
     return f'{KICKFILE}_fda_{plane.lower()}{TFS_SUFFIX}'
 
 
-def outfile_emittance(plane):
+def outfile_emittance(plane) -> str:
     return f'emittance_{plane.lower()}{TFS_SUFFIX}'
 
 
-def outfile_emittance_bws(plane):
+def outfile_emittance_bws(plane) -> str:
     return f'emittance_bws_{plane.lower()}{TFS_SUFFIX}'
 
 
@@ -50,7 +47,7 @@ OUTFILE_INTENSITY = f'intensity{TFS_SUFFIX}'
 PLOT_FILETYPES = (".pdf", ".png")
 
 
-def outfile_plot(ptype, plane, ftype):
+def outfile_plot(ptype, plane, ftype) -> str:
     return f"{ptype}_{plane.lower()}{ftype}"
 
 
@@ -69,15 +66,15 @@ BWS_EMITTANCE_TO_METER = 1e-6  # Emittance is normalized and in um
 LR_MAP = {1: "R", 2: "L"}
 
 
-def bsrt_emittance_key(beam, plane, type):
+def bsrt_emittance_key(beam, plane, type_):
     key = {
         'fit_sigma': BSRT_EMITTANCE_SIGMA_FIT_KEY,
         'average': BSRT_EMITTANCE_AVERAGE_KEY,
-    }[type]
+    }[type_]
     return key.format(side=LR_MAP[beam], beam=beam, plane=PLANE_TO_HV[plane])
 
 
-def bws_emittance_key(beam, plane, direction):
+def bws_emittance_key(beam, plane, direction) -> str:
     return BWS_EMITTANCE_KEY.format(side=LR_MAP[beam], beam=beam, plane=PLANE_TO_HV[plane], direction=direction)
 
 
@@ -92,20 +89,21 @@ HEADER_ENERGY = "Beam_Energy[GeV]"
 HEADER_NOMINAL_EMITTANCE = "Nominal_Emittance_{plane:}[m]"
 
 
-def header_da(plane, unit="m"):
+def header_da(plane, unit="m") -> str:
     return HEADER_DA.format(plane=plane.upper(), unit=unit)
 
 
-def header_da_error(plane, unit="m"):
+def header_da_error(plane, unit="m") -> str:
     return HEADER_DA_ERROR.format(plane=plane.upper(), unit=unit)
 
 
-def header_nominal_emittance(plane):
+def header_nominal_emittance(plane) -> str:
     return HEADER_NOMINAL_EMITTANCE.format(plane=plane.upper())
 
 
-def header_norm_nominal_emittance(plane):
+def header_norm_nominal_emittance(plane) -> str:
     return f"Normalized_{HEADER_NOMINAL_EMITTANCE.format(plane=plane.upper())}"
+
 
 # Columns ----------------------------------------------------------------------
 
@@ -122,19 +120,19 @@ RELATIVE = "REL"
 SIGMA = "SIGMA"
 
 
-def err_col(column):
+def err_col(column) -> str:
     return f"{ERR}{column}"
 
 
-def mean_col(column):
+def mean_col(column) -> str:
     return f"{MEAN}{column}"
 
 
-def rel_col(column):
+def rel_col(column) -> str:
     return f"{column}{RELATIVE}"
 
 
-def sigma_col(column):
+def sigma_col(column) -> str:
     return f"{SIGMA}{column}"
 
 
@@ -143,17 +141,17 @@ EMITTANCE = "EMITTANCE"
 NORM_EMITTANCE = "NORMEMITTANCE"
 
 
-def column_action(plane):
+def column_action(plane) -> str:
     return f"2J{plane.upper()}RES"
 
 
-def column_emittance(plane):
+def column_emittance(plane) -> str:
     return f"{EMITTANCE}{plane.upper()}"
 
 
-def column_norm_emittance(plane):
+def column_norm_emittance(plane) -> str:
     return f"{NORM_EMITTANCE}{plane.upper()}"
 
 
-def column_bws_norm_emittance(plane, direction):
+def column_bws_norm_emittance(plane, direction) -> str:
     return f"{column_norm_emittance(plane)}_{direction}"
