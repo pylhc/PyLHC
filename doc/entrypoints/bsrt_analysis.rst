@@ -1,5 +1,5 @@
 BSRT Analysis
 **************************
 
-.. automodule:: pylhc.bsrt_analysis
+.. automodule:: pylhc.BSRT_analysis
     :members:
