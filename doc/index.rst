@@ -8,7 +8,7 @@ Package Reference
 =================
 
 .. toctree::
-   :caption: Main Entrypoints
+   :caption: Entrypoints
    :maxdepth: 1
    :glob:
 

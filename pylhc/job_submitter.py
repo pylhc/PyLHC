@@ -118,11 +118,11 @@ LOG = logging_tools.get_logger(__name__)
 
 try:
     import htcondor
+    HAS_HTCONDOR = True
 except ImportError:
     platform = "macOS" if sys.platform == "darwin" else "windows"
     LOG.error(f"htcondor python bindings are linux-only, this module is not callable on {platform}")
-    pass
-    # raise NotImplementedError("htcondor bindings are necessary to run this module.")
+    HAS_HTCONDOR = False
 
 
 def get_params():
@@ -241,6 +241,7 @@ def get_params():
 
 @entrypoint(get_params(), strict=True)
 def main(opt):
+    _check_htcondor_presence()
     LOG.info("Starting HTCondor Job-submitter.")
     opt = _check_opts(opt)
     opt = _convert_to_paths(opt, ("working_directory", "job_output_dir", "mask"))
@@ -382,6 +383,12 @@ def _get_script_extension(script_extension, executable, mask):
 
 
 # Sub Functions ----------------------------------------------------------------
+
+
+def _check_htcondor_presence() -> None:
+    """Checks the ``HAS_HTCONDOR`` variable and raises EnvironmentError if it is ``False``."""
+    if not HAS_HTCONDOR:
+        raise EnvironmentError("htcondor bindings are necessary to run this module.")
 
 
 def _setup_folders(job_df, working_directory):
