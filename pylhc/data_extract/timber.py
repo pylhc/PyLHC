@@ -21,8 +21,8 @@ def find_exact_time_for_beamprocess(acc_time: AccDatetime) -> AccDatetime:
     db = pytimber.LoggingDB()
     t1, t2 = acc_time.sub(days=1).local_string(), acc_time.local_string()
 
-    event_ts, event_val = db.get('HX:SRMP-POW', t1, t2)['HX:SRMP-POW']
-    event_ts = event_ts[event_val == 123.]
+    event_ts, event_val = db.get("HX:SRMP-POW", t1, t2)["HX:SRMP-POW"]
+    event_ts = event_ts[event_val == 123.0]
 
     if len(event_ts) == 0:
         raise ValueError(

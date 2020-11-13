@@ -36,7 +36,7 @@ PREF_DELTA = "DELTA_"
 class LSAClient(pjlsa.LSAClient):
     """Extension of the LSAClient."""
 
-    def find_knob_names(self, accelerator: str = 'lhc', regexp: str = '') -> list:
+    def find_knob_names(self, accelerator: str = "lhc", regexp: str = "") -> list:
         """
         Return knobs for accelerator.
 
@@ -49,12 +49,12 @@ class LSAClient(pjlsa.LSAClient):
         """
         req = pjlsa.ParametersRequestBuilder()
         req.setAccelerator(pjlsa.Accelerators.get(accelerator, accelerator))
-        req.setParameterTypeName('KNOB')
+        req.setParameterTypeName("KNOB")
         lst = self._parameterService.findParameters(req.build())
         reg = re.compile(regexp, re.IGNORECASE)
         return sorted(filter(reg.search, [pp.getName() for pp in lst]))
 
-    def find_last_fill(self, acc_time: AccDatetime, accelerator: str = 'lhc') -> (str, list):
+    def find_last_fill(self, acc_time: AccDatetime, accelerator: str = "lhc") -> (str, list):
         """
         Return last fill name and content.
 
@@ -67,15 +67,19 @@ class LSAClient(pjlsa.LSAClient):
          """
         start_time = acc_time.sub(days=1)  # assumes a fill is not longer than a day
         try:
-            fills = self.findBeamProcessHistory(t1=start_time.local_string(),
-                                                t2=acc_time.local_string(),
-                                                accelerator=accelerator)
+            fills = self.findBeamProcessHistory(
+                t1=start_time.local_string(), t2=acc_time.local_string(), accelerator=accelerator
+            )
         except TypeError:
-            raise ValueError(f"No beamprocesses found in the day before {acc_time.cern_utc_string()}")
+            raise ValueError(
+                f"No beamprocesses found in the day before {acc_time.cern_utc_string()}"
+            )
         last_fill = sorted(fills.keys())[-1]
         return last_fill, fills[last_fill]
 
-    def find_trims_at_time(self, beamprocess: str, knobs: list, acc_time: AccDatetime, accelerator: str = 'lhc') -> dict:
+    def find_trims_at_time(
+        self, beamprocess: str, knobs: list, acc_time: AccDatetime, accelerator: str = "lhc"
+    ) -> dict:
         """
         Get trims for knobs at specific time.
 
@@ -109,16 +113,20 @@ class LSAClient(pjlsa.LSAClient):
         bp = self._contextService.findStandAloneBeamProcess(beamprocess)
         return _beamprocess_to_dict(bp)
 
-    def find_active_beamprocess_at_time(self, acc_time: AccDatetime, accelerator: str = 'lhc') -> str:
+    def find_active_beamprocess_at_time(
+        self, acc_time: AccDatetime, accelerator: str = "lhc"
+    ) -> str:
         """
         Find the active beam process at the time given. Same as what online model extractor
         (KnobExtractor) does, but returns empty map for some reason.
         """
         raise NotImplementedError("This function does not work yet!")
 
-        if accelerator != 'lhc':
+        if accelerator != "lhc":
             raise NotImplementedError("Active-Beamprocess retrieval is only implemented for LHC")
-        beamprocessmap = self._lhcService.findResidentStandAloneBeamProcessesByTime(int(acc_time.timestamp()))
+        beamprocessmap = self._lhcService.findResidentStandAloneBeamProcessesByTime(
+            int(acc_time.timestamp())
+        )
         # print(str(beamprocessmap))
         beamprocess = beamprocessmap.get("POWERCONVERTERS")
         LOG.debug(f"Active Beamprocess at time '{acc_time.cern_utc_string()}': {beamprocess}")
@@ -155,8 +163,10 @@ class LSAClient(pjlsa.LSAClient):
             type = param.getParameterType().getName()
             madx_name = self.get_madx_name_from_circuit(circuit)
             if madx_name is None:
-                LOG.error(f"Circuit '{circuit}' could not be resolved to a MADX name in LSA! "
-                          "It will not be found in knob-definition!")
+                LOG.error(
+                    f"Circuit '{circuit}' could not be resolved to a MADX name in LSA! "
+                    "It will not be found in knob-definition!"
+                )
             else:
                 LOG.debug(f"  Found component '{circuit}': {madx_name}, {knob_factor.factor}")
                 df.loc[madx_name, COL_CIRCUIT] = circuit
@@ -166,7 +176,9 @@ class LSAClient(pjlsa.LSAClient):
     def get_madx_name_from_circuit(self, circuit: str):
         """Returns the ``MAD-X`` Strength Name (Circuit/Knob) from the given circuit name."""
         logical_name = circuit.split("/")[0]
-        slist = jpype.java.util.Collections.singletonList(logical_name)  # python lists did not work (jdilly)
+        slist = jpype.java.util.Collections.singletonList(
+            logical_name
+        )  # python lists did not work (jdilly)
         madx_name = self._deviceService.findMadStrengthNamesByLogicalNames(slist)  # returns a map
         return madx_name[logical_name]
 
@@ -176,6 +188,7 @@ class LSAClient(pjlsa.LSAClient):
 
 class LSAMeta(type):
     """Metaclass for single instance LSAClient."""
+
     _client = None
 
     def __getattr__(cls, attr):
@@ -185,6 +198,7 @@ class LSAMeta(type):
 
         client_attr = cls._client.__getattribute__(attr)
         if callable(client_attr):
+
             def hooked(*args, **kwargs):
                 result = client_attr(*args, **kwargs)
                 with suppress(ValueError):  # happens with e.g. numpy arrays as return value
@@ -192,6 +206,7 @@ class LSAMeta(type):
                         # prevent client from becoming unwrapped
                         return cls
                 return result
+
             return hooked
         else:
             return client_attr
@@ -199,6 +214,7 @@ class LSAMeta(type):
 
 class LSA(metaclass=LSAMeta):
     """Import this class to use LSA like the client without the need to instantiate it."""
+
     pass
 
 
