@@ -1,13 +1,8 @@
 """
 PyLSA
----------------------------
+-----
 
-Provides additional functionality for pjlsa.
-
-
-:module: data_extract.lsa
-:author: jdilly
-
+This module provides useful functions to conveniently wrap the functionality of ``pjlsa``.
 """
 import logging
 import re
@@ -39,18 +34,18 @@ PREF_DELTA = "DELTA_"
 
 
 class LSAClient(pjlsa.LSAClient):
-    """ Extension of the LSAClient. """
+    """Extension of the LSAClient."""
 
-    def find_knob_names(self, accelerator:str = 'lhc', regexp: str = '') -> list:
-        """ Return knobs for accelerator.
+    def find_knob_names(self, accelerator: str = 'lhc', regexp: str = '') -> list:
+        """
+        Return knobs for accelerator.
 
         Args:
-            accelerator: Accelerator name
-            regexp: Rgular Expression to filter knob names
+            accelerator: Accelerator name.
+            regexp: Regular Expression to filter knob names.
 
         Returns:
             Sorted list of knob names.
-
         """
         req = pjlsa.ParametersRequestBuilder()
         req.setAccelerator(pjlsa.Accelerators.get(accelerator, accelerator))
@@ -60,15 +55,15 @@ class LSAClient(pjlsa.LSAClient):
         return sorted(filter(reg.search, [pp.getName() for pp in lst]))
 
     def find_last_fill(self, acc_time: AccDatetime, accelerator: str = 'lhc') -> (str, list):
-        """ Return last fill name and content.
+        """
+        Return last fill name and content.
 
          Args:
-            acc_time: (AccDatetime): Accelerator datetime object
-            accelerator (str): Name of the accelerator
+            acc_time: (AccDatetime): Accelerator datetime object.
+            accelerator (str): Name of the accelerator.
 
         Returns:
-            tupel: Last fill name (str), Beamprocesses of last fill (list)
-
+            tupel: Last fill name (str), Beamprocesses of last fill (list).
          """
         start_time = acc_time.sub(days=1)  # assumes a fill is not longer than a day
         try:
@@ -81,17 +76,17 @@ class LSAClient(pjlsa.LSAClient):
         return last_fill, fills[last_fill]
 
     def find_trims_at_time(self, beamprocess: str, knobs: list, acc_time: AccDatetime, accelerator: str = 'lhc') -> dict:
-        """ Get trims for knobs at specific time.
+        """
+        Get trims for knobs at specific time.
 
         Args:
-            beamprocess (str): Name of the beamprocess
-            knobs (list): List of strings of the knobs to check
-            acc_time: (AccDatetime): Accelerator datetime object
-            accelerator (str): Name of the accelerator
+            beamprocess (str): Name of the beamprocess.
+            knobs (list): List of strings of the knobs to check.
+            acc_time: (AccDatetime): Accelerator datetime object.
+            accelerator (str): Name of the accelerator.
 
         Returns:
-            Dictionary of knob names and their values
-
+            Dictionary of knob names and their values.
         """
         if knobs is None or len(knobs) == 0:
             knobs = self.find_knob_names(accelerator)
@@ -102,7 +97,8 @@ class LSAClient(pjlsa.LSAClient):
         return {trim: trims[trim].data[-1] for trim in trims.keys()}  # return last set value
 
     def get_beamprocess_info(self, beamprocess: str):
-        """ Get context info of the given beamprocess.
+        """
+        Get context info of the given beamprocess.
 
         Args:
             beamprocess (str): Name of the beamprocess.
@@ -114,9 +110,9 @@ class LSAClient(pjlsa.LSAClient):
         return _beamprocess_to_dict(bp)
 
     def find_active_beamprocess_at_time(self, acc_time: AccDatetime, accelerator: str = 'lhc') -> str:
-        """ Find the active beam process at the time given.
-
-        Same as what online model extractor (KnobExtractor) does, but returns empty map for some reason.
+        """
+        Find the active beam process at the time given. Same as what online model extractor
+        (KnobExtractor) does, but returns empty map for some reason.
         """
         raise NotImplementedError("This function does not work yet!")
 
@@ -129,15 +125,16 @@ class LSAClient(pjlsa.LSAClient):
         return beamprocess
 
     def get_knob_circuits(self, knob_name: str, optics: str) -> tfs.TfsDataFrame:
-        """ Get a dataframe of the structure of the knob.
-        (Similar to online model extractor KnobExtractor.getKnobHiercarchy)
+        """
+        Get a dataframe of the structure of the knob. Similar to online model extractor
+        (KnobExtractor.getKnobHiercarchy)
         
         Args:
-            knob: name of the knob
-            optics: name of the optics
+            knob_name: name of the knob.
+            optics: name of the optics.
 
-        Returns: TfsDataFrame
-
+        Returns:
+            A `TfsDataFrame` of the knob circuits.
         """
         LOG.debug(f"Getting knob defintions for '{knob_name}', optics '{optics}'")
         df = tfs.TfsDataFrame()
@@ -167,7 +164,7 @@ class LSAClient(pjlsa.LSAClient):
         return df.fillna(0)
 
     def get_madx_name_from_circuit(self, circuit: str):
-        """ Returns the MAD-X Strength Name (Circuit/Knob) from the circuit name. """
+        """Returns the ``MAD-X`` Strength Name (Circuit/Knob) from the given circuit name."""
         logical_name = circuit.split("/")[0]
         slist = jpype.java.util.Collections.singletonList(logical_name)  # python lists did not work (jdilly)
         madx_name = self._deviceService.findMadStrengthNamesByLogicalNames(slist)  # returns a map
@@ -178,7 +175,7 @@ class LSAClient(pjlsa.LSAClient):
 
 
 class LSAMeta(type):
-    """ Metaclass for single instance LSAClient. """
+    """Metaclass for single instance LSAClient."""
     _client = None
 
     def __getattr__(cls, attr):
@@ -201,7 +198,7 @@ class LSAMeta(type):
 
 
 class LSA(metaclass=LSAMeta):
-    """ Import this class to use LSA like the client without the need to instantiate it."""
+    """Import this class to use LSA like the client without the need to instantiate it."""
     pass
 
 
@@ -209,6 +206,6 @@ class LSA(metaclass=LSAMeta):
 
 
 def _beamprocess_to_dict(bp):
-    """ Converts some fields of the beamprocess (java) to a dictionary """
+    """Converts some fields of the beamprocess (java) to a dictionary."""
     variables = ["category", "contextCategory", "description", "contextFamily", "user"]
     return {var: str(bp.__getattribute__(var)) for var in variables}

@@ -1,12 +1,8 @@
 """
 Timber
-------------
+------
 
-Useful functionality for pytimber.
-
-:module: data_extract.timber
-:author: jdilly
-
+This module provides useful functions to conveniently wrap the functionality of ``pytimber``.
 """
 import logging
 
@@ -17,10 +13,10 @@ LOG = logging.getLogger(__name__)
 
 
 def find_exact_time_for_beamprocess(acc_time: AccDatetime) -> AccDatetime:
-    """ Finds the last entry where HX:SRMP-POW equals 123.
-
-    Which is, according to the online model KnobExtractor, the timing event for SQUEEZE or RAMP.
-    I don't think this is correct (jdilly)
+    """
+    Finds the last entry where HX:SRMP-POW equals 123. Which is, according to the online model
+    KnobExtractor, the timing event for SQUEEZE or RAMP.
+    I don't think this is correct (jdilly).
     """
     db = pytimber.LoggingDB()
     t1, t2 = acc_time.sub(days=1).local_string(), acc_time.local_string()
