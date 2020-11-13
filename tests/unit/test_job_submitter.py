@@ -8,7 +8,7 @@ from generic_parser import DotDict
 
 try:
     from pylhc.job_submitter import main as job_submit
-except SystemExit:  # might have triggered exit() because htcondor not found if not on linux
+except NotImplementedError:  # might have been triggered because htcondor not found if not on linux
     pass  # let the skipif marker take care if the rest
 
 

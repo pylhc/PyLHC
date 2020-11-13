@@ -121,7 +121,8 @@ try:
 except ImportError:
     platform = "macOS" if sys.platform == "darwin" else "windows"
     LOG.error(f"htcondor python bindings are linux-only, this module is not callable on {platform}")
-    exit()
+    pass
+    # raise NotImplementedError("htcondor bindings are necessary to run this module.")
 
 
 def get_params():
