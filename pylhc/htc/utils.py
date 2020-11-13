@@ -30,31 +30,33 @@ LOG = logging.getLogger(__name__)
 
 SHEBANG = "#!/bin/bash"
 SUBFILE = "queuehtc.sub"
-BASH_FILENAME = 'Job'
+BASH_FILENAME = "Job"
 
 HTCONDOR_JOBLIMIT = 100000
 
-EXECUTEABLEPATH = {'madx': MADX_BIN,
-                   'python3': PYTHON3_BIN,
-                   'python2': PYTHON2_BIN,
-                   }
+EXECUTEABLEPATH = {
+    "madx": MADX_BIN,
+    "python3": PYTHON3_BIN,
+    "python2": PYTHON2_BIN,
+}
 
 
 CMD_SUBMIT = "condor_submit"
-JOBFLAVOURS = ('espresso',  # 20 min
-               'microcentury',  # 1 h
-               'longlunch',  # 2 h
-               'workday',  # 8 h
-               'tomorrow',  # 1 d
-               'testmatch',  # 3 d
-               'nextweek'  # 1 w
-               )
+JOBFLAVOURS = (
+    "espresso",  # 20 min
+    "microcentury",  # 1 h
+    "longlunch",  # 2 h
+    "workday",  # 8 h
+    "tomorrow",  # 1 d
+    "testmatch",  # 3 d
+    "nextweek",  # 1 w
+)
 
-NOTIFICATIONS = ('always', 'complete', 'error', 'never')
+NOTIFICATIONS = ("always", "complete", "error", "never")
 
 
-COLUMN_SHELL_SCRIPT = 'ShellScript'
-COLUMN_JOB_DIRECTORY = 'JobDirectory'
+COLUMN_SHELL_SCRIPT = "ShellScript"
+COLUMN_JOB_DIRECTORY = "JobDirectory"
 COLUMN_JOB_FILE = "JobFile"
 
 
@@ -74,7 +76,7 @@ def submit_jobfile(jobfile: Path, ssh: str):
     """Submit subfile to ``HTCondor`` via subprocess."""
     proc_args = [CMD_SUBMIT, jobfile]
     if ssh:
-        proc_args = ['ssh', ssh] + proc_args
+        proc_args = ["ssh", ssh] + proc_args
     status = _start_subprocess(proc_args)
     if status:
         raise RuntimeError("Submit to HTCondor was not successful!")
@@ -84,12 +86,13 @@ def submit_jobfile(jobfile: Path, ssh: str):
 
 def _start_subprocess(command):
     LOG.debug(f"Executing command '{command}'")
-    process = subprocess.Popen(command, shell=False,
-                               stdout=subprocess.PIPE, stderr=subprocess.STDOUT,)
+    process = subprocess.Popen(
+        command, shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+    )
     for line in process.stdout:
         htc_line = line.decode("utf-8").strip()
         if htc_line:
-            LOG.debug(f'{htc_line} (from HTCondor)')
+            LOG.debug(f"{htc_line} (from HTCondor)")
     return process.wait()
 
 
@@ -116,15 +119,18 @@ def create_multijob_for_bashfiles(job_df: DataFrame, **kwargs):
         "output": Path("$(initialdir)", "$(MyId).$(ClusterId).$(ProcId).out"),
         "error": Path("$(initialdir)", "$(MyId).$(ClusterId).$(ProcId).err"),
         "log": Path("$(initialdir)", "$(MyId).$(ClusterId).$(ProcId).log"),
-        "on_exit_remove": '(ExitBySignal == False) && (ExitCode == 0)',
-        "requirements": 'Machine =!= LastRemoteHost',
+        "on_exit_remove": "(ExitBySignal == False) && (ExitCode == 0)",
+        "requirements": "Machine =!= LastRemoteHost",
     }
     submit_dict.update(_map_kwargs(kwargs))
 
     job = htcondor.Submit(submit_dict)
 
     # add the multiple bash files
-    scripts = [str(Path(*parts)) for parts in zip(job_df[COLUMN_JOB_DIRECTORY], job_df[COLUMN_SHELL_SCRIPT])]
+    scripts = [
+        str(Path(*parts))
+        for parts in zip(job_df[COLUMN_JOB_DIRECTORY], job_df[COLUMN_SHELL_SCRIPT])
+    ]
     args = [",".join(parts) for parts in zip(scripts, job_df[COLUMN_JOB_DIRECTORY])]
     queueArgs = ["queue executable, initialdir from (", *args, ")"]
 
@@ -133,6 +139,7 @@ def create_multijob_for_bashfiles(job_df: DataFrame, **kwargs):
     job = str(job) + "\n".join(queueArgs)
     LOG.debug(f"Created HTCondor subfile with content: \n{job}")
     return job
+
 
 # Main functions ###############################################################
 
@@ -146,30 +153,32 @@ def make_subfile(cwd: Path, job_df: DataFrame, **kwargs):
     return create_subfile_from_job(cwd, job)
 
 
-def write_bash(job_df: DataFrame, output_dir: Path = None, executable: str = 'madx',
-               cmdline_arguments: dict = None) -> DataFrame:
+def write_bash(
+    job_df: DataFrame,
+    output_dir: Path = None,
+    executable: str = "madx",
+    cmdline_arguments: dict = None,
+) -> DataFrame:
     """Write the bash-files to be called by ``HTCondor``."""
     if len(job_df.index) > HTCONDOR_JOBLIMIT:
-        raise AttributeError('Submitting too many jobs for HTCONDOR')
+        raise AttributeError("Submitting too many jobs for HTCONDOR")
 
-    cmds = ''
+    cmds = ""
     if cmdline_arguments is not None:
-        cmds = ' '.join([f'{param} {val}' for param, val in cmdline_arguments.items()])
+        cmds = " ".join([f"{param} {val}" for param, val in cmdline_arguments.items()])
 
     exec_path = EXECUTEABLEPATH.get(executable, executable)
     shell_scripts = [None] * len(job_df.index)
     for idx, (jobid, job) in enumerate(job_df.iterrows()):
         job_dir = Path(job[COLUMN_JOB_DIRECTORY])
-        bash_file_name = f'{BASH_FILENAME}.{jobid}.sh'
+        bash_file_name = f"{BASH_FILENAME}.{jobid}.sh"
         jobfile = job_dir / bash_file_name
         LOG.debug(f"Writing bash-file {idx:d} '{jobfile}'.")
-        with open(jobfile, 'w') as f:
+        with open(jobfile, "w") as f:
             f.write(f"{SHEBANG}\n")
             if output_dir is not None:
-                f.write(f'mkdir {str(output_dir)}\n')
-            f.write(
-                f'{exec_path} {str(job_dir / job[COLUMN_JOB_FILE])} {cmds}\n'
-            )
+                f.write(f"mkdir {str(output_dir)}\n")
+            f.write(f"{exec_path} {str(job_dir / job[COLUMN_JOB_FILE])} {cmds}\n")
         shell_scripts[idx] = bash_file_name
     job_df[COLUMN_SHELL_SCRIPT] = shell_scripts
     return job_df
@@ -186,12 +195,13 @@ def _map_kwargs(add_dict):
     new = {}
 
     # Predefined ones
-    htc_map = {'duration': ('+JobFlavour', JOBFLAVOURS, "workday"),
-               'output_dir': ('transfer_output_files', None, None),
-               'accounting_group': ('+AccountingGroup', None, None),
-               'max_retries': ('max_retries', None, 3),
-               'notification': ('notification', NOTIFICATIONS, 'error'),
-               }
+    htc_map = {
+        "duration": ("+JobFlavour", JOBFLAVOURS, "workday"),
+        "output_dir": ("transfer_output_files", None, None),
+        "accounting_group": ("+AccountingGroup", None, None),
+        "max_retries": ("max_retries", None, 3),
+        "notification": ("notification", NOTIFICATIONS, "error"),
+    }
     for key, (mapped, choices, default) in htc_map.items():
         try:
             value = add_dict.pop(key)
@@ -200,7 +210,9 @@ def _map_kwargs(add_dict):
                 new[mapped] = default
         else:
             if choices is not None and value not in choices:
-                raise TypeError(f"{key} needs to be one of '{str(choices).strip('[]')}' but instead was '{value}'")
+                raise TypeError(
+                    f"{key} needs to be one of '{str(choices).strip('[]')}' but instead was '{value}'"
+                )
             new[mapped] = _maybe_put_in_quotes(mapped, value)
 
     # Pass-Through Arguments
@@ -218,5 +230,5 @@ def _maybe_put_in_quotes(key, value):
 # Script Mode ##################################################################
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     raise EnvironmentError(f"{__file__} is not supposed to run as main.")
