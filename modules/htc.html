@@ -1,0 +1,336 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>HTCondor Tools &mdash; pylhc 0.0.3 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Data Extraction" href="data_extract.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html">
+          
+
+          
+            
+            <img src="../_static/omc_logo.svg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Entrypoints</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../entrypoints/bsrt_analysis.html">BSRT Analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../entrypoints/bsrt_analysis.html#id1">BSRT Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../entrypoints/forced_da_analysis.html">Forced DA Analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../entrypoints/forced_da_analysis.html#id1">Forced DA Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../entrypoints/job_submitter.html">HTCondor Job Submitter</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../entrypoints/job_submitter.html#job-submitter">Job Submitter</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../entrypoints/machine_settings_info.html">Machine Settings Info</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../entrypoints/machine_settings_info.html#print-machine-settings-overview">Print Machine Settings Overview</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Modules</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="constants.html">Constants Definitions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="constants.html#constants-general">Constants: General</a></li>
+<li class="toctree-l2"><a class="reference internal" href="constants.html#constants-external-paths">Constants: External Paths</a></li>
+<li class="toctree-l2"><a class="reference internal" href="constants.html#constants-forced-da-analysis">Constants: Forced DA Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="constants.html#constants-machine-settings-info">Constants: Machine Settings Info</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="data_extract.html">Data Extraction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="data_extract.html#pylsa">PyLSA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_extract.html#timber">Timber</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">HTCondor Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#htcondor-utilities">HTCondor Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mask-resolver">Mask Resolver</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pylhc</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>HTCondor Tools</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/modules/htc.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-pylhc.htc.utils">
+<span id="htcondor-tools"></span><h1>HTCondor Tools<a class="headerlink" href="#module-pylhc.htc.utils" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="htcondor-utilities">
+<h2>HTCondor Utilities<a class="headerlink" href="#htcondor-utilities" title="Permalink to this headline">¶</a></h2>
+<p>This module provides functionality to create HTCondor jobs and submit them to <code class="docutils literal notranslate"><span class="pre">HTCondor</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">write_bash</span></code> creates bash scripts executing either a python or madx script.
+Takes as input <cite>Dataframe</cite>, job type, and optional additional commandline arguments for the script.
+A shell script is created in each job directory in the dataframe.</p>
+<p><code class="docutils literal notranslate"><span class="pre">make_subfile</span></code> takes the job dataframe and creates the <strong>.sub</strong> files required for submissions to
+<code class="docutils literal notranslate"><span class="pre">HTCondor</span></code>. The <strong>.sub</strong> file will be put in the working directory. The maximum runtime of one
+job can be specified, standard is 8h.</p>
+<dl class="py function">
+<dt id="pylhc.htc.utils.create_multijob_for_bashfiles">
+<code class="sig-prename descclassname">pylhc.htc.utils.</code><code class="sig-name descname">create_multijob_for_bashfiles</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">job_df</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/htc/utils.html#create_multijob_for_bashfiles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pylhc.htc.utils.create_multijob_for_bashfiles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to create an <code class="docutils literal notranslate"><span class="pre">HTCondor</span></code> job assuming n_files bash-files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Keyword Arguments</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>output_dir</strong> (<em>str</em>) -- output directory that will be transferred. Defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>duration</strong> (<em>str</em>) -- max duration of the job. Needs to be one of the <code class="docutils literal notranslate"><span class="pre">HTCondor</span></code> Jobflavours.
+Defaults to <code class="docutils literal notranslate"><span class="pre">workday</span></code>.</p></li>
+<li><p><strong>group</strong> (<em>str</em>) -- force use of accounting group. Defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>retries</strong> (<em>int</em>) -- maximum amount of retries. Default to <code class="docutils literal notranslate"><span class="pre">3</span></code>.</p></li>
+<li><p><strong>notification</strong> (<em>str</em>) -- Notify under certain conditions. Defaults to <code class="docutils literal notranslate"><span class="pre">error</span></code>.</p></li>
+<li><p><strong>priority</strong> (<em>int</em>) -- Priority to order your jobs. Defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pylhc.htc.utils.create_subfile_from_job">
+<code class="sig-prename descclassname">pylhc.htc.utils.</code><code class="sig-name descname">create_subfile_from_job</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cwd</span><span class="p">:</span> <span class="n">pathlib.Path</span></em>, <em class="sig-param"><span class="n">job</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/htc/utils.html#create_subfile_from_job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pylhc.htc.utils.create_subfile_from_job" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write file to submit to <code class="docutils literal notranslate"><span class="pre">HTCondor</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pylhc.htc.utils.make_subfile">
+<code class="sig-prename descclassname">pylhc.htc.utils.</code><code class="sig-name descname">make_subfile</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cwd</span><span class="p">:</span> <span class="n">pathlib.Path</span></em>, <em class="sig-param"><span class="n">job_df</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/htc/utils.html#make_subfile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pylhc.htc.utils.make_subfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates submit-file for <code class="docutils literal notranslate"><span class="pre">HTCondor</span></code>.
+For kwargs, see <code class="docutils literal notranslate"><span class="pre">create_multijob_for_bashfiles</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pylhc.htc.utils.submit_jobfile">
+<code class="sig-prename descclassname">pylhc.htc.utils.</code><code class="sig-name descname">submit_jobfile</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">jobfile</span><span class="p">:</span> <span class="n">pathlib.Path</span></em>, <em class="sig-param"><span class="n">ssh</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/htc/utils.html#submit_jobfile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pylhc.htc.utils.submit_jobfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Submit subfile to <code class="docutils literal notranslate"><span class="pre">HTCondor</span></code> via subprocess.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pylhc.htc.utils.write_bash">
+<code class="sig-prename descclassname">pylhc.htc.utils.</code><code class="sig-name descname">write_bash</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">job_df</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="n">output_dir</span><span class="p">:</span> <span class="n">pathlib.Path</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">executable</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'madx'</span></em>, <em class="sig-param"><span class="n">cmdline_arguments</span><span class="p">:</span> <span class="n">dict</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="../_modules/pylhc/htc/utils.html#write_bash"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pylhc.htc.utils.write_bash" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the bash-files to be called by <code class="docutils literal notranslate"><span class="pre">HTCondor</span></code>.</p>
+</dd></dl>
+
+</div>
+<span class="target" id="module-pylhc.htc.mask"></span><div class="section" id="mask-resolver">
+<h2>Mask Resolver<a class="headerlink" href="#mask-resolver" title="Permalink to this headline">¶</a></h2>
+<p>This module provides functionality to resolve and write script masks for <code class="docutils literal notranslate"><span class="pre">HTCondor</span></code> jobs
+submission.</p>
+<dl class="py function">
+<dt id="pylhc.htc.mask.create_jobs_from_mask">
+<code class="sig-prename descclassname">pylhc.htc.mask.</code><code class="sig-name descname">create_jobs_from_mask</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">job_df</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="n">maskfile</span><span class="p">:</span> <span class="n">pathlib.Path</span></em>, <em class="sig-param"><span class="n">replace_keys</span><span class="p">:</span> <span class="n">dict</span></em>, <em class="sig-param"><span class="n">file_ext</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="../_modules/pylhc/htc/mask.html#create_jobs_from_mask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pylhc.htc.mask.create_jobs_from_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes path to mask file, list of parameter to be replaced and pandas dataframe containg per job
+the job directory where processed mask is to be put, and columns containing the parameter values
+with column named like replace parameters. Job directories have to be created beforehand.
+Processed (madx) mask has the same filename as mask but with the given file extension.
+Input Dataframe is returned with additional column containing path to the processed script
+files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>job_df</strong> (<em>pd.DataFrame</em>) -- Job parameters as defined in description.</p></li>
+<li><p><strong>maskfile</strong> -- <cite>Path</cite> object to the mask file.</p></li>
+<li><p><strong>replace_keys</strong> -- keys to be replaced (must correspond to columns in <code class="docutils literal notranslate"><span class="pre">job_df</span></code>).</p></li>
+<li><p><strong>file_ext</strong> -- file extention to use (defaults to <strong>madx</strong>).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The provided <code class="docutils literal notranslate"><span class="pre">job_df</span></code> but with added path to the scripts.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="data_extract.html" class="btn btn-neutral float-left" title="Data Extraction" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

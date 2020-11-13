@@ -13,6 +13,7 @@
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
 
   
   
@@ -52,9 +53,12 @@
           
 
           
-            <a href="index.html" class="icon icon-home" alt="Documentation Home"> pylhc
+            <a href="index.html">
           
 
+          
+            
+            <img src="_static/omc_logo.svg" class="logo" alt="Logo"/>
           
           </a>
 
@@ -87,11 +91,44 @@
               
             
             
-              <ul>
-<li class="toctree-l1"><a class="reference internal" href="root/index.html">Main Scripts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="constants/index.html">Constants Definitions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="data_extract/index.html">Data Extraction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="htc/index.html">HTC-Condor Tools</a></li>
+              <p class="caption"><span class="caption-text">Entrypoints</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="entrypoints/bsrt_analysis.html">BSRT Analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="entrypoints/bsrt_analysis.html#id1">BSRT Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="entrypoints/forced_da_analysis.html">Forced DA Analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="entrypoints/forced_da_analysis.html#id1">Forced DA Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="entrypoints/job_submitter.html">HTCondor Job Submitter</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="entrypoints/job_submitter.html#job-submitter">Job Submitter</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="entrypoints/machine_settings_info.html">Machine Settings Info</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="entrypoints/machine_settings_info.html#print-machine-settings-overview">Print Machine Settings Overview</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules/constants.html">Constants Definitions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/constants.html#constants-general">Constants: General</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/constants.html#constants-external-paths">Constants: External Paths</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/constants.html#constants-forced-da-analysis">Constants: Forced DA Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/constants.html#constants-machine-settings-info">Constants: Machine Settings Info</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules/data_extract.html">Data Extraction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/data_extract.html#pylsa">PyLSA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/data_extract.html#timber">Timber</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules/htc.html">HTCondor Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/htc.html#htcondor-utilities">HTCondor Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/htc.html#mask-resolver">Mask Resolver</a></li>
+</ul>
+</li>
 </ul>
 
             
@@ -173,52 +210,62 @@
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="constants/index.html#module-pylhc.constants.external_paths"><code class="xref">pylhc.constants.external_paths</code></a></td><td>
+       <a href="entrypoints/bsrt_analysis.html#module-pylhc.BSRT_analysis"><code class="xref">pylhc.BSRT_analysis</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="constants/index.html#module-pylhc.constants.forced_da_analysis"><code class="xref">pylhc.constants.forced_da_analysis</code></a></td><td>
+       <a href="modules/constants.html#module-pylhc.constants.external_paths"><code class="xref">pylhc.constants.external_paths</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="constants/index.html#module-pylhc.constants.general"><code class="xref">pylhc.constants.general</code></a></td><td>
+       <a href="modules/constants.html#module-pylhc.constants.forced_da_analysis"><code class="xref">pylhc.constants.forced_da_analysis</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="constants/index.html#module-pylhc.constants.machine_settings_info"><code class="xref">pylhc.constants.machine_settings_info</code></a></td><td>
+       <a href="modules/constants.html#module-pylhc.constants.general"><code class="xref">pylhc.constants.general</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="data_extract/index.html#module-pylhc.data_extract.lsa"><code class="xref">pylhc.data_extract.lsa</code></a></td><td>
+       <a href="modules/constants.html#module-pylhc.constants.machine_settings_info"><code class="xref">pylhc.constants.machine_settings_info</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="data_extract/index.html#module-pylhc.data_extract.timber"><code class="xref">pylhc.data_extract.timber</code></a></td><td>
+       <a href="modules/data_extract.html#module-pylhc.data_extract.lsa"><code class="xref">pylhc.data_extract.lsa</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="root/index.html#module-pylhc.forced_da_analysis"><code class="xref">pylhc.forced_da_analysis</code></a></td><td>
+       <a href="modules/data_extract.html#module-pylhc.data_extract.timber"><code class="xref">pylhc.data_extract.timber</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="htc/index.html#module-pylhc.htc.mask"><code class="xref">pylhc.htc.mask</code></a></td><td>
+       <a href="entrypoints/forced_da_analysis.html#module-pylhc.forced_da_analysis"><code class="xref">pylhc.forced_da_analysis</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="htc/index.html#module-pylhc.htc.utils"><code class="xref">pylhc.htc.utils</code></a></td><td>
+       <a href="modules/htc.html#module-pylhc.htc.mask"><code class="xref">pylhc.htc.mask</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="root/index.html#module-pylhc.job_submitter"><code class="xref">pylhc.job_submitter</code></a></td><td>
+       <a href="modules/htc.html#module-pylhc.htc.utils"><code class="xref">pylhc.htc.utils</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="entrypoints/job_submitter.html#module-pylhc.job_submitter"><code class="xref">pylhc.job_submitter</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="entrypoints/machine_settings_info.html#module-pylhc.machine_settings_info"><code class="xref">pylhc.machine_settings_info</code></a></td><td>
        <em></em></td></tr>
    </table>
 

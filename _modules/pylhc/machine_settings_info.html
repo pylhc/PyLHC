@@ -1,0 +1,504 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pylhc.machine_settings_info &mdash; pylhc 0.0.3 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html">
+          
+
+          
+            
+            <img src="../../_static/omc_logo.svg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Entrypoints</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../entrypoints/bsrt_analysis.html">BSRT Analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/bsrt_analysis.html#id1">BSRT Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../entrypoints/forced_da_analysis.html">Forced DA Analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/forced_da_analysis.html#id1">Forced DA Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../entrypoints/job_submitter.html">HTCondor Job Submitter</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/job_submitter.html#job-submitter">Job Submitter</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../entrypoints/machine_settings_info.html">Machine Settings Info</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/machine_settings_info.html#print-machine-settings-overview">Print Machine Settings Overview</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/constants.html">Constants Definitions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/constants.html#constants-general">Constants: General</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/constants.html#constants-external-paths">Constants: External Paths</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/constants.html#constants-forced-da-analysis">Constants: Forced DA Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/constants.html#constants-machine-settings-info">Constants: Machine Settings Info</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/data_extract.html">Data Extraction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/data_extract.html#pylsa">PyLSA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/data_extract.html#timber">Timber</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/htc.html">HTCondor Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/htc.html#htcondor-utilities">HTCondor Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/htc.html#mask-resolver">Mask Resolver</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pylhc</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>pylhc.machine_settings_info</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pylhc.machine_settings_info</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Print Machine Settings Overview</span>
+<span class="sd">-------------------------------</span>
+
+<span class="sd">Prints an overview over the machine settings at a provided given time, or the current settings if</span>
+<span class="sd">no time is given.</span>
+
+<span class="sd">Can be run from command line, parameters as given in :meth:`print_machine_settings_overview.main`.</span>
+
+<span class="sd">.. code-block:: none</span>
+
+<span class="sd">  print_machine_settings_overview.py [-h] [--time TIME]</span>
+<span class="sd">                                          [--knobs KNOBS [KNOBS ...]]</span>
+<span class="sd">                                          [--bp_regexp BP_REGEXP]</span>
+<span class="sd">                                          [--accel ACCEL]</span>
+<span class="sd">                                          [--out OUT]</span>
+
+<span class="sd">  optional arguments:</span>
+<span class="sd">    -h, --help            show this help message and exit</span>
+<span class="sd">    --time TIME, -t TIME  Time as &#39;Y-m-d H:M:S.f&#39; format.</span>
+<span class="sd">    --knobs KNOBS [KNOBS ...], -k KNOBS [KNOBS ...]</span>
+<span class="sd">                          List of knobnames.</span>
+<span class="sd">    --bp_regexp BP_REGEXP, -r BP_REGEXP</span>
+<span class="sd">                          Beamprocess regexp filter.</span>
+<span class="sd">    --accel ACCEL, -a ACCEL</span>
+<span class="sd">                          Accelerator name.</span>
+<span class="sd">    --out OUT, -o OUT     Output path.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span> <span class="nn">tfs</span>
+<span class="kn">from</span> <span class="nn">generic_parser</span> <span class="kn">import</span> <span class="n">DotDict</span><span class="p">,</span> <span class="n">EntryPointParameters</span><span class="p">,</span> <span class="n">entrypoint</span>
+<span class="kn">from</span> <span class="nn">omc3.utils</span> <span class="kn">import</span> <span class="n">logging_tools</span>
+<span class="kn">from</span> <span class="nn">omc3.utils.time_tools</span> <span class="kn">import</span> <span class="n">AccDatetime</span><span class="p">,</span> <span class="n">AcceleratorDatetime</span>
+
+<span class="kn">from</span> <span class="nn">pylhc.constants</span> <span class="kn">import</span> <span class="n">machine_settings_info</span> <span class="k">as</span> <span class="n">const</span>
+<span class="kn">from</span> <span class="nn">pylhc.data_extract.lsa</span> <span class="kn">import</span> <span class="n">COL_NAME</span> <span class="k">as</span> <span class="n">lsa_col_name</span><span class="p">,</span> <span class="n">LSA</span>
+
+<span class="n">LOG</span> <span class="o">=</span> <span class="n">logging_tools</span><span class="o">.</span><span class="n">get_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<span class="n">DEFAULT_BP_RE</span> <span class="o">=</span> <span class="s2">&quot;^(RAMP|SQUEEZE)[_-]&quot;</span>
+<span class="sd">&quot;&quot;&quot;str: Default regexp for interesting Beamprocesses. &quot;&quot;&quot;</span>
+
+
+<span class="c1"># Main #########################################################################</span>
+
+
+<span class="k">def</span> <span class="nf">_get_params</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Parse Commandline Arguments and return them as options.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">EntryPointParameters</span><span class="p">(</span>
+        <span class="n">time</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+            <span class="n">flags</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;--time&quot;</span><span class="p">,</span> <span class="s2">&quot;-t&quot;</span><span class="p">],</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Time as &#39;Y-m-d H:M:S.f&#39; format.&quot;</span>
+        <span class="p">),</span>
+        <span class="n">knobs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+            <span class="n">flags</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;--knobs&quot;</span><span class="p">,</span> <span class="s2">&quot;-k&quot;</span><span class="p">],</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;List of knobnames.&quot;</span>
+        <span class="p">),</span>
+        <span class="n">bp_regexp</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+            <span class="n">flags</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;--bp_regexp&quot;</span><span class="p">,</span> <span class="s2">&quot;-r&quot;</span><span class="p">],</span>
+            <span class="n">default</span><span class="o">=</span><span class="n">DEFAULT_BP_RE</span><span class="p">,</span>
+            <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Beamprocess regexp filter.&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">accel</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">flags</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;--accel&quot;</span><span class="p">,</span> <span class="s2">&quot;-a&quot;</span><span class="p">],</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;lhc&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Accelerator name.&quot;</span><span class="p">),</span>
+        <span class="n">out</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">flags</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;--out&quot;</span><span class="p">,</span> <span class="s2">&quot;-o&quot;</span><span class="p">],</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Output path.&quot;</span><span class="p">),</span>
+        <span class="n">knob_def</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+            <span class="n">flags</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;--knob_def&quot;</span><span class="p">,</span> <span class="s2">&quot;-d&quot;</span><span class="p">],</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Set to extract knob definitions.&quot;</span>
+        <span class="p">),</span>
+        <span class="n">log</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+            <span class="n">flags</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;--log&quot;</span><span class="p">,</span> <span class="s2">&quot;-l&quot;</span><span class="p">],</span>
+            <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Write summary into log (automatically done if no output path is given).&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+
+
+<div class="viewcode-block" id="get_info"><a class="viewcode-back" href="../../entrypoints/machine_settings_info.html#pylhc.machine_settings_info.get_info">[docs]</a><span class="nd">@entrypoint</span><span class="p">(</span><span class="n">_get_params</span><span class="p">(),</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">get_info</span><span class="p">(</span><span class="n">opt</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">AccDatetime</span><span class="p">,</span> <span class="n">DotDict</span><span class="p">,</span> <span class="n">DotDict</span><span class="p">,</span> <span class="nb">dict</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get info about **Beamprocess**, **Optics** and **Knobs** at given time.</span>
+
+<span class="sd">    Keyword Args:</span>
+<span class="sd">        *--Optional--*</span>
+<span class="sd">        - **accel** *(str)*: Accelerator name.</span>
+
+<span class="sd">          Flags: **[&#39;--accel&#39;, &#39;-a&#39;]**</span>
+<span class="sd">          Default: ``lhc``</span>
+<span class="sd">        - **bp_regexp** *(str)*: Beamprocess regexp filter.</span>
+
+<span class="sd">          Flags: **[&#39;--bp_regexp&#39;, &#39;-r&#39;]**</span>
+<span class="sd">          Default: ``^(RAMP|SQUEEZE)[_-]``</span>
+<span class="sd">        - **knob_def**: Set to extract knob definitions.</span>
+
+<span class="sd">          Flags: **[&#39;--knob_def&#39;, &#39;-d&#39;]**</span>
+<span class="sd">          Action: ``store_true``</span>
+<span class="sd">        - **knobs** *(str)*: List of knobnames.</span>
+
+<span class="sd">          Flags: **[&#39;--knobs&#39;, &#39;-k&#39;]**</span>
+<span class="sd">          Default: ``()``</span>
+<span class="sd">        - **log**: Write summary into log (automatically done if no output path is given).</span>
+
+<span class="sd">          Flags: **[&#39;--log&#39;, &#39;-l&#39;]**</span>
+<span class="sd">          Action: ``store_true``</span>
+<span class="sd">        - **out** *(str)*: Output path.</span>
+
+<span class="sd">          Flags: **[&#39;--out&#39;, &#39;-o&#39;]**</span>
+<span class="sd">          Default: ``None``</span>
+<span class="sd">        - **time** *(str)*: Time as &#39;Y-m-d H:M:S.f&#39; format.</span>
+
+<span class="sd">          Flags: **[&#39;--time&#39;, &#39;-t&#39;]**</span>
+<span class="sd">          Default: ``None``</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">opt</span><span class="o">.</span><span class="n">out</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">opt</span><span class="o">.</span><span class="n">log</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="n">AccDT</span> <span class="o">=</span> <span class="n">AcceleratorDatetime</span><span class="p">[</span><span class="n">opt</span><span class="o">.</span><span class="n">accel</span><span class="p">]</span>
+    <span class="n">acc_time</span> <span class="o">=</span> <span class="n">AccDT</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="k">if</span> <span class="n">opt</span><span class="o">.</span><span class="n">time</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">AccDT</span><span class="o">.</span><span class="n">from_utc_string</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">time</span><span class="p">)</span>
+
+    <span class="n">beamprocess_info</span> <span class="o">=</span> <span class="n">_get_beamprocess</span><span class="p">(</span><span class="n">acc_time</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">bp_regexp</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">accel</span><span class="p">)</span>
+    <span class="n">optics_info</span> <span class="o">=</span> <span class="n">_get_optics</span><span class="p">(</span><span class="n">acc_time</span><span class="p">,</span> <span class="n">beamprocess_info</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">beamprocess_info</span><span class="o">.</span><span class="n">start</span><span class="p">)</span>
+    <span class="n">trims</span> <span class="o">=</span> <span class="n">LSA</span><span class="o">.</span><span class="n">find_trims_at_time</span><span class="p">(</span><span class="n">beamprocess_info</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">knobs</span><span class="p">,</span> <span class="n">acc_time</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">accel</span><span class="p">)</span>
+    <span class="n">knobs_definitions</span> <span class="o">=</span> <span class="n">_get_knob_definitions</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">knob_def</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">knobs</span><span class="p">,</span> <span class="n">optics_info</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">opt</span><span class="o">.</span><span class="n">log</span><span class="p">:</span>
+        <span class="n">log_summary</span><span class="p">(</span><span class="n">acc_time</span><span class="p">,</span> <span class="n">beamprocess_info</span><span class="p">,</span> <span class="n">optics_info</span><span class="p">,</span> <span class="n">trims</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">opt</span><span class="o">.</span><span class="n">out</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">write_summary</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">out</span><span class="p">,</span> <span class="n">acc_time</span><span class="p">,</span> <span class="n">beamprocess_info</span><span class="p">,</span> <span class="n">optics_info</span><span class="p">,</span> <span class="n">trims</span><span class="p">)</span>
+        <span class="n">write_knob_defitions</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">out</span><span class="p">,</span> <span class="n">knobs_definitions</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">acc_time</span><span class="p">,</span> <span class="n">beamprocess_info</span><span class="p">,</span> <span class="n">optics_info</span><span class="p">,</span> <span class="n">trims</span><span class="p">,</span> <span class="n">knobs_definitions</span></div>
+
+
+<span class="c1"># Output #######################################################################</span>
+
+
+<div class="viewcode-block" id="log_summary"><a class="viewcode-back" href="../../entrypoints/machine_settings_info.html#pylhc.machine_settings_info.log_summary">[docs]</a><span class="k">def</span> <span class="nf">log_summary</span><span class="p">(</span><span class="n">acc_time</span><span class="p">:</span> <span class="n">AccDatetime</span><span class="p">,</span> <span class="n">bp_info</span><span class="p">:</span> <span class="n">DotDict</span><span class="p">,</span> <span class="n">o_info</span><span class="p">:</span> <span class="n">DotDict</span><span class="p">,</span> <span class="n">trims</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Log the summary.&quot;&quot;&quot;</span>
+    <span class="n">summary</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">----------- Summary ---------------------</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;Given Time:   </span><span class="si">{</span><span class="n">acc_time</span><span class="o">.</span><span class="n">utc_string</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;Fill:         </span><span class="si">{</span><span class="n">bp_info</span><span class="o">.</span><span class="n">fill</span><span class="si">:</span><span class="s2">d</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;Beamprocess:  </span><span class="si">{</span><span class="n">bp_info</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;  Start:      </span><span class="si">{</span><span class="n">bp_info</span><span class="o">.</span><span class="n">start</span><span class="o">.</span><span class="n">utc_string</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;  Context:    </span><span class="si">{</span><span class="n">bp_info</span><span class="o">.</span><span class="n">contextCategory</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;  Descr.:     </span><span class="si">{</span><span class="n">bp_info</span><span class="o">.</span><span class="n">description</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;Optics:       </span><span class="si">{</span><span class="n">o_info</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;  Start:      </span><span class="si">{</span><span class="n">o_info</span><span class="o">.</span><span class="n">start</span><span class="o">.</span><span class="n">utc_string</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;-----------------------------------------</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">trim</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">trims</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">summary</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">trim</span><span class="si">:</span><span class="s2">30s</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">value</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">summary</span> <span class="o">+=</span> <span class="s2">&quot;-----------------------------------------</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+    <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">summary</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="write_summary"><a class="viewcode-back" href="../../entrypoints/machine_settings_info.html#pylhc.machine_settings_info.write_summary">[docs]</a><span class="k">def</span> <span class="nf">write_summary</span><span class="p">(</span>
+    <span class="n">output_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">acc_time</span><span class="p">:</span> <span class="n">AccDatetime</span><span class="p">,</span> <span class="n">bp_info</span><span class="p">:</span> <span class="n">DotDict</span><span class="p">,</span> <span class="n">o_info</span><span class="p">:</span> <span class="n">DotDict</span><span class="p">,</span> <span class="n">trims</span><span class="p">:</span> <span class="nb">dict</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Write summary into a **tfs** file.&quot;&quot;&quot;</span>
+    <span class="n">info_tfs</span> <span class="o">=</span> <span class="n">tfs</span><span class="o">.</span><span class="n">TfsDataFrame</span><span class="p">(</span><span class="n">trims</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="n">const</span><span class="o">.</span><span class="n">column_knob</span><span class="p">,</span> <span class="n">const</span><span class="o">.</span><span class="n">column_value</span><span class="p">])</span>
+    <span class="n">info_tfs</span><span class="o">.</span><span class="n">headers</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="p">(</span><span class="n">const</span><span class="o">.</span><span class="n">head_time</span><span class="p">,</span> <span class="n">acc_time</span><span class="o">.</span><span class="n">cern_utc_string</span><span class="p">()),</span>
+            <span class="p">(</span><span class="n">const</span><span class="o">.</span><span class="n">head_beamprocess</span><span class="p">,</span> <span class="n">bp_info</span><span class="o">.</span><span class="n">name</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">const</span><span class="o">.</span><span class="n">head_fill</span><span class="p">,</span> <span class="n">bp_info</span><span class="o">.</span><span class="n">fill</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">const</span><span class="o">.</span><span class="n">head_beamprocess_start</span><span class="p">,</span> <span class="n">bp_info</span><span class="o">.</span><span class="n">start</span><span class="o">.</span><span class="n">cern_utc_string</span><span class="p">()),</span>
+            <span class="p">(</span><span class="n">const</span><span class="o">.</span><span class="n">head_context_category</span><span class="p">,</span> <span class="n">bp_info</span><span class="o">.</span><span class="n">contextCategory</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">const</span><span class="o">.</span><span class="n">head_beamprcess_description</span><span class="p">,</span> <span class="n">bp_info</span><span class="o">.</span><span class="n">description</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">const</span><span class="o">.</span><span class="n">head_optics</span><span class="p">,</span> <span class="n">o_info</span><span class="o">.</span><span class="n">name</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">const</span><span class="o">.</span><span class="n">head_optics_start</span><span class="p">,</span> <span class="n">o_info</span><span class="o">.</span><span class="n">start</span><span class="o">.</span><span class="n">cern_utc_string</span><span class="p">()),</span>
+            <span class="p">(</span><span class="s2">&quot;Hint:&quot;</span><span class="p">,</span> <span class="s2">&quot;All times given in UTC.&quot;</span><span class="p">),</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">tfs</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="n">const</span><span class="o">.</span><span class="n">info_name</span><span class="p">)),</span> <span class="n">info_tfs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="write_knob_defitions"><a class="viewcode-back" href="../../entrypoints/machine_settings_info.html#pylhc.machine_settings_info.write_knob_defitions">[docs]</a><span class="k">def</span> <span class="nf">write_knob_defitions</span><span class="p">(</span><span class="n">output_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">definitions</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Write Knob definitions into a **tfs** file.&quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">knob</span><span class="p">,</span> <span class="n">definition</span> <span class="ow">in</span> <span class="n">definitions</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">knob</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">)</span><span class="si">}{</span><span class="n">const</span><span class="o">.</span><span class="n">knobdef_suffix</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">tfs</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">),</span> <span class="n">definition</span><span class="p">,</span> <span class="n">save_index</span><span class="o">=</span><span class="n">lsa_col_name</span><span class="p">)</span></div>
+
+
+<span class="c1"># Beamprocess ##################################################################</span>
+
+
+<span class="k">def</span> <span class="nf">_get_beamprocess</span><span class="p">(</span><span class="n">acc_time</span><span class="p">:</span> <span class="n">AccDatetime</span><span class="p">,</span> <span class="n">regexp</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">accel</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DotDict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Get the info about the active beamprocess at ``acc_time``.&quot;&quot;&quot;</span>
+    <span class="n">fill_no</span><span class="p">,</span> <span class="n">fill_bps</span> <span class="o">=</span> <span class="n">LSA</span><span class="o">.</span><span class="n">find_last_fill</span><span class="p">(</span><span class="n">acc_time</span><span class="p">,</span> <span class="n">accel</span><span class="p">)</span>
+    <span class="n">beamprocess</span><span class="p">,</span> <span class="n">start_time</span> <span class="o">=</span> <span class="n">_get_last_beamprocess</span><span class="p">(</span><span class="n">fill_bps</span><span class="p">,</span> <span class="n">acc_time</span><span class="p">,</span> <span class="n">regexp</span><span class="p">)</span>
+    <span class="n">bp_info</span> <span class="o">=</span> <span class="n">LSA</span><span class="o">.</span><span class="n">get_beamprocess_info</span><span class="p">(</span><span class="n">beamprocess</span><span class="p">)</span>
+    <span class="n">bp_info</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">beamprocess</span><span class="p">,</span> <span class="s2">&quot;fill&quot;</span><span class="p">:</span> <span class="n">fill_no</span><span class="p">,</span> <span class="s2">&quot;start&quot;</span><span class="p">:</span> <span class="n">start_time</span><span class="p">})</span>
+    <span class="k">return</span> <span class="n">DotDict</span><span class="p">(</span><span class="n">bp_info</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_get_last_beamprocess</span><span class="p">(</span><span class="n">bps</span><span class="p">,</span> <span class="n">acc_time</span><span class="p">:</span> <span class="n">AccDatetime</span><span class="p">,</span> <span class="n">regexp</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">AccDatetime</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the last beamprocess in the list of beamprocesses before dt_utc.</span>
+<span class="sd">    Also returns the start time of the beam-process in utc.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ts</span> <span class="o">=</span> <span class="n">acc_time</span><span class="o">.</span><span class="n">timestamp</span><span class="p">()</span>
+    <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Looking for beamprocesses before &#39;</span><span class="si">{</span><span class="n">acc_time</span><span class="o">.</span><span class="n">cern_utc_string</span><span class="p">()</span><span class="si">}</span><span class="s2">&#39;, matching &#39;</span><span class="si">{</span><span class="n">regexp</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+    <span class="p">)</span>
+    <span class="n">time</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+    <span class="n">reg</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">regexp</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">time</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">bps</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">time</span> <span class="o">&lt;=</span> <span class="n">ts</span> <span class="ow">and</span> <span class="n">reg</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">break</span>
+    <span class="k">if</span> <span class="n">time</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;No relevant beamprocess found in the fill before </span><span class="si">{</span><span class="n">acc_time</span><span class="o">.</span><span class="n">cern_utc_string</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">name</span><span class="p">,</span> <span class="n">acc_time</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">from_timestamp</span><span class="p">(</span><span class="n">time</span><span class="p">)</span>
+
+
+<span class="c1"># Optics #######################################################################</span>
+
+
+<span class="k">def</span> <span class="nf">_get_optics</span><span class="p">(</span><span class="n">acc_time</span><span class="p">:</span> <span class="n">AccDatetime</span><span class="p">,</span> <span class="n">beamprocess</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">bp_start</span><span class="p">:</span> <span class="n">AccDatetime</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DotDict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Get the info about the active optics at ``acc_time``.&quot;&quot;&quot;</span>
+    <span class="n">optics_table</span> <span class="o">=</span> <span class="n">LSA</span><span class="o">.</span><span class="n">getOpticTable</span><span class="p">(</span><span class="n">beamprocess</span><span class="p">)</span>
+    <span class="n">optics</span><span class="p">,</span> <span class="n">start_time</span> <span class="o">=</span> <span class="n">_get_last_optics</span><span class="p">(</span><span class="n">optics_table</span><span class="p">,</span> <span class="n">beamprocess</span><span class="p">,</span> <span class="n">bp_start</span><span class="p">,</span> <span class="n">acc_time</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">DotDict</span><span class="p">({</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">optics</span><span class="p">,</span> <span class="s2">&quot;start&quot;</span><span class="p">:</span> <span class="n">start_time</span><span class="p">})</span>
+
+
+<span class="k">def</span> <span class="nf">_get_last_optics</span><span class="p">(</span>
+    <span class="n">optics_table</span><span class="p">,</span> <span class="n">bp</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">bp_start</span><span class="p">:</span> <span class="n">AccDatetime</span><span class="p">,</span> <span class="n">acc_time</span><span class="p">:</span> <span class="n">AccDatetime</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">AccDatetime</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get the name of the optics at the right time for current beam process.&quot;&quot;&quot;</span>
+    <span class="n">ts</span> <span class="o">=</span> <span class="n">acc_time</span><span class="o">.</span><span class="n">timestamp</span><span class="p">()</span> <span class="o">-</span> <span class="n">bp_start</span><span class="o">.</span><span class="n">timestamp</span><span class="p">()</span>
+    <span class="n">item</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">optics_table</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">time</span> <span class="o">&lt;=</span> <span class="n">ts</span><span class="p">:</span>
+            <span class="k">break</span>
+    <span class="k">if</span> <span class="n">item</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No optics found for beamprocess </span><span class="si">{</span><span class="n">bp</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">item</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">acc_time</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">from_timestamp</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">time</span> <span class="o">+</span> <span class="n">bp_start</span><span class="o">.</span><span class="n">timestamp</span><span class="p">())</span>
+
+
+<span class="c1"># Knobs ########################################################################</span>
+
+
+<span class="k">def</span> <span class="nf">_get_knob_definitions</span><span class="p">(</span><span class="n">active</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">knobs</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">optics</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get knob definitions if switch is activated.&quot;&quot;&quot;</span>
+    <span class="n">defs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">active</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">knob</span> <span class="ow">in</span> <span class="n">knobs</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">defs</span><span class="p">[</span><span class="n">knob</span><span class="p">]</span> <span class="o">=</span> <span class="n">LSA</span><span class="o">.</span><span class="n">get_knob_circuits</span><span class="p">(</span><span class="n">knob</span><span class="p">,</span> <span class="n">optics</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">IOError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">LOG</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">defs</span>
+
+
+<span class="c1"># Script Mode ##################################################################</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">get_info</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

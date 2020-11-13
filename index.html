@@ -7,12 +7,13 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Welcome to pyLHC’s documentation! &mdash; pylhc 0.0.3 documentation</title>
+  <title>Welcome to PyLHC’s documentation! &mdash; pylhc 0.0.3 documentation</title>
   
 
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
 
   
   
@@ -36,7 +37,7 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Main Scripts" href="root/index.html" /> 
+    <link rel="next" title="BSRT Analysis" href="entrypoints/bsrt_analysis.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -50,9 +51,12 @@
           
 
           
-            <a href="#" class="icon icon-home" alt="Documentation Home"> pylhc
+            <a href="#">
           
 
+          
+            
+            <img src="_static/omc_logo.svg" class="logo" alt="Logo"/>
           
           </a>
 
@@ -85,11 +89,44 @@
               
             
             
-              <ul>
-<li class="toctree-l1"><a class="reference internal" href="root/index.html">Main Scripts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="constants/index.html">Constants Definitions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="data_extract/index.html">Data Extraction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="htc/index.html">HTC-Condor Tools</a></li>
+              <p class="caption"><span class="caption-text">Entrypoints</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="entrypoints/bsrt_analysis.html">BSRT Analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="entrypoints/bsrt_analysis.html#id1">BSRT Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="entrypoints/forced_da_analysis.html">Forced DA Analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="entrypoints/forced_da_analysis.html#id1">Forced DA Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="entrypoints/job_submitter.html">HTCondor Job Submitter</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="entrypoints/job_submitter.html#job-submitter">Job Submitter</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="entrypoints/machine_settings_info.html">Machine Settings Info</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="entrypoints/machine_settings_info.html#print-machine-settings-overview">Print Machine Settings Overview</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules/constants.html">Constants Definitions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/constants.html#constants-general">Constants: General</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/constants.html#constants-external-paths">Constants: External Paths</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/constants.html#constants-forced-da-analysis">Constants: Forced DA Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/constants.html#constants-machine-settings-info">Constants: Machine Settings Info</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules/data_extract.html">Data Extraction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/data_extract.html#pylsa">PyLSA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/data_extract.html#timber">Timber</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules/htc.html">HTCondor Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/htc.html#htcondor-utilities">HTCondor Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/htc.html#mask-resolver">Mask Resolver</a></li>
+</ul>
+</li>
 </ul>
 
             
@@ -136,7 +173,7 @@
     
       <li><a href="#" class="icon icon-home"></a> &raquo;</li>
         
-      <li>Welcome to pyLHC’s documentation!</li>
+      <li>Welcome to PyLHC’s documentation!</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -156,32 +193,26 @@
            <div itemprop="articleBody">
             
   <div class="section" id="welcome-to-pylhc-s-documentation">
-<h1>Welcome to pyLHC’s documentation!<a class="headerlink" href="#welcome-to-pylhc-s-documentation" title="Permalink to this headline">¶</a></h1>
-<p>Contents:</p>
+<h1>Welcome to PyLHC’s documentation!<a class="headerlink" href="#welcome-to-pylhc-s-documentation" title="Permalink to this headline">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">PyLHC</span></code> is a collection of useful scripts and tools for the OMC Team at CERN. <a class="reference external" href="https://home.cern/">CERN</a>.</p>
+</div>
+<div class="section" id="package-reference">
+<h1>Package Reference<a class="headerlink" href="#package-reference" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">Entrypoints</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="root/index.html">Main Scripts</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="root/index.html#forced-da-analysis">Forced DA Analysis</a></li>
-<li class="toctree-l2"><a class="reference internal" href="root/index.html#job-submitter">Job-Submitter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="entrypoints/bsrt_analysis.html">BSRT Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="entrypoints/forced_da_analysis.html">Forced DA Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="entrypoints/job_submitter.html">HTCondor Job Submitter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="entrypoints/machine_settings_info.html">Machine Settings Info</a></li>
 </ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="constants/index.html">Constants Definitions</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="constants/index.html#constants-general">Constants: General</a></li>
-<li class="toctree-l2"><a class="reference internal" href="constants/index.html#constants-external-paths">Constants: External Paths</a></li>
-<li class="toctree-l2"><a class="reference internal" href="constants/index.html#constants-forced-da-analysis">Constants: Forced DA Analysis</a></li>
-<li class="toctree-l2"><a class="reference internal" href="constants/index.html#constants-machine-settings-info">Constants: Machine Settings Info</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="data_extract/index.html">Data Extraction</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="data_extract/index.html#pylsa">PyLSA</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data_extract/index.html#timber">Timber</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="htc/index.html">HTC-Condor Tools</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="htc/index.html#htc-utils">HTC Utils</a></li>
-<li class="toctree-l2"><a class="reference internal" href="htc/index.html#mask-resolver">MASK Resolver</a></li>
-</ul>
-</li>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules/constants.html">Constants Definitions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules/data_extract.html">Data Extraction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules/htc.html">HTCondor Tools</a></li>
 </ul>
 </div>
 </div>
@@ -202,7 +233,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="root/index.html" class="btn btn-neutral float-right" title="Main Scripts" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="entrypoints/bsrt_analysis.html" class="btn btn-neutral float-right" title="BSRT Analysis" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
     </div>

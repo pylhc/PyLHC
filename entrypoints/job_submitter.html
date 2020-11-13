@@ -1,0 +1,322 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>HTCondor Job Submitter &mdash; pylhc 0.0.3 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Machine Settings Info" href="machine_settings_info.html" />
+    <link rel="prev" title="Forced DA Analysis" href="forced_da_analysis.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html">
+          
+
+          
+            
+            <img src="../_static/omc_logo.svg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Entrypoints</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="bsrt_analysis.html">BSRT Analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="bsrt_analysis.html#id1">BSRT Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="forced_da_analysis.html">Forced DA Analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="forced_da_analysis.html#id1">Forced DA Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">HTCondor Job Submitter</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#job-submitter">Job Submitter</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="machine_settings_info.html">Machine Settings Info</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="machine_settings_info.html#print-machine-settings-overview">Print Machine Settings Overview</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules/constants.html">Constants Definitions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../modules/constants.html#constants-general">Constants: General</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/constants.html#constants-external-paths">Constants: External Paths</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/constants.html#constants-forced-da-analysis">Constants: Forced DA Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/constants.html#constants-machine-settings-info">Constants: Machine Settings Info</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/data_extract.html">Data Extraction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../modules/data_extract.html#pylsa">PyLSA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/data_extract.html#timber">Timber</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/htc.html">HTCondor Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../modules/htc.html#htcondor-utilities">HTCondor Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/htc.html#mask-resolver">Mask Resolver</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pylhc</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>HTCondor Job Submitter</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/entrypoints/job_submitter.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-pylhc.job_submitter">
+<span id="htcondor-job-submitter"></span><h1>HTCondor Job Submitter<a class="headerlink" href="#module-pylhc.job_submitter" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="job-submitter">
+<h2>Job Submitter<a class="headerlink" href="#job-submitter" title="Permalink to this headline">¶</a></h2>
+<p>Allows to execute a parametric study using a script-mask and a <cite>dictionary</cite> with parameters to
+replace, from the command line. The parameters to be replaced must be present in the given mask as
+<code class="docutils literal notranslate"><span class="pre">%(PARAMETER)s</span></code> (other types apart from string also allowed).</p>
+<p>The type of script and executable is freely choosable, but defaults to <code class="docutils literal notranslate"><span class="pre">madx</span></code> - for which this
+submitter was originally written.</p>
+<p>When submitting to <code class="docutils literal notranslate"><span class="pre">HTCondor</span></code>, data to be transferred back to the working directory must be
+written in a sub-folder defined by <code class="docutils literal notranslate"><span class="pre">job_output_directory</span></code> which defaults to <strong>Outputdata</strong>.</p>
+<p>This script also allows to check if all <code class="docutils literal notranslate"><span class="pre">HTCondor</span></code> jobs finished successfully, for resubmissions
+with a different parameter grid, and for local execution.</p>
+<p>A <strong>Jobs.tfs</strong> file is created in the working directory containing the Job Id, parameter per job
+and job directory for further post processing.</p>
+<p><em>--Required--</em></p>
+<ul class="simple">
+<li><p><strong>mask</strong> <em>(str)</em>: Script Mask to use</p></li>
+<li><p><strong>replace_dict</strong> <em>(DictAsString)</em>: Dict containing the str to replace as
+keys and values a list of parameters to replace</p></li>
+<li><p><strong>working_directory</strong> <em>(str)</em>: Directory where data should be put</p></li>
+</ul>
+<p><em>--Optional--</em></p>
+<ul>
+<li><p><strong>append_jobs</strong>: Flag to rerun job with finer/wider grid,
+already existing points will not be reexecuted.</p>
+<p>Action: <code class="docutils literal notranslate"><span class="pre">store_true</span></code></p>
+</li>
+<li><p><strong>check_files</strong> <em>(str)</em>: List of files/file-name-masks expected to be in the
+‘job_output_dir’ after a successful job (for appending/resuming). Uses the ‘glob’
+function, so unix-wildcards (*) are allowed. If not given, only the presence of the folder itself is checked.</p></li>
+<li><p><strong>dryrun</strong>: Flag to only prepare folders and scripts,
+but does not start madx/submit jobs.
+Together with <cite>resume_jobs</cite> this can be use to check which jobs succeeded and which failed.</p>
+<p>Action: <code class="docutils literal notranslate"><span class="pre">store_true</span></code></p>
+</li>
+<li><p><strong>executable</strong> <em>(str)</em>: Path to executable or job-type (of [‘madx’, ‘python3’, ‘python2’]) to use.</p></li>
+<li><p><strong>htc_arguments</strong> <em>(DictAsString)</em>: Additional arguments for htcondor, as Dict-String.
+For AccountingGroup please use ‘accounting_group’. ‘max_retries’ and ‘notification’ have defaults (if not given).
+Others are just passed on.</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">{}</span></code></p>
+</li>
+<li><p><strong>job_output_dir</strong> <em>(str)</em>: The name of the output dir of the job. (Make sure your script puts its data there!)</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">Outputdata</span></code></p>
+</li>
+<li><p><strong>jobflavour</strong> <em>(str)</em>: Jobflavour to give rough estimate of runtime of one job</p>
+<p>Choices: <code class="docutils literal notranslate"><span class="pre">('espresso',</span> <span class="pre">'microcentury',</span> <span class="pre">'longlunch',</span> <span class="pre">'workday',</span> <span class="pre">'tomorrow',</span> <span class="pre">'testmatch',</span> <span class="pre">'nextweek')</span></code>
+Default: <code class="docutils literal notranslate"><span class="pre">workday</span></code></p>
+</li>
+<li><p><strong>jobid_mask</strong> <em>(str)</em>: Mask to name jobs from replace_dict</p></li>
+<li><p><strong>num_processes</strong> <em>(int)</em>: Number of processes to be used if run locally</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">4</span></code></p>
+</li>
+<li><p><strong>resume_jobs</strong>: Only do jobs that did not work.</p>
+<p>Action: <code class="docutils literal notranslate"><span class="pre">store_true</span></code></p>
+</li>
+<li><p><strong>run_local</strong>: Flag to run the jobs on the local machine. Not suggested.</p>
+<p>Action: <code class="docutils literal notranslate"><span class="pre">store_true</span></code></p>
+</li>
+<li><p><strong>script_arguments</strong> <em>(DictAsString)</em>: Additional arguments to pass to the script,
+as dict in key-value pairs (‘--‘ need to be included in the keys).</p>
+<p>Default: <code class="docutils literal notranslate"><span class="pre">{}</span></code></p>
+</li>
+<li><p><strong>script_extension</strong> <em>(str)</em>: New extension for the scripts created from the masks.
+This is inferred automatically for [‘madx’, ‘python3’, ‘python2’]. Otherwise not changed.</p></li>
+<li><p><strong>ssh</strong> <em>(str)</em>: Run htcondor from this machine via ssh (needs access to the <cite>working_directory</cite>)</p></li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="machine_settings_info.html" class="btn btn-neutral float-right" title="Machine Settings Info" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="forced_da_analysis.html" class="btn btn-neutral float-left" title="Forced DA Analysis" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

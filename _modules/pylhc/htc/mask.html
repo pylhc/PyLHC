@@ -13,6 +13,7 @@
   
   <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/custom.css" type="text/css" />
 
   
   
@@ -49,9 +50,12 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> pylhc
+            <a href="../../../index.html">
           
 
+          
+            
+            <img src="../../../_static/omc_logo.svg" class="logo" alt="Logo"/>
           
           </a>
 
@@ -84,11 +88,44 @@
               
             
             
-              <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../root/index.html">Main Scripts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../constants/index.html">Constants Definitions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../data_extract/index.html">Data Extraction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../htc/index.html">HTC-Condor Tools</a></li>
+              <p class="caption"><span class="caption-text">Entrypoints</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../entrypoints/bsrt_analysis.html">BSRT Analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/bsrt_analysis.html#id1">BSRT Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../entrypoints/forced_da_analysis.html">Forced DA Analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/forced_da_analysis.html#id1">Forced DA Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../entrypoints/job_submitter.html">HTCondor Job Submitter</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/job_submitter.html#job-submitter">Job Submitter</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../entrypoints/machine_settings_info.html">Machine Settings Info</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/machine_settings_info.html#print-machine-settings-overview">Print Machine Settings Overview</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/constants.html">Constants Definitions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/constants.html#constants-general">Constants: General</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/constants.html#constants-external-paths">Constants: External Paths</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/constants.html#constants-forced-da-analysis">Constants: Forced DA Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/constants.html#constants-machine-settings-info">Constants: Machine Settings Info</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/data_extract.html">Data Extraction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/data_extract.html#pylsa">PyLSA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/data_extract.html#timber">Timber</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/htc.html">HTCondor Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/htc.html#htcondor-utilities">HTCondor Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/htc.html#mask-resolver">Mask Resolver</a></li>
+</ul>
+</li>
 </ul>
 
             
@@ -154,60 +191,58 @@
             
   <h1>Source code for pylhc.htc.mask</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">MASK Resolver</span>
-<span class="sd">------------------</span>
+<span class="sd">Mask Resolver</span>
+<span class="sd">-------------</span>
 
-<span class="sd">Package to resolve script masks.</span>
-
-<span class="sd">:module: htc.mask</span>
-<span class="sd">:author: mihofer</span>
-
+<span class="sd">This module provides functionality to resolve and write script masks for ``HTCondor`` jobs</span>
+<span class="sd">submission.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">DataFrame</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
 <span class="kn">from</span> <span class="nn">pylhc.htc.utils</span> <span class="kn">import</span> <span class="n">COLUMN_JOB_DIRECTORY</span><span class="p">,</span> <span class="n">COLUMN_JOB_FILE</span>
 
 <span class="n">LOG</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="create_jobs_from_mask"><a class="viewcode-back" href="../../../htc/index.html#pylhc.htc.mask.create_jobs_from_mask">[docs]</a><span class="k">def</span> <span class="nf">create_jobs_from_mask</span><span class="p">(</span><span class="n">job_df</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">,</span> <span class="n">maskfile</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">replace_keys</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">file_ext</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<div class="viewcode-block" id="create_jobs_from_mask"><a class="viewcode-back" href="../../../modules/htc.html#pylhc.htc.mask.create_jobs_from_mask">[docs]</a><span class="k">def</span> <span class="nf">create_jobs_from_mask</span><span class="p">(</span>
+    <span class="n">job_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">maskfile</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">replace_keys</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">file_ext</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Takes path to mask file, list of parameter to be replaced and pandas dataframe containg per job</span>
 <span class="sd">    the job directory where processed mask is to be put, and columns containing the parameter values</span>
 <span class="sd">    with column named like replace parameters. Job directories have to be created beforehand.</span>
 <span class="sd">    Processed (madx) mask has the same filename as mask but with the given file extension.</span>
-<span class="sd">    Input Dataframe is returned with additional column containing path to the processed script files.</span>
-
+<span class="sd">    Input Dataframe is returned with additional column containing path to the processed script</span>
+<span class="sd">    files.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        job_df: Job parameters as defined in description</span>
-<span class="sd">        maskfile: path to mask file</span>
-<span class="sd">        replace_keys: keys to be replaced (must correspond to columns in job_df)</span>
-<span class="sd">        file_ext: file extention to use (defaults to &#39;madx&#39;)</span>
+<span class="sd">        job_df (pd.DataFrame): Job parameters as defined in description.</span>
+<span class="sd">        maskfile: `Path` object to the mask file.</span>
+<span class="sd">        replace_keys: keys to be replaced (must correspond to columns in ``job_df``).</span>
+<span class="sd">        file_ext: file extention to use (defaults to **madx**).</span>
 
-<span class="sd">    Returns: job_df but with added path to the scripts</span>
-
+<span class="sd">    Returns:</span>
+<span class="sd">        The provided ``job_df`` but with added path to the scripts.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">with</span> <span class="n">maskfile</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mfile</span><span class="p">:</span>
+    <span class="k">with</span> <span class="n">maskfile</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mfile</span><span class="p">:</span>
         <span class="n">template</span> <span class="o">=</span> <span class="n">mfile</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 
-    <span class="n">jobname</span> <span class="o">=</span> <span class="n">maskfile</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
+    <span class="n">jobname</span> <span class="o">=</span> <span class="n">maskfile</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
     <span class="n">jobs</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">job_df</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="p">(</span><span class="n">jobid</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">job_df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">()):</span>
         <span class="n">jobfile_fullpath</span> <span class="o">=</span> <span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="n">COLUMN_JOB_DIRECTORY</span><span class="p">])</span> <span class="o">/</span> <span class="n">jobname</span><span class="p">)</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="n">file_ext</span><span class="p">)</span>
 
-        <span class="k">with</span> <span class="n">jobfile_fullpath</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">madxjob</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">jobfile_fullpath</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">madxjob</span><span class="p">:</span>
             <span class="n">madxjob</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">template</span> <span class="o">%</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">replace_keys</span><span class="p">,</span> <span class="n">values</span><span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">replace_keys</span><span class="p">)])))</span>
         <span class="n">jobs</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">jobfile_fullpath</span><span class="o">.</span><span class="n">name</span>
     <span class="n">job_df</span><span class="p">[</span><span class="n">COLUMN_JOB_FILE</span><span class="p">]</span> <span class="o">=</span> <span class="n">jobs</span>
     <span class="k">return</span> <span class="n">job_df</span></div>
 
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="k">raise</span> <span class="ne">EnvironmentError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="vm">__file__</span><span class="si">}</span><span class="s2"> is not supposed to run as main.&quot;</span><span class="p">)</span>
 </pre></div>
 

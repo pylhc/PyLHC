@@ -1,0 +1,350 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Machine Settings Info &mdash; pylhc 0.0.3 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Constants Definitions" href="../modules/constants.html" />
+    <link rel="prev" title="HTCondor Job Submitter" href="job_submitter.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html">
+          
+
+          
+            
+            <img src="../_static/omc_logo.svg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Entrypoints</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="bsrt_analysis.html">BSRT Analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="bsrt_analysis.html#id1">BSRT Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="forced_da_analysis.html">Forced DA Analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="forced_da_analysis.html#id1">Forced DA Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="job_submitter.html">HTCondor Job Submitter</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="job_submitter.html#job-submitter">Job Submitter</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Machine Settings Info</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#print-machine-settings-overview">Print Machine Settings Overview</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules/constants.html">Constants Definitions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../modules/constants.html#constants-general">Constants: General</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/constants.html#constants-external-paths">Constants: External Paths</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/constants.html#constants-forced-da-analysis">Constants: Forced DA Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/constants.html#constants-machine-settings-info">Constants: Machine Settings Info</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/data_extract.html">Data Extraction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../modules/data_extract.html#pylsa">PyLSA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/data_extract.html#timber">Timber</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/htc.html">HTCondor Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../modules/htc.html#htcondor-utilities">HTCondor Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/htc.html#mask-resolver">Mask Resolver</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pylhc</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Machine Settings Info</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/entrypoints/machine_settings_info.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-pylhc.machine_settings_info">
+<span id="machine-settings-info"></span><h1>Machine Settings Info<a class="headerlink" href="#module-pylhc.machine_settings_info" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="print-machine-settings-overview">
+<h2>Print Machine Settings Overview<a class="headerlink" href="#print-machine-settings-overview" title="Permalink to this headline">¶</a></h2>
+<p>Prints an overview over the machine settings at a provided given time, or the current settings if
+no time is given.</p>
+<p>Can be run from command line, parameters as given in <code class="xref py py-meth docutils literal notranslate"><span class="pre">print_machine_settings_overview.main()</span></code>.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>print_machine_settings_overview.py [-h] [--time TIME]
+                                        [--knobs KNOBS [KNOBS ...]]
+                                        [--bp_regexp BP_REGEXP]
+                                        [--accel ACCEL]
+                                        [--out OUT]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --time TIME, -t TIME  Time as &#39;Y-m-d H:M:S.f&#39; format.
+  --knobs KNOBS [KNOBS ...], -k KNOBS [KNOBS ...]
+                        List of knobnames.
+  --bp_regexp BP_REGEXP, -r BP_REGEXP
+                        Beamprocess regexp filter.
+  --accel ACCEL, -a ACCEL
+                        Accelerator name.
+  --out OUT, -o OUT     Output path.
+</pre></div>
+</div>
+<dl class="py data">
+<dt id="pylhc.machine_settings_info.DEFAULT_BP_RE">
+<code class="sig-prename descclassname">pylhc.machine_settings_info.</code><code class="sig-name descname">DEFAULT_BP_RE</code><em class="property"> = '^(RAMP|SQUEEZE)[_-]'</em><a class="headerlink" href="#pylhc.machine_settings_info.DEFAULT_BP_RE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default regexp for interesting Beamprocesses.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pylhc.machine_settings_info.get_info">
+<code class="sig-prename descclassname">pylhc.machine_settings_info.</code><code class="sig-name descname">get_info</code><span class="sig-paren">(</span><em class="sig-param">opt) -&gt; (&lt;class 'omc3.utils.time_tools.AccDatetime'&gt;</em>, <em class="sig-param">&lt;class 'generic_parser.tools.DotDict'&gt;</em>, <em class="sig-param">&lt;class 'generic_parser.tools.DotDict'&gt;</em>, <em class="sig-param">&lt;class 'dict'&gt;</em>, <em class="sig-param">&lt;class 'dict'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/machine_settings_info.html#get_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pylhc.machine_settings_info.get_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get info about <strong>Beamprocess</strong>, <strong>Optics</strong> and <strong>Knobs</strong> at given time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Keyword Arguments</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>*--Optional--*</strong> -- </p></li>
+<li><p><strong>accel *</strong> (<em>-</em>) -- <p>Accelerator name.</p>
+<p>Flags: <strong>[‘--accel’, ‘-a’]</strong>
+Default: <code class="docutils literal notranslate"><span class="pre">lhc</span></code></p>
+</p></li>
+<li><p><strong>bp_regexp *</strong> (<em>-</em>) -- <p>Beamprocess regexp filter.</p>
+<p>Flags: <strong>[‘--bp_regexp’, ‘-r’]</strong>
+Default: <code class="docutils literal notranslate"><span class="pre">^(RAMP|SQUEEZE)[_-]</span></code></p>
+</p></li>
+<li><p><strong>knob_def</strong> (<em>-</em>) -- <p>Set to extract knob definitions.</p>
+<p>Flags: <strong>[‘--knob_def’, ‘-d’]</strong>
+Action: <code class="docutils literal notranslate"><span class="pre">store_true</span></code></p>
+</p></li>
+<li><p><strong>knobs *</strong> (<em>-</em>) -- <p>List of knobnames.</p>
+<p>Flags: <strong>[‘--knobs’, ‘-k’]</strong>
+Default: <code class="docutils literal notranslate"><span class="pre">()</span></code></p>
+</p></li>
+<li><p><strong>log</strong> (<em>-</em>) -- <p>Write summary into log (automatically done if no output path is given).</p>
+<p>Flags: <strong>[‘--log’, ‘-l’]</strong>
+Action: <code class="docutils literal notranslate"><span class="pre">store_true</span></code></p>
+</p></li>
+<li><p><strong>out *</strong> (<em>-</em>) -- <p>Output path.</p>
+<p>Flags: <strong>[‘--out’, ‘-o’]</strong>
+Default: <code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</p></li>
+<li><p><strong>time *</strong> (<em>-</em>) -- <p>Time as ‘Y-m-d H:M:S.f’ format.</p>
+<p>Flags: <strong>[‘--time’, ‘-t’]</strong>
+Default: <code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pylhc.machine_settings_info.log_summary">
+<code class="sig-prename descclassname">pylhc.machine_settings_info.</code><code class="sig-name descname">log_summary</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">acc_time</span><span class="p">:</span> <span class="n">omc3.utils.time_tools.AccDatetime</span></em>, <em class="sig-param"><span class="n">bp_info</span><span class="p">:</span> <span class="n">generic_parser.tools.DotDict</span></em>, <em class="sig-param"><span class="n">o_info</span><span class="p">:</span> <span class="n">generic_parser.tools.DotDict</span></em>, <em class="sig-param"><span class="n">trims</span><span class="p">:</span> <span class="n">dict</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/machine_settings_info.html#log_summary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pylhc.machine_settings_info.log_summary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Log the summary.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pylhc.machine_settings_info.write_knob_defitions">
+<code class="sig-prename descclassname">pylhc.machine_settings_info.</code><code class="sig-name descname">write_knob_defitions</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">output_path</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">definitions</span><span class="p">:</span> <span class="n">dict</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/machine_settings_info.html#write_knob_defitions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pylhc.machine_settings_info.write_knob_defitions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write Knob definitions into a <strong>tfs</strong> file.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pylhc.machine_settings_info.write_summary">
+<code class="sig-prename descclassname">pylhc.machine_settings_info.</code><code class="sig-name descname">write_summary</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">output_path</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">acc_time</span><span class="p">:</span> <span class="n">omc3.utils.time_tools.AccDatetime</span></em>, <em class="sig-param"><span class="n">bp_info</span><span class="p">:</span> <span class="n">generic_parser.tools.DotDict</span></em>, <em class="sig-param"><span class="n">o_info</span><span class="p">:</span> <span class="n">generic_parser.tools.DotDict</span></em>, <em class="sig-param"><span class="n">trims</span><span class="p">:</span> <span class="n">dict</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/machine_settings_info.html#write_summary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pylhc.machine_settings_info.write_summary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write summary into a <strong>tfs</strong> file.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../modules/constants.html" class="btn btn-neutral float-right" title="Constants Definitions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="job_submitter.html" class="btn btn-neutral float-left" title="HTCondor Job Submitter" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

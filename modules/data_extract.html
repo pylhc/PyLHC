@@ -13,6 +13,7 @@
   
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
 
   
   
@@ -36,8 +37,8 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="HTC-Condor Tools" href="../htc/index.html" />
-    <link rel="prev" title="Constants Definitions" href="../constants/index.html" /> 
+    <link rel="next" title="HTCondor Tools" href="htc.html" />
+    <link rel="prev" title="Constants Definitions" href="constants.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -51,9 +52,12 @@
           
 
           
-            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> pylhc
+            <a href="../index.html">
           
 
+          
+            
+            <img src="../_static/omc_logo.svg" class="logo" alt="Logo"/>
           
           </a>
 
@@ -86,15 +90,44 @@
               
             
             
-              <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../root/index.html">Main Scripts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../constants/index.html">Constants Definitions</a></li>
+              <p class="caption"><span class="caption-text">Entrypoints</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../entrypoints/bsrt_analysis.html">BSRT Analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../entrypoints/bsrt_analysis.html#id1">BSRT Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../entrypoints/forced_da_analysis.html">Forced DA Analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../entrypoints/forced_da_analysis.html#id1">Forced DA Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../entrypoints/job_submitter.html">HTCondor Job Submitter</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../entrypoints/job_submitter.html#job-submitter">Job Submitter</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../entrypoints/machine_settings_info.html">Machine Settings Info</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../entrypoints/machine_settings_info.html#print-machine-settings-overview">Print Machine Settings Overview</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Modules</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="constants.html">Constants Definitions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="constants.html#constants-general">Constants: General</a></li>
+<li class="toctree-l2"><a class="reference internal" href="constants.html#constants-external-paths">Constants: External Paths</a></li>
+<li class="toctree-l2"><a class="reference internal" href="constants.html#constants-forced-da-analysis">Constants: Forced DA Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="constants.html#constants-machine-settings-info">Constants: Machine Settings Info</a></li>
+</ul>
+</li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Data Extraction</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#pylsa">PyLSA</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#timber">Timber</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../htc/index.html">HTC-Condor Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="htc.html">HTCondor Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="htc.html#htcondor-utilities">HTCondor Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="htc.html#mask-resolver">Mask Resolver</a></li>
+</ul>
+</li>
 </ul>
 
             
@@ -147,7 +180,7 @@
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="../_sources/data_extract/index.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/modules/data_extract.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -164,15 +197,7 @@
 <span id="data-extraction"></span><h1>Data Extraction<a class="headerlink" href="#module-pylhc.data_extract.lsa" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="pylsa">
 <h2>PyLSA<a class="headerlink" href="#pylsa" title="Permalink to this headline">¶</a></h2>
-<p>Provides additional functionality for pjlsa.</p>
-<dl class="field-list simple">
-<dt class="field-odd">module</dt>
-<dd class="field-odd"><p>data_extract.lsa</p>
-</dd>
-<dt class="field-even">author</dt>
-<dd class="field-even"><p>jdilly</p>
-</dd>
-</dl>
+<p>This module provides useful functions to conveniently wrap the functionality of <code class="docutils literal notranslate"><span class="pre">pjlsa</span></code>.</p>
 <dl class="py class">
 <dt id="pylhc.data_extract.lsa.LSA">
 <em class="property">class </em><code class="sig-prename descclassname">pylhc.data_extract.lsa.</code><code class="sig-name descname">LSA</code><a class="reference internal" href="../_modules/pylhc/data_extract/lsa.html#LSA"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pylhc.data_extract.lsa.LSA" title="Permalink to this definition">¶</a></dt>
@@ -186,8 +211,8 @@
 <dl class="py method">
 <dt id="pylhc.data_extract.lsa.LSAClient.find_active_beamprocess_at_time">
 <code class="sig-name descname">find_active_beamprocess_at_time</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">acc_time</span><span class="p">:</span> <span class="n">omc3.utils.time_tools.AccDatetime</span></em>, <em class="sig-param"><span class="n">accelerator</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'lhc'</span></em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="../_modules/pylhc/data_extract/lsa.html#LSAClient.find_active_beamprocess_at_time"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pylhc.data_extract.lsa.LSAClient.find_active_beamprocess_at_time" title="Permalink to this definition">¶</a></dt>
-<dd><p>Find the active beam process at the time given.</p>
-<p>Same as what online model extractor (KnobExtractor) does, but returns empty map for some reason.</p>
+<dd><p>Find the active beam process at the time given. Same as what online model extractor
+(KnobExtractor) does, but returns empty map for some reason.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -197,8 +222,8 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>accelerator</strong> -- Accelerator name</p></li>
-<li><p><strong>regexp</strong> -- Rgular Expression to filter knob names</p></li>
+<li><p><strong>accelerator</strong> -- Accelerator name.</p></li>
+<li><p><strong>regexp</strong> -- Regular Expression to filter knob names.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -213,14 +238,14 @@
 <dd><p>Return last fill name and content.</p>
 <blockquote>
 <div><dl class="simple">
-<dt>Args:</dt><dd><p>acc_time: (AccDatetime): Accelerator datetime object
-accelerator (str): Name of the accelerator</p>
+<dt>Args:</dt><dd><p>acc_time: (AccDatetime): Accelerator datetime object.
+accelerator (str): Name of the accelerator.</p>
 </dd>
 </dl>
 </div></blockquote>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>Last fill name (str), Beamprocesses of last fill (list)</p>
+<dd class="field-odd"><p>Last fill name (str), Beamprocesses of last fill (list).</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>tupel</p>
@@ -235,14 +260,14 @@ accelerator (str): Name of the accelerator</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>beamprocess</strong> (<em>str</em>) -- Name of the beamprocess</p></li>
-<li><p><strong>knobs</strong> (<em>list</em>) -- List of strings of the knobs to check</p></li>
-<li><p><strong>acc_time</strong> -- (AccDatetime): Accelerator datetime object</p></li>
-<li><p><strong>accelerator</strong> (<em>str</em>) -- Name of the accelerator</p></li>
+<li><p><strong>beamprocess</strong> (<em>str</em>) -- Name of the beamprocess.</p></li>
+<li><p><strong>knobs</strong> (<em>list</em>) -- List of strings of the knobs to check.</p></li>
+<li><p><strong>acc_time</strong> -- (AccDatetime): Accelerator datetime object.</p></li>
+<li><p><strong>accelerator</strong> (<em>str</em>) -- Name of the accelerator.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Dictionary of knob names and their values</p>
+<dd class="field-even"><p>Dictionary of knob names and their values.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -264,23 +289,25 @@ accelerator (str): Name of the accelerator</p>
 <dl class="py method">
 <dt id="pylhc.data_extract.lsa.LSAClient.get_knob_circuits">
 <code class="sig-name descname">get_knob_circuits</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">knob_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">optics</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; tfs.handler.TfsDataFrame<a class="reference internal" href="../_modules/pylhc/data_extract/lsa.html#LSAClient.get_knob_circuits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pylhc.data_extract.lsa.LSAClient.get_knob_circuits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a dataframe of the structure of the knob.
-(Similar to online model extractor KnobExtractor.getKnobHiercarchy)</p>
+<dd><p>Get a dataframe of the structure of the knob. Similar to online model extractor
+(KnobExtractor.getKnobHiercarchy)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>knob</strong> -- name of the knob</p></li>
-<li><p><strong>optics</strong> -- name of the optics</p></li>
+<li><p><strong>knob_name</strong> -- name of the knob.</p></li>
+<li><p><strong>optics</strong> -- name of the optics.</p></li>
 </ul>
 </dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A <cite>TfsDataFrame</cite> of the knob circuits.</p>
+</dd>
 </dl>
-<p>Returns: TfsDataFrame</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="pylhc.data_extract.lsa.LSAClient.get_madx_name_from_circuit">
 <code class="sig-name descname">get_madx_name_from_circuit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">circuit</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/data_extract/lsa.html#LSAClient.get_madx_name_from_circuit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pylhc.data_extract.lsa.LSAClient.get_madx_name_from_circuit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the MAD-X Strength Name (Circuit/Knob) from the circuit name.</p>
+<dd><p>Returns the <code class="docutils literal notranslate"><span class="pre">MAD-X</span></code> Strength Name (Circuit/Knob) from the given circuit name.</p>
 </dd></dl>
 
 </dd></dl>
@@ -294,21 +321,13 @@ accelerator (str): Name of the accelerator</p>
 </div>
 <span class="target" id="module-pylhc.data_extract.timber"></span><div class="section" id="timber">
 <h2>Timber<a class="headerlink" href="#timber" title="Permalink to this headline">¶</a></h2>
-<p>Useful functionality for pytimber.</p>
-<dl class="field-list simple">
-<dt class="field-odd">module</dt>
-<dd class="field-odd"><p>data_extract.timber</p>
-</dd>
-<dt class="field-even">author</dt>
-<dd class="field-even"><p>jdilly</p>
-</dd>
-</dl>
+<p>This module provides useful functions to conveniently wrap the functionality of <code class="docutils literal notranslate"><span class="pre">pytimber</span></code>.</p>
 <dl class="py function">
 <dt id="pylhc.data_extract.timber.find_exact_time_for_beamprocess">
 <code class="sig-prename descclassname">pylhc.data_extract.timber.</code><code class="sig-name descname">find_exact_time_for_beamprocess</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">acc_time</span><span class="p">:</span> <span class="n">omc3.utils.time_tools.AccDatetime</span></em><span class="sig-paren">)</span> &#x2192; omc3.utils.time_tools.AccDatetime<a class="reference internal" href="../_modules/pylhc/data_extract/timber.html#find_exact_time_for_beamprocess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pylhc.data_extract.timber.find_exact_time_for_beamprocess" title="Permalink to this definition">¶</a></dt>
-<dd><p>Finds the last entry where HX:SRMP-POW equals 123.</p>
-<p>Which is, according to the online model KnobExtractor, the timing event for SQUEEZE or RAMP.
-I don’t think this is correct (jdilly)</p>
+<dd><p>Finds the last entry where HX:SRMP-POW equals 123. Which is, according to the online model
+KnobExtractor, the timing event for SQUEEZE or RAMP.
+I don’t think this is correct (jdilly).</p>
 </dd></dl>
 
 </div>
@@ -322,10 +341,10 @@ I don’t think this is correct (jdilly)</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../htc/index.html" class="btn btn-neutral float-right" title="HTC-Condor Tools" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="htc.html" class="btn btn-neutral float-right" title="HTCondor Tools" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="../constants/index.html" class="btn btn-neutral float-left" title="Constants Definitions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="constants.html" class="btn btn-neutral float-left" title="Constants Definitions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

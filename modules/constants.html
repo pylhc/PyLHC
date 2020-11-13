@@ -13,6 +13,7 @@
   
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
 
   
   
@@ -36,8 +37,8 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Data Extraction" href="../data_extract/index.html" />
-    <link rel="prev" title="Main Scripts" href="../root/index.html" /> 
+    <link rel="next" title="Data Extraction" href="data_extract.html" />
+    <link rel="prev" title="Machine Settings Info" href="../entrypoints/machine_settings_info.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -51,9 +52,12 @@
           
 
           
-            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> pylhc
+            <a href="../index.html">
           
 
+          
+            
+            <img src="../_static/omc_logo.svg" class="logo" alt="Logo"/>
           
           </a>
 
@@ -86,8 +90,27 @@
               
             
             
-              <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../root/index.html">Main Scripts</a></li>
+              <p class="caption"><span class="caption-text">Entrypoints</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../entrypoints/bsrt_analysis.html">BSRT Analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../entrypoints/bsrt_analysis.html#id1">BSRT Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../entrypoints/forced_da_analysis.html">Forced DA Analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../entrypoints/forced_da_analysis.html#id1">Forced DA Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../entrypoints/job_submitter.html">HTCondor Job Submitter</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../entrypoints/job_submitter.html#job-submitter">Job Submitter</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../entrypoints/machine_settings_info.html">Machine Settings Info</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../entrypoints/machine_settings_info.html#print-machine-settings-overview">Print Machine Settings Overview</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Modules</span></p>
+<ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Constants Definitions</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#constants-general">Constants: General</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#constants-external-paths">Constants: External Paths</a></li>
@@ -95,8 +118,16 @@
 <li class="toctree-l2"><a class="reference internal" href="#constants-machine-settings-info">Constants: Machine Settings Info</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../data_extract/index.html">Data Extraction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../htc/index.html">HTC-Condor Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_extract.html">Data Extraction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="data_extract.html#pylsa">PyLSA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_extract.html#timber">Timber</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="htc.html">HTCondor Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="htc.html#htcondor-utilities">HTCondor Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="htc.html#mask-resolver">Mask Resolver</a></li>
+</ul>
+</li>
 </ul>
 
             
@@ -149,7 +180,7 @@
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="../_sources/constants/index.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/modules/constants.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -166,12 +197,7 @@
 <span id="constants-definitions"></span><h1>Constants Definitions<a class="headerlink" href="#module-pylhc.constants.general" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="constants-general">
 <h2>Constants: General<a class="headerlink" href="#constants-general" title="Permalink to this headline">¶</a></h2>
-<p>General Constants, useful in many places.</p>
-<dl class="field-list simple">
-<dt class="field-odd">module</dt>
-<dd class="field-odd"><p>constants.general</p>
-</dd>
-</dl>
+<p>General constants to be used in <code class="docutils literal notranslate"><span class="pre">PyLHC</span></code>, to help with consistency.</p>
 <dl class="py function">
 <dt id="pylhc.constants.general.get_proton_beta">
 <code class="sig-prename descclassname">pylhc.constants.general.</code><code class="sig-name descname">get_proton_beta</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">energy</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/constants/general.html#get_proton_beta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pylhc.constants.general.get_proton_beta" title="Permalink to this definition">¶</a></dt>
@@ -181,42 +207,23 @@
 <dl class="py function">
 <dt id="pylhc.constants.general.get_proton_gamma">
 <code class="sig-prename descclassname">pylhc.constants.general.</code><code class="sig-name descname">get_proton_gamma</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">energy</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/constants/general.html#get_proton_gamma"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pylhc.constants.general.get_proton_gamma" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns relativistic gamma for protons</p>
+<dd><p>Returns relativistic gamma for protons.</p>
 </dd></dl>
 
 </div>
 <span class="target" id="module-pylhc.constants.external_paths"></span><div class="section" id="constants-external-paths">
 <h2>Constants: External Paths<a class="headerlink" href="#constants-external-paths" title="Permalink to this headline">¶</a></h2>
-<p>Collections of external paths used in this package.</p>
-<dl class="field-list simple">
-<dt class="field-odd">module</dt>
-<dd class="field-odd"><p>constants.forced_da_analysis</p>
-</dd>
-<dt class="field-even">author</dt>
-<dd class="field-even"><p>jdilly</p>
-</dd>
-</dl>
+<p>Specific constants relating to external paths to be used in <code class="docutils literal notranslate"><span class="pre">PyLHC</span></code>, to help with consistency.</p>
 </div>
 <span class="target" id="module-pylhc.constants.forced_da_analysis"></span><div class="section" id="constants-forced-da-analysis">
 <h2>Constants: Forced DA Analysis<a class="headerlink" href="#constants-forced-da-analysis" title="Permalink to this headline">¶</a></h2>
-<p>Constants and definitions for the forced DA analysis.</p>
-<dl class="field-list simple">
-<dt class="field-odd">module</dt>
-<dd class="field-odd"><p>constants.forced_da_analysis</p>
-</dd>
-<dt class="field-even">author</dt>
-<dd class="field-even"><p>jdilly</p>
-</dd>
-</dl>
+<p>Specific constants relating to the forced DA analysis to be used in <code class="docutils literal notranslate"><span class="pre">PyLHC</span></code>, to help with
+consistency.</p>
 </div>
 <span class="target" id="module-pylhc.constants.machine_settings_info"></span><div class="section" id="constants-machine-settings-info">
 <h2>Constants: Machine Settings Info<a class="headerlink" href="#constants-machine-settings-info" title="Permalink to this headline">¶</a></h2>
-<p>Constants for the machine settings info.</p>
-<dl class="field-list simple">
-<dt class="field-odd">module</dt>
-<dd class="field-odd"><p>constants.machine_settings_info</p>
-</dd>
-</dl>
+<p>Specific constants relating to the retrieval of machine settings information to be used in
+<code class="docutils literal notranslate"><span class="pre">PyLHC</span></code>, to help with consistency.</p>
 </div>
 </div>
 
@@ -228,10 +235,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../data_extract/index.html" class="btn btn-neutral float-right" title="Data Extraction" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="data_extract.html" class="btn btn-neutral float-right" title="Data Extraction" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="../root/index.html" class="btn btn-neutral float-left" title="Main Scripts" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="../entrypoints/machine_settings_info.html" class="btn btn-neutral float-left" title="Machine Settings Info" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
