@@ -1,21 +1,16 @@
 """
-HTC Utils
-----------
+HTCondor Utilities
+------------------
 
-Functions allowing to create HTCondor jobs and submit them.
+This module provides functionality to create HTCondor jobs and submit them to ``HTCondor``.
 
-write_bash creates bash scripts executing either a python or madx script. 
-Takes dataframe, job type, and optional additional cmd line arguments for script.
+``write_bash`` creates bash scripts executing either a python or madx script.
+Takes as input `Dataframe`, job type, and optional additional commandline arguments for the script.
 A shell script is created in each job directory in the dataframe.
 
-make_subfile takes the job dataframe and creates the .sub required for submissions to HTCondor.
-The .sub file will be put in the working directory. 
-The maximum runtime of one job can be specified, standard is 8h.
-
-
-:module: htc.utils
-:author: mihofer
-
+``make_subfile`` takes the job dataframe and creates the **.sub** files required for submissions to
+``HTCondor``. The **.sub** file will be put in the working directory. The maximum runtime of one
+job can be specified, standard is 8h.
 """
 import logging
 import subprocess
@@ -67,7 +62,7 @@ COLUMN_JOB_FILE = "JobFile"
 
 
 def create_subfile_from_job(cwd: Path, job: str):
-    """ Write file to submit to htcondor """
+    """Write file to submit to ``HTCondor``."""
     subfile = cwd / SUBFILE
     LOG.debug(f"Writing sub-file '{str(subfile)}'.")
     with subfile.open("w") as f:
@@ -76,7 +71,7 @@ def create_subfile_from_job(cwd: Path, job: str):
 
 
 def submit_jobfile(jobfile: Path, ssh: str):
-    """ Submit subfile to htcondor via subprocess """
+    """Submit subfile to ``HTCondor`` via subprocess."""
     proc_args = [CMD_SUBMIT, jobfile]
     if ssh:
         proc_args = ['ssh', ssh] + proc_args
@@ -102,15 +97,17 @@ def _start_subprocess(command):
 
 
 def create_multijob_for_bashfiles(job_df: DataFrame, **kwargs):
-    """ Function to create a HTCondor job assuming n_files bash-files.
+    """
+    Function to create an ``HTCondor`` job assuming n_files bash-files.
 
     Keyword Args:
-        output_dir (str): output directory that will be transferred. Default: None
-        duration (str): max duration of the job. Needs to be one of the HTCondor Jobflavours. Default: 'workday'
-        group (str): force use of accounting group. Default: None
-        retries (int): maximum amount of retries. Default: 3
-        notification (str): Notify under certain conditions. Default: 'error'.
-        priority (int): Priority to order your jobs. Default: None
+        output_dir (str): output directory that will be transferred. Defaults to ``None``.
+        duration (str): max duration of the job. Needs to be one of the ``HTCondor`` Jobflavours.
+            Defaults to ``workday``.
+        group (str): force use of accounting group. Defaults to ``None``.
+        retries (int): maximum amount of retries. Default to ``3``.
+        notification (str): Notify under certain conditions. Defaults to ``error``.
+        priority (int): Priority to order your jobs. Defaults to ``None``.
     """
     submit_dict = {
         "MyId": "htcondor",
@@ -141,16 +138,17 @@ def create_multijob_for_bashfiles(job_df: DataFrame, **kwargs):
 
 
 def make_subfile(cwd: Path, job_df: DataFrame, **kwargs):
-    """ Creates submit-file for htc.
-
-    For kwargs see create_multijob_for_bashfiles.
+    """
+    Creates submit-file for ``HTCondor``.
+    For kwargs, see ``create_multijob_for_bashfiles``.
     """
     job = create_multijob_for_bashfiles(job_df, **kwargs)
     return create_subfile_from_job(cwd, job)
 
 
-def write_bash(job_df: DataFrame, output_dir: Path = None, executable: str = 'madx', cmdline_arguments: dict = None):
-    """ Write the bash-files to be called by HTCondor. """
+def write_bash(job_df: DataFrame, output_dir: Path = None, executable: str = 'madx',
+               cmdline_arguments: dict = None) -> DataFrame:
+    """Write the bash-files to be called by ``HTCondor``."""
     if len(job_df.index) > HTCONDOR_JOBLIMIT:
         raise AttributeError('Submitting too many jobs for HTCONDOR')
 
@@ -181,9 +179,10 @@ def write_bash(job_df: DataFrame, output_dir: Path = None, executable: str = 'ma
 
 
 def _map_kwargs(add_dict):
-    """ Maps the kwargs for the job-file.
-
-    Some arguments have pre-defined choices and defaults, the remaining ones are just passed on. """
+    """
+    Maps the kwargs for the job-file. Some arguments have pre-defined choices and defaults,
+    the remaining ones are just passed on.
+    """
     new = {}
 
     # Predefined ones
