@@ -1,4 +1,4 @@
-HTC-Condor Tools
+HTCondor Tools
 **************************
 
 .. automodule:: pylhc.htc.utils
