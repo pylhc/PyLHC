@@ -5,9 +5,11 @@ IPS = [1, 4, 5]
 LABELS = ['S',
           'CALIBRATION',
           'ERROR_CALIBRATION',
-          'CALIBRATION_PHASE_FIT',
-          'ERROR_CALIBRATION_PHASE_FIT']
+          'CALIBRATION_FIT',
+          'ERROR_CALIBRATION_FIT']
 TFS_INDEX = 'NAME'
+D = 'D'
+ND = 'ND'
 
 # Estimation for the curve fit
 BETA_STAR_ESTIMATION = 200
@@ -66,7 +68,7 @@ BPMS = {1: {1: ['BPMR.5L1.B1',
                 'BPMYA.5R4.B2',
                 'BPMYB.6R4.B2'
                 ]
-            },
+             },
         5: {1: ['BPMYA.4L5.B1', 
                 'BPMWB.4L5.B1', 
                 'BPMSY.4L5.B1', 
@@ -74,7 +76,7 @@ BPMS = {1: {1: ['BPMR.5L1.B1',
                 'BPMSW.1L5.B1', 
                 'BPMSW.1R5.B1', 
                 'BPMS.2R5.B1', 
-                'BPMSY.4R5.B1', 
+                'BPMSY.4R5.B1',  #WHY
                 'BPMWB.4R5.B1', 
                 'BPMYA.4R5.B1', 
                 'BPM.5R5.B1'],
@@ -91,3 +93,37 @@ BPMS = {1: {1: ['BPMR.5L1.B1',
                 'BPMR.5R5.B2']
             }
         }
+
+# For the dispersion method, only a subject of the BPMs is used
+# Same as BPM: IP and then beam
+D_BPMS = {1: {1: ['BPMSY.4L1.B1',
+                  'BPMS.2L1.B1',
+                  'BPMSW.1L1.B1',
+                  'BPMSW.1R1.B1',
+                  'BPMS.2R1.B1',
+                  'BPMSY.4R1.B1'],
+              2: ['BPMSY.4L1.B2', 
+                  'BPMS.2L1.B2', 
+                  'BPMSW.1L1.B2', 
+                  'BPMSW.1R1.B2', 
+                  'BPMS.2R1.B2', 
+                  'BPMSY.4R1.B2']
+              },
+          4: {1: [],
+              2: []
+              },
+          5: {1: ['BPMSY.4L5.B1', 
+                  'BPMS.2L5.B1', 
+                  'BPMSW.1L5.B1', 
+                  'BPMSW.1R5.B1', 
+                  'BPMS.2R5.B1', 
+                  #'BPMSY.4R5.B1', WHY
+                  ],
+              2: ['BPMSY.4L5.B2', 
+                  'BPMS.2L5.B2', 
+                  'BPMSW.1L5.B2', 
+                  'BPMSW.1R5.B2', 
+                  'BPMS.2R5.B2', 
+                  'BPMSY.4R5.B2']
+              }
+          }

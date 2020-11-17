@@ -9,13 +9,14 @@ from generic_parser.dict_parser import ArgumentError
 from pylhc import BPM_calibration as calibration
 
 INPUTS_DIR = Path(__file__).parent.parent / 'inputs' / 'calibration'
-MEASUREMENTS = INPUTS_DIR / 'measurements'
+MEASUREMENTS_BETA = INPUTS_DIR / 'measurements' / 'for_beta'
+MEASUREMENTS_DISPERSION = INPUTS_DIR / 'measurements' / 'for_dispersion'
 MODEL = INPUTS_DIR / 'model'
 EXPECTED_OUTPUT = INPUTS_DIR / 'output'
 
 
 def test_calibration_same_betabeat(tmp_path):
-    factors = calibration.main(input_path=MEASUREMENTS,
+    factors = calibration.main(input_path=MEASUREMENTS_BETA,
                                model_path=MODEL,
                                output_path=tmp_path)
 
@@ -65,7 +66,7 @@ def test_no_beta_tfs(tmp_path):
 
 def test_no_model_tfs(tmp_path):
     with pytest.raises(FileNotFoundError) as e:
-        calibration.main(input_path=MEASUREMENTS,
+        calibration.main(input_path=MEASUREMENTS_BETA,
                          model_path=pathlib.Path('oopsie'),
                          output_path=tmp_path)
     
