@@ -57,6 +57,13 @@ def _get_params() -> dict:
             type=Path,
             required=True,
             help="Output directory where to write the calibration factors."),
+        ips=dict(
+            flags=["--ips"],
+            type=int,
+            nargs='+',
+            choices=IPS,
+            required=True,
+            help="IPs to compute calibration factors for."),
         method=dict(
             flags=["--method"],
             type=str,
@@ -357,7 +364,7 @@ def main(opt):
     c_factors = dict()
     for plane in PLANES:
         c_factors[plane] = tfs.TfsDataFrame()
-        for ip in IPS:
+        for ip in opt.ips:
             if opt.method == 'beta':
                 factors = _get_calibration_factors_beta(ip,
                                                         plane,
@@ -365,9 +372,6 @@ def main(opt):
                                                         beta_amp_tfs[plane],
                                                         model_tfs)
             elif opt.method == 'dispersion' and plane == 'X':
-                # FIXME
-                if ip == 4:
-                    continue
                 factors = _get_calibration_factors_dispersion(ip,
                                                         plane,
                                                         beta_phase_tfs[plane],

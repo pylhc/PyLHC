@@ -18,7 +18,8 @@ EXPECTED_OUTPUT = INPUTS_DIR / 'output'
 def test_calibration_same_betabeat(tmp_path):
     factors = calibration.main(input_path=MEASUREMENTS_BETA,
                                model_path=MODEL,
-                               output_path=tmp_path)
+                               output_path=tmp_path,
+                               ips=[1,4,5])
 
     # Let's open the tfs files we just created
     x_tfs = tfs.read(tmp_path / 'calibration_beta_x.tfs')
@@ -50,7 +51,8 @@ def test_bad_args():
     with pytest.raises(ArgumentError) as e:
         calibration.main(input_path='wat',
                          model_path='Cake',
-                         output_path='')
+                         output_path='',
+                         ips=[1,5])
 
     assert "input_path' is not of type Path" in str(e.value)
 
@@ -59,7 +61,8 @@ def test_no_beta_tfs(tmp_path):
     with pytest.raises(FileNotFoundError) as e:
         calibration.main(input_path=pathlib.Path('wat'),
                          model_path=MODEL,
-                         output_path=tmp_path)
+                         output_path=tmp_path,
+                         ips=[1,5])
 
     assert "File beta_phase_x.tfs couldn't be found in directory" in str(e.value)
 
@@ -68,7 +71,8 @@ def test_no_model_tfs(tmp_path):
     with pytest.raises(FileNotFoundError) as e:
         calibration.main(input_path=MEASUREMENTS_BETA,
                          model_path=pathlib.Path('oopsie'),
-                         output_path=tmp_path)
+                         output_path=tmp_path,
+                         ips=[1,5])
     
     assert "No such file or directory" in str(e.value)
 
