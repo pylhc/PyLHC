@@ -266,7 +266,19 @@ def setup_and_run(jobname: str, basedir: Path, **kwargs):
             #           python=python, ssh=ssh)
             # sixdb_cmd(jobname, basedir, cmd=['plot_da_vs_turns'], python=python, ssh=ssh)
 
-    post_process_da(jobname, basedir)
+    with check_stage(STAGES.post_process, jobname, basedir) as check_ok:
+        """
+        Extracts the analysed data in the database and writes them to three tfs files:
+        
+        - All DA values
+        - Statistics over angles, listed per seed (+ Seed 0 as over seeds and angles)
+        - Statistics over seeds, listed per angle
+        
+        The statistics over the seeds are then plotted in a polar plot.
+        All files are outputted to the ``sixjobs/autosix_output`` folder in the job directory.
+        """
+        if check_ok:
+            post_process_da(jobname, basedir)
 
     with check_stage(STAGES.final, jobname, basedir) as check_ok:
         """ Just info about finishing this script and where to check the stagefile. """

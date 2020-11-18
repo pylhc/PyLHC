@@ -53,7 +53,7 @@ SEED_KEYS = ['FIRSTSEED', 'LASTSEED']
 # Stages ---
 STAGE_ORDER = ['create_jobs', 'submit_mask', 'check_input',
                'submit_sixtrack', 'check_sixtrack_output',
-               'sixdb_load', 'sixdb_cmd', 'final']
+               'sixdb_load', 'sixdb_cmd', 'post_process', 'final']
 STAGES = DotDict({key: key for key in STAGE_ORDER})
 
 
