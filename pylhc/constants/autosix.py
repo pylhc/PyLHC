@@ -15,8 +15,6 @@ from generic_parser import DotDict
 from pylhc.constants.external_paths import SIXDESK_UTILS, MADX_BIN
 
 # Program Paths ----------------------------------------------------------------
-from pylhc.sixdesk_tools.post_process_da import ALOST1, ALOST2, SEED, ANGLE
-
 SETENV_SH = SIXDESK_UTILS / 'set_env.sh'
 MAD_TO_SIXTRACK_SH = SIXDESK_UTILS / 'mad6t.sh'
 RUNSIX_SH = SIXDESK_UTILS / 'run_six.sh'
@@ -24,9 +22,6 @@ RUNSTATUS_SH = SIXDESK_UTILS / 'run_status'
 DOT_PROFILE = SIXDESK_UTILS / 'dot_profile'
 SIXDB = SIXDESK_UTILS.parent / 'externals' / 'SixDeskDB' / 'sixdb'
 SIXDESKLOCKFILE = 'sixdesklock'
-SYSENV_MASK = Path(__file__).parent / 'mask_sysenv'
-SIXDESKENV_MASK = Path(__file__).parent / 'mask_sixdeskenv'
-
 
 # Constants and Requirements ---------------------------------------------------
 
@@ -52,6 +47,8 @@ SIXENV_DEFAULT = dict(
     DIMENSIONS=6,  # Phase-Space dimensions
     WRITEBINS=500,
 )
+SEED_KEYS = ['FIRSTSEED', 'LASTSEED']
+
 
 # Stages ---
 STAGE_ORDER = ['create_jobs', 'submit_mask', 'check_input',

@@ -4,7 +4,7 @@ AutoSix
 
 Wrapper for SixDesk to perform the setup and steps needed automatically.
 
-
+FIRSTSEED, LASTSEED -> Both None or 0 deactivates SEED. Otherwise %SEEDRAN needed.
 
 
 
@@ -29,7 +29,7 @@ from pylhc.constants.autosix import (STAGES, HEADER_BASEDIR, get_stagefile_path,
 from pylhc.htc.mask import generate_jobdf_index
 from pylhc.job_submitter import JOBSUMMARY_FILE, COLUMN_JOBID, check_replace_dict, keys_to_path
 from pylhc.sixdesk_tools.create_workspace import create_jobs, remove_twiss_fail_check
-from pylhc.sixdesk_tools.db_extract import post_process_da
+from pylhc.sixdesk_tools.post_process_da import post_process_da
 from pylhc.sixdesk_tools.submit import (
     submit_mask, submit_sixtrack, check_sixtrack_input, check_sixtrack_output,
     sixdb_cmd, sixdb_load)
@@ -168,8 +168,6 @@ def setup_and_run(jobname: str, basedir: Path, **kwargs):
     resubmit: bool = kwargs.pop('resubmit', False)
     da_turnstep: int = kwargs.pop('da_turnstep', DEFAULTS['da_turnstep'])
     ignore_twissfail_check: bool = kwargs.pop('ignore_twissfail_check', False)
-
-    get_autosix_results_path(jobname, basedir).mkdir(exist_ok=True)
 
     if is_locked(jobname, basedir, unlock=unlock):
         LOG.info(f"{jobname} is locked. Try 'unlock' flag if this causes errors.")

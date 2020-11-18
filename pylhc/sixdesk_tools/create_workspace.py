@@ -14,13 +14,15 @@ import numpy as np
 from omc3.utils import logging_tools
 
 from pylhc.constants.autosix import (
-    SETENV_SH, SYSENV_MASK, SIXDESKENV_MASK,
-    SIXENV_DEFAULT, SIXENV_REQUIRED,
+    SETENV_SH, SIXENV_DEFAULT, SIXENV_REQUIRED, SEED_KEYS,
     get_workspace_path, get_scratch_path,
     get_sixjobs_path, get_masks_path,
-    get_mad6t_mask_path, get_mad6t1_mask_path,
+    get_mad6t_mask_path, get_mad6t1_mask_path, get_autosix_results_path,
 )
 from pylhc.sixdesk_tools.utils import start_subprocess
+
+SYSENV_MASK = Path(__file__).parent / 'mask_sysenv'
+SIXDESKENV_MASK = Path(__file__).parent / 'mask_sixdeskenv'
 
 LOG = logging_tools.get_logger(__name__)
 
@@ -68,7 +70,8 @@ def remove_twiss_fail_check(jobname: str, basedir: Path):
 
 def _create_workspace(jobname: str, basedir: Path, ssh: str = None):
     """ Create workspace structure (with default files). """
-    workspace_path, scratch_path = get_workspace_path(jobname, basedir), get_scratch_path(basedir)
+    workspace_path = get_workspace_path(jobname, basedir)
+    scratch_path = get_scratch_path(basedir)
     LOG.info(f'Creating new workspace in "{str(workspace_path)}"')
 
     if workspace_path.exists():
@@ -77,7 +80,10 @@ def _create_workspace(jobname: str, basedir: Path, ssh: str = None):
         user_answer = input()
         if user_answer.lower().startswith('y'):
             shutil.rmtree(workspace_path)
-            shutil.rmtree(scratch_path)
+            try:
+                shutil.rmtree(scratch_path)
+            except FileNotFoundError:
+                pass
         else:
             LOG.warning("Keeping Workspace as-is.")
             return
@@ -87,6 +93,11 @@ def _create_workspace(jobname: str, basedir: Path, ssh: str = None):
     # create environment with all necessary files
     # _start_subprocess(['git', 'clone', GIT_REPO, basedir])
     start_subprocess([SETENV_SH, "-N", workspace_path.name], cwd=basedir, ssh=ssh)
+
+    # create autosix results folder.
+    # Needs to be done after above command (as it crashes if folder exists)
+    # but before end of this stage (as it needs to write the stagefile)
+    get_autosix_results_path(jobname, basedir).mkdir(exist_ok=True, parents=True)
 
 
 def _create_sixdeskenv(jobname: str, basedir: Path, **kwargs):
@@ -108,6 +119,10 @@ def _create_sixdeskenv(jobname: str, basedir: Path, **kwargs):
         SCRATCHDIR=str(scratch_path),
         TURNSPOWER=np.log10(sixenv_replace['TURNS'])
     ))
+
+    if any(sixenv_replace[key] is None for key in SEED_KEYS):
+        for key in SEED_KEYS:
+            sixenv_replace[key] = 0
 
     with open(SIXDESKENV_MASK, 'r') as f:
         sixenv_text = f.read()
@@ -142,11 +157,14 @@ def _create_sysenv(jobname: str, basedir: Path, binary_path: Path):
 def _write_mask(jobname: str, basedir: Path, mask_text: str, **kwargs):
     """ Fills mask with arguments and writes it out. """
     masks_path = get_masks_path(jobname, basedir)
-    seed_range = [kwargs.get(key, SIXENV_DEFAULT[key]) for key in ('FIRSTSEED', 'LASTSEED')]
+    seed_range = [kwargs.get(key, SIXENV_DEFAULT[key]) for key in SEED_KEYS]
 
-    # seed_vars = re.findall(r'%\(?SEEDRAN\)?', mask_text)
-    if ('%SEEDRAN' not in mask_text) and ('%SEEDRAN' not in kwargs.values()) and (seed_range[0] != seed_range[1]):
-        raise ValueError("First and Lastseed are given, but no seed-variable '%SEEDRAN' found in mask.")
+    if seed_range.count(None) == 1:
+        raise ValueError("First- or Lastseed is set, but the other one is deactivated. "
+                         "Set or unset both.")
+
+    if ('%SEEDRAN' not in mask_text) and ('%SEEDRAN' not in kwargs.values()) and any(seed_range):
+        raise ValueError("First- and Lastseed are set, but no seed-variable '%SEEDRAN' found in mask.")
 
     mask_text = mask_text.replace('%SEEDRAN', '#!#SEEDRAN')  # otherwise next line will complain
     mask_filled = mask_text % kwargs
