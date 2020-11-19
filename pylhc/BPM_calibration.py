@@ -206,6 +206,7 @@ def _get_calibration_factors_beta(ip, plane, beta_phase_tfs, beta_amp_tfs, model
         axis=1,
     )
     calibration_factors.columns = LABELS
+    calibration_factors.index.name = TFS_INDEX
 
     return calibration_factors
 
@@ -217,7 +218,7 @@ def _get_dispersion_from_phase(normalised_dispersion, beta):
     # And the the associated error
     d_phase_err = (normalised_dispersion["amp_err"] * np.sqrt(beta["phase_err"])) ** 2
     d_phase_err += (
-        1/2
+        1 / 2
         * normalised_dispersion["amp"]
         / np.sqrt(beta["phase"])
         * beta["phase_err"]
@@ -333,6 +334,8 @@ def _get_calibration_factors_dispersion(
     )
 
     calibration_factors.columns = LABELS
+    calibration_factors.index.name = TFS_INDEX
+    
     return calibration_factors
 
 
