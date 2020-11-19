@@ -259,11 +259,6 @@ def _get_factors_from_dispersion(dispersion):
     calibration_error += (dispersion['amp_err'] * (dispersion['phase'] / (dispersion['amp'] ** 2))) ** 2
     calibration_error = np.sqrt(calibration_error)
 
-    # Code in the paper
-    calibration_error = ((dispersion['amp'] / (dispersion['phase'] ** 2)) * dispersion['phase_err'] ) ** 2
-    calibration_error +=  (1 / dispersion['phase'] * dispersion['amp_err']) ** 2
-    calibration_error = np.sqrt(calibration_error)
-
     return factors, calibration_error
 
 
@@ -271,14 +266,8 @@ def _get_factors_from_dispersion_fit(dispersion):
     # Get the ratios, those are our calibration factors
     factors = dispersion['phase_fit'] / dispersion['amp']
 
-    # Code in BBs
     calibration_error = (dispersion['phase_fit_err'] / dispersion['amp']) ** 2
     calibration_error += (dispersion['amp_err'] * dispersion['phase_fit'] / (dispersion['amp'] ** 2)) ** 2
-    calibration_error = np.sqrt(calibration_error)
-    
-    # Code in the paper
-    calibration_error = ((dispersion['amp'] / (dispersion['phase_fit'] ** 2)) * dispersion['phase_fit_err'] ) ** 2
-    calibration_error +=  (1 / dispersion['phase_fit'] * dispersion['amp_err']) ** 2
     calibration_error = np.sqrt(calibration_error)
 
     return factors, calibration_error
