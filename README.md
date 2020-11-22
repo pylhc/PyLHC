@@ -73,4 +73,4 @@ Open an issue, make your changes in a branch and submit a pull request.
 * **pyLHC/OMC-Team** - *Working Group* - [pyLHC](https://github.com/orgs/pylhc/teams/omc-team)
 
 ## License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the `GNU GPLv3` License - see the [LICENSE](LICENSE) file for details.
