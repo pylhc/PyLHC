@@ -11,13 +11,11 @@ from pylhc import BPM_calibration as calibration
 INPUTS_DIR = Path(__file__).parent.parent / 'inputs' / 'calibration'
 MEASUREMENTS_BETA = INPUTS_DIR / 'measurements' / 'for_beta'
 MEASUREMENTS_DISPERSION = INPUTS_DIR / 'measurements' / 'for_dispersion'
-MODEL = INPUTS_DIR / 'model'
 EXPECTED_OUTPUT = INPUTS_DIR / 'output'
 
 
 def test_calibration_same_betabeat(tmp_path):
     factors = calibration.main(input_path=MEASUREMENTS_BETA,
-                               model_path=MODEL,
                                output_path=tmp_path,
                                ips=[1,4,5])
 
@@ -50,7 +48,6 @@ def test_calibration_same_betabeat(tmp_path):
 def test_bad_args():
     with pytest.raises(ArgumentError) as e:
         calibration.main(input_path='wat',
-                         model_path='Cake',
                          output_path='',
                          ips=[1,5])
 
@@ -60,27 +57,16 @@ def test_bad_args():
 def test_no_beta_tfs(tmp_path):
     with pytest.raises(FileNotFoundError) as e:
         calibration.main(input_path=pathlib.Path('wat'),
-                         model_path=MODEL,
                          output_path=tmp_path,
                          ips=[1,5])
 
-    assert "File beta_phase_x.tfs couldn't be found in directory" in str(e.value)
-
-
-def test_no_model_tfs(tmp_path):
-    with pytest.raises(FileNotFoundError) as e:
-        calibration.main(input_path=MEASUREMENTS_BETA,
-                         model_path=pathlib.Path('oopsie'),
-                         output_path=tmp_path,
-                         ips=[1,5])
-    
-    assert "No such file or directory" in str(e.value)
+    assert "No such file or directory:" in str(e.value)
+    assert "beta_phase_x.tfs" in str(e.value)
 
 
 def test_wrong_ip(tmp_path):
     with pytest.raises(ArgumentError) as e:
         calibration.main(input_path=MEASUREMENTS_BETA,
-                         model_path=MODEL,
                          output_path=tmp_path,
                          ips=[15, 22])
 
@@ -88,19 +74,8 @@ def test_wrong_ip(tmp_path):
     assert err in str(e.value)
 
 
-def test_bad_beam():
-    model = tfs.TfsDataFrame()
-    model.SEQUENCE = 'LHCB4'
-
-    with pytest.raises(ValueError) as e:
-        calibration._get_beam_from_model(model)
-
-    assert "Could not find a correct value for beam in model: 4" in str(e.value)
-
-
 def test_calibration_same_dispersion(tmp_path):
     factors = calibration.main(input_path=MEASUREMENTS_DISPERSION,
-                               model_path=MODEL,
                                output_path=tmp_path,
                                method='dispersion',
                                ips=[1,5])
@@ -118,9 +93,7 @@ def test_calibration_same_dispersion(tmp_path):
     x_tfs = x_tfs.drop(['NAME'], axis=1)
     expected_x_tfs = expected_x_tfs.drop(['NAME'], axis=1)
 
-    # BetaBeat's tfs implementation is a bit different, we don't have the
-    # same integer precision
-    precision = 1e-14
+    precision = 1e-6
 
     # BBsrc was wrong for the calibration error fit and the calibration fits
     # So we can only check the calibration

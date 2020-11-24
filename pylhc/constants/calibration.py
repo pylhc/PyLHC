@@ -14,9 +14,6 @@ ND = 'ND'
 # Estimation for the curve fit
 BETA_STAR_ESTIMATION = 200
 
-# File names for the tfs model
-MODEL_TFS = 'twiss.dat'
-
 # Methods to be used to compulte the calibration factors
 METHODS = ('beta', 'dispersion')
 

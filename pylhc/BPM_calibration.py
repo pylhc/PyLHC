@@ -13,6 +13,7 @@ from omc3.optics_measurements.constants import (
     ERR,
     EXT,
     NORM_DISP_NAME,
+    DISPERSION_NAME,
     S,
 )
 from pylhc.constants.calibration import (
@@ -24,7 +25,6 @@ from pylhc.constants.calibration import (
     IPS,
     LABELS,
     METHODS,
-    MODEL_TFS,
     ND,
     TFS_INDEX,
 )
@@ -52,12 +52,6 @@ def _get_params() -> dict:
         input_path=dict(
             flags=["--input", "-i"], required=True, type=Path, help="Measurements path."
         ),
-        model_path=dict(
-            flags=["--model", "-m"],
-            type=Path,
-            required=True,
-            help="Model path associated to the measurements.",
-        ),
         output_path=dict(
             flags=["--outputdir", "-o"],
             type=Path,
@@ -84,127 +78,6 @@ def _get_params() -> dict:
             ),
         ),
     )
-
-
-def _get_tfs_files(prefix: str, planes: list, input_path: Path) -> dict:
-    """_get_tfs_files.
-
-    This function loops over the planes given as input and will look for the
-    files matching the filename "prefix + plane.tfs".
-    Each plane is then associated to its tfs object in a dict.
-
-    Parameters
-    ----------
-    prefix : str
-        Prefix of the file to be opened. e.g. 'BET'
-    planes : list
-        List of planes to consider when opening files
-    input_path : Path
-        Directory where the file is located
-
-    Returns
-    -------
-    dict
-        A dictionnary associating one plane to one tfs object
-    """
-    tfs_files = dict()
-    for plane in planes:
-        file_name = f"{prefix}{plane.lower()}{EXT}"
-        expected_path = input_path / file_name
-
-        if not expected_path.is_file():
-            msg = f"File {file_name} couldn't be found in directory {input_path}"
-            LOG.error(msg)
-            raise FileNotFoundError(msg)
-
-        tfs_files[plane] = tfs.read(expected_path, index=TFS_INDEX)
-    return tfs_files
-
-
-def _get_beta_from_phase_tfs(input_path: Path) -> dict:
-    """_get_beta_from_phase_tfs.
-    
-    This function returns the beta from phase file associated to the
-    measurement's directory given as input. Both planes X and Y are used.
-
-    Parameters
-    ----------
-    input_path : Path
-        Directory where the beta from phase files are located.
-
-    Returns
-    -------
-    dict
-        A dictionnary with two keys, X and Y and the associated tfs objects for
-        each plane.
-
-    """
-    return _get_tfs_files(BETA_NAME, PLANES, input_path)
-
-
-def _get_beta_from_amp_tfs(input_path: Path) -> dict:
-    """_get_beta_from_amp_tfs.
-    
-    This function returns the beta from amplitude file associated to the
-    measurement's directory given as input. Both planes X and Y are used.
-
-    Parameters
-    ----------
-    input_path : Path
-        Directory where the beta from amplitude files are located.
-
-    Returns
-    -------
-    dict
-        A dictionnary with two keys, X and Y and the associated tfs objects for
-        each plane.
-
-    """
-    return _get_tfs_files(AMP_BETA_NAME, PLANES, input_path)
-
-
-def _get_dispersion_tfs(input_path: Path) -> dict:
-    """_get_dispersion_tfs.
-
-    This function returns the tfs dispersion file associated to the
-    measurement's directory given as input. Only the X plane is used.
-
-    Parameters
-    ----------
-    input_path : Path
-        Directory where the dispersion file for the X plane is located.
-
-    Returns
-    -------
-    dict
-        A dictionnary with one key, X, and its associated tfs object.
-    """
-    return _get_tfs_files(NORM_DISP_NAME, "X", input_path)
-
-
-def _get_beam_from_model(model_tfs: TfsDataFrame) -> int:
-    """_get_beam_from_model.
-
-    Given a tfs object of the model, this function returns which beam it is
-    associated to.
-
-    Parameters
-    ----------
-    model_tfs : TfsDataFrame
-        tfs object of the model currently used.
-
-    Returns
-    -------
-    int
-        Beam number.
-
-    """
-    beam = int(model_tfs.SEQUENCE[-1])
-    if beam not in BEAMS:
-        msg = f"Could not find a correct value for beam in model: {beam}"
-        LOG.error(msg)
-        raise ValueError(msg)
-    return beam
 
 
 def _get_beta_fit(positions: pd.Series, 
@@ -336,32 +209,23 @@ def _get_factors_from_phase_fit(beta_phase_fit: pd.Series,
     return factors, calibration_error
 
 
-def _get_calibration_factors_beta(ip: int,
-                                  plane: str,
-                                  beam: int,
-                                  beta_phase_tfs: TfsDataFrame,
-                                  beta_amp_tfs: TfsDataFrame) -> pd.DataFrame:
+def _get_calibration_factors_beta(ips: list,
+                                  input_path: Path) -> pd.DataFrame:
     """_get_calibration_factors_beta.
 
     This function is the main function to compute the calibration factors for
     the beta method.
-    Given an IP, a plane and the corresponding Tfs files, this function
-    returns the calibration factors using both the beta from phase and its
-    fitted values.
+    Given a list of IPs and the path containing the corresponding Tfs files,
+    this function returns the calibration factors using both the beta from
+    phase and its fitted values.
 
 
     Parameters
     ----------
-    ip: int
-        IP to compute the calibration factors for.
-    plane : str
-        Plane to compute the calibration factors for.
-    beam: int
-        Beam to compute the calibration factors for.
-    beta_phase_tfs: TfsDataFrame
-        Tfs object for the beta from phase values.
-    beta_amp_tfs: TfsDataFrame
-        Tfs object for the beta from amplitude values.
+    ips: list
+        IPs to compute the calibration factors for.
+    input_path: Path
+        Path of the directory containing the beta files.
 
     Returns
     -------
@@ -382,42 +246,58 @@ def _get_calibration_factors_beta(ip: int,
 
     """
 
-    # Filter our TFS files to only keep the BPMs for the selected IR
-    bpms = beta_phase_tfs.reindex(BPMS[ip][beam]).dropna().index
+    # Loop over each plane and compute the calibration factors
+    calibration_factors = dict()
+    for plane in PLANES:
+        # Load the tfs files for beta from phase and beta from amp
+        beta_phase_tfs = tfs.read(input_path / f'{BETA_NAME}{plane.lower()}{EXT}', index=TFS_INDEX)
+        beta_amp_tfs = tfs.read(input_path / f'{AMP_BETA_NAME}{plane.lower()}{EXT}', index=TFS_INDEX)
 
-    # Get the positions and the beta values for those BPMs
-    positions = beta_phase_tfs.loc[bpms, S].dropna()
-    beta_phase = beta_phase_tfs.loc[bpms, f"{BETA}{plane}"].dropna()
-    beta_phase_err = beta_phase_tfs.loc[bpms, f"{ERR}{BETA}{plane}"].dropna()
-    beta_amp = beta_amp_tfs.loc[bpms, f"{BETA}{plane}"].dropna()
-    beta_amp_err = beta_amp_tfs.loc[bpms, f"{ERR}{BETA}{plane}"].dropna()
+        # Get the beam concerned by those tfs files
+        beam = int(beta_phase_tfs.iloc[0].name[-1])
 
-    # Curve fit the beta from phase values
-    beta_phase_fit, beta_phase_fit_err = _get_beta_fit(
-        positions, beta_phase, beta_phase_err
-    )
+        for ip in ips:
+            # Filter our TFS files to only keep the BPMs for the selected IR
+            bpms = beta_phase_tfs.reindex(BPMS[ip][beam]).dropna().index
 
-    # Get the calibration factors for each method: from phase and phase fit
-    calibration_phase, calibration_phase_err = _get_factors_from_phase(
-        beta_phase, beta_amp, beta_phase_err, beta_amp_err
-    )
-    calibration_phase_fit, calibration_phase_fit_err = _get_factors_from_phase_fit(
-        beta_phase_fit, beta_amp, beta_phase_fit_err, beta_amp_err
-    )
+            # Get the positions and the beta values for those BPMs
+            positions = beta_phase_tfs.loc[bpms, S].dropna()
+            beta_phase = beta_phase_tfs.loc[bpms, f"{BETA}{plane}"].dropna()
+            beta_phase_err = beta_phase_tfs.loc[bpms, f"{ERR}{BETA}{plane}"].dropna()
+            beta_amp = beta_amp_tfs.loc[bpms, f"{BETA}{plane}"].dropna()
+            beta_amp_err = beta_amp_tfs.loc[bpms, f"{ERR}{BETA}{plane}"].dropna()
 
-    # Assemble the calibration factors in one dataframe
-    calibration_factors = pd.concat(
-        [
-            positions,
-            calibration_phase,
-            calibration_phase_err,
-            calibration_phase_fit,
-            calibration_phase_fit_err,
-        ],
-        axis=1,
-    )
-    calibration_factors.columns = LABELS
-    calibration_factors.index.name = TFS_INDEX
+            # Curve fit the beta from phase values
+            beta_phase_fit, beta_phase_fit_err = _get_beta_fit(
+                positions, beta_phase, beta_phase_err
+            )
+
+            # Get the calibration factors for each method: from phase and phase fit
+            calibration_phase, calibration_phase_err = _get_factors_from_phase(
+                beta_phase, beta_amp, beta_phase_err, beta_amp_err
+            )
+            calibration_phase_fit, calibration_phase_fit_err = _get_factors_from_phase_fit(
+                beta_phase_fit, beta_amp, beta_phase_fit_err, beta_amp_err
+            )
+
+            # Assemble the calibration factors in one dataframe
+            factors_for_ip = pd.concat(
+                [
+                    positions,
+                    calibration_phase,
+                    calibration_phase_err,
+                    calibration_phase_fit,
+                    calibration_phase_fit_err,
+                ],
+                axis=1,
+            )
+            factors_for_ip.columns = LABELS
+            factors_for_ip.index.name = TFS_INDEX
+
+            if plane not in calibration_factors.keys():
+                calibration_factors[plane] = factors_for_ip
+            else:
+                calibration_factors[plane] = calibration_factors[plane].append(factors_for_ip)
 
     return calibration_factors
 
@@ -578,32 +458,25 @@ def _get_factors_from_dispersion_fit(dispersion: dict) -> (pd.Series, pd.Series)
     return factors, calibration_error
 
 
-def _get_calibration_factors_dispersion(ip: int, 
-                                        plane: str,
-                                        beam: int,
-                                        beta_phase_tfs: TfsDataFrame,
-                                        dispersion_tfs: TfsDataFrame) -> pd.DataFrame:
+def _get_calibration_factors_dispersion(ips: list,
+                                        input_path: Path) -> pd.DataFrame:
     """_get_calibration_factors_beta.
 
     This function is the main function to compute the calibration factors for
     the dispersion method.
-    Given an IP, a plane and the corresponding Tfs files, this function
-    returns the calibration factors using both the dispersion and its fitted
-    values.
+    Given an IP and a path containing the corresponding Tfs files, this
+    function returns the calibration factors using both the dispersion and its
+    fitted values.
+    The calibration factors based on the dispersion are only computed for the
+    X plane.
 
 
     Parameters
     ----------
-    ip: int
-        IP to compute the calibration factors for.
-    plane : str
-        Plane to compute the calibration factors for.
-    beam: int
-        Beam to compute the calibration factors for.
-    beta_phase_tfs: TfsDataFrame
-        Tfs object for the beta from phase values.
-    dispersion_tfs: TfsDataFrame
-        Tfs object for the dispersion values.
+    ips: list
+        IPs to compute the calibration factors for.
+    input_path: Path
+        Path of the directory containing the beta files.
 
     Returns
     -------
@@ -623,53 +496,62 @@ def _get_calibration_factors_dispersion(ip: int,
             factors
 
     """
-    # Filter our TFS files to only keep the BPMs for the selected IR
-    bpms = beta_phase_tfs.reindex(BPMS[ip][beam]).dropna().index
-    d_bpms = beta_phase_tfs.reindex(D_BPMS[ip][beam]).dropna().index
+    # Load the normalized dispersion tfs file 
+    norm_dispersion_tfs = tfs.read(input_path / f'{NORM_DISP_NAME}x{EXT}', index=TFS_INDEX)
+    dispersion_tfs = tfs.read(input_path / f'{DISPERSION_NAME}x{EXT}', index=TFS_INDEX)
+    
+    # Get the beam concerned by those tfs files
+    beam = int(dispersion_tfs.iloc[0].name[-1])
 
-    # Get the positions of the BPMs and the subset used for the fit
-    positions = beta_phase_tfs.loc[bpms, S].dropna()
-    positions_fit = beta_phase_tfs.loc[d_bpms, S].dropna()
+    # Loop over the IPs and compute the calibration factors
+    calibration_factors = dict()
+    for ip in ips:
+        # Filter our TFS files to only keep the BPMs for the selected IR
+        bpms = dispersion_tfs.reindex(BPMS[ip][beam]).dropna().index
+        d_bpms = dispersion_tfs.reindex(D_BPMS[ip][beam]).dropna().index
 
-    # Get the beta values for all BPMs
-    beta = dict()
-    beta["phase"] = beta_phase_tfs.loc[bpms, f"{BETA}{plane}"].dropna()
-    beta["phase_err"] = beta_phase_tfs.loc[bpms, f"{ERR}{BETA}{plane}"].dropna()
+        # Get the positions of the BPMs and the subset used for the fit
+        positions = dispersion_tfs.loc[bpms, S].dropna()
+        positions_fit = dispersion_tfs.loc[d_bpms, S].dropna()
 
-    # Get the dispersion and normalised dispersion from the tfs files
-    dispersion = dict()
-    normalised_dispersion = dict()
-    dispersion["amp"] = dispersion_tfs.loc[bpms, f"D{plane}"].dropna()
-    dispersion["amp_err"] = dispersion_tfs.loc[bpms, f"{ERR}{D}{plane}"].dropna()
-    normalised_dispersion["amp"] = dispersion_tfs.loc[bpms, f"{ND}{plane}"].dropna()
-    normalised_dispersion["amp_err"] = dispersion_tfs.loc[
-        bpms, f"{ERR}{ND}{plane}"
-    ].dropna()
+        # Get the dispersion and normalised dispersion from the tfs files
+        dispersion = dict()
+        normalised_dispersion = dict()
 
-    # Get the dispersion from phase
-    dispersion["phase"], dispersion["phase_err"] = _get_dispersion_from_phase(
-        normalised_dispersion, beta
-    )
+        dispersion["amp"] = dispersion_tfs.loc[bpms, f"DX"].dropna()
+        dispersion["amp_err"] = dispersion_tfs.loc[bpms, f"{ERR}{D}X"].dropna()
 
-    # Compute the calibration factors using the dispersion from phase and amp
-    calibration, calibration_err = _get_factors_from_dispersion(dispersion)
+        dispersion["phase"] = norm_dispersion_tfs.loc[bpms, f"DX"].dropna()
+        dispersion["phase_err"] = norm_dispersion_tfs.loc[bpms, f"{ERR}{D}X"].dropna()
 
-    # Fit the dispersion from phase
-    dispersion["phase_fit"], dispersion["phase_fit_err"] = _get_dispersion_fit(
-        positions_fit, dispersion["phase"], dispersion["phase_err"]
-    )
+        normalised_dispersion["amp"] = norm_dispersion_tfs.loc[bpms, f"{ND}X"].dropna()
+        normalised_dispersion["amp_err"] = norm_dispersion_tfs.loc[
+            bpms, f"{ERR}{ND}X"
+        ].dropna()
 
-    # Compute the calibration factors using the fitted dispersion from amp / phase
-    calibration_fit, calibration_fit_err = _get_factors_from_dispersion_fit(dispersion)
+        # Compute the calibration factors using the dispersion from phase and amp
+        calibration, calibration_err = _get_factors_from_dispersion(dispersion)
 
-    # Assemble the calibration factors in one dataframe
-    calibration_factors = pd.concat(
-        [positions, calibration, calibration_err, calibration_fit, calibration_fit_err],
-        axis=1,
-    )
+        # Fit the dispersion from phase
+        dispersion["phase_fit"], dispersion["phase_fit_err"] = _get_dispersion_fit(
+            positions_fit, dispersion["phase"], dispersion["phase_err"]
+        )
 
-    calibration_factors.columns = LABELS
-    calibration_factors.index.name = TFS_INDEX
+        # Compute the calibration factors using the fitted dispersion from amp / phase
+        calibration_fit, calibration_fit_err = _get_factors_from_dispersion_fit(dispersion)
+
+        # Assemble the calibration factors in one dataframe
+        factors_for_ip = pd.concat(
+            [positions, calibration, calibration_err, calibration_fit, calibration_fit_err],
+            axis=1,
+        )
+        factors_for_ip.columns = LABELS
+        factors_for_ip.index.name = TFS_INDEX
+
+        if 'X' not in calibration_factors.keys():
+            calibration_factors = {'X': factors_for_ip}
+        else:
+            calibration_factors['X'] = calibration_factors['X'].append(factors_for_ip)
     
     return calibration_factors
 
@@ -716,41 +598,17 @@ def _write_calibration_tfs(calibration_factors: pd.DataFrame,
 
 @entrypoint(_get_params(), strict=True)
 def main(opt):
-    # Load the tfs for beta from phase and beta from amp
-    beta_phase_tfs = _get_beta_from_phase_tfs(opt.input_path)
-    beta_amp_tfs = _get_beta_from_amp_tfs(opt.input_path)
-
-    # Get the beam number from the model
-    model_tfs = tfs.read(opt.model_path / MODEL_TFS, index=TFS_INDEX)
-    beam = _get_beam_from_model(model_tfs)
-
-    # also load the dispersion file if the method requires it
-    if opt.method == "dispersion":
-        dispersion_tfs = _get_dispersion_tfs(opt.input_path)["X"]
-
     # Compute the calibration factors and their errors for each plane
-    c_factors = dict()
-    for plane in PLANES:
-        c_factors[plane] = tfs.TfsDataFrame()
-        for ip in opt.ips:
-            if opt.method == "beta":
-                factors = _get_calibration_factors_beta(
-                    ip, plane, beam, beta_phase_tfs[plane], beta_amp_tfs[plane]
-                )
-            elif opt.method == "dispersion" and plane == "X":
-                factors = _get_calibration_factors_dispersion(
-                    ip, plane, beam, beta_phase_tfs[plane], dispersion_tfs
-                )
+    if opt.method == "beta":
+        factors = _get_calibration_factors_beta(opt.ips, opt.input_path)
+    elif opt.method == "dispersion":
+        factors = _get_calibration_factors_dispersion(opt.ips, opt.input_path)
 
-            c_factors[plane] = c_factors[plane].append(factors)
+    # Write the TFS file to the desired output directory
+    for plane in factors.keys():
+        _write_calibration_tfs(factors[plane], plane, opt.method, opt.output_path)
 
-        # Write the TFS file to the desired output directory
-        # There's no calibration factors on the Y plane for dispersion
-        if opt.method == "dispersion" and plane != "X":
-            continue
-        _write_calibration_tfs(c_factors[plane], plane, opt.method, opt.output_path)
-
-    return c_factors
+    return factors
 
 
 if __name__ == "__main__":
