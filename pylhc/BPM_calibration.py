@@ -338,9 +338,9 @@ def _get_factors_from_phase_fit(beta_phase_fit: pd.Series,
 
 def _get_calibration_factors_beta(ip: int,
                                   plane: str,
+                                  beam: int,
                                   beta_phase_tfs: TfsDataFrame,
-                                  beta_amp_tfs: TfsDataFrame,
-                                  model_tfs: TfsDataFrame) -> pd.DataFrame:
+                                  beta_amp_tfs: TfsDataFrame) -> pd.DataFrame:
     """_get_calibration_factors_beta.
 
     This function is the main function to compute the calibration factors for
@@ -356,12 +356,12 @@ def _get_calibration_factors_beta(ip: int,
         IP to compute the calibration factors for.
     plane : str
         Plane to compute the calibration factors for.
+    beam: int
+        Beam to compute the calibration factors for.
     beta_phase_tfs: TfsDataFrame
         Tfs object for the beta from phase values.
     beta_amp_tfs: TfsDataFrame
         Tfs object for the beta from amplitude values.
-    model_tfs: TfsDataFrame
-        Tfs object for the model associated to the measurements.
 
     Returns
     -------
@@ -381,7 +381,6 @@ def _get_calibration_factors_beta(ip: int,
             factors
 
     """
-    beam = _get_beam_from_model(model_tfs)
 
     # Filter our TFS files to only keep the BPMs for the selected IR
     bpms = beta_phase_tfs.reindex(BPMS[ip][beam]).dropna().index
@@ -581,9 +580,9 @@ def _get_factors_from_dispersion_fit(dispersion: dict) -> (pd.Series, pd.Series)
 
 def _get_calibration_factors_dispersion(ip: int, 
                                         plane: str,
+                                        beam: int,
                                         beta_phase_tfs: TfsDataFrame,
-                                        dispersion_tfs: TfsDataFrame,
-                                        model_tfs: TfsDataFrame) -> pd.DataFrame:
+                                        dispersion_tfs: TfsDataFrame) -> pd.DataFrame:
     """_get_calibration_factors_beta.
 
     This function is the main function to compute the calibration factors for
@@ -599,12 +598,12 @@ def _get_calibration_factors_dispersion(ip: int,
         IP to compute the calibration factors for.
     plane : str
         Plane to compute the calibration factors for.
+    beam: int
+        Beam to compute the calibration factors for.
     beta_phase_tfs: TfsDataFrame
         Tfs object for the beta from phase values.
     dispersion_tfs: TfsDataFrame
         Tfs object for the dispersion values.
-    model_tfs: TfsDataFrame
-        Tfs object for the model associated to the measurements.
 
     Returns
     -------
@@ -624,8 +623,6 @@ def _get_calibration_factors_dispersion(ip: int,
             factors
 
     """
-    beam = _get_beam_from_model(model_tfs)
-
     # Filter our TFS files to only keep the BPMs for the selected IR
     bpms = beta_phase_tfs.reindex(BPMS[ip][beam]).dropna().index
     d_bpms = beta_phase_tfs.reindex(D_BPMS[ip][beam]).dropna().index
@@ -719,10 +716,13 @@ def _write_calibration_tfs(calibration_factors: pd.DataFrame,
 
 @entrypoint(_get_params(), strict=True)
 def main(opt):
-    # Load the tfs for beta from phase, beta from amp and from the model
+    # Load the tfs for beta from phase and beta from amp
     beta_phase_tfs = _get_beta_from_phase_tfs(opt.input_path)
     beta_amp_tfs = _get_beta_from_amp_tfs(opt.input_path)
+
+    # Get the beam number from the model
     model_tfs = tfs.read(opt.model_path / MODEL_TFS, index=TFS_INDEX)
+    beam = _get_beam_from_model(model_tfs)
 
     # also load the dispersion file if the method requires it
     if opt.method == "dispersion":
@@ -735,11 +735,11 @@ def main(opt):
         for ip in opt.ips:
             if opt.method == "beta":
                 factors = _get_calibration_factors_beta(
-                    ip, plane, beta_phase_tfs[plane], beta_amp_tfs[plane], model_tfs
+                    ip, plane, beam, beta_phase_tfs[plane], beta_amp_tfs[plane]
                 )
             elif opt.method == "dispersion" and plane == "X":
                 factors = _get_calibration_factors_dispersion(
-                    ip, plane, beta_phase_tfs[plane], dispersion_tfs, model_tfs
+                    ip, plane, beam, beta_phase_tfs[plane], dispersion_tfs
                 )
 
             c_factors[plane] = c_factors[plane].append(factors)
