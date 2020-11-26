@@ -1,3 +1,10 @@
+"""
+Constants: BPM Calibration
+-------------------------
+
+Specific constants related to the BPM calibration script in ``PyLHC``.
+"""
+
 # IPS to be used to compute the calibraton factors
 IPS = [1, 4, 5]
 

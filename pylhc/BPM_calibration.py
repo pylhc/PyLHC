@@ -1,3 +1,50 @@
+"""
+BPM Calibration
+---------------
+
+This script computes the calibration factors for the LHC BPMs using either a
+beta from phase method or a dispersion one.
+
+Arguments:
+
+*--Required--*
+
+- **input_path** *(Path)*:
+
+    Measurements path.
+
+    flags: **['--input', '-i']**
+
+
+- **ips** *(int)*:
+
+    IPs to compute calibration factors for.
+
+    flags: **['--ips']**
+
+    choices: ``[1, 4, 5]``
+
+
+- **output_path** *(Path)*:
+
+    Output directory where to write the calibration factors.
+
+    flags: **['--outputdir', '-o']**
+
+
+*--Optional--*
+
+- **method** *(str)*:
+
+    Method to be used to compute the calibration factors. The Beta
+    function is used by default.
+
+    flags: **['--method']**
+
+    choices: ``('beta', 'dispersion')``
+
+    default: ``beta``
+"""
 from pathlib import Path
 from scipy.optimize import curve_fit
 import numpy as np
