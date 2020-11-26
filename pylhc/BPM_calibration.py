@@ -182,7 +182,7 @@ def _get_factors_from_phase_fit(beta_phase_fit: pd.Series,
 
 
 def _get_calibration_factors_from_beta(ips: List[int],
-                                       input_path: Path) -> pd.DataFrame:
+                                       input_path: Path) -> Dict[str, pd.DataFrame]:
     """
     This function is the main function to compute the calibration factors for
     the beta method.
@@ -195,9 +195,10 @@ def _get_calibration_factors_from_beta(ips: List[int],
       input_path (Path): Path of the directory containing the beta files.
 
     Returns:
-       pd.DataFrame: The returned DataFrame object contains the calibration
-       factors for each BPM along with their error. Both the beta from phase
-       and beta from phase fitted values are used, resulting in 6 colums: 
+       Dict[str, pd.DataFrame]: The returned DataFrame object contains the
+       calibration factors for each BPM along with their error. Both the beta
+       from phase and beta from phase fitted values are used, resulting in 6
+       colums: 
          - NAME: BPM Name
          - S: Position
          - CALIBRATION: Calibration factors computed from beta from phase
@@ -212,6 +213,8 @@ def _get_calibration_factors_from_beta(ips: List[int],
     # Loop over each plane and compute the calibration factors
     calibration_factors = dict()
     for plane in PLANES:
+        LOG.info(f"  Computing the calibration factors for plane {plane}")
+
         # Load the tfs files for beta from phase and beta from amp
         beta_phase_tfs = tfs.read(input_path / f'{BETA_NAME}{plane.lower()}{EXT}', index=TFS_INDEX)
         beta_amp_tfs = tfs.read(input_path / f'{AMP_BETA_NAME}{plane.lower()}{EXT}', index=TFS_INDEX)
@@ -220,7 +223,7 @@ def _get_calibration_factors_from_beta(ips: List[int],
         beam = int(beta_phase_tfs.iloc[0].name[-1])
 
         for ip in ips:
-            LOG.debug("Computing the calibration factors for IP {ip}")
+            LOG.info(f"    Computing the calibration factors for IP {ip}")
             # Filter our TFS files to only keep the BPMs for the selected IR
             bpms = beta_phase_tfs.reindex(BPMS[ip][beam]).dropna().index
 
@@ -262,8 +265,6 @@ def _get_calibration_factors_from_beta(ips: List[int],
                 calibration_factors[plane] = factors_for_ip
             else:
                 calibration_factors[plane] = calibration_factors[plane].append(factors_for_ip)
-    
-    LOG.debug(f"Calibration factors: {calibration_factors}")
 
     return calibration_factors
 
@@ -397,7 +398,7 @@ def _get_factors_from_dispersion_fit(dispersion: Dict[str, pd.Series]) -> Tuple[
 
 
 def _get_calibration_factors_from_dispersion(ips: List[int],
-                                             input_path: Path) -> pd.DataFrame:
+                                             input_path: Path) -> Dict[str, pd.DataFrame]:
     """
     This function is the main function to compute the calibration factors for
     the dispersion method.
@@ -412,9 +413,10 @@ def _get_calibration_factors_from_dispersion(ips: List[int],
       input_path (Path): Path of the directory containing the beta files.
 
     Returns:
-      pd.DataFrame: The returned DataFrame object contains the calibration
-      factors for each BPM along with their error. Both the dispersion and
-      dispersion from fit values are used, resulting in 6 colums: 
+      Dict[str, pd.DataFrame]: The returned DataFrame object contains the
+      calibration factors for each BPM along with their error. Both the
+      dispersion and dispersion from fit values are used, resulting in 6
+      colums: 
         - NAME: BPM Name
         - S: Position
         - CALIBRATION: Calibration factors computed from the dispersion
@@ -436,7 +438,7 @@ def _get_calibration_factors_from_dispersion(ips: List[int],
     # Loop over the IPs and compute the calibration factors
     calibration_factors = dict()
     for ip in ips:
-        LOG.debug("Computing the calibration factors for IP {ip}")
+        LOG.info(f"  Computing the calibration factors for IP {ip}, plane X")
         # Filter our TFS files to only keep the BPMs for the selected IR
         bpms = dispersion_tfs.reindex(BPMS[ip][beam]).dropna().index
         d_bpms = dispersion_tfs.reindex(D_BPMS[ip][beam]).dropna().index
@@ -483,8 +485,6 @@ def _get_calibration_factors_from_dispersion(ips: List[int],
             calibration_factors = {'X': factors_for_ip}
         else:
             calibration_factors['X'] = calibration_factors['X'].append(factors_for_ip)
-
-    LOG.debug(f"Calibration factors: {calibration_factors}")
     
     return calibration_factors
 
@@ -517,9 +517,28 @@ def _write_calibration_tfs(calibration_factors: pd.DataFrame,
     # Write the TFS files for this plane
     # The method chosen will change the tfs name
     tfs_name = f"{CALIBRATION_NAME[method]}{plane.lower()}{EXT}"
-    LOG.info(f"Writing {tfs_name}")
     file_path = output_path / tfs_name
+    LOG.info(f"Writing {file_path}")
     tfs.write_tfs(file_path, calibration_factors, save_index=False)
+
+
+def _get_str_calibration_factors(calibration_factors: Dict[str, pd.DataFrame]) -> str:
+    """
+    Return the calibration factor in a console readable format
+
+    Args:
+        calibration_factors (Dict[str, pd.DataFrame]): the dataframe containing
+        all the calibration factors for each plane
+
+    Returns:
+        str: The calibration factors as string
+    """
+    result_str = ''
+    for plane in calibration_factors.keys():
+        result_str += f'\nPlane {plane}:\n'
+        result_str += f'{calibration_factors[plane]}'
+
+    return result_str
 
 
 @entrypoint(_get_params(), strict=True)
@@ -529,6 +548,8 @@ def main(opt):
         factors = _get_calibration_factors_from_beta(opt.ips, opt.input_path)
     elif opt.method == "dispersion":
         factors = _get_calibration_factors_from_dispersion(opt.ips, opt.input_path)
+
+    LOG.debug(_get_str_calibration_factors(factors))
 
     # Write the TFS file to the desired output directory
     for plane in factors.keys():
