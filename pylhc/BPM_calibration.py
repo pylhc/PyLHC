@@ -16,6 +16,8 @@ from omc3.optics_measurements.constants import (
     DISPERSION_NAME,
     S,
 )
+from typing import Tuple
+
 from pylhc.constants.calibration import (
     BPMS,
     BETA_STAR_ESTIMATION,
@@ -33,19 +35,15 @@ from tfs.handler import TfsDataFrame
 import tfs
 
 
-
 LOG = logging_tools.get_logger(__name__)
 
 
 def _get_params() -> dict:
-    """_get_params.
-
+    """
     Parse Commandline Arguments and return them as options.
 
-    Returns
-    -------
-    dict
-
+    Returns:
+        dict
     """
 
     return EntryPointParameters(
@@ -80,29 +78,21 @@ def _get_params() -> dict:
     )
 
 
-def _get_beta_fit(positions: pd.Series, 
+def _get_beta_fit(positions: pd.Series,
                   beta_values: pd.Series, 
-                  beta_err: pd.Series) -> (pd.Series, pd.Series):
-    """_get_beta_fit.
-
+                  beta_err: pd.Series) -> Tuple[pd.Series, pd.Series]:
+    """
     This function returns a fit of the given beta values along with the
     associated error.
 
-    Parameters
-    ----------
-    positions : pd.Series
-        Positions of the BPMs to be fitted.
-    beta_values : pd.Series
-        Values of the BPMs to be fitted.
-    beta_err : pd.Series
-        Associated errors to the values.
+    Args:
+        positions (pd.Series): Positions of the BPMs to be fitted.
+        beta_values (pd.Series): Values of the BPMs to be fitted.
+        beta_err (pd.Series): Associated errors to the values.
 
-    Returns
-    -------
-    (pd.Series, pd.Series)
-        The elements returned are the values of the fit of the beta values
-        and the associated error.
-
+    Returns:
+        Tuple[pd.Series, pd.Series]: The elements returned are the values of
+        the fit of the beta values and the associated error.
     """
     def beta_function(x, a, b):
         return a + ((x - b) ** 2) / a
@@ -137,28 +127,19 @@ def _get_factors_from_phase(beta_phase: pd.Series,
                             beta_amp: pd.Series,
                             beta_phase_err: pd.Series,
                             beta_amp_err: pd.Series) -> (pd.Series, pd.Series):
-    """_get_factors_from_phase.
-
+    """
     This function computes the calibration factors for the beta method with the
     beta from phase values. The associated error is also calculated.
 
-    Parameters
-    ----------
-    beta_phase : pd.Series
-        Series of the beta from phase values
-    beta_amp : pd.Series
-        Series of the beta from amplitude values
-    beta_phase_err : pd.Series
-        Series of the error associated to the beta from phase values
-    beta_amp_err : pd.Series
-        Series of the error associated to the beta from amplitude values
+    Args:
+      beta_phase (pd.Series): Series of the beta from phase values
+      beta_amp (pd.Series): Series of the beta from amplitude values
+      beta_phase_err (pd.Series): Series of the error associated to the beta from phase values
+      beta_amp_err (pd.Series): Series of the error associated to the beta from amplitude values
 
-    Returns
-    -------
-    (pd.Series, pd.Series)
-        The first Series are the calibration factors, the second one their
-        error.
-
+    Returns:
+      (pd.Series, pd.Series): The first Series are the calibration factors, the second one their
+      error.
     """
     # Compute the calibration factors
     factors = np.sqrt(beta_phase / beta_amp)
@@ -175,28 +156,19 @@ def _get_factors_from_phase_fit(beta_phase_fit: pd.Series,
                                 beta_amp: pd.Series,
                                 beta_phase_fit_err: pd.Series,
                                 beta_amp_err: pd.Series) -> (pd.Series, pd.Series):
-    """_get_factors_from_phase_fit.
-
+    """
     This function computes the calibration factors for the beta method with the
     beta from phase fitted values. The associated error is also calculated.
 
-    Parameters
-    ----------
-    beta_phase_fit : pd.Series
-        Series of the beta from phase fitted values
-    beta_amp : pd.Series
-        Series of the beta from amplitude values
-    beta_phase_fit_err : pd.Series
-        Series of the error associated to the beta from phase fitted values
-    beta_amp_err : pd.Series
-        Series of the error associated to the beta from amplitude values
+    Args:
+      beta_phase_fit (pd.Series): Series of the beta from phase fitted values
+      beta_amp (pd.Series): Series of the beta from amplitude values
+      beta_phase_fit_err (pd.Series): Series of the error associated to the beta from phase fitted values
+      beta_amp_err (pd.Series): Series of the error associated to the beta from amplitude values
 
-    Returns
-    -------
-    (pd.Series, pd.Series)
-        The first Series are the calibration factors, the second one their
-        error.
-
+    Returns:
+      (pd.Series, pd.Series): The first Series are the calibration factors, the second one their
+      error.
     """
     # Compute the calibration factors
     factors = np.sqrt(beta_phase_fit / beta_amp)
@@ -211,41 +183,31 @@ def _get_factors_from_phase_fit(beta_phase_fit: pd.Series,
 
 def _get_calibration_factors_beta(ips: list,
                                   input_path: Path) -> pd.DataFrame:
-    """_get_calibration_factors_beta.
-
+    """
     This function is the main function to compute the calibration factors for
     the beta method.
     Given a list of IPs and the path containing the corresponding Tfs files,
     this function returns the calibration factors using both the beta from
     phase and its fitted values.
 
+    Args:
+      ips (list): IPs to compute the calibration factors for.
+      input_path (Path): Path of the directory containing the beta files.
 
-    Parameters
-    ----------
-    ips: list
-        IPs to compute the calibration factors for.
-    input_path: Path
-        Path of the directory containing the beta files.
-
-    Returns
-    -------
-    pd.DataFrame
-        The returned DataFrame object contains the calibration factors for each
-        BPM along with their error.
-        Both the beta from phase and beta from phase fitted values are used,
-        resulting in 6 colums: 
-            - NAME: BPM Name
-            - S: Position
-            - CALIBRATION: Calibration factors computed from beta from phase
-            - ERROR_CALIBRATION: Associated error to the above calibration 
-            factors
-            - CALIBRATION_FIT: Calibration factor computed from fitted beta
-            from phase
-            - ERROR_CALIBRATION_FIT: Associated error to the above calibration
-            factors
-
+    Returns:
+       pd.DataFrame: The returned DataFrame object contains the calibration
+       factors for each BPM along with their error. Both the beta from phase
+       and beta from phase fitted values are used, resulting in 6 colums: 
+         - NAME: BPM Name
+         - S: Position
+         - CALIBRATION: Calibration factors computed from beta from phase
+         - ERROR_CALIBRATION: Associated error to the above calibration
+           factors
+         - CALIBRATION_FIT: Calibration factor computed from fitted beta
+           from phase
+         - ERROR_CALIBRATION_FIT: Associated error to the above calibration
+           factors
     """
-
     # Loop over each plane and compute the calibration factors
     calibration_factors = dict()
     for plane in PLANES:
@@ -304,26 +266,18 @@ def _get_calibration_factors_beta(ips: list,
 
 def _get_dispersion_from_phase(normalised_dispersion: dict,
                               beta: dict) -> (pd.Series, pd.Series):
-    """_get_dispersion_from_phase.
-
+    """
     This function computes the dispersion from phase given the normalised
     dispersion from amplitude, the beta from phase and their associated errors.
 
-    Parameters
-    ----------
-    normalised_dispersion : dict
-        Dictionnary containg the keys "amp" and and "amp_err" with a pd.Series
-        item as value for each.
-        
-    beta : dict
-        Dictionnary containg the keys "phase" and and "phase_err" with a
-        pd.Series item as value for each.
+    Args:
+        normalised_dispersion (dict): Dictionnary containg the keys "amp" and
+        and "amp_err" with a pd.Series item as value for each. 
+        beta (dict): Dictionnary containg the keys "phase" and and "phase_err"
+        with a pd.Series item as value for each.
 
     Returns
-    -------
-    (pd.Series, pd.Series)
-        The dispersion from phase and its associated error in each Series
-
+        (pd.Series, pd.Series): The dispersion from phase and its associated error in each Series
     """
     # Compute the dispersion from phase
     d_phase = normalised_dispersion["amp"] * np.sqrt(beta["phase"])
@@ -344,26 +298,18 @@ def _get_dispersion_from_phase(normalised_dispersion: dict,
 def _get_dispersion_fit(positions: pd.Series,
                         dispersion_values: pd.Series,
                         dispersion_err: pd.Series) -> (pd.Series, pd.Series):
-    """_get_dispersion_fit.
-
+    """ 
     This function returns a fit of the given dispersion values along with the
     associated error.
 
-    Parameters
-    ----------
-    positions : pd.Series
-        Positions of the BPMs to be fitted.
-    dispersion_values : pd.Series
-        Values of the BPMs to be fitted.
-    dispersion_err : pd.Series
-        Associated errors to the values.
+    Args:
+      positions (pd.Series): Positions of the BPMs to be fitted.
+      dispersion_values (pd.Series): Values of the BPMs to be fitted.
+      dispersion_err (pd.Series): Associated errors to the values.
 
-    Returns
-    -------
-    (pd.Series, pd.Series)
-        The elements returned are the values of the fit of the dispersion
-        values and the associated error.
-
+    Returns:
+      (pd.Series, pd.Series): The elements returned are the values of the fit of the dispersion
+      values and the associated error.
     """
     def dispersion_function(x, a, b):
         return a * x + b
@@ -392,25 +338,19 @@ def _get_dispersion_fit(positions: pd.Series,
 
 
 def _get_factors_from_dispersion(dispersion: dict) -> (pd.Series, pd.Series):
-    """_get_factors_from_dispersion.
-
+    """
     This function computes the calibration factors for the dispersion method
     with the non fitted dispersion values. The associated error is also
     calculated.
 
-    Parameters
-    ----------
-    dispersion: dict
-        Dictionnary containing 4 keys: phase, phase_err, amp and amp_err.
-        Each key is related to the method used to obtain the dispersion and its
-        error.
+    Args:
+      dispersion (dict): Dictionnary containing 4 keys: phase, phase_err, amp and amp_err.
+      Each key is related to the method used to obtain the dispersion and its
+      error.
 
-    Returns
-    -------
-    (pd.Series, pd.Series)
-        The first Series are the calibration factors, the second one their
-        error.
-
+    Returns:
+      (pd.Series, pd.Series): The first Series are the calibration factors, the second one their
+      error.
     """
     # Get the ratios, those are our calibration factors
     factors = dispersion["phase"] / dispersion["amp"]
@@ -426,25 +366,19 @@ def _get_factors_from_dispersion(dispersion: dict) -> (pd.Series, pd.Series):
 
 
 def _get_factors_from_dispersion_fit(dispersion: dict) -> (pd.Series, pd.Series):
-    """_get_factors_from_dispersion_fit.
-
+    """
     This function computes the calibration factors for the dispersion method
     with the _fitted_ dispersion values. The associated error is also
     calculated.
 
-    Parameters
-    ----------
-    dispersion: dict
-        Dictionnary containing 4 keys: phase_fit, phase_fit_err, amp and 
-        amp_err.
-        Each key is related to the method used to obtain the dispersion and its
-        error.
+    Args:
+      dispersion (dict): Dictionnary containing 4 keys: phase_fit,
+      phase_fit_err, amp and amp_err.  Each key is related to the method used
+      to obtain the dispersion and its error.
 
-    Returns
-    -------
-    (pd.Series, pd.Series)
-        The first Series are the calibration factors, the second one their
-        error.
+    Returns:
+      (pd.Series, pd.Series): The first Series are the calibration factors, the second one their
+      error.
     """
     # Get the ratios, those are our calibration factors
     factors = dispersion["phase_fit"] / dispersion["amp"]
@@ -460,8 +394,7 @@ def _get_factors_from_dispersion_fit(dispersion: dict) -> (pd.Series, pd.Series)
 
 def _get_calibration_factors_dispersion(ips: list,
                                         input_path: Path) -> pd.DataFrame:
-    """_get_calibration_factors_beta.
-
+    """
     This function is the main function to compute the calibration factors for
     the dispersion method.
     Given an IP and a path containing the corresponding Tfs files, this
@@ -470,31 +403,23 @@ def _get_calibration_factors_dispersion(ips: list,
     The calibration factors based on the dispersion are only computed for the
     X plane.
 
+    Args:
+      ips (list): IPs to compute the calibration factors for.
+      input_path (Path): Path of the directory containing the beta files.
 
-    Parameters
-    ----------
-    ips: list
-        IPs to compute the calibration factors for.
-    input_path: Path
-        Path of the directory containing the beta files.
-
-    Returns
-    -------
-    pd.DataFrame
-        The returned DataFrame object contains the calibration factors for each
-        BPM along with their error.
-        Both the dispersion and dispersion from fit values are used,
-        resulting in 6 colums: 
-            - NAME: BPM Name
-            - S: Position
-            - CALIBRATION: Calibration factors computed from the dispersion
-            - ERROR_CALIBRATION: Associated error to the above calibration 
-            factors
-            - CALIBRATION_FIT: Calibration factors computed from the fitted 
-            dispersion
-            - ERROR_CALIBRATION_FIT: Associated error to the above calibration 
-            factors
-
+    Returns:
+      pd.DataFrame: The returned DataFrame object contains the calibration
+      factors for each BPM along with their error. Both the dispersion and
+      dispersion from fit values are used, resulting in 6 colums: 
+        - NAME: BPM Name
+        - S: Position
+        - CALIBRATION: Calibration factors computed from the dispersion
+        - ERROR_CALIBRATION: Associated error to the above calibration
+          factors
+        - CALIBRATION_FIT: Calibration factors computed from the fitted
+          dispersion
+        - ERROR_CALIBRATION_FIT: Associated error to the above calibration
+          factors
     """
     # Load the normalized dispersion tfs file 
     norm_dispersion_tfs = tfs.read(input_path / f'{NORM_DISP_NAME}x{EXT}', index=TFS_INDEX)
@@ -560,27 +485,19 @@ def _write_calibration_tfs(calibration_factors: pd.DataFrame,
                           plane: str,
                           method: str, 
                           output_path: Path) -> None:
-    """_write_calibration_tfs.
-
+    """
     This function saves to a file the calibration factors given as input.
     The file name contains the method and plane related to those factors.
     e.g: "calibration_beta_x.tfs"
 
-    Parameters
-    ----------
-    calibration_factors : pd.DataFrame
-        The DataFrame containing the calibration factors to be written to disk.
-    plane : str
-        The plane associated to the current calibration factors.
-    method : str
-        The method used to compute those calibration factors.
-    output_path : Path
-        The directory where to save the file.
+    Args:
+      calibration_factors (pd.DataFrame): The DataFrame containing the calibration factors to be written to disk.
+      plane (str): The plane associated to the current calibration factors.
+      method (str): The method used to compute those calibration factors.
+      output_path (Path): The directory where to save the file.
 
-    Returns
-    -------
-    None
-
+    Returns:
+      None
     """
     # Create the output directory
     os.makedirs(output_path.absolute(), exist_ok=True)
@@ -598,7 +515,7 @@ def _write_calibration_tfs(calibration_factors: pd.DataFrame,
 
 @entrypoint(_get_params(), strict=True)
 def main(opt):
-    # Compute the calibration factors and their errors for each plane
+    # Compute the calibration factors and their errors according to the method
     if opt.method == "beta":
         factors = _get_calibration_factors_beta(opt.ips, opt.input_path)
     elif opt.method == "dispersion":
