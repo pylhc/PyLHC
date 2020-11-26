@@ -1,6 +1,6 @@
 """
 Constants: BPM Calibration
--------------------------
+--------------------------
 
 Specific constants related to the BPM calibration script in ``PyLHC``.
 """
