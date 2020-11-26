@@ -78,9 +78,9 @@ def _get_params() -> dict:
     )
 
 
-def _get_beta_fit(positions: pd.Series,
-                  beta_values: pd.Series, 
-                  beta_err: pd.Series) -> Tuple[pd.Series, pd.Series]:
+def _get_beta_fit(
+    positions: pd.Series, beta_values: pd.Series, beta_err: pd.Series
+) -> Tuple[pd.Series, pd.Series]:
     """
     This function returns a fit of the given beta values along with the
     associated error.
@@ -94,6 +94,7 @@ def _get_beta_fit(positions: pd.Series,
         Tuple[pd.Series, pd.Series]: The elements returned are the values of
         the fit of the beta values and the associated error.
     """
+
     def beta_function(x, a, b):
         return a + ((x - b) ** 2) / a
 
@@ -123,10 +124,12 @@ def _get_beta_fit(positions: pd.Series,
     return beta_fit, beta_fit_err
 
 
-def _get_factors_from_phase(beta_phase: pd.Series, 
-                            beta_amp: pd.Series,
-                            beta_phase_err: pd.Series,
-                            beta_amp_err: pd.Series) -> Tuple[pd.Series, pd.Series]:
+def _get_factors_from_phase(
+    beta_phase: pd.Series,
+    beta_amp: pd.Series,
+    beta_phase_err: pd.Series,
+    beta_amp_err: pd.Series,
+) -> Tuple[pd.Series, pd.Series]:
     """
     This function computes the calibration factors for the beta method with the
     beta from phase values. The associated error is also calculated.
@@ -152,10 +155,12 @@ def _get_factors_from_phase(beta_phase: pd.Series,
     return factors, calibration_error
 
 
-def _get_factors_from_phase_fit(beta_phase_fit: pd.Series,
-                                beta_amp: pd.Series,
-                                beta_phase_fit_err: pd.Series,
-                                beta_amp_err: pd.Series) -> Tuple[pd.Series, pd.Series]:
+def _get_factors_from_phase_fit(
+    beta_phase_fit: pd.Series,
+    beta_amp: pd.Series,
+    beta_phase_fit_err: pd.Series,
+    beta_amp_err: pd.Series,
+) -> Tuple[pd.Series, pd.Series]:
     """
     This function computes the calibration factors for the beta method with the
     beta from phase fitted values. The associated error is also calculated.
@@ -181,8 +186,9 @@ def _get_factors_from_phase_fit(beta_phase_fit: pd.Series,
     return factors, calibration_error
 
 
-def _get_calibration_factors_from_beta(ips: List[int],
-                                       input_path: Path) -> Dict[str, pd.DataFrame]:
+def _get_calibration_factors_from_beta(
+    ips: List[int], input_path: Path
+) -> Dict[str, pd.DataFrame]:
     """
     This function is the main function to compute the calibration factors for
     the beta method.
@@ -198,7 +204,7 @@ def _get_calibration_factors_from_beta(ips: List[int],
        Dict[str, pd.DataFrame]: The returned DataFrame object contains the
        calibration factors for each BPM along with their error. Both the beta
        from phase and beta from phase fitted values are used, resulting in 6
-       colums: 
+       colums:
          - NAME: BPM Name
          - S: Position
          - CALIBRATION: Calibration factors computed from beta from phase
@@ -216,8 +222,12 @@ def _get_calibration_factors_from_beta(ips: List[int],
         LOG.info(f"  Computing the calibration factors for plane {plane}")
 
         # Load the tfs files for beta from phase and beta from amp
-        beta_phase_tfs = tfs.read(input_path / f'{BETA_NAME}{plane.lower()}{EXT}', index=TFS_INDEX)
-        beta_amp_tfs = tfs.read(input_path / f'{AMP_BETA_NAME}{plane.lower()}{EXT}', index=TFS_INDEX)
+        beta_phase_tfs = tfs.read(
+            input_path / f"{BETA_NAME}{plane.lower()}{EXT}", index=TFS_INDEX
+        )
+        beta_amp_tfs = tfs.read(
+            input_path / f"{AMP_BETA_NAME}{plane.lower()}{EXT}", index=TFS_INDEX
+        )
 
         # Get the beam concerned by those tfs files
         beam = int(beta_phase_tfs.iloc[0].name[-1])
@@ -243,7 +253,10 @@ def _get_calibration_factors_from_beta(ips: List[int],
             calibration_phase, calibration_phase_err = _get_factors_from_phase(
                 beta_phase, beta_amp, beta_phase_err, beta_amp_err
             )
-            calibration_phase_fit, calibration_phase_fit_err = _get_factors_from_phase_fit(
+            (
+                calibration_phase_fit,
+                calibration_phase_fit_err,
+            ) = _get_factors_from_phase_fit(
                 beta_phase_fit, beta_amp, beta_phase_fit_err, beta_amp_err
             )
 
@@ -264,13 +277,16 @@ def _get_calibration_factors_from_beta(ips: List[int],
             if plane not in calibration_factors.keys():
                 calibration_factors[plane] = factors_for_ip
             else:
-                calibration_factors[plane] = calibration_factors[plane].append(factors_for_ip)
+                calibration_factors[plane] = calibration_factors[plane].append(
+                    factors_for_ip
+                )
 
     return calibration_factors
 
 
-def _get_dispersion_from_phase(normalised_dispersion: Dict[str, pd.Series],
-                              beta: Dict[str, pd.Series]) -> Tuple[pd.Series, pd.Series]:
+def _get_dispersion_from_phase(
+    normalised_dispersion: Dict[str, pd.Series], beta: Dict[str, pd.Series]
+) -> Tuple[pd.Series, pd.Series]:
     """
     This function computes the dispersion from phase given the normalised
     dispersion from amplitude, the beta from phase and their associated errors.
@@ -290,7 +306,7 @@ def _get_dispersion_from_phase(normalised_dispersion: Dict[str, pd.Series],
     # And the the associated error
     d_phase_err = (normalised_dispersion["amp_err"] * np.sqrt(beta["phase_err"])) ** 2
     d_phase_err += (
-        1 / 2
+        (1 / 2)
         * normalised_dispersion["amp"]
         / np.sqrt(beta["phase"])
         * beta["phase_err"]
@@ -300,10 +316,10 @@ def _get_dispersion_from_phase(normalised_dispersion: Dict[str, pd.Series],
     return d_phase, d_phase_err
 
 
-def _get_dispersion_fit(positions: pd.Series,
-                        dispersion_values: pd.Series,
-                        dispersion_err: pd.Series) -> Tuple[pd.Series, pd.Series]:
-    """ 
+def _get_dispersion_fit(
+    positions: pd.Series, dispersion_values: pd.Series, dispersion_err: pd.Series
+) -> Tuple[pd.Series, pd.Series]:
+    """
     This function returns a fit of the given dispersion values along with the
     associated error.
 
@@ -316,6 +332,7 @@ def _get_dispersion_fit(positions: pd.Series,
       Tuple[pd.Series, pd.Series]: The elements returned are the values of the
       fit of the dispersion values and the associated error.
     """
+
     def dispersion_function(x, a, b):
         return a * x + b
 
@@ -342,7 +359,9 @@ def _get_dispersion_fit(positions: pd.Series,
     return dispersion_fit, dispersion_fit_err
 
 
-def _get_factors_from_dispersion(dispersion: Dict[str, pd.Series]) -> Tuple[pd.Series, pd.Series]:
+def _get_factors_from_dispersion(
+    dispersion: Dict[str, pd.Series]
+) -> Tuple[pd.Series, pd.Series]:
     """
     This function computes the calibration factors for the dispersion method
     with the non fitted dispersion values. The associated error is also
@@ -370,7 +389,9 @@ def _get_factors_from_dispersion(dispersion: Dict[str, pd.Series]) -> Tuple[pd.S
     return factors, calibration_error
 
 
-def _get_factors_from_dispersion_fit(dispersion: Dict[str, pd.Series]) -> Tuple[pd.Series, pd.Series]:
+def _get_factors_from_dispersion_fit(
+    dispersion: Dict[str, pd.Series]
+) -> Tuple[pd.Series, pd.Series]:
     """
     This function computes the calibration factors for the dispersion method
     with the _fitted_ dispersion values. The associated error is also
@@ -397,8 +418,9 @@ def _get_factors_from_dispersion_fit(dispersion: Dict[str, pd.Series]) -> Tuple[
     return factors, calibration_error
 
 
-def _get_calibration_factors_from_dispersion(ips: List[int],
-                                             input_path: Path) -> Dict[str, pd.DataFrame]:
+def _get_calibration_factors_from_dispersion(
+    ips: List[int], input_path: Path
+) -> Dict[str, pd.DataFrame]:
     """
     This function is the main function to compute the calibration factors for
     the dispersion method.
@@ -416,7 +438,7 @@ def _get_calibration_factors_from_dispersion(ips: List[int],
       Dict[str, pd.DataFrame]: The returned DataFrame object contains the
       calibration factors for each BPM along with their error. Both the
       dispersion and dispersion from fit values are used, resulting in 6
-      colums: 
+      colums:
         - NAME: BPM Name
         - S: Position
         - CALIBRATION: Calibration factors computed from the dispersion
@@ -428,10 +450,12 @@ def _get_calibration_factors_from_dispersion(ips: List[int],
           factors
     """
     LOG.info("Computing the calibration factors via dispersion")
-    # Load the normalized dispersion tfs file 
-    norm_dispersion_tfs = tfs.read(input_path / f'{NORM_DISP_NAME}x{EXT}', index=TFS_INDEX)
-    dispersion_tfs = tfs.read(input_path / f'{DISPERSION_NAME}x{EXT}', index=TFS_INDEX)
-    
+    # Load the normalized dispersion tfs file
+    norm_dispersion_tfs = tfs.read(
+        input_path / f"{NORM_DISP_NAME}x{EXT}", index=TFS_INDEX
+    )
+    dispersion_tfs = tfs.read(input_path / f"{DISPERSION_NAME}x{EXT}", index=TFS_INDEX)
+
     # Get the beam concerned by those tfs files
     beam = int(dispersion_tfs.iloc[0].name[-1])
 
@@ -471,28 +495,35 @@ def _get_calibration_factors_from_dispersion(ips: List[int],
         )
 
         # Compute the calibration factors using the fitted dispersion from amp / phase
-        calibration_fit, calibration_fit_err = _get_factors_from_dispersion_fit(dispersion)
+        calibration_fit, calibration_fit_err = _get_factors_from_dispersion_fit(
+            dispersion
+        )
 
         # Assemble the calibration factors in one dataframe
         factors_for_ip = pd.concat(
-            [positions, calibration, calibration_err, calibration_fit, calibration_fit_err],
+            [
+                positions,
+                calibration,
+                calibration_err,
+                calibration_fit,
+                calibration_fit_err,
+            ],
             axis=1,
         )
         factors_for_ip.columns = LABELS
         factors_for_ip.index.name = TFS_INDEX
 
-        if 'X' not in calibration_factors.keys():
-            calibration_factors = {'X': factors_for_ip}
+        if "X" not in calibration_factors.keys():
+            calibration_factors = {"X": factors_for_ip}
         else:
-            calibration_factors['X'] = calibration_factors['X'].append(factors_for_ip)
-    
+            calibration_factors["X"] = calibration_factors["X"].append(factors_for_ip)
+
     return calibration_factors
 
 
-def _write_calibration_tfs(calibration_factors: pd.DataFrame,
-                          plane: str,
-                          method: str, 
-                          output_path: Path) -> None:
+def _write_calibration_tfs(
+    calibration_factors: pd.DataFrame, plane: str, method: str, output_path: Path
+) -> None:
     """
     This function saves to a file the calibration factors given as input.
     The file name contains the method and plane related to those factors.
@@ -533,10 +564,10 @@ def _get_str_calibration_factors(calibration_factors: Dict[str, pd.DataFrame]) -
     Returns:
         str: The calibration factors as string
     """
-    result_str = ''
+    result_str = ""
     for plane in calibration_factors.keys():
-        result_str += f'\nPlane {plane}:\n'
-        result_str += f'{calibration_factors[plane]}'
+        result_str += f"\nPlane {plane}:\n"
+        result_str += f"{calibration_factors[plane]}"
 
     return result_str
 
