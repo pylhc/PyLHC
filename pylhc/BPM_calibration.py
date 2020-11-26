@@ -168,7 +168,8 @@ def _get_factors_from_phase_fit(
     Args:
       beta_phase_fit (pd.Series): Series of the beta from phase fitted values
       beta_amp (pd.Series): Series of the beta from amplitude values
-      beta_phase_fit_err (pd.Series): Series of the error associated to the beta from phase fitted values
+      beta_phase_fit_err (pd.Series): Series of the error associated to the
+        beta from phase fitted values
       beta_amp_err (pd.Series): Series of the error associated to the beta from amplitude values
 
     Returns:
@@ -297,8 +298,9 @@ def _get_dispersion_from_phase(
         beta (Dict[str, pd.Series]): Dictionnary containg the keys "phase" and
         and "phase_err" with a pd.Series item as value for each.
 
-    Returns
-        Tuple[pd.Series, pd.Series]: The dispersion from phase and its associated error in each Series
+    Returns;
+        Tuple[pd.Series, pd.Series]: The dispersion from phase and its
+            associated error in each Series
     """
     # Compute the dispersion from phase
     d_phase = normalised_dispersion["amp"] * np.sqrt(beta["phase"])
@@ -368,13 +370,13 @@ def _get_factors_from_dispersion(
     calculated.
 
     Args:
-      dispersion (Dict[str, pd.Series]): Dictionnary containing 4 keys: phase, phase_err, amp and amp_err.
-      Each key is related to the method used to obtain the dispersion and its
-      error.
+      dispersion (Dict[str, pd.Series]): Dictionnary containing 4 keys: phase,
+        phase_err, amp and amp_err. Each key is related to the method used to
+        obtain the dispersion and its error.
 
     Returns:
-      Tuple[pd.Series, pd.Series]: The first Series are the calibration factors, the second one their
-      error.
+      Tuple[pd.Series, pd.Series]: The first Series are the calibration
+        factors, the second one their error.
     """
     # Get the ratios, those are our calibration factors
     factors = dispersion["phase"] / dispersion["amp"]
@@ -530,7 +532,8 @@ def _write_calibration_tfs(
     e.g: "calibration_beta_x.tfs"
 
     Args:
-      calibration_factors (pd.DataFrame): The DataFrame containing the calibration factors to be written to disk.
+      calibration_factors (pd.DataFrame): The DataFrame containing the
+        calibration factors to be written to disk.
       plane (str): The plane associated to the current calibration factors.
       method (str): The method used to compute those calibration factors.
       output_path (Path): The directory where to save the file.
