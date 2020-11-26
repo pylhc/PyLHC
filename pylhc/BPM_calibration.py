@@ -208,6 +208,7 @@ def _get_calibration_factors_from_beta(ips: List[int],
          - ERROR_CALIBRATION_FIT: Associated error to the above calibration
            factors
     """
+    LOG.info("Computing the calibration factors via beta")
     # Loop over each plane and compute the calibration factors
     calibration_factors = dict()
     for plane in PLANES:
@@ -219,6 +220,7 @@ def _get_calibration_factors_from_beta(ips: List[int],
         beam = int(beta_phase_tfs.iloc[0].name[-1])
 
         for ip in ips:
+            LOG.debug("Computing the calibration factors for IP {ip}")
             # Filter our TFS files to only keep the BPMs for the selected IR
             bpms = beta_phase_tfs.reindex(BPMS[ip][beam]).dropna().index
 
@@ -260,6 +262,8 @@ def _get_calibration_factors_from_beta(ips: List[int],
                 calibration_factors[plane] = factors_for_ip
             else:
                 calibration_factors[plane] = calibration_factors[plane].append(factors_for_ip)
+    
+    LOG.debug(f"Calibration factors: {calibration_factors}")
 
     return calibration_factors
 
@@ -421,6 +425,7 @@ def _get_calibration_factors_from_dispersion(ips: List[int],
         - ERROR_CALIBRATION_FIT: Associated error to the above calibration
           factors
     """
+    LOG.info("Computing the calibration factors via dispersion")
     # Load the normalized dispersion tfs file 
     norm_dispersion_tfs = tfs.read(input_path / f'{NORM_DISP_NAME}x{EXT}', index=TFS_INDEX)
     dispersion_tfs = tfs.read(input_path / f'{DISPERSION_NAME}x{EXT}', index=TFS_INDEX)
@@ -431,6 +436,7 @@ def _get_calibration_factors_from_dispersion(ips: List[int],
     # Loop over the IPs and compute the calibration factors
     calibration_factors = dict()
     for ip in ips:
+        LOG.debug("Computing the calibration factors for IP {ip}")
         # Filter our TFS files to only keep the BPMs for the selected IR
         bpms = dispersion_tfs.reindex(BPMS[ip][beam]).dropna().index
         d_bpms = dispersion_tfs.reindex(D_BPMS[ip][beam]).dropna().index
@@ -477,6 +483,8 @@ def _get_calibration_factors_from_dispersion(ips: List[int],
             calibration_factors = {'X': factors_for_ip}
         else:
             calibration_factors['X'] = calibration_factors['X'].append(factors_for_ip)
+
+    LOG.debug(f"Calibration factors: {calibration_factors}")
     
     return calibration_factors
 
@@ -509,6 +517,7 @@ def _write_calibration_tfs(calibration_factors: pd.DataFrame,
     # Write the TFS files for this plane
     # The method chosen will change the tfs name
     tfs_name = f"{CALIBRATION_NAME[method]}{plane.lower()}{EXT}"
+    LOG.info(f"Writing {tfs_name}")
     file_path = output_path / tfs_name
     tfs.write_tfs(file_path, calibration_factors, save_index=False)
 
