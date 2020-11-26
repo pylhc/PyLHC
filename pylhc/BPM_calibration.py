@@ -254,10 +254,7 @@ def _get_calibration_factors_from_beta(
             calibration_phase, calibration_phase_err = _get_factors_from_phase(
                 beta_phase, beta_amp, beta_phase_err, beta_amp_err
             )
-            (
-                calibration_phase_fit,
-                calibration_phase_fit_err,
-            ) = _get_factors_from_phase_fit(
+            calibration_phase_fit, calibration_phase_fit_err = _get_factors_from_phase_fit(
                 beta_phase_fit, beta_amp, beta_phase_fit_err, beta_amp_err
             )
 
