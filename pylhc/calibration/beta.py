@@ -4,7 +4,7 @@ beta
 
 The functions in this script compute the calibration factors for the LHC BPMs
 using the beta method. The `get_calibration_factors_from_beta` is intended
-to be used with the script `calibration.py`.
+to be used with the script `bpm_calibration.py`.
 
 """
 from pathlib import Path

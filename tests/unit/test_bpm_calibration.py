@@ -6,7 +6,7 @@ import pytest
 
 import tfs
 from generic_parser.dict_parser import ArgumentError
-from pylhc.bpm_calibration import calibration
+from pylhc import bpm_calibration as calibration
 
 INPUTS_DIR = Path(__file__).parent.parent / 'inputs' / 'calibration'
 MEASUREMENTS_BETA = INPUTS_DIR / 'measurements' / 'for_beta'

@@ -1,5 +1,5 @@
 BPM Calibration
 **************************
 
-.. automodule:: pylhc.BPM_calibration
+.. automodule:: pylhc.bpm_calibration
     :members:

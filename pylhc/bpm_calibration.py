@@ -47,7 +47,6 @@ Arguments:
 """
 from pathlib import Path
 import numpy as np
-import os
 import pandas as pd
 from typing import Tuple, List, Dict
 
@@ -59,8 +58,8 @@ from pylhc.constants.calibration import (
     IPS,
     METHODS,
 )
-from pylhc.bpm_calibration.dispersion import get_calibration_factors_from_dispersion
-from pylhc.bpm_calibration.beta import get_calibration_factors_from_beta
+from pylhc.calibration.dispersion import get_calibration_factors_from_dispersion
+from pylhc.calibration.beta import get_calibration_factors_from_beta
 import tfs
 
 
@@ -126,7 +125,7 @@ def _write_calibration_tfs(
       None
     """
     # Create the output directory
-    os.makedirs(output_path.absolute(), exist_ok=True)
+    output_path.mkdir(parents=True, exist_ok=True)
 
     # Reset the index of the dataframe, it was handy to handle the data but not
     # to store it
