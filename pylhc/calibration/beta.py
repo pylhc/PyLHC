@@ -91,6 +91,8 @@ def _get_factors_from_phase(
     """
     This function computes the calibration factors for the beta method with the
     beta from phase values. The associated error is also calculated.
+    The equations being the same for the factors from phase and phase fit, this
+    function can be used for both.
 
     Args:
       beta_phase (pd.Series): Series of the beta from phase values
@@ -108,38 +110,6 @@ def _get_factors_from_phase(
     # Now compute the errors
     calibration_error = (beta_phase_err ** 2) / (4 * beta_amp * beta_phase)
     calibration_error += (beta_phase * (beta_amp_err ** 2)) / (4 * (beta_amp ** 3))
-    calibration_error = np.sqrt(calibration_error)
-
-    return factors, calibration_error
-
-
-def _get_factors_from_phase_fit(
-    beta_phase_fit: pd.Series,
-    beta_amp: pd.Series,
-    beta_phase_fit_err: pd.Series,
-    beta_amp_err: pd.Series,
-) -> Tuple[pd.Series, pd.Series]:
-    """
-    This function computes the calibration factors for the beta method with the
-    beta from phase fitted values. The associated error is also calculated.
-
-    Args:
-      beta_phase_fit (pd.Series): Series of the beta from phase fitted values
-      beta_amp (pd.Series): Series of the beta from amplitude values
-      beta_phase_fit_err (pd.Series): Series of the error associated to the
-        beta from phase fitted values
-      beta_amp_err (pd.Series): Series of the error associated to the beta from amplitude values
-
-    Returns:
-      Tuple[pd.Series, pd.Series]: The first Series are the calibration
-      factors, the second one their error.
-    """
-    # Compute the calibration factors
-    factors = np.sqrt(beta_phase_fit / beta_amp)
-
-    # Now compute the errors
-    calibration_error = (beta_phase_fit_err ** 2) / (4 * beta_amp * beta_phase_fit)
-    calibration_error += (beta_phase_fit * (beta_amp_err ** 2)) / (4 * (beta_amp ** 3))
     calibration_error = np.sqrt(calibration_error)
 
     return factors, calibration_error
@@ -212,7 +182,7 @@ def get_calibration_factors_from_beta(
             calibration_phase, calibration_phase_err = _get_factors_from_phase(
                 beta_phase, beta_amp, beta_phase_err, beta_amp_err
             )
-            calibration_phase_fit, calibration_phase_fit_err = _get_factors_from_phase_fit(
+            calibration_phase_fit, calibration_phase_fit_err = _get_factors_from_phase(
                 beta_phase_fit, beta_amp, beta_phase_fit_err, beta_amp_err
             )
 

@@ -39,39 +39,6 @@ import tfs
 LOG = logging_tools.get_logger(__name__)
 
 
-def _get_dispersion_from_phase(
-    normalised_dispersion: Dict[str, pd.Series], beta: Dict[str, pd.Series]
-) -> Tuple[pd.Series, pd.Series]:
-    """
-    This function computes the dispersion from phase given the normalised
-    dispersion from amplitude, the beta from phase and their associated errors.
-
-    Args:
-        normalised_dispersion (Dict[str, pd.Series]): Dictionnary containg the
-        keys "amp" and and "amp_err" with a pd.Series item as value for each.
-        beta (Dict[str, pd.Series]): Dictionnary containg the keys "phase" and
-        and "phase_err" with a pd.Series item as value for each.
-
-    Returns;
-        Tuple[pd.Series, pd.Series]: The dispersion from phase and its
-            associated error in each Series
-    """
-    # Compute the dispersion from phase
-    d_phase = normalised_dispersion["amp"] * np.sqrt(beta["phase"])
-
-    # And the the associated error
-    d_phase_err = (normalised_dispersion["amp_err"] * np.sqrt(beta["phase_err"])) ** 2
-    d_phase_err += (
-        (1 / 2)
-        * normalised_dispersion["amp"]
-        / np.sqrt(beta["phase"])
-        * beta["phase_err"]
-    ) ** 2
-    d_phase_err = np.sqrt(d_phase_err)
-
-    return d_phase, d_phase_err
-
-
 def _get_dispersion_fit(
     positions: pd.Series, dispersion_values: pd.Series, dispersion_err: pd.Series
 ) -> Tuple[pd.Series, pd.Series]:
@@ -116,58 +83,34 @@ def _get_dispersion_fit(
 
 
 def _get_factors_from_dispersion(
-    dispersion: Dict[str, pd.Series]
+        dispersion: Dict[str, pd.Series], phase: str, phase_err: str,
 ) -> Tuple[pd.Series, pd.Series]:
     """
     This function computes the calibration factors for the dispersion method
     with the non fitted dispersion values. The associated error is also
     calculated.
+    The equations being the same for the factors from dispersion and dispersion
+    fit, this function can be used for both.
 
     Args:
       dispersion (Dict[str, pd.Series]): Dictionnary containing 4 keys: phase,
         phase_err, amp and amp_err. Each key is related to the method used to
-        obtain the dispersion and its error.
+        obtain the dispersion and its error. The keys differ for the dispersion
+        fit method, as a _fit part is added.
+      phase (str): key for the dispersion from phase
+      phase_err (str): key for the dispersion from phase error
 
     Returns:
       Tuple[pd.Series, pd.Series]: The first Series are the calibration
         factors, the second one their error.
     """
     # Get the ratios, those are our calibration factors
-    factors = dispersion["phase"] / dispersion["amp"]
+    factors = dispersion[phase] / dispersion["amp"]
 
     # Code in BBs
-    calibration_error = (dispersion["phase_err"] / dispersion["amp"]) ** 2
+    calibration_error = (dispersion[phase_err] / dispersion["amp"]) ** 2
     calibration_error += (
-        dispersion["amp_err"] * (dispersion["phase"] / (dispersion["amp"] ** 2))
-    ) ** 2
-    calibration_error = np.sqrt(calibration_error)
-
-    return factors, calibration_error
-
-
-def _get_factors_from_dispersion_fit(
-    dispersion: Dict[str, pd.Series]
-) -> Tuple[pd.Series, pd.Series]:
-    """
-    This function computes the calibration factors for the dispersion method
-    with the _fitted_ dispersion values. The associated error is also
-    calculated.
-
-    Args:
-      dispersion (dict): Dictionnary containing 4 keys: phase_fit,
-      phase_fit_err, amp and amp_err.  Each key is related to the method used
-      to obtain the dispersion and its error.
-
-    Returns:
-      Tuple[pd.Series, pd.Series]: The first Series are the calibration
-      factors, the second one their error.
-    """
-    # Get the ratios, those are our calibration factors
-    factors = dispersion["phase_fit"] / dispersion["amp"]
-
-    calibration_error = (dispersion["phase_fit_err"] / dispersion["amp"]) ** 2
-    calibration_error += (
-        dispersion["amp_err"] * dispersion["phase_fit"] / (dispersion["amp"] ** 2)
+        dispersion["amp_err"] * (dispersion[phase] / (dispersion["amp"] ** 2))
     ) ** 2
     calibration_error = np.sqrt(calibration_error)
 
@@ -243,7 +186,8 @@ def get_calibration_factors_from_dispersion(
         ].dropna()
 
         # Compute the calibration factors using the dispersion from phase and amp
-        calibration, calibration_err = _get_factors_from_dispersion(dispersion)
+        calibration, calibration_err = _get_factors_from_dispersion(
+            dispersion, "phase", "phase_err")
 
         # Fit the dispersion from phase
         dispersion["phase_fit"], dispersion["phase_fit_err"] = _get_dispersion_fit(
@@ -251,8 +195,8 @@ def get_calibration_factors_from_dispersion(
         )
 
         # Compute the calibration factors using the fitted dispersion from amp / phase
-        calibration_fit, calibration_fit_err = _get_factors_from_dispersion_fit(
-            dispersion
+        calibration_fit, calibration_fit_err = _get_factors_from_dispersion(
+            dispersion, "phase_fit", "phase_fit_err"
         )
 
         # Assemble the calibration factors in one dataframe
