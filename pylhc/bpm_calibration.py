@@ -3,7 +3,13 @@ BPM Calibration
 ---------------
 
 This script computes the calibration factors for the LHC BPMs using either a
-beta from phase method or a dispersion one.
+beta from phase method or a dispersion one by comparison of beam optics
+quantities calculated independent of and dependent on BPM calibration.
+Namely, the default method compares beta-functions calculated from phase
+advances (BPM-calibration independent) and from amplitude of betatron
+oscillation (calibration dependent).
+The other method compares dispersion, and its use is currently discouraged due
+to worse resolution.
 
 Arguments:
 
