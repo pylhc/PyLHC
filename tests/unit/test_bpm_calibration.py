@@ -33,18 +33,12 @@ def test_calibration_same_betabeat(tmp_path):
     assert x_tfs['NAME'].equals(expected_x_tfs['NAME'])
     assert y_tfs['NAME'].equals(expected_y_tfs['NAME'])
 
-    # Drop the NAME column for float comparison
-    x_tfs = x_tfs.drop(['NAME'], axis=1)
-    y_tfs = y_tfs.drop(['NAME'], axis=1)
-    expected_y_tfs = expected_y_tfs.drop(['NAME'], axis=1)
-    expected_x_tfs = expected_x_tfs.drop(['NAME'], axis=1)
-
     # BetaBeat's tfs implementation is a bit different, we don't have the
     # same integer precision
     precision = 1e-14
-
-    assert np.allclose(x_tfs, expected_x_tfs, atol=precision)
-    assert np.allclose(y_tfs, expected_y_tfs, atol=precision)
+    
+    assert_series_equal(x_tfs['CALIBRATION'], expected_x_tfs['CALIBRATION'], atol=precision)
+    assert_series_equal(y_tfs['CALIBRATION'], expected_y_tfs['CALIBRATION'], atol=precision)
 
 
 def test_bad_args():
@@ -90,16 +84,11 @@ def test_calibration_same_dispersion(tmp_path):
 
     # Check all the BPMs are indeed the same 
     assert x_tfs['NAME'].equals(expected_x_tfs['NAME'])
-
-    # Drop the NAME column for float comparison
-    x_tfs = x_tfs.drop(['NAME'], axis=1)
-    expected_x_tfs = expected_x_tfs.drop(['NAME'], axis=1)
-
-    precision = 1e-6
+    precision = 1e-4
 
     # BBsrc was wrong for the calibration error fit and the calibration fits
-    # So we can only check the calibration
-    assert np.allclose(x_tfs['CALIBRATION'], expected_x_tfs['CALIBRATION'], atol=precision)
+    # So we can only check the first column: CALIBRATION
+    assert_series_equal(x_tfs['CALIBRATION'], expected_x_tfs['CALIBRATION'], atol=precision)
 
 
 def test_beta_equal(tmp_path):
