@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import pathlib
 import pytest
+from pandas.testing import assert_series_equal
 
 import tfs
 from generic_parser.dict_parser import ArgumentError
@@ -11,12 +12,13 @@ from pylhc import bpm_calibration as calibration
 INPUTS_DIR = Path(__file__).parent.parent / 'inputs' / 'calibration'
 MEASUREMENTS_BETA = INPUTS_DIR / 'measurements' / 'for_beta'
 MEASUREMENTS_DISPERSION = INPUTS_DIR / 'measurements' / 'for_dispersion'
+MEASUREMENTS_SAME_BETA = INPUTS_DIR / 'measurements' / 'same_beta'
 EXPECTED_OUTPUT = INPUTS_DIR / 'output'
 
 
 def test_calibration_same_betabeat(tmp_path):
-    factors = calibration.main(input_path=MEASUREMENTS_BETA,
-                               output_path=tmp_path,
+    factors = calibration.main(inputdir=MEASUREMENTS_BETA,
+                               outputdir=tmp_path,
                                ips=[1,4,5])
 
     # Let's open the tfs files we just created
@@ -47,17 +49,17 @@ def test_calibration_same_betabeat(tmp_path):
 
 def test_bad_args():
     with pytest.raises(ArgumentError) as e:
-        calibration.main(input_path='wat',
-                         output_path='',
+        calibration.main(inputdir='wat',
+                         outputdir='',
                          ips=[1,5])
 
-    assert "input_path' is not of type Path" in str(e.value)
+    assert "inputdir' is not of type Path" in str(e.value)
 
 
 def test_no_beta_tfs(tmp_path):
     with pytest.raises(FileNotFoundError) as e:
-        calibration.main(input_path=pathlib.Path('wat'),
-                         output_path=tmp_path,
+        calibration.main(inputdir=pathlib.Path('wat'),
+                         outputdir=tmp_path,
                          ips=[1,5])
 
     assert "No such file or directory:" in str(e.value)
@@ -66,8 +68,8 @@ def test_no_beta_tfs(tmp_path):
 
 def test_wrong_ip(tmp_path):
     with pytest.raises(ArgumentError) as e:
-        calibration.main(input_path=MEASUREMENTS_BETA,
-                         output_path=tmp_path,
+        calibration.main(inputdir=MEASUREMENTS_BETA,
+                         outputdir=tmp_path,
                          ips=[15, 22])
 
     err = "All elements of 'ips' need to be one of '[1, 4, 5]', instead the list was [15, 22]."
@@ -75,8 +77,8 @@ def test_wrong_ip(tmp_path):
 
 
 def test_calibration_same_dispersion(tmp_path):
-    factors = calibration.main(input_path=MEASUREMENTS_DISPERSION,
-                               output_path=tmp_path,
+    factors = calibration.main(inputdir=MEASUREMENTS_DISPERSION,
+                               outputdir=tmp_path,
                                method='dispersion',
                                ips=[1,5])
 
@@ -98,4 +100,19 @@ def test_calibration_same_dispersion(tmp_path):
     # BBsrc was wrong for the calibration error fit and the calibration fits
     # So we can only check the calibration
     assert np.allclose(x_tfs['CALIBRATION'], expected_x_tfs['CALIBRATION'], atol=precision)
+
+
+def test_beta_equal(tmp_path):
+    factors = calibration.main(inputdir=MEASUREMENTS_SAME_BETA,
+                               outputdir=tmp_path,
+                               method='beta',
+                               ips=[1,5])
+
+    # beta from phase and beta amp are the same. Calibrations factors should
+    # equal to 1
+    expected = np.array([1.0] * len(factors['X']['CALIBRATION']))
+    assert (factors['X']['CALIBRATION'].to_numpy() == expected).all()
+    
+    expected = np.array([1.0] * len(factors['Y']['CALIBRATION']))
+    assert (factors['Y']['CALIBRATION'].to_numpy() == expected).all()
 
