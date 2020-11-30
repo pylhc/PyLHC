@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 import pathlib
 import pytest
-from pandas.testing import assert_series_equal
+from pandas.testing import assert_series_equal, assert_frame_equal
 
 import tfs
 from generic_parser.dict_parser import ArgumentError
@@ -29,16 +29,13 @@ def test_calibration_same_betabeat(tmp_path):
     expected_x_tfs = tfs.read(EXPECTED_OUTPUT / 'calibration_beta_x.tfs')
     expected_y_tfs = tfs.read(EXPECTED_OUTPUT / 'calibration_beta_y.tfs')
 
-    # Check all the BPMs are indeed the same 
-    assert x_tfs['NAME'].equals(expected_x_tfs['NAME'])
-    assert y_tfs['NAME'].equals(expected_y_tfs['NAME'])
-
     # BetaBeat's tfs implementation is a bit different, we don't have the
     # same integer precision
     precision = 1e-14
     
-    assert_series_equal(x_tfs['CALIBRATION'], expected_x_tfs['CALIBRATION'], atol=precision)
-    assert_series_equal(y_tfs['CALIBRATION'], expected_y_tfs['CALIBRATION'], atol=precision)
+    # Compare the two dataframes
+    assert_frame_equal(x_tfs, expected_x_tfs, atol=precision)
+    assert_frame_equal(y_tfs, expected_y_tfs, atol=precision)
 
 
 def test_bad_args():

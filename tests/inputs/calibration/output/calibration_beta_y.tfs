@@ -1,4 +1,4 @@
-*                 NAME                    S          CALIBRATION    ERROR_CALIBRATION CALIBRATION_PHASE_FIT ERROR_CALIBRATION_PHASE_FIT
+*                 NAME                    S          CALIBRATION    ERROR_CALIBRATION CALIBRATION_FIT ERROR_CALIBRATION_FIT
 $                   %s                  %le                  %le                  %le                  %le                  %le
            BPMR.5L1.B1          23326.02462      0.9897892216462    0.003196962750808       1.175257852345     0.07680043982141
           BPMYA.4L1.B1          23347.14262      0.9757743157511    0.002732360147657       1.541959266669      0.2066141609959
