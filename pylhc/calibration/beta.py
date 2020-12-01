@@ -61,12 +61,13 @@ def _get_beta_fit(
     initial_values = (BETA_STAR_ESTIMATION, ip_position)
 
     # Get the curve fit for the expected 1parabola
+    valid = ~(np.isnan(positions) | np.isnan(beta_values))
     fit, fit_cov = curve_fit(
         beta_function,
-        positions,
-        beta_values,
+        positions[valid],
+        beta_values[valid],
         p0=initial_values,
-        sigma=beta_err,
+        sigma=beta_err[valid],
         maxfev=1000000,
     )
 
@@ -164,14 +165,25 @@ def get_calibration_factors_from_beta(
         for ip in ips:
             LOG.info(f"    Computing the calibration factors for IP {ip}")
             # Filter our TFS files to only keep the BPMs for the selected IR
-            bpms = beta_phase_tfs.reindex(BPMS[ip][beam]).dropna().index
+            bpms = beta_phase_tfs.reindex(BPMS[ip][beam])
+            bpms_amp = beta_amp_tfs.reindex(BPMS[ip][beam])
 
+            # Check for possible missing bpms
+            for bpm_set in [bpms, bpms_amp]:
+                missing = set(bpm_set.loc[bpm_set.isnull().values].index)
+                if missing:
+                    LOG.warning("    One or several BPMs are missing in the input"
+                                " DataFrame, the calibration factors calculation"
+                                f"from fit not be accurate: {missing}")
+
+            
             # Get the positions and the beta values for those BPMs
-            positions = beta_phase_tfs.loc[bpms, S].dropna()
-            beta_phase = beta_phase_tfs.loc[bpms, f"{BETA}{plane}"].dropna()
-            beta_phase_err = beta_phase_tfs.loc[bpms, f"{ERR}{BETA}{plane}"].dropna()
-            beta_amp = beta_amp_tfs.loc[bpms, f"{BETA}{plane}"].dropna()
-            beta_amp_err = beta_amp_tfs.loc[bpms, f"{ERR}{BETA}{plane}"].dropna()
+            bpms = bpms.index
+            positions = beta_phase_tfs.reindex(bpms)[S]
+            beta_phase = beta_phase_tfs.reindex(bpms)[f"{BETA}{plane}"]
+            beta_phase_err = beta_phase_tfs.reindex(bpms)[f"{ERR}{BETA}{plane}"]
+            beta_amp = beta_amp_tfs.reindex(bpms)[f"{BETA}{plane}"]
+            beta_amp_err = beta_amp_tfs.reindex(bpms)[f"{ERR}{BETA}{plane}"]
 
             # Curve fit the beta from phase values
             beta_phase_fit, beta_phase_fit_err = _get_beta_fit(

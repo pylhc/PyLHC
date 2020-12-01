@@ -64,7 +64,8 @@ def _get_dispersion_fit(
     err = dispersion_err[dispersion_values.index.isin(positions.index)]
 
     # Get the curve fit for the expected affine function
-    fit, fit_cov = curve_fit(dispersion_function, positions, values, sigma=err)
+    valid = ~(np.isnan(positions) | np.isnan(values))
+    fit, fit_cov = curve_fit(dispersion_function, positions[valid], values[valid], sigma=err[valid])
 
     # Get the error from the covariance matrix
     fit_err = np.sqrt(np.diag(fit_cov))
@@ -163,27 +164,35 @@ def get_calibration_factors_from_dispersion(
     for ip in ips:
         LOG.info(f"  Computing the calibration factors for IP {ip}, plane X")
         # Filter our TFS files to only keep the BPMs for the selected IR
-        bpms = dispersion_tfs.reindex(BPMS[ip][beam]).dropna().index
-        d_bpms = dispersion_tfs.reindex(D_BPMS[ip][beam]).dropna().index
+        bpms = dispersion_tfs.reindex(BPMS[ip][beam])
+        d_bpms = dispersion_tfs.reindex(D_BPMS[ip][beam])
+            
+        # Check for possible missing bpms
+        for bpm_set in [bpms, d_bpms]:
+            missing = set(bpm_set.loc[bpm_set.isnull().values].index)
+            if missing:
+                LOG.warning("    One or several BPMs are missing in the input"
+                            " DataFrame, the calibration factors calculation"
+                            f"from might not be accurate: {missing}")
 
         # Get the positions of the BPMs and the subset used for the fit
-        positions = dispersion_tfs.loc[bpms, S].dropna()
-        positions_fit = dispersion_tfs.loc[d_bpms, S].dropna()
+        bpms = bpms.index
+        d_bpms = d_bpms.index
+        positions = dispersion_tfs.reindex(bpms)[S]
+        positions_fit = dispersion_tfs.reindex(d_bpms)[S]
 
         # Get the dispersion and normalised dispersion from the tfs files
         dispersion = dict()
         normalised_dispersion = dict()
 
-        dispersion["amp"] = dispersion_tfs.loc[bpms, f"DX"].dropna()
-        dispersion["amp_err"] = dispersion_tfs.loc[bpms, f"{ERR}{D}X"].dropna()
+        dispersion["amp"] = dispersion_tfs.reindex(bpms)[f"DX"]
+        dispersion["amp_err"] = dispersion_tfs.reindex(bpms)[f"{ERR}{D}X"]
 
-        dispersion["phase"] = norm_dispersion_tfs.loc[bpms, f"DX"].dropna()
-        dispersion["phase_err"] = norm_dispersion_tfs.loc[bpms, f"{ERR}{D}X"].dropna()
+        dispersion["phase"] = norm_dispersion_tfs.reindex(bpms)[f"DX"]
+        dispersion["phase_err"] = norm_dispersion_tfs.reindex(bpms)[f"{ERR}{D}X"]
 
-        normalised_dispersion["amp"] = norm_dispersion_tfs.loc[bpms, f"{ND}X"].dropna()
-        normalised_dispersion["amp_err"] = norm_dispersion_tfs.loc[
-            bpms, f"{ERR}{ND}X"
-        ].dropna()
+        normalised_dispersion["amp"] = norm_dispersion_tfs.reindex(bpms)[f"{ND}X"]
+        normalised_dispersion["amp_err"] = norm_dispersion_tfs.reindex(bpms)[f"{ERR}{ND}X"]
 
         # Compute the calibration factors using the dispersion from phase and amp
         calibration, calibration_err = _get_factors_from_dispersion(

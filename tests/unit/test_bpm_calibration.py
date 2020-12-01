@@ -13,6 +13,7 @@ INPUTS_DIR = Path(__file__).parent.parent / 'inputs' / 'calibration'
 MEASUREMENTS_BETA = INPUTS_DIR / 'measurements' / 'for_beta'
 MEASUREMENTS_DISPERSION = INPUTS_DIR / 'measurements' / 'for_dispersion'
 MEASUREMENTS_SAME_BETA = INPUTS_DIR / 'measurements' / 'same_beta'
+MEASUREMENTS_MISSING_BPM = INPUTS_DIR / 'measurements' / 'missing_bpms'
 EXPECTED_OUTPUT = INPUTS_DIR / 'output'
 
 
@@ -102,3 +103,13 @@ def test_beta_equal(tmp_path):
     expected = np.array([1.0] * len(factors['Y']['CALIBRATION']))
     assert (factors['Y']['CALIBRATION'].to_numpy() == expected).all()
 
+
+def test_missing_bpms(tmp_path):
+    factors = calibration.main(inputdir=MEASUREMENTS_MISSING_BPM,
+                               outputdir=tmp_path,
+                               method='beta',
+                               ips=[1,5])
+
+    missing = set(factors["X"].loc[factors["X"].isna().values].index)
+    assert "BPMWB.4R1.B1" in missing
+    assert "BPMWB.4L1.B1" in missing
