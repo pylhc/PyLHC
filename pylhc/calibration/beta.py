@@ -174,7 +174,7 @@ def get_calibration_factors_from_beta(
                 if missing:
                     LOG.warning("    One or several BPMs are missing in the input"
                                 " DataFrame, the calibration factors calculation"
-                                f"from fit not be accurate: {missing}")
+                                f"from fit may not be accurate: {missing}")
 
             
             # Get the positions and the beta values for those BPMs

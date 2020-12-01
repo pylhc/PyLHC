@@ -173,7 +173,7 @@ def get_calibration_factors_from_dispersion(
             if missing:
                 LOG.warning("    One or several BPMs are missing in the input"
                             " DataFrame, the calibration factors calculation"
-                            f"from might not be accurate: {missing}")
+                            f"from fit may not be accurate: {missing}")
 
         # Get the positions of the BPMs and the subset used for the fit
         bpms = bpms.index
