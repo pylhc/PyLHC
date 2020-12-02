@@ -181,7 +181,7 @@ def get_calibration_factors_from_dispersion(
         positions = dispersion_tfs.reindex(bpms)[S]
         positions_fit = dispersion_tfs.reindex(d_bpms)[S]
 
-        # Get the dispersion and normalised dispersion from the tfs files
+        # Get the dispersion and dispersion from phase from the tfs files
         dispersion = dict()
         normalised_dispersion = dict()
 
@@ -190,9 +190,6 @@ def get_calibration_factors_from_dispersion(
 
         dispersion["phase"] = norm_dispersion_tfs.reindex(bpms)[f"DX"]
         dispersion["phase_err"] = norm_dispersion_tfs.reindex(bpms)[f"{ERR}{D}X"]
-
-        normalised_dispersion["amp"] = norm_dispersion_tfs.reindex(bpms)[f"{ND}X"]
-        normalised_dispersion["amp_err"] = norm_dispersion_tfs.reindex(bpms)[f"{ERR}{ND}X"]
 
         # Compute the calibration factors using the dispersion from phase and amp
         calibration, calibration_err = _get_factors_from_dispersion(
