@@ -95,7 +95,7 @@ def _get_params() -> dict:
             type=int,
             nargs="+",
             choices=IPS,
-            required=True,
+            required=False,
             help="IPs to compute calibration factors for.",
         ),
         method=dict(

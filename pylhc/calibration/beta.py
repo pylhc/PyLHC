@@ -116,6 +116,50 @@ def _get_factors_from_phase(
     return factors, calibration_error
 
 
+def _get_factors_from_phase_fit(beta_phase_tfs, beta_amp_tfs, ips, beam, plane):
+    calibration_phase_fit, calibration_phase_fit_err = None, None
+    print(ips)
+    for ip in ips:
+        LOG.info(f"    Computing the calibration factors from phase fit for IP {ip}")
+        # Filter our TFS files to only keep the BPMs for the selected IR
+        bpms = beta_phase_tfs.reindex(BPMS[ip][beam])
+        bpms_amp = beta_amp_tfs.reindex(BPMS[ip][beam])
+        
+        # Check for possible missing bpms
+        for bpm_set in [bpms, bpms_amp]:
+            missing = set(bpm_set.loc[bpm_set.isnull().values].index)
+            if missing:
+                LOG.warning("    One or several BPMs are missing in the input"
+                            " DataFrame, the calibration factors calculation"
+                            f"from fit may not be accurate: {missing}")
+            
+        bpms = bpms.index
+        positions = beta_phase_tfs.reindex(bpms)[S]
+        beta_phase = beta_phase_tfs.reindex(bpms)[f"{BETA}{plane}"]
+        beta_phase_err = beta_phase_tfs.reindex(bpms)[f"{ERR}{BETA}{plane}"]
+        beta_amp = beta_amp_tfs.reindex(bpms)[f"{BETA}{plane}"]
+        beta_amp_err = beta_amp_tfs.reindex(bpms)[f"{ERR}{BETA}{plane}"]
+
+        # Curve fit the beta from phase values
+        beta_phase_fit, beta_phase_fit_err = _get_beta_fit(
+            positions, beta_phase, beta_phase_err
+        )
+    
+        # Get the factors and put them all together to have all ips in one
+        # Series
+        c_fit, c_fit_err = _get_factors_from_phase(
+            beta_phase_fit, beta_amp, beta_phase_fit_err, beta_amp_err
+        )
+        if calibration_phase_fit is None:
+            calibration_phase_fit = c_fit
+            calibration_phase_fit_err = c_fit_err
+        else:
+            calibration_phase_fit = calibration_phase_fit.append(c_fit)
+            calibration_phase_fit_err = calibration_phase_fit_err.append(c_fit_err)
+    
+    return calibration_phase_fit, calibration_phase_fit_err
+
+
 def get_calibration_factors_from_beta(
     ips: List[int], input_path: Path
 ) -> Dict[str, pd.DataFrame]:
@@ -161,62 +205,42 @@ def get_calibration_factors_from_beta(
 
         # Get the beam concerned by those tfs files
         beam = int(beta_phase_tfs.iloc[0].name[-1])
+        
+        # Get the positions and the beta values for those BPMs
+        bpms = beta_phase_tfs.index
+        positions = beta_phase_tfs[S]
+        beta_phase = beta_phase_tfs[f"{BETA}{plane}"]
+        beta_phase_err = beta_phase_tfs[f"{ERR}{BETA}{plane}"]
+        beta_amp = beta_amp_tfs[f"{BETA}{plane}"]
+        beta_amp_err = beta_amp_tfs[f"{ERR}{BETA}{plane}"]
 
-        for ip in ips:
-            LOG.info(f"    Computing the calibration factors for IP {ip}")
-            # Filter our TFS files to only keep the BPMs for the selected IR
-            bpms = beta_phase_tfs.reindex(BPMS[ip][beam])
-            bpms_amp = beta_amp_tfs.reindex(BPMS[ip][beam])
-
-            # Check for possible missing bpms
-            for bpm_set in [bpms, bpms_amp]:
-                missing = set(bpm_set.loc[bpm_set.isnull().values].index)
-                if missing:
-                    LOG.warning("    One or several BPMs are missing in the input"
-                                " DataFrame, the calibration factors calculation"
-                                f"from fit may not be accurate: {missing}")
-
-            
-            # Get the positions and the beta values for those BPMs
-            bpms = bpms.index
-            positions = beta_phase_tfs.reindex(bpms)[S]
-            beta_phase = beta_phase_tfs.reindex(bpms)[f"{BETA}{plane}"]
-            beta_phase_err = beta_phase_tfs.reindex(bpms)[f"{ERR}{BETA}{plane}"]
-            beta_amp = beta_amp_tfs.reindex(bpms)[f"{BETA}{plane}"]
-            beta_amp_err = beta_amp_tfs.reindex(bpms)[f"{ERR}{BETA}{plane}"]
-
-            # Curve fit the beta from phase values
-            beta_phase_fit, beta_phase_fit_err = _get_beta_fit(
-                positions, beta_phase, beta_phase_err
+        # Get the calibration factors for each method: from phase and phase fit
+        calibration_phase, calibration_phase_err = _get_factors_from_phase(
+            beta_phase, beta_amp, beta_phase_err, beta_amp_err
+        )
+        
+        # Calibration from phase fit can only be obtained via ballistic optics
+        if ips is not None:
+            calibration_phase_fit, calibration_phase_fit_err = _get_factors_from_phase_fit(
+                beta_phase_tfs, beta_amp_tfs, ips, beam, plane
             )
+        else:
+            calibration_phase_fit, calibration_phase_fit_err = pd.Series(), pd.Series()
 
-            # Get the calibration factors for each method: from phase and phase fit
-            calibration_phase, calibration_phase_err = _get_factors_from_phase(
-                beta_phase, beta_amp, beta_phase_err, beta_amp_err
-            )
-            calibration_phase_fit, calibration_phase_fit_err = _get_factors_from_phase(
-                beta_phase_fit, beta_amp, beta_phase_fit_err, beta_amp_err
-            )
+        # Assemble the calibration factors in one dataframe
+        factors = pd.concat(
+            [
+                positions,
+                calibration_phase,
+                calibration_phase_err,
+                calibration_phase_fit,
+                calibration_phase_fit_err,
+            ],
+            axis=1,
+        )
+        factors.columns = LABELS
+        factors.index.name = TFS_INDEX
 
-            # Assemble the calibration factors in one dataframe
-            factors_for_ip = pd.concat(
-                [
-                    positions,
-                    calibration_phase,
-                    calibration_phase_err,
-                    calibration_phase_fit,
-                    calibration_phase_fit_err,
-                ],
-                axis=1,
-            )
-            factors_for_ip.columns = LABELS
-            factors_for_ip.index.name = TFS_INDEX
-
-            if plane not in calibration_factors.keys():
-                calibration_factors[plane] = factors_for_ip
-            else:
-                calibration_factors[plane] = calibration_factors[plane].append(
-                    factors_for_ip
-                )
+        calibration_factors[plane] = factors
 
     return calibration_factors

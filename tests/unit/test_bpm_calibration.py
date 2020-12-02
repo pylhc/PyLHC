@@ -8,6 +8,7 @@ from pandas.testing import assert_series_equal, assert_frame_equal
 import tfs
 from generic_parser.dict_parser import ArgumentError
 from pylhc import bpm_calibration as calibration
+from pylhc.constants.calibration import BPMS
 
 INPUTS_DIR = Path(__file__).parent.parent / 'inputs' / 'calibration'
 MEASUREMENTS_BETA = INPUTS_DIR / 'measurements' / 'for_beta'
@@ -20,15 +21,20 @@ EXPECTED_OUTPUT = INPUTS_DIR / 'output'
 def test_calibration_same_betabeat(tmp_path):
     factors = calibration.main(inputdir=MEASUREMENTS_BETA,
                                outputdir=tmp_path,
-                               ips=[1,4,5])
+                               ips=[1, 4, 5])
 
     # Let's open the tfs files we just created
-    x_tfs = tfs.read(tmp_path / 'calibration_beta_x.tfs')
-    y_tfs = tfs.read(tmp_path / 'calibration_beta_y.tfs')
+    x_tfs = tfs.read(tmp_path / 'calibration_beta_x.tfs', index='NAME')
+    y_tfs = tfs.read(tmp_path / 'calibration_beta_y.tfs', index='NAME')
+
+    # Those tfs need to be filtered because GetLLM only gives us the BPMs
+    # used in ballistic optics
+    x_tfs = x_tfs.reindex(BPMS[1][1] + BPMS[4][1] + BPMS[5][1])
+    y_tfs = y_tfs.reindex(BPMS[1][1] + BPMS[4][1] + BPMS[5][1])
     
     # And the ones created by BetaBeat.src for the same measurements
-    expected_x_tfs = tfs.read(EXPECTED_OUTPUT / 'calibration_beta_x.tfs')
-    expected_y_tfs = tfs.read(EXPECTED_OUTPUT / 'calibration_beta_y.tfs')
+    expected_x_tfs = tfs.read(EXPECTED_OUTPUT / 'calibration_beta_x.tfs', index='NAME')
+    expected_y_tfs = tfs.read(EXPECTED_OUTPUT / 'calibration_beta_y.tfs', index='NAME')
 
     # BetaBeat's tfs implementation is a bit different, we don't have the
     # same integer precision
@@ -92,8 +98,7 @@ def test_calibration_same_dispersion(tmp_path):
 def test_beta_equal(tmp_path):
     factors = calibration.main(inputdir=MEASUREMENTS_SAME_BETA,
                                outputdir=tmp_path,
-                               method='beta',
-                               ips=[1,5])
+                               method='beta')
 
     # beta from phase and beta amp are the same. Calibrations factors should
     # equal to 1
