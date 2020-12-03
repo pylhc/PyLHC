@@ -171,6 +171,9 @@ def main(opt):
     elif opt.method == "dispersion":
         factors = get_calibration_factors_from_dispersion(opt.ips, opt.inputdir)
 
+    # Fill NaN with 1 because of missing BPMs and that fit cannot be done everywhere
+    for plane in factors.keys():
+        factors[plane].fillna(1, inplace=True)
     LOG.debug(_get_str_calibration_factors(factors))
 
     # Write the TFS file to the desired output directory

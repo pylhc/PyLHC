@@ -118,3 +118,12 @@ def test_missing_bpms(tmp_path):
     missing = set(factors["X"].loc[factors["X"].isna().values].index)
     assert "BPMWB.4R1.B1" in missing
     assert "BPMWB.4L1.B1" in missing
+
+
+def test_number_in_out(tmp_path):
+    tfs_in = tfs.read(MEASUREMENTS_BETA / 'beta_phase_x.tfs')
+    factors = calibration.main(inputdir=MEASUREMENTS_BETA,
+                               outputdir=tmp_path,
+                               method='beta')
+
+    assert len(factors["X"]) == len(tfs_in)
