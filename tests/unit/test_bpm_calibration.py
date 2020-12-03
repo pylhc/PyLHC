@@ -110,15 +110,17 @@ def test_beta_equal(tmp_path):
 
 
 def test_missing_bpms(tmp_path):
-    factors = calibration.main(inputdir=MEASUREMENTS_MISSING_BPM,
-                               outputdir=tmp_path,
-                               method='beta',
-                               ips=[1,5])
+    calibration.main(inputdir=MEASUREMENTS_MISSING_BPM,
+                     outputdir=tmp_path,
+                     method='beta',
+                     ips=[1,5])
 
-    missing = set(factors["X"].loc[factors["X"].isna().values].index)
-    assert "BPMWB.4R1.B1" in missing
-    assert "BPMWB.4L1.B1" in missing
+    factors = tfs.read(tmp_path / "calibration_beta_x.tfs", index="NAME")
 
+    assert factors.loc["BPMWB.4R1.B1"]["CALIBRATION"] == 1
+    assert factors.loc["BPMWB.4L1.B1"]["CALIBRATION"] == 1
+    assert factors.loc["BPMS.2L1.B1"]["CALIBRATION"] != 1
+    
 
 def test_number_in_out(tmp_path):
     tfs_in = tfs.read(MEASUREMENTS_BETA / 'beta_phase_x.tfs')

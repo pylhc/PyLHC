@@ -248,8 +248,8 @@ def get_calibration_factors_from_beta(
                 beta_phase_tfs, beta_amp_tfs, ips, beam, plane
             )
         else:
-            calibration_phase_fit = pd.Series()
-            calibration_phase_fit_err = pd.Series()
+            calibration_phase_fit = pd.Series(dtype=np.float64)
+            calibration_phase_fit_err = pd.Series(dtype=np.float64)
 
         # Assemble the calibration factors in one dataframe
         factors = pd.concat(
