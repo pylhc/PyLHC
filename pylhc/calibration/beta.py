@@ -156,11 +156,9 @@ def _get_factors_from_phase_fit(
     for ip in ips:
         LOG.info(f"    Computing the calibration factors from phase fit for IP {ip}")
 
-        # Filter our TFS files to only keep the BPMs for the selected IR
+        # Check for possible missing bpms
         bpms = beta_phase_tfs.reindex(BPMS[ip][beam])
         bpms_amp = beta_amp_tfs.reindex(BPMS[ip][beam])
-        
-        # Check for possible missing bpms
         for bpm_set in [bpms, bpms_amp]:
             missing = set(bpm_set.loc[bpm_set.isnull().values].index)
             if missing:
@@ -174,7 +172,7 @@ def _get_factors_from_phase_fit(
         # Get the factors and put them all together to have all ips in one
         # Series
         c_fit = _get_factors_from_phase(
-            beta_phase_fit.reindex(BPMS[ip][beam]),
+            beta_phase_fit,
             beta_amp_tfs.reindex(BPMS[ip][beam]),
             plane
         )
