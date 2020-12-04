@@ -138,7 +138,7 @@ def plot_polar(df_angles: TfsDataFrame, da_col: str, jobname: str = '',
                               the individual DA results per seed.
 
     Keyword Args (Optional):
-        plot_styles (Iterable[str]): Iterable over plots styles to be applied
+        plot_styles (Iterable[str]): Iterable over plots styles to be applied, default: 'standard'
         interpolated (bool): If true, uses interpolation to plot the lines curved
         fill (bool): If true, fills the area between min and max with light blue
         angle_ticks (Iterable[numeric]): Positions in degree of the angle ticks (and lines)
@@ -152,8 +152,10 @@ def plot_polar(df_angles: TfsDataFrame, da_col: str, jobname: str = '',
     fill: bool = kwargs.pop('fill', df_da is None)
     angle_ticks: Iterable[np.numeric] = kwargs.pop('angle_ticks', None)
     amplitude_ticks: Iterable[np.numeric] = kwargs.pop('amplitude_ticks', None)
-    plot_styles: Iterable[Union[Path, str]] = kwargs.pop('plot_styles', {})
+    plot_styles: Iterable[Union[Path, str]] = kwargs.pop('plot_styles', 'standard')
 
+    if "lines.marker" not in kwargs:
+        kwargs["lines.marker"] = 'None'
     pstyle.set_style(plot_styles, kwargs)
     fig, ax = plt.subplots(nrows=1, ncols=1, subplot_kw={'projection': 'polar'})
     fig.canvas.set_window_title(f"{jobname} polar plot for {da_col}")
@@ -193,13 +195,14 @@ def plot_polar(df_angles: TfsDataFrame, da_col: str, jobname: str = '',
     ax.set_thetamax(90)
     ax.set_rlim([0, None])
     ax.set_xlabel(r'$\sigma_{x}~[\sigma_{nominal}]$', labelpad=15)
-    ax.set_ylabel(r'$\sigma_{y}~[\sigma_{nominal}]$')
+    ax.set_ylabel(r'$\sigma_{y}~[\sigma_{nominal}]$', labelpad=15)
 
     if angle_ticks is not None:
         ax.set_xticks(np.deg2rad(angle_ticks))
 
     if amplitude_ticks is not None:
         ax.set_yticks(amplitude_ticks)
+    ax.tick_params(labelright=True, labelleft=True)
 
     ax.legend(
         loc='upper right',
