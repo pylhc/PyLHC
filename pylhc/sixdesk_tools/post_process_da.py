@@ -43,6 +43,7 @@ COLOR_LIM = 'black'
 COLOR_FILL = 'blue'
 ALPHA_SEED = 0.5
 ALPHA_FILL = 0.2
+ALPHA_FILL_STD = 0.2
 
 
 def post_process_da(jobname: str, basedir: Path):
@@ -183,12 +184,16 @@ def plot_polar(df_angles: TfsDataFrame, da_col: str, jobname: str = '',
         seed_l = ['DA per Seed']
 
     angles = np.deg2rad(df_angles.index)
-    da_min, da_mean, da_max = (df_angles[f'{name}{da_col}'] for name in (MIN, MEAN, MAX))
+    da_min, da_mean, da_max, da_std = (df_angles[f'{name}{da_col}'] for name in (MIN, MEAN, MAX, STD))
     if interpolated:
         _, _, ip_min = _interpolated_line(ax, angles, da_min, c=COLOR_LIM, ls='--', label='Minimum DA')
         max_h, ip_x, ip_max = _interpolated_line(ax, angles, da_max, c=COLOR_LIM, ls='--', label='Maximum DA')
         if fill:
             ax.fill_between(ip_x, ip_min, ip_max, color=COLOR_FILL, alpha=ALPHA_FILL)
+            _, ip_std_min = _interpolated_coords(angles, da_mean-da_std)
+            _, ip_std_max = _interpolated_coords(angles, da_mean+da_std)
+            ax.fill_between(ip_x, ip_std_min, ip_std_max, color=COLOR_FILL, alpha=ALPHA_FILL_STD)
+
         mean_h, _, _ = _interpolated_line(ax, angles, da_mean, c=COLOR_MEAN, ls='-', label='Mean DA')
     else:
         _, = ax.plot(angles, da_min, c=COLOR_LIM, ls='--', label='Minimum DA')
@@ -196,6 +201,8 @@ def plot_polar(df_angles: TfsDataFrame, da_col: str, jobname: str = '',
         if fill:
             ax.fill_between(angles, da_min.astype(float), da_max.astype(float),  # weird conversion to obj otherwise
                             color=COLOR_FILL, alpha=ALPHA_FILL)
+            ax.fill_between(angles, (da_mean-da_std).astype(float), (da_mean+da_std).astype(float),
+                            color=COLOR_FILL, alpha=ALPHA_FILL_STD)
         mean_h, = ax.plot(angles, da_mean, c=COLOR_MEAN, ls='-', label='Mean DA')
 
     ax.set_thetamin(0)
@@ -231,8 +238,7 @@ def _interpolated_line(ax, x, y, npoints: int = 100, **kwargs):
     marker = kwargs.pop('marker', rcParams['lines.marker'])
     label = kwargs.pop('label')
 
-    ip_x = np.linspace(min(x), max(x), npoints)
-    ip_y = interp1d(x, y)(ip_x)
+    ip_x, ip_y = _interpolated_coords(x, y, npoints)
     line_h, = ax.plot(ip_x, ip_y, marker='None', ls=ls, label=f'_{label}_line', **kwargs)
 
     if marker.lower() not in ['none', '']:
@@ -242,3 +248,11 @@ def _interpolated_line(ax, x, y, npoints: int = 100, **kwargs):
     handle = mlines.Line2D([], [], color=line_h.get_color(),
                            ls=ls, marker=marker, label=label)
     return handle, ip_x, ip_y
+
+
+def _interpolated_coords(x, y, npoints: int = 100):
+    """ Do linear interpolation between points. """
+    ip_x = np.linspace(min(x), max(x), npoints)
+    ip_y = interp1d(x, y)(ip_x)
+    return ip_x, ip_y
+
