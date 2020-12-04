@@ -195,7 +195,7 @@ def plot_polar(df_angles: TfsDataFrame, da_col: str, jobname: str = '',
     ax.set_thetamax(90)
     ax.set_rlim([0, None])
     ax.set_xlabel(r'$\sigma_{x}~[\sigma_{nominal}]$', labelpad=15)
-    ax.set_ylabel(r'$\sigma_{y}~[\sigma_{nominal}]$', labelpad=15)
+    ax.set_ylabel(r'$\sigma_{y}~[\sigma_{nominal}]$', labelpad=20)
 
     if angle_ticks is not None:
         ax.set_xticks(np.deg2rad(angle_ticks))
