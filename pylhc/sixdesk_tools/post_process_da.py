@@ -167,7 +167,7 @@ def plot_polar(df_angles: TfsDataFrame, da_col: str, jobname: str = '',
             da_data = df_da.loc[seed_mask, da_col]
             da_data.loc[da_data == 0] = np.NaN
             if interpolated:
-                seed_h = _interpolated_line(ax, angles, da_data, c=COLOR_SEED, ls='-', label=f'Seed {seed:d}', alpha=ALPHA_SEED)
+                seed_h, _, _ = _interpolated_line(ax, angles, da_data, c=COLOR_SEED, ls='-', label=f'Seed {seed:d}', alpha=ALPHA_SEED)
             else:
                 seed_h, = ax.plot(angles, da_data, c=COLOR_SEED, ls='-', label=f'Seed {seed:d}', alpha=ALPHA_SEED)
         seed_h = [seed_h]
