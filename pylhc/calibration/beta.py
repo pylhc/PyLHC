@@ -37,7 +37,9 @@ LOG = logging_tools.get_logger(__name__)
 
 
 def _get_beta_fit(
-    positions: pd.Series, beta_values: pd.Series, beta_err: pd.Series
+    bpms: List[str],
+    beta_phase_tfs: pd.DataFrame,
+    plane: str
 ) -> Tuple[pd.Series, pd.Series]:
     """
     This function returns a fit of the given beta values along with the
@@ -55,39 +57,43 @@ def _get_beta_fit(
 
     def beta_function(x, a, b):
         return a + ((x - b) ** 2) / a
+    
+    positions = beta_phase_tfs.reindex(bpms)[f"{S}"]
+    beta_phase = beta_phase_tfs.reindex(bpms)[f"{BETA}{plane}"]
+    beta_phase_err = beta_phase_tfs.reindex(bpms)[f"{ERR}{BETA}{plane}"]
 
     # Get the rough IP position and beta star for the initial values
     ip_position = (positions[-1] - positions[0]) / 2
     initial_values = (BETA_STAR_ESTIMATION, ip_position)
 
     # Get the curve fit for the expected 1parabola
-    valid = ~(np.isnan(positions) | np.isnan(beta_values))
-    fit, fit_cov = curve_fit(
+    valid = ~(np.isnan(positions) | np.isnan(beta_phase))
+    popt, pcov = curve_fit(
         beta_function,
         positions[valid],
-        beta_values[valid],
+        beta_phase[valid],
         p0=initial_values,
-        sigma=beta_err[valid],
+        sigma=beta_phase_err[valid],
         maxfev=1000000,
     )
 
     # Get the error from the covariance matrix
-    fit_err = np.sqrt(np.diag(fit_cov))
+    perr = np.sqrt(np.diag(pcov))
 
     # Get the fitted beta and add the errors to get min/max values
-    beta_fit = beta_function(positions, fit[0], fit[1])
-    beta_max_fit = beta_function(positions, fit[0] + fit_err[0], fit[1] + fit_err[1])
-    beta_min_fit = beta_function(positions, fit[0] - fit_err[0], fit[1] - fit_err[1])
+    beta_fit = beta_function(positions[valid], *popt)
+    beta_max_fit = beta_function(positions, popt[0] + perr[0], popt[1] + perr[1])
+    beta_min_fit = beta_function(positions, popt[0] - perr[0], popt[1] - perr[1])
     beta_fit_err = (beta_max_fit - beta_min_fit) / 2
 
-    return beta_fit, beta_fit_err
+    return pd.DataFrame({f"{BETA}{plane}": beta_fit, f"{ERR}{BETA}{plane}": beta_fit_err})
 
 
 def _get_factors_from_phase(
-    beta_phase: pd.Series,
-    beta_phase_err: pd.Series,
-    beta_amp: pd.Series,
-    beta_amp_err: pd.Series,
+    bpms: List[str],
+    beta_phase_tfs: pd.DataFrame,
+    beta_amp_tfs: pd.DataFrame,
+    plane: str,
 ) -> Tuple[pd.Series, pd.Series]:
     """
     This function computes the calibration factors for the beta method with the
@@ -105,6 +111,11 @@ def _get_factors_from_phase(
       Tuple[pd.Series, pd.Series]: The first Series are the calibration
       factors, the second one their error.
     """
+    beta_phase = beta_phase_tfs.reindex(bpms)[f"{BETA}{plane}"]
+    beta_phase_err = beta_phase_tfs.reindex(bpms)[f"{ERR}{BETA}{plane}"]
+    beta_amp = beta_amp_tfs.reindex(bpms)[f"{BETA}{plane}"]
+    beta_amp_err = beta_amp_tfs.reindex(bpms)[f"{ERR}{BETA}{plane}"]
+
     # Compute the calibration factors
     factors = np.sqrt(beta_phase / beta_amp)
 
@@ -159,19 +170,15 @@ def _get_factors_from_phase_fit(
         positions = beta_phase_tfs.reindex(bpms)[S]
 
         # Curve fit the beta from phase values
-        beta_phase_fit, beta_phase_fit_err = _get_beta_fit(
-            positions,
-            beta_phase_tfs.reindex(bpms)[f"{BETA}{plane}"],
-            beta_phase_tfs.reindex(bpms)[f"{ERR}{BETA}{plane}"]
-        )
+        beta_phase_fit = _get_beta_fit(bpms, beta_phase_tfs, plane)
     
         # Get the factors and put them all together to have all ips in one
         # Series
         c_fit, c_fit_err = _get_factors_from_phase(
-            beta_phase_fit, 
-            beta_phase_fit_err, 
-            beta_amp_tfs.reindex(bpms)[f"{BETA}{plane}"],
-            beta_amp_tfs.reindex(bpms)[f"{ERR}{BETA}{plane}"]
+            BPMS[ip][beam],
+            beta_phase_fit,
+            beta_amp_tfs,
+            plane
         )
         if calibration_phase_fit is None:
             calibration_phase_fit = c_fit
@@ -229,17 +236,9 @@ def get_calibration_factors_from_beta(
         # Get the beam concerned by those tfs files
         beam = int(beta_phase_tfs.iloc[0].name[-1])
         
-        # Get the positions and the beta values for those BPMs
-        bpms = beta_phase_tfs.index
-        positions = beta_phase_tfs[S]
-        beta_phase = beta_phase_tfs[f"{BETA}{plane}"]
-        beta_phase_err = beta_phase_tfs[f"{ERR}{BETA}{plane}"]
-        beta_amp = beta_amp_tfs[f"{BETA}{plane}"]
-        beta_amp_err = beta_amp_tfs[f"{ERR}{BETA}{plane}"]
-
         # Get the calibration factors for each method: from phase and phase fit
         calibration_phase, calibration_phase_err = _get_factors_from_phase(
-            beta_phase, beta_phase_err, beta_amp, beta_amp_err
+            beta_phase_tfs.index, beta_phase_tfs, beta_amp_tfs, plane
         )
         
         # Calibration from phase fit can only be obtained via ballistic optics
@@ -254,7 +253,7 @@ def get_calibration_factors_from_beta(
         # Assemble the calibration factors in one dataframe
         factors = pd.concat(
             [
-                positions,
+                beta_phase_tfs[S],
                 calibration_phase,
                 calibration_phase_err,
                 calibration_phase_fit,
