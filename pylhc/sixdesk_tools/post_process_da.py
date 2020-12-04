@@ -16,6 +16,7 @@ from generic_parser import DotDict
 from matplotlib import pyplot as plt
 from matplotlib import rcParams, lines as mlines
 from omc3.plotting.utils import style as pstyle
+from omc3.utils import logging_tools
 from pylhc.constants.autosix import (
     get_database_path,
     get_tfs_da_path, get_tfs_da_seed_stats_path, get_tfs_da_angle_stats_path,
@@ -26,6 +27,8 @@ from pylhc.constants.autosix import (
 )
 from scipy.interpolate import interp1d
 from tfs import TfsDataFrame, write_tfs
+
+LOG = logging_tools.get_logger(__name__)
 
 DA_COLUMNS = (ALOST1, ALOST2)
 INFO = ('Statistics over the N={n:d} {over:s} per {per:s}. '
@@ -44,14 +47,17 @@ ALPHA_FILL = 0.2
 
 def post_process_da(jobname: str, basedir: Path):
     """ Post process the DA results into dataframes and DA plots. """
+    LOG.info("Post-Processing Sixdesk Results.")
     df_da, df_angle, df_seed = create_da_tfs(jobname, basedir)
     create_polar_plots(jobname, basedir, df_da, df_angle)
+    LOG.info("Post-Processing finished.")
 
 
 # Data Analysis ----------------------------------------------------------------
 
 def create_da_tfs(jobname: str, basedir: Path) -> Tuple[TfsDataFrame, TfsDataFrame, TfsDataFrame]:
     """ Extracts data form db into dataframes, and writes and returns them."""
+    LOG.info("Gathering DA data into tfs-files.")
     df_da = extract_da_data_from_db(jobname, basedir)
 
     df_angle = _create_stats_df(df_da, ANGLE)
@@ -118,6 +124,7 @@ def _create_stats_df(df: TfsDataFrame, parameter: str, global_index: Any = None)
 
 def create_polar_plots(jobname: str, basedir: Path, df_da: TfsDataFrame, df_angles: TfsDataFrame):
     """ Plotting loop over da-methods and wrapper so save plots. """
+    LOG.info("Creating Polar Plots.")
     outdir_path = get_autosix_results_path(jobname, basedir)
     for da_col in DA_COLUMNS:
         fig = plot_polar(df_angles, da_col, jobname, df_da)
