@@ -75,16 +75,21 @@ def _get_beta_fit(
         p0=initial_values,
         sigma=beta_phase_err[valid],
         maxfev=1000000,
+        absolute_sigma=True,
     )
 
     # Get the error from the covariance matrix
     perr = np.sqrt(np.diag(pcov))
 
     # Get the fitted beta and add the errors to get min/max values
+    nstd = 1.
+    popt_up = popt + nstd * perr
+    popt_dw = popt - nstd * perr
+
     beta_fit = beta_function(positions[valid], *popt)
-    beta_max_fit = beta_function(positions, popt[0] + perr[0], popt[1] + perr[1])
-    beta_min_fit = beta_function(positions, popt[0] - perr[0], popt[1] - perr[1])
-    beta_fit_err = (beta_max_fit - beta_min_fit) / 2
+    beta_fit_up = beta_function(positions, *popt_up)
+    beta_fit_dw = beta_function(positions, *popt_dw)
+    beta_fit_err = (beta_fit_up - beta_fit_dw) / 2
 
     return pd.DataFrame({f"{BETA}{plane}": beta_fit, f"{ERR}{BETA}{plane}": beta_fit_err})
 
