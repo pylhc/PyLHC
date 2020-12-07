@@ -90,7 +90,16 @@ def test_skip_all_stages(tmp_path, caplog):
 def test_polar_plot(tmp_path):
     df_angles = tfs.read(DA_RESULTS_DIR / 'da_per_angle.tfs', index=ANGLE)
     df_da = tfs.read(DA_RESULTS_DIR / 'da.tfs')
-    fig = plot_polar(df_angles=df_angles, df_da=df_da, interpolated=True, fill=True)
+    fig = plot_polar(df_angles=df_angles, df_da=df_da, interpolated=False, fill=True)
+    assert len(fig.axes) == 1
+    assert len(fig.axes[0].lines) == 63  # 60 Seeds, MEAN, MIN, MAX
+    # plt.show()
+
+
+def test_polar_plot_interpolated(tmp_path):
+    df_angles = tfs.read(DA_RESULTS_DIR / 'da_per_angle.tfs', index=ANGLE)
+    df_da = tfs.read(DA_RESULTS_DIR / 'da.tfs')
+    fig = plot_polar(df_angles=df_angles, df_da=df_da, interpolated=True, fill=False)
     assert len(fig.axes) == 1
     assert len(fig.axes[0].lines) == 63  # 60 Seeds, MEAN, MIN, MAX
     # plt.show()
