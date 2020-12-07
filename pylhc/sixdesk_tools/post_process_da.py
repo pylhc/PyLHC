@@ -171,42 +171,14 @@ def plot_polar(df_angles: TfsDataFrame, da_col: str = ALOST2, jobname: str = '',
     fig, ax = plt.subplots(nrows=1, ncols=1, subplot_kw={'projection': 'polar'})
     fig.canvas.set_window_title(f"{jobname} polar plot for {da_col}")
 
-    seed_h = []
-    seed_l = []
-    if df_da is not None:
-        for seed in sorted(set(df_da[SEED])):
-            seed_mask = df_da[SEED] == seed
-            angles = np.deg2rad(df_da.loc[seed_mask, ANGLE])
-            da_data = df_da.loc[seed_mask, da_col]
-            da_data.loc[da_data == 0] = np.NaN
-            if interpolated:
-                seed_h, _, _ = _interpolated_line(ax, angles, da_data, c=COLOR_SEED, ls='-', label=f'Seed {seed:d}', alpha=ALPHA_SEED)
-            else:
-                seed_h, = ax.plot(angles, da_data, c=COLOR_SEED, ls='-', label=f'Seed {seed:d}', alpha=ALPHA_SEED)
-        seed_h = [seed_h]
-        seed_l = ['DA per Seed']
-
     angles = np.deg2rad(df_angles.index)
     da_min, da_mean, da_max, da_std = (df_angles[f'{name}{da_col}'] for name in (MIN, MEAN, MAX, STD))
-    if interpolated:
-        _, _, ip_min = _interpolated_line(ax, angles, da_min, c=COLOR_LIM, ls='--', label='Minimum DA')
-        max_h, ip_x, ip_max = _interpolated_line(ax, angles, da_max, c=COLOR_LIM, ls='--', label='Maximum DA')
-        if fill:
-            ax.fill_between(ip_x, ip_min, ip_max, color=COLOR_FILL, alpha=ALPHA_FILL)
-            _, ip_std_min = _interpolated_coords(angles, da_mean-da_std)
-            _, ip_std_max = _interpolated_coords(angles, da_mean+da_std)
-            ax.fill_between(ip_x, ip_std_min, ip_std_max, color=COLOR_FILL, alpha=ALPHA_FILL_STD)
 
-        mean_h, _, _ = _interpolated_line(ax, angles, da_mean, c=COLOR_MEAN, ls='-', label='Mean DA')
+    seed_h, seed_l = _plot_seeds(ax, df_da, da_col, interpolated)
+    if interpolated:
+        mean_h, max_h = _plot_interpolated(ax, angles, da_min, da_mean, da_max, da_std, fill)
     else:
-        _, = ax.plot(angles, da_min, c=COLOR_LIM, ls='--', label='Minimum DA')
-        max_h, = ax.plot(angles, da_max, c=COLOR_LIM, ls='--', label='Maximum DA')
-        if fill:
-            ax.fill_between(angles, da_min.astype(float), da_max.astype(float),  # weird conversion to obj otherwise
-                            color=COLOR_FILL, alpha=ALPHA_FILL)
-            ax.fill_between(angles, (da_mean-da_std).astype(float), (da_mean+da_std).astype(float),
-                            color=COLOR_FILL, alpha=ALPHA_FILL_STD)
-        mean_h, = ax.plot(angles, da_mean, c=COLOR_MEAN, ls='-', label='Mean DA')
+        mean_h, max_h = _plot_straight(ax, angles, da_min, da_mean, da_max, da_std, fill)
 
     ax.set_thetamin(0)
     ax.set_thetamax(90)
@@ -232,6 +204,49 @@ def plot_polar(df_angles: TfsDataFrame, da_col: str = ALOST2, jobname: str = '',
     )
 
     return fig
+
+
+def _plot_seeds(ax, df_da, da_col, interpolated):
+    """Add the Seed lines to the polar plots, if df_da is given."""
+    if df_da is not None:
+        for seed in sorted(set(df_da[SEED])):
+            seed_mask = df_da[SEED] == seed
+            angles = np.deg2rad(df_da.loc[seed_mask, ANGLE])
+            da_data = df_da.loc[seed_mask, da_col]
+            da_data.loc[da_data == 0] = np.NaN
+            if interpolated:
+                seed_h, _, _ = _interpolated_line(ax, angles, da_data, c=COLOR_SEED, ls='-', label=f'Seed {seed:d}', alpha=ALPHA_SEED)
+            else:
+                seed_h, = ax.plot(angles, da_data, c=COLOR_SEED, ls='-', label=f'Seed {seed:d}', alpha=ALPHA_SEED)
+        return [seed_h], ['DA per Seed']
+    return [], []
+
+
+def _plot_interpolated(ax, angles, da_min, da_mean, da_max, da_std, fill):
+    """Plot interpolated DA lines and areas"""
+    _, _, ip_min = _interpolated_line(ax, angles, da_min, c=COLOR_LIM, ls='--', label='Minimum DA')
+    max_h, ip_x, ip_max = _interpolated_line(ax, angles, da_max, c=COLOR_LIM, ls='--', label='Maximum DA')
+    if fill:
+        ax.fill_between(ip_x, ip_min, ip_max, color=COLOR_FILL, alpha=ALPHA_FILL)
+        _, ip_std_min = _interpolated_coords(angles, da_mean-da_std)
+        _, ip_std_max = _interpolated_coords(angles, da_mean+da_std)
+        ax.fill_between(ip_x, ip_std_min, ip_std_max, color=COLOR_FILL, alpha=ALPHA_FILL_STD)
+
+    mean_h, _, _ = _interpolated_line(ax, angles, da_mean, c=COLOR_MEAN, ls='-', label='Mean DA')
+    return mean_h, max_h
+
+
+def _plot_straight(ax, angles, da_min, da_mean, da_max, da_std, fill):
+    """Plot straight DA lines and areas"""
+    _, = ax.plot(angles, da_min, c=COLOR_LIM, ls='--', label='Minimum DA')
+    max_h, = ax.plot(angles, da_max, c=COLOR_LIM, ls='--', label='Maximum DA')
+    if fill:
+        ax.fill_between(angles, da_min.astype(float), da_max.astype(float),  # weird conversion to obj otherwise
+                        color=COLOR_FILL, alpha=ALPHA_FILL)
+        ax.fill_between(angles, (da_mean-da_std).astype(float), (da_mean+da_std).astype(float),
+                        color=COLOR_FILL, alpha=ALPHA_FILL_STD)
+    mean_h, = ax.plot(angles, da_mean, c=COLOR_MEAN, ls='-', label='Mean DA')
+    return mean_h, max_h
 
 
 def _interpolated_line(ax, x, y, npoints: int = 100, **kwargs):
