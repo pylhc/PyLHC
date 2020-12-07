@@ -491,12 +491,6 @@ def _generate_jobs(basedir, jobid_mask, **kwargs) -> tfs.TfsDataFrame:
         columns=list(kwargs.keys()),
         data=values_grid,
     )
-    try:
-        # pandas >= 1.0 functionality with convert_dtypes
-        job_df = job_df.convert_dtypes()
-    except AttributeError:
-        # fix for pandas < 1.0
-        job_df = job_df.apply(partial(pd.to_numeric, errors='ignore'))
     tfs.write(basedir / JOBSUMMARY_FILE, job_df, save_index=COLUMN_JOBID)
     return job_df
 

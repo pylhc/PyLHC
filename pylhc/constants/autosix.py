@@ -79,6 +79,14 @@ def get_sixjobs_path(jobname: str, basedir: Path) -> Path:
     return get_workspace_path(jobname, basedir) / 'sixjobs'
 
 
+def get_sixdeskenv_path(jobname: str, basedir: Path) -> Path:
+    return get_sixjobs_path(jobname, basedir) / 'sixdeskenv'
+
+
+def get_sysenv_path(jobname: str, basedir: Path) -> Path:
+    return get_sixjobs_path(jobname, basedir) / 'sysenv'
+
+
 def get_masks_path(jobname: str, basedir: Path) -> Path:
     return get_sixjobs_path(jobname, basedir) / 'mask'
 

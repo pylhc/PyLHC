@@ -14,7 +14,7 @@ from pylhc.constants.autosix import (
     SETENV_SH, SIXENV_DEFAULT, SIXENV_REQUIRED, SEED_KEYS,
     get_workspace_path, get_scratch_path,
     get_sixjobs_path, get_masks_path,
-    get_mad6t_mask_path, get_mad6t1_mask_path, get_autosix_results_path,
+    get_mad6t_mask_path, get_mad6t1_mask_path, get_autosix_results_path, get_sysenv_path, get_sixdeskenv_path,
 )
 from pylhc.sixdesk_tools.utils import start_subprocess
 
@@ -101,7 +101,7 @@ def _create_sixdeskenv(jobname: str, basedir: Path, **kwargs):
     """ Fills sixdeskenv mask and copies it to workspace """
     workspace_path = get_workspace_path(jobname, basedir)
     scratch_path = get_scratch_path(basedir)
-    sixjobs_path = get_sixjobs_path(jobname, basedir)
+    sixdeskenv_path = get_sixdeskenv_path(jobname, basedir)
 
     missing = [key for key in SIXENV_REQUIRED if key not in kwargs.keys()]
     if len(missing):
@@ -121,33 +121,32 @@ def _create_sixdeskenv(jobname: str, basedir: Path, **kwargs):
         for key in SEED_KEYS:
             sixenv_replace[key] = 0
 
-    with open(SIXDESKENV_MASK, 'r') as f:
-        sixenv_text = f.read()
+    # the following checks are limits of SixDesk in 2020
+    # and might be fixed upstream in the future
+    if sixenv_replace['AMPMAX'] < sixenv_replace['AMPMIN']:
+        raise ValueError("Given AMPMAX is smaller than AMPMIN.")
 
-    sixenv_text = sixenv_text % sixenv_replace
+    if (sixenv_replace['AMPMAX'] - sixenv_replace['AMPMIN']) % sixenv_replace["AMPSTEP"]:
+        raise ValueError("The amplitude range need to be dividable by the amplitude steps!")
 
-    with open(sixjobs_path / 'sixdeskenv', 'w') as f:
-        f.write(sixenv_text)
+    if not sixenv_replace["ANGLES"] % 2:
+        raise ValueError("The number of angles needs to be an uneven one.")
+
+    sixenv_text = SIXDESKENV_MASK.read_text()
+    sixdeskenv_path.write_text(sixenv_text % sixenv_replace)
     LOG.debug("sixdeskenv written.")
 
 
 def _create_sysenv(jobname: str, basedir: Path, binary_path: Path):
     """ Fills sysenv mask and copies it to workspace """
     LOG.info(f"Chosen binary for mask '{str(binary_path)}'")
-    sixjobs_path = get_sixjobs_path(jobname, basedir)
+    sysenv_path = get_sysenv_path(jobname, basedir)
     sysenv_replace = dict(
         MADXPATH=str(binary_path.parent),
         MADXBIN=binary_path.name,
     )
-
-    with open(SYSENV_MASK, 'r') as f:
-        sysenv_text = f.read()
-
-    sysenv_text = sysenv_text % sysenv_replace
-
-    with open(sixjobs_path / 'sysenv', 'w') as f:
-        f.write(sysenv_text)
-
+    sysenv_text = SYSENV_MASK.read_text()
+    sysenv_path.write_text(sysenv_text % sysenv_replace)
     LOG.debug("sysenv written.")
 
 

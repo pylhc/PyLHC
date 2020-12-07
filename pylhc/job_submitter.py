@@ -75,6 +75,9 @@ and job directory for further post processing.
   This is inferred automatically for ['madx', 'python3', 'python2']. Otherwise not changed.
 
 - **ssh** *(str)*: Run htcondor from this machine via ssh (needs access to the `working_directory`)
+
+
+:author: mihofer, jdilly
 """
 import itertools
 import multiprocessing

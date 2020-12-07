@@ -25,6 +25,9 @@ Can be run from command line, parameters as given in :meth:`print_machine_settin
     --accel ACCEL, -a ACCEL
                           Accelerator name.
     --out OUT, -o OUT     Output path.
+
+
+:author: jdilly
 """
 import re
 from collections import OrderedDict
