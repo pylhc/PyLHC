@@ -43,15 +43,13 @@ as any other variable (if given as a list).
     LOG = logging_tools.get_logger(__name__)
 
     if __name__ == '__main__':
-        python_path = Path('/afs/cern.ch/work/j/jdilly/public/venvs/for_htc/bin/python')
-
         autosix.main(
             working_directory=Path('/afs/cern.ch/work/u/user/sixdeskbase'),
             mask=Path('my_madx.mask'), # can contain any of the parameters used in replace_dict
-            python=python_path,
-            ignore_twissfail_check=False,  # if your script prints 'check if twiss failed' or the like
+            python=Path('/afs/cern.ch/work/u/user/my_venv/bin/python'),
+            ignore_twissfail_check=False,  # if script prints 'check if twiss failed' or similar
             replace_dict=dict(
-                # Part of the sixdesk-environment
+                # Part of the sixdesk-environment:
                 BEAM=[1, 4],
                 TURNS=100000,
                 AMPMIN=4, AMPMAX=30, AMPSTEP=2,
