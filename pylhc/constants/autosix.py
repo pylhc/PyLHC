@@ -34,7 +34,7 @@ DEFAULTS = dict(
 )
 
 # Sixenv ---
-SIXENV_REQUIRED = ['BEAM', 'TURNS', 'AMPMIN', 'AMPMAX', 'AMPSTEP', 'ANGLES']
+SIXENV_REQUIRED = ['TURNS', 'AMPMIN', 'AMPMAX', 'AMPSTEP', 'ANGLES']
 SIXENV_DEFAULT = dict(
     RESUBMISSION=0,  # 0: never, 1: if fort.10, 2: always
     PLATFORM='HTCondor',

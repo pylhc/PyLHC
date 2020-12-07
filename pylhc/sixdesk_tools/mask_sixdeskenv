@@ -99,7 +99,7 @@ export daHTCq=testmatch
 export runtype="%(ENERGY)s"
 # and the beam can be set to "" or b1 or B1 for beam1, or to b2 or B2 for beam2
 # and "_b1" or "_b2" is appended to the mask filename
-export beam=b%(BEAM)d
+export beam=""
 
 # Options for run_six
 # idfor = 0 => closed orbit added, = 1 => initial co-ordinates unchanged

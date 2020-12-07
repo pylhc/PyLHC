@@ -50,11 +50,11 @@ as any other variable (if given as a list).
             ignore_twissfail_check=False,  # if script prints 'check if twiss failed' or similar
             replace_dict=dict(
                 # Part of the sixdesk-environment:
-                BEAM=[1, 4],
                 TURNS=100000,
                 AMPMIN=4, AMPMAX=30, AMPSTEP=2,
                 ANGLES=11,
                 # Examples for mask:
+                BEAM=[1, 4],
                 TUNE=[62.29, 62.30, 62.31, 62.31]
                 OUTPUT='/afs/cern.ch/work/u/user/study_output/',
                 SEED='%SEEDRAN',  # puts '%SEEDRAN' in the mask and lets sixdesk handle this loop
@@ -118,7 +118,7 @@ Arguments:
 
     Dict with keys of the strings to be replaced in the mask (required) as
     well as the mask_sixdeskenv and mask_sysenv files in the sixdesk_tools
-    module. Required fields are BEAM, TURNS, AMPMIN, AMPMAX, AMPSTEP,
+    module. Required fields are TURNS, AMPMIN, AMPMAX, AMPSTEP,
     ANGLES. Optional fields are RESUBMISSION, PLATFORM, LOGLEVEL,
     FIRSTSEED, LASTSEED, ENERGY, NPAIRS, EMITTANCE, DIMENSIONS, WRITEBINS.
     These keys can also be used in the mask if needed. The values of this
