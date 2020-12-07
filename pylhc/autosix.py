@@ -1,6 +1,6 @@
 """
 AutoSix
-------------------
+-------
 
 Wrapper for SixDesk to perform the setup and steps needed automatically.
 

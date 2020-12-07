@@ -64,6 +64,5 @@ def generate_jobdf_index(old_df, jobid_mask, keys, values):
     return [jobid_mask % dict(zip(keys, v)) for v in values]
 
 
-if __name__ == '__main__':
 if __name__ == "__main__":
     raise EnvironmentError(f"{__file__} is not supposed to run as main.")

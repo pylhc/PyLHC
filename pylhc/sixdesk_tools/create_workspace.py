@@ -3,9 +3,6 @@ Create SixDesk Workspace
 -----------------------------------
 
 Tools to setup the workspace for sixdesk.
-
-:module: pylhc.sixdesk_tools.create_workspace
-
 """
 import shutil
 from pathlib import Path

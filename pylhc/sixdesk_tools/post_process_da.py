@@ -5,9 +5,6 @@ Post Process DA
 Tools to process data after sixdb has calculated the
 da. Includes functions for extracting data from database
 as well as plotting of DA polar plots.
-
-:module: pylhc.sixdesk_tools.post_process_da
-
 """
 import sqlite3 as sql
 from pathlib import Path
