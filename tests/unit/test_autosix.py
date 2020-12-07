@@ -2,10 +2,17 @@ import logging
 from pathlib import Path
 from unittest.mock import patch
 
+import tfs
+
+from pylhc.sixdesk_tools.post_process_da import plot_polar, plt
 from pylhc.autosix import _generate_jobs, setup_and_run
 from pylhc.constants.autosix import (get_masks_path, get_autosix_results_path, get_sixdeskenv_path,
-                                     get_sysenv_path, get_stagefile_path, STAGE_ORDER)
+                                     get_sysenv_path, get_stagefile_path, STAGE_ORDER, ANGLE)
 from pylhc.sixdesk_tools.create_workspace import create_jobs
+
+
+INPUTS = Path(__file__).parent.parent / 'inputs'
+DA_RESULTS_DIR = INPUTS / 'sixdesk_da_results'
 
 
 def test_create_job_matrix(tmp_path):
@@ -78,3 +85,13 @@ def test_skip_all_stages(tmp_path, caplog):
 
     assert all(stage in caplog.text for stage in STAGE_ORDER[:-1])
     assert "All stages run." in caplog.text
+
+
+def test_polar_plot(tmp_path):
+    df_angles = tfs.read(DA_RESULTS_DIR / 'da_per_angle.tfs', index=ANGLE)
+    df_da = tfs.read(DA_RESULTS_DIR / 'da.tfs')
+    fig = plot_polar(df_angles=df_angles, df_da=df_da, interpolated=True, fill=True)
+    assert len(fig.axes) == 1
+    assert len(fig.axes[0].lines) == 63  # 60 Seeds, MEAN, MIN, MAX
+    # plt.show()
+
