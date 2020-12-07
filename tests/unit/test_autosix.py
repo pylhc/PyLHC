@@ -1,10 +1,11 @@
+import logging
 from pathlib import Path
-
-from pylhc.autosix import _generate_jobs
-from pylhc.sixdesk_tools.create_workspace import create_jobs
-from pylhc.constants.autosix import get_masks_path, get_autosix_results_path, get_workspace_path, get_sixdeskenv_path, \
-    get_sysenv_path
 from unittest.mock import patch
+
+from pylhc.autosix import _generate_jobs, setup_and_run
+from pylhc.constants.autosix import (get_masks_path, get_autosix_results_path, get_sixdeskenv_path,
+                                     get_sysenv_path, get_stagefile_path, STAGE_ORDER)
+from pylhc.sixdesk_tools.create_workspace import create_jobs
 
 
 def test_create_job_matrix(tmp_path):
@@ -65,3 +66,15 @@ def test_create_workspace(tmp_path):
 
         autosix_result = get_autosix_results_path(jobname, tmp_path)
         assert autosix_result.exists()
+
+
+def test_skip_all_stages(tmp_path, caplog):
+    jobname = "test_job"
+    stagefile = get_stagefile_path(jobname, tmp_path)
+    stagefile.parent.mkdir(parents=True)
+    stagefile.write_text("\n".join(STAGE_ORDER[:-1]))
+    with caplog.at_level(logging.INFO):
+        setup_and_run(jobname, tmp_path)
+
+    assert all(stage in caplog.text for stage in STAGE_ORDER[:-1])
+    assert "All stages run." in caplog.text

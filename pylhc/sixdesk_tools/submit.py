@@ -8,7 +8,6 @@ from pathlib import Path
 from typing import Union
 
 from omc3.utils import logging_tools
-from omc3.utils.iotools import PathOrStr
 
 from pylhc.sixdesk_tools.utils import start_subprocess, StageSkip
 from pylhc.constants.autosix import (MAD_TO_SIXTRACK_SH, RUNSIX_SH,

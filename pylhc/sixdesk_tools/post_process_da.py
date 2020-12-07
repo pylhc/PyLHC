@@ -215,7 +215,8 @@ def _plot_seeds(ax, df_da, da_col, interpolated):
             da_data = df_da.loc[seed_mask, da_col]
             da_data.loc[da_data == 0] = np.NaN
             if interpolated:
-                seed_h, _, _ = _interpolated_line(ax, angles, da_data, c=COLOR_SEED, ls='-', label=f'Seed {seed:d}', alpha=ALPHA_SEED)
+                seed_h, _, _ = _interpolated_line(ax, angles, da_data,
+                                                  c=COLOR_SEED, ls='-', label=f'Seed {seed:d}', alpha=ALPHA_SEED)
             else:
                 seed_h, = ax.plot(angles, da_data, c=COLOR_SEED, ls='-', label=f'Seed {seed:d}', alpha=ALPHA_SEED)
         return [seed_h], ['DA per Seed']
