@@ -11,22 +11,34 @@ import numpy as np
 from omc3.utils import logging_tools
 
 from pylhc.constants.autosix import (
-    SETENV_SH, SIXENV_DEFAULT, SIXENV_REQUIRED, SEED_KEYS,
-    get_workspace_path, get_scratch_path,
-    get_sixjobs_path, get_masks_path,
-    get_mad6t_mask_path, get_mad6t1_mask_path, get_autosix_results_path, get_sysenv_path, get_sixdeskenv_path,
+    SETENV_SH,
+    SIXENV_DEFAULT,
+    SIXENV_REQUIRED,
+    SEED_KEYS,
+    get_workspace_path,
+    get_scratch_path,
+    get_sixjobs_path,
+    get_masks_path,
+    get_mad6t_mask_path,
+    get_mad6t1_mask_path,
+    get_autosix_results_path,
+    get_sysenv_path,
+    get_sixdeskenv_path,
 )
 from pylhc.sixdesk_tools.utils import start_subprocess
 
-SYSENV_MASK = Path(__file__).parent / 'mask_sysenv'
-SIXDESKENV_MASK = Path(__file__).parent / 'mask_sixdeskenv'
+SYSENV_MASK = Path(__file__).parent / "mask_sysenv"
+SIXDESKENV_MASK = Path(__file__).parent / "mask_sixdeskenv"
 
 LOG = logging_tools.get_logger(__name__)
 
 
 # Main -------------------------------------------------------------------------
 
-def create_jobs(jobname: str, basedir: Path, mask_text: str, binary_path: Path, ssh: str = None, **kwargs):
+
+def create_jobs(
+    jobname: str, basedir: Path, mask_text: str, binary_path: Path, ssh: str = None, **kwargs
+):
     """ Create environment and individual jobs/masks for sixdesk to send to HTC. """
     sixjobs_path = get_sixjobs_path(jobname, basedir)
     _create_workspace(jobname, basedir, ssh=ssh)
@@ -34,15 +46,18 @@ def create_jobs(jobname: str, basedir: Path, mask_text: str, binary_path: Path, 
     _create_sixdeskenv(jobname, basedir, **kwargs)
     _write_mask(jobname, basedir, mask_text, **kwargs)
 
-    start_subprocess([SETENV_SH, '-s'], cwd=sixjobs_path, ssh=ssh)
+    start_subprocess([SETENV_SH, "-s"], cwd=sixjobs_path, ssh=ssh)
     LOG.info("Workspace fully set up.")
 
 
 def remove_twiss_fail_check(jobname: str, basedir: Path):
     """ Comments out the "Twiss fail" check from mad6t.sh """
     LOG.info("Applying twiss-fail hack.")
-    for mad6t_path in (get_mad6t_mask_path(jobname, basedir), get_mad6t1_mask_path(jobname, basedir)):
-        with open(mad6t_path, 'r') as f:
+    for mad6t_path in (
+        get_mad6t_mask_path(jobname, basedir),
+        get_mad6t1_mask_path(jobname, basedir),
+    ):
+        with open(mad6t_path, "r") as f:
             lines = f.readlines()
 
         check_started = False
@@ -51,14 +66,14 @@ def remove_twiss_fail_check(jobname: str, basedir: Path):
                 check_started = True
 
             if check_started:
-                lines[idx] = f'# {line}'
-                if line.startswith('fi'):
+                lines[idx] = f"# {line}"
+                if line.startswith("fi"):
                     break
         else:
             LOG.info(f"'TWISS fail' not found in {mad6t_path.name}")
             continue
 
-        with open(mad6t_path, 'w') as f:
+        with open(mad6t_path, "w") as f:
             f.writelines(lines)
 
 
@@ -75,7 +90,7 @@ def _create_workspace(jobname: str, basedir: Path, ssh: str = None):
         LOG.warning(f'Workspace in "{str(workspace_path)}" already exists. ')
         LOG.info("Do you want to delete the old workspace? [y/N]")
         user_answer = input()
-        if user_answer.lower().startswith('y'):
+        if user_answer.lower().startswith("y"):
             shutil.rmtree(workspace_path)
             try:
                 shutil.rmtree(scratch_path)
@@ -105,17 +120,19 @@ def _create_sixdeskenv(jobname: str, basedir: Path, **kwargs):
 
     missing = [key for key in SIXENV_REQUIRED if key not in kwargs.keys()]
     if len(missing):
-        raise ValueError(f'The following keys are required but missing {missing}.')
+        raise ValueError(f"The following keys are required but missing {missing}.")
 
     sixenv_replace = SIXENV_DEFAULT.copy()
     sixenv_replace.update(kwargs)
-    sixenv_replace.update(dict(
-        JOBNAME=jobname,
-        WORKSPACE=workspace_path.name,
-        BASEDIR=str(basedir),
-        SCRATCHDIR=str(scratch_path),
-        TURNSPOWER=np.log10(sixenv_replace['TURNS'])
-    ))
+    sixenv_replace.update(
+        dict(
+            JOBNAME=jobname,
+            WORKSPACE=workspace_path.name,
+            BASEDIR=str(basedir),
+            SCRATCHDIR=str(scratch_path),
+            TURNSPOWER=np.log10(sixenv_replace["TURNS"]),
+        )
+    )
 
     if any(sixenv_replace[key] is None for key in SEED_KEYS):
         for key in SEED_KEYS:
@@ -123,10 +140,10 @@ def _create_sixdeskenv(jobname: str, basedir: Path, **kwargs):
 
     # the following checks are limits of SixDesk in 2020
     # and might be fixed upstream in the future
-    if sixenv_replace['AMPMAX'] < sixenv_replace['AMPMIN']:
+    if sixenv_replace["AMPMAX"] < sixenv_replace["AMPMIN"]:
         raise ValueError("Given AMPMAX is smaller than AMPMIN.")
 
-    if (sixenv_replace['AMPMAX'] - sixenv_replace['AMPMIN']) % sixenv_replace["AMPSTEP"]:
+    if (sixenv_replace["AMPMAX"] - sixenv_replace["AMPMIN"]) % sixenv_replace["AMPSTEP"]:
         raise ValueError("The amplitude range need to be dividable by the amplitude steps!")
 
     if not sixenv_replace["ANGLES"] % 2:
@@ -156,15 +173,20 @@ def _write_mask(jobname: str, basedir: Path, mask_text: str, **kwargs):
     seed_range = [kwargs.get(key, SIXENV_DEFAULT[key]) for key in SEED_KEYS]
 
     if seed_range.count(None) == 1:
-        raise ValueError("First- or Lastseed is set, but the other one is deactivated. "
-                         "Set or unset both.")
+        raise ValueError(
+            "First- or Lastseed is set, but the other one is deactivated. " "Set or unset both."
+        )
 
-    if ('%SEEDRAN' not in mask_text) and ('%SEEDRAN' not in kwargs.values()) and any(seed_range):
-        raise ValueError("First- and Lastseed are set, but no seed-variable '%SEEDRAN' found in mask.")
+    if ("%SEEDRAN" not in mask_text) and ("%SEEDRAN" not in kwargs.values()) and any(seed_range):
+        raise ValueError(
+            "First- and Lastseed are set, but no seed-variable '%SEEDRAN' found in mask."
+        )
 
-    mask_text = mask_text.replace('%SEEDRAN', '#!#SEEDRAN')  # otherwise next line will complain
+    mask_text = mask_text.replace("%SEEDRAN", "#!#SEEDRAN")  # otherwise next line will complain
     mask_filled = mask_text % kwargs
-    mask_filled = mask_filled.replace('#!#SEEDRAN', '%SEEDRAN')  # bring seedran back for sixdesk seed-loop
+    mask_filled = mask_filled.replace(
+        "#!#SEEDRAN", "%SEEDRAN"
+    )  # bring seedran back for sixdesk seed-loop
 
-    with open(masks_path / f'{jobname}.mask', 'w') as mask_out:
+    with open(masks_path / f"{jobname}.mask", "w") as mask_out:
         mask_out.write(mask_filled)

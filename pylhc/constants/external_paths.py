@@ -7,14 +7,16 @@ to help with consistency.
 """
 from pathlib import Path
 
-AFS_CERN = Path('/', 'afs', 'cern.ch')
-LINTRACK = AFS_CERN / 'eng' / 'sl' / 'lintrack'
+AFS_CERN = Path("/", "afs", "cern.ch")
+LINTRACK = AFS_CERN / "eng" / "sl" / "lintrack"
 
 # Binary Files -----------------------------------------------------------------
-MADX_BIN = AFS_CERN / 'user' / 'm' / 'mad' / 'bin' / 'madx'
-PYTHON3_BIN = LINTRACK / 'anaconda3' / 'bin' / 'python'
-PYTHON2_BIN = LINTRACK / 'miniconda2' / 'bin' / 'python'
-SIXDESK_UTILS = AFS_CERN / 'project' / 'sixtrack' / 'SixDesk_utilities' / 'pro' / 'utilities' / 'bash'
+MADX_BIN = AFS_CERN / "user" / "m" / "mad" / "bin" / "madx"
+PYTHON3_BIN = LINTRACK / "anaconda3" / "bin" / "python"
+PYTHON2_BIN = LINTRACK / "miniconda2" / "bin" / "python"
+SIXDESK_UTILS = (
+        AFS_CERN / "project" / "sixtrack" / "SixDesk_utilities" / "pro" / "utilities" / "bash"
+)
 
 
 # Repositories -----------------------------------------------------------------

@@ -205,15 +205,32 @@ from generic_parser.entry_datatypes import DictAsString
 from omc3.utils import logging_tools
 from omc3.utils.iotools import PathOrStr, save_config
 
-from pylhc.constants.autosix import (STAGES, HEADER_BASEDIR, get_stagefile_path,
-                                     DEFAULTS, SIXENV_REQUIRED, SIXENV_DEFAULT, get_autosix_results_path)
+from pylhc.constants.autosix import (
+    STAGES,
+    HEADER_BASEDIR,
+    get_stagefile_path,
+    DEFAULTS,
+    SIXENV_REQUIRED,
+    SIXENV_DEFAULT,
+    get_autosix_results_path,
+)
 from pylhc.htc.mask import generate_jobdf_index
-from pylhc.job_submitter import JOBSUMMARY_FILE, COLUMN_JOBID, check_replace_dict, keys_to_path
+from pylhc.job_submitter import (
+    JOBSUMMARY_FILE,
+    COLUMN_JOBID,
+    check_replace_dict,
+    keys_to_path,
+)
 from pylhc.sixdesk_tools.create_workspace import create_jobs, remove_twiss_fail_check
 from pylhc.sixdesk_tools.post_process_da import post_process_da
 from pylhc.sixdesk_tools.submit import (
-    submit_mask, submit_sixtrack, check_sixtrack_input, check_sixtrack_output,
-    sixdb_cmd, sixdb_load)
+    submit_mask,
+    submit_sixtrack,
+    check_sixtrack_input,
+    check_sixtrack_output,
+    sixdb_cmd,
+    sixdb_load,
+)
 from pylhc.sixdesk_tools.utils import is_locked, check_mask, check_stage, StageSkip
 
 LOG = logging_tools.get_logger(__name__)
@@ -235,26 +252,28 @@ def get_params():
     )
     params.add_parameter(
         name="replace_dict",
-        help=("Dict with keys of the strings to be replaced in the mask (required) "
-              "as well as the mask_sixdeskenv and mask_sysenv files "
-              "in the sixdesk_tools module. "
-              f"Required fields are {', '.join(SIXENV_REQUIRED)}. "
-              f"Optional fields are {', '.join(SIXENV_DEFAULT.keys())}. "
-              "These keys can also be used in the mask if needed. "
-              "The values of this dict are lists of values to replace "
-              "these or single entries."),
+        help=(
+            "Dict with keys of the strings to be replaced in the mask (required) "
+            "as well as the mask_sixdeskenv and mask_sysenv files "
+            "in the sixdesk_tools module. "
+            f"Required fields are {', '.join(SIXENV_REQUIRED)}. "
+            f"Optional fields are {', '.join(SIXENV_DEFAULT.keys())}. "
+            "These keys can also be used in the mask if needed. "
+            "The values of this dict are lists of values to replace "
+            "these or single entries."
+        ),
         type=DictAsString,
-        required=True
+        required=True,
     )
     params.add_parameter(
         name="executable",
-        default=DEFAULTS['executable'],
+        default=DEFAULTS["executable"],
         type=PathOrStr,
         help="Path to executable.",
     )
     params.add_parameter(
         name="python",
-        default=DEFAULTS['python'],
+        default=DEFAULTS["python"],
         type=PathOrStr,
         help="Path to python to use with sixdb (python3 with requirements installed).",
     )
@@ -275,9 +294,11 @@ def get_params():
     )
     params.add_parameter(
         name="ignore_twissfail_check",
-        help=("Ignore the check for 'Twiss fail' in the submission file. "
-              "This is a hack needed in case this check greps the wrong lines, "
-              "e.g. in madx-comments. USE WITH CARE!!"),
+        help=(
+            "Ignore the check for 'Twiss fail' in the submission file. "
+            "This is a hack needed in case this check greps the wrong lines, "
+            "e.g. in madx-comments. USE WITH CARE!!"
+        ),
         action="store_true",
     )
     params.add_parameter(
@@ -289,7 +310,7 @@ def get_params():
         name="da_turnstep",
         type=int,
         help="Step between turns used in DA-vs-Turns plot.",
-        default=DEFAULTS['da_turnstep'],
+        default=DEFAULTS["da_turnstep"],
     )
     return params
 
@@ -298,30 +319,32 @@ def get_params():
 def main(opt):
     """ Loop to create jobs from replace dict product matrix. """
     LOG.info("Starting autosix.")
-    with open(opt.mask, 'r') as mask_f:
+    with open(opt.mask, "r") as mask_f:
         mask = mask_f.read()
     opt = _check_opts(mask, opt)
     save_config(opt.working_directory, opt, __file__)
 
     jobdf = _generate_jobs(opt.working_directory, opt.jobid_mask, **opt.replace_dict)
     for job_args in jobdf.iterrows():
-        setup_and_run(jobname=job_args[0],
-                      basedir=opt.working_directory,
-                      # kwargs:
-                      ssh=opt.ssh,
-                      python=opt.python,
-                      unlock=opt.unlock,
-                      resubmit=opt.resubmit,
-                      da_turnstep=opt.da_turnstep,
-                      ignore_twissfail_check=opt.ignore_twissfail_check,
-                      # kwargs passed only to create_jobs:
-                      mask_text=mask,
-                      binary_path=opt.executable,
-                      **job_args[1])
+        setup_and_run(
+            jobname=job_args[0],
+            basedir=opt.working_directory,
+            # kwargs:
+            ssh=opt.ssh,
+            python=opt.python,
+            unlock=opt.unlock,
+            resubmit=opt.resubmit,
+            da_turnstep=opt.da_turnstep,
+            ignore_twissfail_check=opt.ignore_twissfail_check,
+            # kwargs passed only to create_jobs:
+            mask_text=mask,
+            binary_path=opt.executable,
+            **job_args[1],
+        )
 
 
 def setup_and_run(jobname: str, basedir: Path, **kwargs):
-    """ Main submitting procedure for single job.
+    """Main submitting procedure for single job.
 
     Args:
         jobname (str): Name of the job/study
@@ -343,28 +366,28 @@ def setup_and_run(jobname: str, basedir: Path, **kwargs):
 
     """
     LOG.info(f"vv---------------- Job {jobname} -------------------vv")
-    unlock: bool = kwargs.pop('unlock', False)
-    ssh: str = kwargs.pop('ssh', None)
-    python: Union[Path, str] = kwargs.pop('python', DEFAULTS['python'])
-    resubmit: bool = kwargs.pop('resubmit', False)
-    da_turnstep: int = kwargs.pop('da_turnstep', DEFAULTS['da_turnstep'])
-    ignore_twissfail_check: bool = kwargs.pop('ignore_twissfail_check', False)
+    unlock: bool = kwargs.pop("unlock", False)
+    ssh: str = kwargs.pop("ssh", None)
+    python: Union[Path, str] = kwargs.pop("python", DEFAULTS["python"])
+    resubmit: bool = kwargs.pop("resubmit", False)
+    da_turnstep: int = kwargs.pop("da_turnstep", DEFAULTS["da_turnstep"])
+    ignore_twissfail_check: bool = kwargs.pop("ignore_twissfail_check", False)
 
     if is_locked(jobname, basedir, unlock=unlock):
         LOG.info(f"{jobname} is locked. Try 'unlock' flag if this causes errors.")
 
     with check_stage(STAGES.create_jobs, jobname, basedir) as check_ok:
-        """ 
+        """
         create workspace
         > cd $basedir
         > /afs/cern.ch/project/sixtrack/SixDesk_utilities/pro/utilities/bash/set_env.sh -N workspace-$jobname
-         
+
         write sixdeskenv, sysenv, filled mask (manual)
-        
+
         initialize workspace
         > cd $basedir/workspace-$jobname/sixjobs
         > /afs/cern.ch/project/sixtrack/SixDesk_utilities/pro/utilities/bash/set_env.sh -s
-         
+
         remove the twiss-fail check in sixtrack_input
         (manual)
         """
@@ -388,7 +411,7 @@ def setup_and_run(jobname: str, basedir: Path, **kwargs):
         Check if input files have been generated properly
         > cd $basedir/workspace-$jobname/sixjobs
         > /afs/cern.ch/project/sixtrack/SixDesk_utilities/pro/utilities/bash/mad6t.sh -c
-        
+
         If not, and resubmit is active
         > /afs/cern.ch/project/sixtrack/SixDesk_utilities/pro/utilities/bash/mad6t.sh -w
         """
@@ -407,12 +430,12 @@ def setup_and_run(jobname: str, basedir: Path, **kwargs):
 
     with check_stage(STAGES.check_sixtrack_output, jobname, basedir) as check_ok:
         """
-        Checks sixtrack output via run_status. If this fails even though all 
+        Checks sixtrack output via run_status. If this fails even though all
         jobs have finished on the scheduler, check the log-output (run_status
         messages are logged to debug).
         > cd $basedir/workspace-$jobname/sixjobs
         > /afs/cern.ch/project/sixtrack/SixDesk_utilities/pro/utilities/bash/run_status
-        
+
         If not, and resubmit is active
         > cd $basedir/workspace-$jobname/sixjobs
         > /afs/cern.ch/project/sixtrack/SixDesk_utilities/pro/utilities/bash/run_six.sh -i
@@ -433,14 +456,14 @@ def setup_and_run(jobname: str, basedir: Path, **kwargs):
         """
         Analysise results in database via sixdb.
         > cd $basedir/workspace-$jobname/sixjobs
-        > python3 /afs/cern.ch/project/sixtrack/SixDesk_utilities/pro/utilities/externals/SixDeskDB/sixdb $jobname da 
-        
+        > python3 /afs/cern.ch/project/sixtrack/SixDesk_utilities/pro/utilities/externals/SixDeskDB/sixdb $jobname da
+
         when fixed:
         > python3 /afs/cern.ch/project/sixtrack/SixDesk_utilities/pro/utilities/externals/SixDeskDB/sixdb $jobname da_vs_turns -turnstep 100 -outfile
         > python3 /afs/cern.ch/project/sixtrack/SixDesk_utilities/pro/utilities/externals/SixDeskDB/sixdb $jobname plot_da_vs_turns
         """
         if check_ok:
-            sixdb_cmd(jobname, basedir, cmd=['da'], python=python, ssh=ssh)
+            sixdb_cmd(jobname, basedir, cmd=["da"], python=python, ssh=ssh)
 
             # da_vs_turns is broken at the moment (jdilly, 19.10.2020)
             # sixdb_cmd(jobname, basedir, cmd=['da_vs_turns', '-turnstep', str(da_turnstep), '-outfile'],
@@ -450,11 +473,11 @@ def setup_and_run(jobname: str, basedir: Path, **kwargs):
     with check_stage(STAGES.post_process, jobname, basedir) as check_ok:
         """
         Extracts the analysed data in the database and writes them to three tfs files:
-        
+
         - All DA values
         - Statistics over angles, listed per seed (+ Seed 0 as over seeds and angles)
         - Statistics over seeds, listed per angle
-        
+
         The statistics over the seeds are then plotted in a polar plot.
         All files are outputted to the ``sixjobs/autosix_output`` folder in the job directory.
         """
@@ -465,17 +488,20 @@ def setup_and_run(jobname: str, basedir: Path, **kwargs):
         """ Just info about finishing this script and where to check the stagefile. """
         if check_ok:
             stage_file = get_stagefile_path(jobname, basedir)
-            LOG.info(f"All stages run. Check stagefile {str(stage_file)} "
-                     "in case you want to rerun some stages.")
+            LOG.info(
+                f"All stages run. Check stagefile {str(stage_file)} "
+                "in case you want to rerun some stages."
+            )
             raise StageSkip()
 
     LOG.info(f"^^---------------- Job {jobname} -------------------^^")
+
 
 # Helper for main --------------------------------------------------------------
 
 
 def _check_opts(mask_text, opt):
-    opt = keys_to_path(opt, 'mask', 'working_directory', 'executable')
+    opt = keys_to_path(opt, "mask", "working_directory", "executable")
     check_mask(mask_text, opt.replace_dict)
     opt.replace_dict = check_replace_dict(opt.replace_dict)
     return opt
@@ -495,5 +521,5 @@ def _generate_jobs(basedir, jobid_mask, **kwargs) -> tfs.TfsDataFrame:
     return job_df
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -10,8 +10,12 @@ from pathlib import Path
 
 from omc3.utils import logging_tools
 
-from pylhc.constants.autosix import (SIXDESKLOCKFILE, STAGE_ORDER,
-                                     get_workspace_path, get_stagefile_path)
+from pylhc.constants.autosix import (
+    SIXDESKLOCKFILE,
+    STAGE_ORDER,
+    get_workspace_path,
+    get_stagefile_path,
+)
 from pylhc.constants.external_paths import SIXDESK_UTILS
 from pylhc.htc.mask import find_named_variables_in_mask
 
@@ -20,6 +24,7 @@ LOG = logging_tools.get_logger(__name__)
 
 # Checks  ----------------------------------------------------------------------
 
+
 def check_mask(mask_text: str, replace_args: dict):
     """ Checks validity/compatibility of the mask and replacement dict. """
     dict_keys = set(replace_args.keys())
@@ -27,11 +32,14 @@ def check_mask(mask_text: str, replace_args: dict):
     not_in_dict = mask_keys - dict_keys
 
     if len(not_in_dict):
-        raise KeyError("The following keys in the mask were not found for replacement: "
-                       f"{str(not_in_dict).strip('{}')}")
+        raise KeyError(
+            "The following keys in the mask were not found for replacement: "
+            f"{str(not_in_dict).strip('{}')}"
+        )
 
 
 # Stages -----------------------------------------------------------------------
+
 
 class StageSkip(Exception):
     pass
@@ -55,8 +63,8 @@ def check_stage(stage: str, jobname: str, basedir: Path):
 def stage_done(jobname: str, basedir: Path, stage: str):
     """ Append current stage name to stagefile. """
     stage_file = get_stagefile_path(jobname, basedir)
-    with open(stage_file, 'a+') as f:
-        f.write(f'{stage}\n')
+    with open(stage_file, "a+") as f:
+        f.write(f"{stage}\n")
 
 
 def should_run_stage(jobname: str, basedir: Path, stage: str):
@@ -68,15 +76,15 @@ def should_run_stage(jobname: str, basedir: Path, stage: str):
         if stage_idx == 0:
             return True
         else:
-            LOG.debug(f'Stage {stage} not run because previous stage(s) missing.')
+            LOG.debug(f"Stage {stage} not run because previous stage(s) missing.")
             return False
 
-    with open(stage_file, 'r') as f:
-        txt = f.read().split('\n')
+    with open(stage_file, "r") as f:
+        txt = f.read().split("\n")
     txt = [line.strip() for line in txt if line.strip()]
 
     if stage in txt:
-        LOG.info(f'Stage {stage} has already been run. Skipping.')
+        LOG.info(f"Stage {stage} has already been run. Skipping.")
         return False
 
     if stage_idx == 0:
@@ -86,31 +94,32 @@ def should_run_stage(jobname: str, basedir: Path, stage: str):
     if txt[-1] == STAGE_ORDER[stage_idx - 1]:
         return True
 
-    LOG.debug(f'Stage {stage} not run because previous stage(s) missing.')
+    LOG.debug(f"Stage {stage} not run because previous stage(s) missing.")
     return False
 
 
 # Locks ------------------------------------------------------------------------
 
+
 def is_locked(jobname: str, basedir: Path, unlock: bool = False):
     """ Checks for sixdesklock-files """
     workspace_path = get_workspace_path(jobname, basedir)
-    locks = list(workspace_path.glob(f'**/{SIXDESKLOCKFILE}'))  # list() for repeated usage
+    locks = list(workspace_path.glob(f"**/{SIXDESKLOCKFILE}"))  # list() for repeated usage
 
     if locks:
-        LOG.info('The follwing folders are locked:')
+        LOG.info("The follwing folders are locked:")
         for lock in locks:
             LOG.info(f"{str(lock.parent)}")
 
-            with open(lock, 'r') as f:
+            with open(lock, "r") as f:
                 txt = f.read()
             txt = txt.replace(str(SIXDESK_UTILS), "$SIXUTILS").strip("\n")
             if txt:
-                LOG.debug(f' -> locked by: {txt}')
+                LOG.debug(f" -> locked by: {txt}")
 
         if unlock:
             for lock in locks:
-                LOG.debug(f'Removing lock {str(lock)}')
+                LOG.debug(f"Removing lock {str(lock)}")
                 lock.unlink()
             return False
         return True
@@ -119,7 +128,8 @@ def is_locked(jobname: str, basedir: Path, unlock: bool = False):
 
 # Commandline ------------------------------------------------------------------
 
-def start_subprocess(command, cwd=None, ssh: str=None):
+
+def start_subprocess(command, cwd=None, ssh: str = None):
     if isinstance(command, str):
         command = [command]
 
@@ -132,16 +142,16 @@ def start_subprocess(command, cwd=None, ssh: str=None):
         if cwd:
             command = f'cd "{cwd}" && {command}'
         LOG.debug(f"Executing command '{command}' on {ssh}")
-        process = subprocess.Popen(['ssh', ssh, command], shell=False,
-                                   stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                                   cwd=cwd)
+        process = subprocess.Popen(
+            ["ssh", ssh, command], shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=cwd,
+        )
 
     else:
         # Execute command locally
         LOG.debug(f"Executing command '{' '.join(command)}'")
-        process = subprocess.Popen(command, shell=False,
-                                   stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                                   cwd=cwd)
+        process = subprocess.Popen(
+            command, shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=cwd
+        )
 
     # Log output
     for line in process.stdout:
