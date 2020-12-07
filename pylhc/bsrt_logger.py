@@ -4,7 +4,7 @@ BSRT logger
 
 Script used during Run II to log detailed BSRT data and save it for later analysis. Data from the
 BSRT for each timestep is put in a `dictionary` and append to a `list`. The `list` is then saved
-to disk through pickling. Proper testing requires communication with ``FESA``s class, possible
+to disk through pickling. Proper testing requires communication with ``FESA`` s class, possible
 only from the Technical Network.
 
 Original authors: E. H. Maclean, T. Persson and G. Trad.

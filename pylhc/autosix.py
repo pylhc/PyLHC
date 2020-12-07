@@ -2,7 +2,7 @@
 AutoSix
 -------
 
-Wrapper for SixDesk to perform the setup and steps needed automatically.
+A wrapper for SixDesk to perform the setup and steps needed automatically.
 
 The idea is, to call this script with the same parameters and it runs through
 all the steps automatically.
