@@ -4,8 +4,8 @@ SixDesk Utilities
 
 Helper Utilities for Autosix.
 
-:module: sixdesk_tools.utils
-:author: jdilly
+:module: pylhc.sixdesk_tools.utils
+
 """
 import subprocess
 from contextlib import contextmanager

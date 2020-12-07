@@ -4,8 +4,8 @@ SixDesk Submission Utils
 
 Individual functions to call SixDesk functionality.
 
-:module: sixdesk_tools.submit
-:author: jdilly
+:module: pylhc.sixdesk_tools.submit
+
 """
 from pathlib import Path
 from typing import Union

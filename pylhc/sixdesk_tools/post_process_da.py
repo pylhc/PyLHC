@@ -1,10 +1,13 @@
 """
-Sixdesk Tools: Post Process DA
+Post Process DA
 ----------------------------------
 
 Tools to process data after sixdb has calculated the
 da. Includes functions for extracting data from database
 as well as plotting of DA polar plots.
+
+:module: pylhc.sixdesk_tools.post_process_da
+
 """
 import sqlite3 as sql
 from pathlib import Path
@@ -134,18 +137,21 @@ def create_polar_plots(jobname: str, basedir: Path, df_da: TfsDataFrame, df_angl
     # plt.show()
 
 
-def plot_polar(df_angles: TfsDataFrame, da_col: str, jobname: str = '',
+def plot_polar(df_angles: TfsDataFrame, da_col: str = ALOST2, jobname: str = '',
                df_da: TfsDataFrame = None, **kwargs) -> plt.Figure:
     """ Create Polar Plot for DA analysis data.
 
+    Keyword arguments are all optional.
+
     Args:
         df_angles (TfsDataFrame): Dataframe with the statistics (min, max, mean) per angle
-        da_col (str): DA-Column name from sixdesk analysis to be used (e.g. ALOST2)
-        jobname (str): Name of the job. Used in window title only
-        df_da (TfsDataFrame): Optional. Full DA analysis result. If given, plots
-                              the individual DA results per seed.
+        da_col (str): DA-Column name from sixdesk analysis to be used , e.g. ``ALOST2``.
+                      (optional, default: ``ALOST2``)
+        jobname (str): Name of the job. Used in window title only (optional).
+        df_da (TfsDataFrame): Full DA analysis result. If given, plots
+                              the individual DA results per seed. (optional)
 
-    Keyword Args (Optional):
+    Keyword Arguments:
         plot_styles (Iterable[str]): Iterable over plots styles to be applied, default: 'standard'
         interpolated (bool): If true, uses interpolation to plot the lines curved
         fill (bool): If true, fills the area between min and max with light blue

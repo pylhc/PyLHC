@@ -1,10 +1,193 @@
 """
 AutoSix
--------------------
+------------------
 
 Wrapper for SixDesk to perform the setup and steps needed automatically.
 
-FIRSTSEED, LASTSEED -> Both None or 0 deactivates SEED. Otherwise %SEEDRAN needed.
+The idea is, to call this script with the same parameters and it runs through
+all the steps automatically.
+
+The functionality is similar to the :mod:`pylhc.job_submitter` in that
+the inner product of a ``replace_dict`` is used to automatically create a set of
+job-directories to gather the data.
+To avoid conflicts each of these job-directories is a SixDesk workspace,
+meaning there will be only one "study" per directory, .
+
+The ``replace_dict`` contains variables for your mask as well as variables
+for the SixDesk environment. See the description of ``replace_dict`` below.
+In any other way, these __special__ variables behave like normal variables and
+can also be inserted in your mask. They are also looped over in the same manner
+as any other variable (if given as a list).
+
+.. important::
+    As the loop over Seeds is handled by SixDesk you need to set
+    `FIRSTSEED` and `LASTSEED` to None or 0 to deactivate this loop.
+    Otherwise a ``%SEEDRAN`` placeholder is required in your mask,
+    which needs to be present **after** filling in the variables (see example below).
+
+
+.. note::
+    Unlike in the :mod:`pylhc.job_submitter`, the output directory of the
+    HTCondor job (the 'mask-job') is not automatically transferred to the
+    workspace. To have access to this data, you will need to specify different
+    output-directories in your mask manually, e.g. using strings containing
+    the variable placeholders.
+
+
+.. code-block:: python
+
+    from pathlib import Path
+    from omc3.utils import logging_tools
+    from pylhc import autosix
+
+    LOG = logging_tools.get_logger(__name__)
+
+    if __name__ == '__main__':
+        python_path = Path('/afs/cern.ch/work/j/jdilly/public/venvs/for_htc/bin/python')
+
+        autosix.main(
+            working_directory=Path('/afs/cern.ch/work/u/user/sixdeskbase'),
+            mask=Path('my_madx.mask'), # can contain any of the parameters used in replace_dict
+            python=python_path,
+            ignore_twissfail_check=False,  # if your script prints 'check if twiss failed' or the like
+            replace_dict=dict(
+                # Part of the sixdesk-environment
+                BEAM=[1, 4],
+                TURNS=100000,
+                AMPMIN=4, AMPMAX=30, AMPSTEP=2,
+                ANGLES=11,
+                # Examples for mask:
+                TUNE=[62.29, 62.30, 62.31, 62.31]
+                OUTPUT='/afs/cern.ch/work/u/user/study_output/',
+                SEED='%SEEDRAN',  # puts '%SEEDRAN' in the mask and lets sixdesk handle this loop
+            ),
+            jobid_mask="B%(BEAM)d-QX%(TUNE)s",
+            # unlock=True,
+            # resubmit=True,
+            # ssh='lxplus.cern.ch',
+        )
+
+
+Upon running the script the job-matrix is created
+(see __Jobs.tfs__ in working directory) and the following stages are run per job:
+
+- ``create_jobs``: create workspace; fill sysenv, sixdeskenv, mask; initialize workspace.
+- ``submit_mask``: submit mask-job to HTCondor. (__interrupt__)
+- ``check_input``: check if sixdesk input is complete.
+- ``submit_sixtrack``: submit sixdesk-jobs to HTCondor. (__interrupt__)
+- ``check_sixtrack_output``: check if all sixdesk jobs are completed.
+- ``sixdb_load``: crate database and load jobs output.
+- ``sixdb_cmd``: calculated DA from database data.
+- ``post_process``: extract data from database, write into _.tfs_ and plot.
+- ``final``: announce everything has finihed
+
+
+To keep track of the stages, they are written into the __stages\_completed.txt__
+in the __autosix\_output__ directory in the workspaces.
+Stages that are written in this file are assumed to be done and will be skipped.
+To rerun a stage, delete the stage and all following stages in that file and
+start your script anew.
+
+The stages are run independently of each job, meaning different jobs can be
+at different stages. E.g if one job has all data for the ``six_db`` analysis
+already, but the others are still running on sixdesk the
+``check_sixtrack_output`` stage will fail for these jobs but the other one will
+just continue.
+
+Because the stages after ``submit_mask`` and ``submit_sixtrack`` need only be
+run after the jobs on HTCondor are completed, these two stages interrupt the
+execution of stages if they have successfully finished. Check your scheduler
+via ``condor_q`` and run your script again after everything is done, to
+have autosix continue its work.
+
+
+For the creation of polar plots, the function
+:func:`pylhc.sixdesk_tools.post_process_da.plot_polar` is available, which is
+used for the basic polar plotting in the ``post_process`` stage, but provides
+more customization features if called manually.
+
+
+Arguments:
+
+*--Required--*
+
+- **mask** *(PathOrStr)*:
+
+    Program mask to use
+
+
+- **replace_dict** *(DictAsString)*:
+
+    Dict with keys of the strings to be replaced in the mask (required) as
+    well as the mask_sixdeskenv and mask_sysenv files in the sixdesk_tools
+    module. Required fields are BEAM, TURNS, AMPMIN, AMPMAX, AMPSTEP,
+    ANGLES. Optional fields are RESUBMISSION, PLATFORM, LOGLEVEL,
+    FIRSTSEED, LASTSEED, ENERGY, NPAIRS, EMITTANCE, DIMENSIONS, WRITEBINS.
+    These keys can also be used in the mask if needed. The values of this
+    dict are lists of values to replace these or single entries.
+
+
+- **working_directory** *(PathOrStr)*:
+
+    Directory where data should be put
+
+
+*--Optional--*
+
+- **da_turnstep** *(int)*:
+
+    Step between turns used in DA-vs-Turns plot.
+
+    default: ``100``
+
+
+- **executable** *(PathOrStr)*:
+
+    Path to executable.
+
+    default: ``/afs/cern.ch/user/m/mad/bin/madx``
+
+
+- **ignore_twissfail_check**:
+
+    Ignore the check for 'Twiss fail' in the submission file. This is a
+    hack needed in case this check greps the wrong lines, e.g. in madx-
+    comments. USE WITH CARE!!
+
+    action: ``store_true``
+
+
+- **jobid_mask** *(str)*:
+
+    Mask to name jobs from replace_dict
+
+
+- **python** *(PathOrStr)*:
+
+    Path to python to use with sixdb (python3 with requirements
+    installed).
+
+    default: ``python3``
+
+
+- **resubmit**:
+
+    Resubmits if needed.
+
+    action: ``store_true``
+
+
+- **ssh** *(str)*:
+
+    Run htcondor from this machine via ssh (needs access to the
+    `working_directory`)
+
+
+- **unlock**:
+
+    Forces unlocking of folders.
+
+    action: ``store_true``
 
 
 

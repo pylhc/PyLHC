@@ -117,7 +117,8 @@ from pandas import DataFrame, Series
 from pandas.plotting import register_matplotlib_converters
 from pytimber.pagestore import PageStore
 from tfs import TfsDataFrame
-from tfs.tools import significant_digits, DotDict
+from tfs.tools import significant_digits
+from generic_parser import DotDict
 
 from pylhc.constants.forced_da_analysis import (bsrt_emittance_key, bws_emittance_key,
                                                 column_action, column_bws_norm_emittance, column_emittance,

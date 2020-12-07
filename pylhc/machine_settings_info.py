@@ -62,7 +62,7 @@ def _get_params() -> dict:
             help="Time as 'Y-m-d H:M:S.f' format."),
         knobs=dict(
             flags=["--knobs", "-k"],
-            default=(),
+            default=None,
             nargs="+",
             type=str,
             help="List of knobnames."),

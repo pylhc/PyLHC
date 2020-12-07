@@ -4,8 +4,8 @@ Create SixDesk Workspace
 
 Tools to setup the workspace for sixdesk.
 
-:module: sixdesk_tools.create_workspace
-:author: jdilly
+:module: pylhc.sixdesk_tools.create_workspace
+
 """
 import shutil
 from pathlib import Path
