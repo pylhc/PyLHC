@@ -39,10 +39,15 @@ def test_calibration_same_betabeat(tmp_path):
     # BetaBeat's tfs implementation is a bit different, we don't have the
     # same integer precision
     precision = 1e-14
+
+    # Drop the error calibration fit column because GetLLM fit was wrong
+    tfs_ = [x_tfs, y_tfs, expected_x_tfs, expected_y_tfs]
+    for i in range(len(tfs_)):
+        tfs_[i] = tfs_[i].drop("ERROR_CALIBRATION_FIT", axis=1)
     
     # Compare the two dataframes
-    assert_frame_equal(x_tfs, expected_x_tfs, atol=precision)
-    assert_frame_equal(y_tfs, expected_y_tfs, atol=precision)
+    assert_frame_equal(tfs_[0], tfs_[2], atol=precision)
+    assert_frame_equal(tfs_[1], tfs_[3], atol=precision)
 
 
 def test_bad_args():
