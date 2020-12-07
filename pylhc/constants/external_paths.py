@@ -1,20 +1,20 @@
 """
 Constants: External Paths
-----------------------------------
+-------------------------
 
-Collections of external paths used in this package.
-
-:module: constants.forced_da_analysis
-:author: jdilly
-
+Specific constants relating to external paths to be used in ``PyLHC``,
+to help with consistency.
 """
 from pathlib import Path
 
+AFS_CERN = Path('/', 'afs', 'cern.ch')
+LINTRACK = AFS_CERN / 'eng' / 'sl' / 'lintrack'
+
 # Binary Files -----------------------------------------------------------------
-MADX_BIN = Path('/', 'afs', 'cern.ch', 'user', 'm', 'mad', 'bin', 'madx')
-PYTHON3_BIN = Path('/', 'afs', 'cern.ch', 'eng', 'sl', 'lintrack', 'anaconda3', 'bin', 'python')
-PYTHON2_BIN = Path('/', 'afs', 'cern.ch', 'eng', 'sl', 'lintrack', 'miniconda2', 'bin', 'python')
-SIXDESK_UTILS = Path('/afs/cern.ch/project/sixtrack/SixDesk_utilities/pro/utilities/bash/')
+MADX_BIN = AFS_CERN / 'user' / 'm' / 'mad' / 'bin' / 'madx'
+PYTHON3_BIN = LINTRACK / 'anaconda3' / 'bin' / 'python'
+PYTHON2_BIN = LINTRACK / 'miniconda2' / 'bin' / 'python'
+SIXDESK_UTILS = AFS_CERN / 'project' / 'sixtrack' / 'SixDesk_utilitiespro' / 'utilities' / 'bash'
 
 
 # Repositories -----------------------------------------------------------------

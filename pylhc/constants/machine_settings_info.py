@@ -2,12 +2,11 @@
 Constants: Machine Settings Info
 ---------------------------------
 
-Constants for the machine settings info.
-
-:module: constants.machine_settings_info
-
+Specific constants relating to the retrieval of machine settings information to be used in
+``PyLHC``, to help with consistency.
 """
 from pylhc.constants.general import TFS_SUFFIX
+
 # TFS-File Conventions #########################################################
 # Filename
 info_name = f"machine_settings{TFS_SUFFIX}"
@@ -26,4 +25,3 @@ head_context_category = "ContextCategory"
 head_beamprcess_description = "Description"
 head_optics = "Optics"
 head_optics_start = "Optics_Start"
-
