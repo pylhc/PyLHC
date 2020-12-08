@@ -21,7 +21,7 @@ as any other variable (if given as a list).
 
 .. important::
     As the loop over Seeds is handled by SixDesk you need to set
-    `FIRSTSEED` and `LASTSEED` to None or 0 to deactivate this loop.
+    `FIRSTSEED` and `LASTSEED` to ``None`` or ``0`` to deactivate this loop.
     Otherwise a ``%SEEDRAN`` placeholder is required in your mask,
     which needs to be present **after** filling in the variables (see example below).
 
