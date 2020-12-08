@@ -89,7 +89,8 @@ def _get_beta_fit(
     beta_fit = beta_function(positions[valid], *popt)
     beta_fit_up = beta_function(positions, *popt_up)
     beta_fit_dw = beta_function(positions, *popt_dw)
-    beta_fit_err = (beta_fit_up - beta_fit_dw) / 2
+
+    beta_fit_err = np.sqrt((1/2) * ((beta_fit - beta_fit_up)**2 + (beta_fit - beta_fit_dw)**2))
 
     return pd.DataFrame({f"{BETA}{plane}": beta_fit, f"{ERR}{BETA}{plane}": beta_fit_err})
 
