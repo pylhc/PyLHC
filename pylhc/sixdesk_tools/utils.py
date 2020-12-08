@@ -107,7 +107,7 @@ def is_locked(jobname: str, basedir: Path, unlock: bool = False):
     locks = list(workspace_path.glob(f"**/{SIXDESKLOCKFILE}"))  # list() for repeated usage
 
     if locks:
-        LOG.info("The follwing folders are locked:")
+        LOG.info("The following folders are locked:")
         for lock in locks:
             LOG.info(f"{str(lock.parent)}")
 

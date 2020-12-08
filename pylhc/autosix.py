@@ -113,8 +113,8 @@ have autosix continue its work.
     knows which variable he or she needs to change.
 
 
-Autosix is not only able run MAD-X masks, but does also work for **cpymad**
-masks. Requirement for the latter is to provide the ``executable`` path to a
+AutoSix is not only able to run MAD-X masks, but also **cpymad** masks.
+Requirement for the latter is to provide the ``executable`` path to a
 python binary with **cpymad**, and all other packages used, installed.
 
 To create the files needed for Sixtrack input, MAD-X masks need to contain
