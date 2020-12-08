@@ -4,11 +4,12 @@ from unittest.mock import patch
 
 import tfs
 
+from pylhc.sixdesk_tools.create_workspace import remove_twiss_fail_check
 from pylhc.sixdesk_tools.post_process_da import plot_polar, plt
 from pylhc.autosix import _generate_jobs, setup_and_run
 from pylhc.constants.autosix import (
     get_masks_path, get_autosix_results_path, get_sixdeskenv_path,
-    get_sysenv_path, get_stagefile_path, STAGE_ORDER, ANGLE, STAGES
+    get_sysenv_path, get_stagefile_path, STAGE_ORDER, ANGLE, STAGES, get_mad6t_mask_path, get_mad6t1_mask_path
 )
 
 
@@ -132,6 +133,23 @@ def test_polar_plot_interpolated(tmp_path):
     # plt.show()
 
 
+def test_twissfail_removal(tmp_path):
+    jobname = "test_job"
+    mad6t = get_mad6t_mask_path(jobname, tmp_path)
+    mad6t1 = get_mad6t1_mask_path(jobname, tmp_path)
+    mad6t.parent.mkdir(parents=True)
+    mad6t.write_text(_mad6t_text())
+    mad6t1.write_text(_mad6t_text())
+
+    remove_twiss_fail_check(jobname, tmp_path)
+
+    for f in (mad6t, mad6t1):
+        mad6t_lines = f.read_text().split("\n")
+
+        assert all(l.startswith("#") for l in mad6t_lines[:-1])
+        assert mad6t_lines[-1].startswith("if")
+
+
 # Helper -----------------------------------------------------------------------
 
 
@@ -143,3 +161,15 @@ def _create_subprocess_mocks(jobname, dirpath):
     mock_crate = patch('pylhc.sixdesk_tools.create_workspace.start_subprocess', new=subprocess_mock)
     mock_submit = patch('pylhc.sixdesk_tools.submit.start_subprocess', new=subprocess_mock)
     return mock_crate, mock_submit
+
+
+def _mad6t_text():
+    return """grep -i "TWISS fail" $filejob.out."$i" > /dev/null
+if test $? -eq 0
+then
+  touch $sixtrack_input/ERRORS
+  echo "MADX TWISS appears to have failed!"
+  echo "$filejob.out.${i} MADX TWISS appears to have failed!" >> $sixtrack_input/ERRORS
+  exit 2
+fi
+if test ! -s fc.2"""
