@@ -15,7 +15,7 @@ meaning there will be only one "study" per directory, .
 
 The ``replace_dict`` contains variables for your mask as well as variables
 for the SixDesk environment. See the description of ``replace_dict`` below.
-In any other way, these __special__ variables behave like normal variables and
+In any other way, these *special* variables behave like normal variables and
 can also be inserted in your mask. They are also looped over in the same manner
 as any other variable (if given as a list).
 
@@ -67,21 +67,22 @@ as any other variable (if given as a list).
 
 
 Upon running the script the job-matrix is created
-(see __Jobs.tfs__ in working directory) and the following stages are run per job:
+(see *Jobs.tfs* in working directory) and the following stages are run per job:
 
-- ``create_jobs``: create workspace; fill sysenv, sixdeskenv, mask; initialize workspace.
-- ``submit_mask``: submit mask-job to HTCondor. (__interrupt__)
+- ``create_jobs``: create workspace; fill sysenv, sixdeskenv, mask.
+- ``initialize_workspace``: initialize workspace from the env-files.
+- ``submit_mask``: submit mask-job to HTCondor. (*interrupt*)
 - ``check_input``: check if sixdesk input is complete.
-- ``submit_sixtrack``: submit sixdesk-jobs to HTCondor. (__interrupt__)
+- ``submit_sixtrack``: submit sixdesk-jobs to HTCondor. (*interrupt*)
 - ``check_sixtrack_output``: check if all sixdesk jobs are completed.
 - ``sixdb_load``: create database and load jobs output.
 - ``sixdb_cmd``: calculated DA from database data.
-- ``post_process``: extract data from database, write into _.tfs_ and plot.
+- ``post_process``: extract data from database, write into *.tfs* and plot.
 - ``final``: announce everything has finished
 
 
-To keep track of the stages, they are written into the __stages\_completed.txt__
-in the __autosix\_output__ directory in the workspaces.
+To keep track of the stages, they are written into the *stages\_completed.txt*
+in the *autosix\_output* directory in the workspaces.
 Stages that are written in this file are assumed to be done and will be skipped.
 To rerun a stage, delete the stage and all following stages in that file and
 start your script anew.
@@ -97,6 +98,48 @@ run after the jobs on HTCondor are completed, these two stages interrupt the
 execution of stages if they have successfully finished. Check your scheduler
 via ``condor_q`` and run your script again after everything is done, to
 have autosix continue its work.
+
+While most studies should be fine with the input options given, there is the
+possibility to manually adapt the *sixdeskenv* and *sysenv* file
+before workspace initialization but adding the switch ``stop_workspace_init``.
+This will not reset automatically and one will have to remove the switch again
+to continue.
+As this is a bit of a workaround, it might be easier to define a new variable
+in the ``pylhc.sixdesk_tools.mask_sixdeskenv`` file and put its current default
+into ``pylhc.constants.autosix.SIXENV_DEFAULT``. One can then use the
+``replace_dict`` to change its value.
+This is left open as a task for the inspired user to implement, as only he
+knows which variable he or she needs to change.
+
+
+Autosix is not only able run MAD-X masks, but does also work for **cpymad**
+masks. Requirement for the latter is to provide the ``executable`` path to a
+python binary with **cpymad**, and all other packages used, installed.
+
+To create the files needed for Sixtrack input, MAD-X masks need to contain
+
+.. code-block:: bash
+
+    if (NRJ<5000.0000) {VRF400:=8.;} else {VRF400:=16.;};
+    LAGRF400.B1=0.5;
+    LAGRF400.B2=0.;
+    twiss;
+    sixtrack, cavall, radius=0.017;
+
+
+while **cpymad** masks can do the same task with
+
+.. code-block:: python
+
+    madx.globals["VRF400"] = 8 if madx.globals['NRJ'] < 5000 else 16
+    madx.globals["LAGRF400.B1"] = 0.5
+    madx.globals["LAGRF400.B2"] = 0.
+    madx.twiss()  # used by sixtrack
+    madx.sixtrack(cavall=True, radius=0.017)
+
+
+In theory, any kind of mask is possible, given the correct ``executable``
+is provided and the Sixtrack outputfiles created.
 
 
 For the creation of polar plots, the function
@@ -181,6 +224,14 @@ Arguments:
     `working_directory`)
 
 
+- **stop_workspace_init**:
+
+    Stops the workspace creation before initialization, so one can make
+    manual changes.
+
+    action: ``store_true``
+
+
 - **unlock**:
 
     Forces unlocking of folders.
@@ -218,7 +269,7 @@ from pylhc.job_submitter import (
     check_replace_dict,
     keys_to_path,
 )
-from pylhc.sixdesk_tools.create_workspace import create_jobs, remove_twiss_fail_check
+from pylhc.sixdesk_tools.create_workspace import create_job, remove_twiss_fail_check, init_workspace
 from pylhc.sixdesk_tools.post_process_da import post_process_da
 from pylhc.sixdesk_tools.submit import (
     submit_mask,
@@ -299,6 +350,14 @@ def get_params():
         action="store_true",
     )
     params.add_parameter(
+        name="stop_workspace_init",
+        help=(
+            "Stops the workspace creation before initialization,"
+            " so one can make manual changes."
+        ),
+        action="store_true",
+    )
+    params.add_parameter(
         name="resubmit",
         help="Resubmits if needed.",
         action="store_true",
@@ -336,6 +395,7 @@ def main(opt):
             # kwargs passed only to create_jobs:
             mask_text=mask,
             binary_path=opt.executable,
+            stop_workspace_init=opt.stop_workspace_init,
             **job_args[1],
         )
 
@@ -369,11 +429,12 @@ def setup_and_run(jobname: str, basedir: Path, **kwargs):
     resubmit: bool = kwargs.pop("resubmit", False)
     da_turnstep: int = kwargs.pop("da_turnstep", DEFAULTS["da_turnstep"])
     ignore_twissfail_check: bool = kwargs.pop("ignore_twissfail_check", False)
+    stop_workspace_init: bool = kwargs.pop("stop_workspace_init", False)
 
     if is_locked(jobname, basedir, unlock=unlock):
         LOG.info(f"{jobname} is locked. Try 'unlock' flag if this causes errors.")
 
-    with check_stage(STAGES.create_jobs, jobname, basedir) as check_ok:
+    with check_stage(STAGES.create_job, jobname, basedir) as check_ok:
         """
         create workspace
         > cd $basedir
@@ -381,6 +442,12 @@ def setup_and_run(jobname: str, basedir: Path, **kwargs):
 
         write sixdeskenv, sysenv, filled mask (manual)
 
+        """
+        if check_ok:
+            create_job(jobname, basedir, ssh=ssh, **kwargs)
+
+    with check_stage(STAGES.initialize_workspace, jobname, basedir) as check_ok:
+        """
         initialize workspace
         > cd $basedir/workspace-$jobname/sixjobs
         > /afs/cern.ch/project/sixtrack/SixDesk_utilities/pro/utilities/bash/set_env.sh -s
@@ -389,7 +456,16 @@ def setup_and_run(jobname: str, basedir: Path, **kwargs):
         (manual)
         """
         if check_ok:
-            create_jobs(jobname, basedir, ssh=ssh, **kwargs)
+            if stop_workspace_init:
+                LOG.info(
+                    f"Workspace creation for job {jobname} interrupted."
+                    " Check directory to manually adapt `sixdeskenv`"
+                    " and `sysenv`. Remove 'stop_workspace_init' from input"
+                    " parameters or set to 'False' to continue run."
+                )
+                raise StageSkip()
+
+            init_workspace(jobname, basedir, ssh=ssh)
             if ignore_twissfail_check:  # Hack
                 remove_twiss_fail_check(jobname, basedir)
 

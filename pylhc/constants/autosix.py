@@ -52,7 +52,8 @@ SEED_KEYS = ["FIRSTSEED", "LASTSEED"]
 
 # Stages ---
 STAGE_ORDER = [
-    "create_jobs",
+    "create_job",
+    "initialize_workspace",
     "submit_mask",
     "check_input",
     "submit_sixtrack",

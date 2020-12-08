@@ -36,18 +36,20 @@ LOG = logging_tools.get_logger(__name__)
 # Main -------------------------------------------------------------------------
 
 
-def create_jobs(
-    jobname: str, basedir: Path, mask_text: str, binary_path: Path, ssh: str = None, **kwargs
-):
-    """ Create environment and individual jobs/masks for sixdesk to send to HTC. """
-    sixjobs_path = get_sixjobs_path(jobname, basedir)
+def create_job(jobname: str, basedir: Path, mask_text: str, binary_path: Path, ssh: str = None, **kwargs):
+    """ Create environment and individual jobs/masks for SixDesk to send to HTC. """
     _create_workspace(jobname, basedir, ssh=ssh)
     _create_sysenv(jobname, basedir, binary_path=binary_path)
     _create_sixdeskenv(jobname, basedir, **kwargs)
     _write_mask(jobname, basedir, mask_text, **kwargs)
+    LOG.info("Workspace prepared.")
 
+
+def init_workspace(jobname: str, basedir: Path, ssh: str = None):
+    """ Initializes the workspace with sixdeskenv and sysenv. """
+    sixjobs_path = get_sixjobs_path(jobname, basedir)
     start_subprocess([SETENV_SH, "-s"], cwd=sixjobs_path, ssh=ssh)
-    LOG.info("Workspace fully set up.")
+    LOG.info("Workspace initialized.")
 
 
 def remove_twiss_fail_check(jobname: str, basedir: Path):
