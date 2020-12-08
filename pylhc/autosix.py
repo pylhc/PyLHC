@@ -99,17 +99,18 @@ execution of stages if they have successfully finished. Check your scheduler
 via ``condor_q`` and run your script again after everything is done, to
 have autosix continue its work.
 
-While most studies should be fine with the input options given, there is the
-possibility to manually adapt the *sixdeskenv* and *sysenv* file
-before workspace initialization but adding the switch ``stop_workspace_init``.
-This will not reset automatically and one will have to remove the switch again
-to continue.
-As this is a bit of a workaround, it might be easier to define a new variable
-in the ``pylhc.sixdesk_tools.mask_sixdeskenv`` file and put its current default
-into ``pylhc.constants.autosix.SIXENV_DEFAULT``. One can then use the
-``replace_dict`` to change its value.
-This is left open as a task for the inspired user to implement, as only he
-knows which variable he or she needs to change.
+.. note::
+    While most studies should be fine with the input options given, there is the
+    possibility to manually adapt the *sixdeskenv* and *sysenv* file before
+    workspace initialization but adding the switch ``stop_workspace_init``.
+    This will not reset automatically and one will have to remove the switch
+    again to continue.
+    As this is a bit of a workaround, it might be easier to define a new
+    variable in the **pylhc.sixdesk_tools.mask_sixdeskenv** file and put its
+    current default into **pylhc.constants.autosix.SIXENV_DEFAULT**.
+    One can then use the ``replace_dict`` to change its value.
+    This is left open as a task for the inspired user to implement, as only he
+    knows which variable he or she needs to change.
 
 
 Autosix is not only able run MAD-X masks, but does also work for **cpymad**
@@ -141,11 +142,11 @@ while **cpymad** masks can do the same task with
 In theory, any kind of mask is possible, given the correct ``executable``
 is provided and the Sixtrack outputfiles created.
 
-
-For the creation of polar plots, the function
-:func:`pylhc.sixdesk_tools.post_process_da.plot_polar` is available, which is
-used for the basic polar plotting in the ``post_process`` stage, but provides
-more customization features if called manually.
+.. note::
+    For the creation of polar plots, the function
+    :func:`pylhc.sixdesk_tools.post_process_da.plot_polar` is available,
+    which is used for the basic polar plotting in the ``post_process`` stage,
+    but provides more customization features if called manually.
 
 
 Arguments:
