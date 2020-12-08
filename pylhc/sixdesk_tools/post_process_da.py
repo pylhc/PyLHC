@@ -72,7 +72,7 @@ def post_process_da(jobname: str, basedir: Path):
 
 
 def create_da_tfs(jobname: str, basedir: Path) -> Tuple[TfsDataFrame, TfsDataFrame, TfsDataFrame]:
-    """ Extracts data form db into dataframes, and writes and returns them."""
+    """ Extracts data from db into dataframes, and writes and returns them."""
     LOG.info("Gathering DA data into tfs-files.")
     df_da = extract_da_data_from_db(jobname, basedir)
 

@@ -74,10 +74,10 @@ Upon running the script the job-matrix is created
 - ``check_input``: check if sixdesk input is complete.
 - ``submit_sixtrack``: submit sixdesk-jobs to HTCondor. (__interrupt__)
 - ``check_sixtrack_output``: check if all sixdesk jobs are completed.
-- ``sixdb_load``: crate database and load jobs output.
+- ``sixdb_load``: create database and load jobs output.
 - ``sixdb_cmd``: calculated DA from database data.
 - ``post_process``: extract data from database, write into _.tfs_ and plot.
-- ``final``: announce everything has finihed
+- ``final``: announce everything has finished
 
 
 To keep track of the stages, they are written into the __stages\_completed.txt__
@@ -193,12 +193,10 @@ Arguments:
 
 """
 import itertools
-from functools import partial
 from pathlib import Path
 from typing import Union
 
 import numpy as np
-import pandas as pd
 import tfs
 from generic_parser import EntryPointParameters, entrypoint
 from generic_parser.entry_datatypes import DictAsString
@@ -212,7 +210,6 @@ from pylhc.constants.autosix import (
     DEFAULTS,
     SIXENV_REQUIRED,
     SIXENV_DEFAULT,
-    get_autosix_results_path,
 )
 from pylhc.htc.mask import generate_jobdf_index
 from pylhc.job_submitter import (

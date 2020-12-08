@@ -81,7 +81,7 @@ master_doc = "index"
 
 # General information about the project.
 project = ABOUT_PYLHC["__title__"]
-copyright_ = "2019-2020, pyLHC/OMC-TEAM"
+copyright = "2019-2020, pyLHC/OMC-TEAM"
 author = ABOUT_PYLHC["__author__"]
 
 # The version info for the project you're documenting, acts as replacement for
