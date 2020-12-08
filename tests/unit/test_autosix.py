@@ -32,12 +32,8 @@ def test_create_job_matrix(tmp_path):
 def test_create_workspace(tmp_path):
     jobname="test_job"
 
-    def subprocess_mock(*args, **kwargs):
-        tmp_path.mkdir(exist_ok=True, parents=True)
-        get_masks_path(jobname, tmp_path).mkdir(exist_ok=True, parents=True)
-
-    with patch('pylhc.sixdesk_tools.create_workspace.start_subprocess', new=subprocess_mock),\
-         patch('pylhc.sixdesk_tools.submit.start_subprocess', new=subprocess_mock):
+    mock_create, mock_submit = _create_subprocess_mocks(jobname, tmp_path)
+    with mock_create, mock_submit:
         setup_and_run(jobname=jobname,
                       basedir=tmp_path,
                       mask_text="Just a mask %(PARAM1)s %(PARAM2)s %(BEAM)s",
@@ -85,12 +81,8 @@ def test_create_workspace(tmp_path):
 def test_create_workspace_stop_init(tmp_path):
     jobname="test_job"
 
-    def subprocess_mock(*args, **kwargs):
-        tmp_path.mkdir(exist_ok=True, parents=True)
-        get_masks_path(jobname, tmp_path).mkdir(exist_ok=True, parents=True)
-
-    with patch('pylhc.sixdesk_tools.create_workspace.start_subprocess', new=subprocess_mock), \
-         patch('pylhc.sixdesk_tools.submit.start_subprocess', new=subprocess_mock):
+    mock_create, mock_submit = _create_subprocess_mocks(jobname, tmp_path)
+    with mock_create, mock_submit:
         setup_and_run(jobname=jobname,
                       basedir=tmp_path,
                       binary_path=Path('somethingcomplicated/pathomatic'),
@@ -139,3 +131,15 @@ def test_polar_plot_interpolated(tmp_path):
     assert len(fig.axes[0].lines) == 63  # 60 Seeds, MEAN, MIN, MAX
     # plt.show()
 
+
+# Helper -----------------------------------------------------------------------
+
+
+def _create_subprocess_mocks(jobname, dirpath):
+    def subprocess_mock(*args, **kwargs):
+        dirpath.mkdir(exist_ok=True, parents=True)
+        get_masks_path(jobname, dirpath).mkdir(exist_ok=True, parents=True)
+
+    mock_crate = patch('pylhc.sixdesk_tools.create_workspace.start_subprocess', new=subprocess_mock)
+    mock_submit = patch('pylhc.sixdesk_tools.submit.start_subprocess', new=subprocess_mock)
+    return mock_crate, mock_submit
