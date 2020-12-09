@@ -5,7 +5,7 @@
             "affiliation": "CERN"
         },
     ],
-    "description": "Useful tools in particular for accelerator physicists at CERN.",
+    "description": "Additional tools for particle accelerator data analysis and machine information.",
     "keywords": [
         "python",
         "accelerator",
