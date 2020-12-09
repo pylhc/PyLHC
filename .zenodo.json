@@ -1,0 +1,18 @@
+{
+    "creators": [
+        {
+            "name": "OMC-Team",
+            "affiliation": "CERN"
+        },
+    ],
+    "description": "Useful tools in particular for accelerator physicists at CERN.",
+    "keywords": [
+        "python",
+        "accelerator",
+        "analysis",
+        "htcondor",
+        "sixdesk",
+        "pylhc",
+        "lhc"
+    ],
+}
