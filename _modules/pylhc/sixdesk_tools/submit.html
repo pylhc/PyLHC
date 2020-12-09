@@ -1,0 +1,357 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pylhc.sixdesk_tools.submit &mdash; pylhc 0.0.3 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/custom.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html">
+          
+
+          
+            
+            <img src="../../../_static/omc_logo.svg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Entrypoints</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../entrypoints/analysis.html">Analysis Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/analysis.html#bsrt-analysis">BSRT Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/analysis.html#forced-da-analysis">Forced DA Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../entrypoints/machine_info.html">Machine Information Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/machine_info.html#print-machine-settings-overview">Print Machine Settings Overview</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../entrypoints/submitter.html">HTCondor Job Submitter</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/submitter.html#job-submitter">Job Submitter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/submitter.html#autosix">AutoSix</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/constants.html">Constants Definitions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/constants.html#constants-general">Constants: General</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/constants.html#constants-external-paths">Constants: External Paths</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/constants.html#constants-autosix">Constants: Autosix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/constants.html#constants-forced-da-analysis">Constants: Forced DA Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/constants.html#constants-machine-settings-info">Constants: Machine Settings Info</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/data_extract.html">Data Extraction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/data_extract.html#pylsa">PyLSA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/data_extract.html#timber">Timber</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/htc.html">HTCondor Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/htc.html#htcondor-utilities">HTCondor Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/htc.html#mask-resolver">Mask Resolver</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/sixdesk_tools.html">Sixdesk Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/sixdesk_tools.html#create-sixdesk-workspace">Create SixDesk Workspace</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/sixdesk_tools.html#sixdesk-submission-utils">SixDesk Submission Utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/sixdesk_tools.html#post-process-da">Post Process DA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/sixdesk_tools.html#sixdesk-utilities">SixDesk Utilities</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pylhc</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>pylhc.sixdesk_tools.submit</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pylhc.sixdesk_tools.submit</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">SixDesk Submission Utils</span>
+<span class="sd">---------------------------</span>
+
+<span class="sd">Individual functions to call SixDesk functionality.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
+
+<span class="kn">from</span> <span class="nn">omc3.utils</span> <span class="kn">import</span> <span class="n">logging_tools</span>
+
+<span class="kn">from</span> <span class="nn">pylhc.sixdesk_tools.utils</span> <span class="kn">import</span> <span class="n">start_subprocess</span><span class="p">,</span> <span class="n">StageSkip</span>
+<span class="kn">from</span> <span class="nn">pylhc.constants.autosix</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">MAD_TO_SIXTRACK_SH</span><span class="p">,</span>
+    <span class="n">RUNSIX_SH</span><span class="p">,</span>
+    <span class="n">RUNSTATUS_SH</span><span class="p">,</span>
+    <span class="n">SIXDB</span><span class="p">,</span>
+    <span class="n">get_sixjobs_path</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">LOG</span> <span class="o">=</span> <span class="n">logging_tools</span><span class="o">.</span><span class="n">get_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="submit_mask"><a class="viewcode-back" href="../../../modules/sixdesk_tools.html#pylhc.sixdesk_tools.submit.submit_mask">[docs]</a><span class="k">def</span> <span class="nf">submit_mask</span><span class="p">(</span><span class="n">jobname</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">basedir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">ssh</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Run the mask (probably Madx) and generate sixtrack input files. &quot;&quot;&quot;</span>
+    <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Submitting mask to run for sixtrack input generation.&quot;</span><span class="p">)</span>
+    <span class="n">sixjobs_path</span> <span class="o">=</span> <span class="n">get_sixjobs_path</span><span class="p">(</span><span class="n">jobname</span><span class="p">,</span> <span class="n">basedir</span><span class="p">)</span>
+    <span class="n">start_subprocess</span><span class="p">([</span><span class="n">MAD_TO_SIXTRACK_SH</span><span class="p">,</span> <span class="s2">&quot;-s&quot;</span><span class="p">],</span> <span class="n">cwd</span><span class="o">=</span><span class="n">sixjobs_path</span><span class="p">,</span> <span class="n">ssh</span><span class="o">=</span><span class="n">ssh</span><span class="p">)</span>
+    <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Submitted mask-jobs.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="check_sixtrack_input"><a class="viewcode-back" href="../../../modules/sixdesk_tools.html#pylhc.sixdesk_tools.submit.check_sixtrack_input">[docs]</a><span class="k">def</span> <span class="nf">check_sixtrack_input</span><span class="p">(</span><span class="n">jobname</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">basedir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">ssh</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">resubmit</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Checks the generated input files needed by sixtrack and resubmits, if requested. &quot;&quot;&quot;</span>
+    <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Checking if input files are present.&quot;</span><span class="p">)</span>
+    <span class="n">sixjobs_path</span> <span class="o">=</span> <span class="n">get_sixjobs_path</span><span class="p">(</span><span class="n">jobname</span><span class="p">,</span> <span class="n">basedir</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">start_subprocess</span><span class="p">([</span><span class="n">MAD_TO_SIXTRACK_SH</span><span class="p">,</span> <span class="s2">&quot;-c&quot;</span><span class="p">],</span> <span class="n">cwd</span><span class="o">=</span><span class="n">sixjobs_path</span><span class="p">,</span> <span class="n">ssh</span><span class="o">=</span><span class="n">ssh</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">resubmit</span><span class="p">:</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Resubmitting mask to run wrong seeds for sixtrack input generation.&quot;</span><span class="p">)</span>
+            <span class="n">start_subprocess</span><span class="p">([</span><span class="n">MAD_TO_SIXTRACK_SH</span><span class="p">,</span> <span class="s2">&quot;-w&quot;</span><span class="p">],</span> <span class="n">cwd</span><span class="o">=</span><span class="n">sixjobs_path</span><span class="p">,</span> <span class="n">ssh</span><span class="o">=</span><span class="n">ssh</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">StageSkip</span><span class="p">(</span><span class="s2">&quot;Resubmitted input generation jobs.&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">StageSkip</span><span class="p">(</span>
+                <span class="s2">&quot;Checking input files failed. Check (debug-) logs. &quot;</span>
+                <span class="s2">&quot;Maybe restart with &#39;resubmit&#39; flag.&quot;</span>
+            <span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Check for input files was successful.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="submit_sixtrack"><a class="viewcode-back" href="../../../modules/sixdesk_tools.html#pylhc.sixdesk_tools.submit.submit_sixtrack">[docs]</a><span class="k">def</span> <span class="nf">submit_sixtrack</span><span class="p">(</span><span class="n">jobname</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">basedir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">ssh</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">resubmit</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Generate simulation files and check if runnable and submit. &quot;&quot;&quot;</span>
+    <span class="n">re_str</span> <span class="o">=</span> <span class="s2">&quot;Re-&quot;</span> <span class="k">if</span> <span class="n">resubmit</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">re_str</span><span class="si">}</span><span class="s2">Submitting to sixtrack.&quot;</span><span class="p">)</span>
+    <span class="n">sixjobs_path</span> <span class="o">=</span> <span class="n">get_sixjobs_path</span><span class="p">(</span><span class="n">jobname</span><span class="p">,</span> <span class="n">basedir</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;-i&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">resubmit</span> <span class="k">else</span> <span class="p">[</span><span class="s2">&quot;-a&quot;</span><span class="p">]</span>
+        <span class="n">start_subprocess</span><span class="p">([</span><span class="n">RUNSIX_SH</span><span class="p">]</span> <span class="o">+</span> <span class="n">args</span><span class="p">,</span> <span class="n">cwd</span><span class="o">=</span><span class="n">sixjobs_path</span><span class="p">,</span> <span class="n">ssh</span><span class="o">=</span><span class="n">ssh</span><span class="p">)</span>  <span class="c1"># throws OSError if failed</span>
+    <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">StageSkip</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">re_str</span><span class="si">}</span><span class="s2">Submit to sixtrack for </span><span class="si">{</span><span class="n">jobname</span><span class="si">}</span><span class="s2"> ended in error.&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot; Input generation possibly not finished. Check your Scheduler.&quot;</span>
+        <span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">re_str</span><span class="si">}</span><span class="s2">Submitted jobs to Sixtrack&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="check_sixtrack_output"><a class="viewcode-back" href="../../../modules/sixdesk_tools.html#pylhc.sixdesk_tools.submit.check_sixtrack_output">[docs]</a><span class="k">def</span> <span class="nf">check_sixtrack_output</span><span class="p">(</span><span class="n">jobname</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">basedir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">ssh</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">resubmit</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Checks if the sixtrack output is all there. &quot;&quot;&quot;</span>
+    <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Checking if sixtrack has finished.&quot;</span><span class="p">)</span>
+    <span class="n">sixjobs_path</span> <span class="o">=</span> <span class="n">get_sixjobs_path</span><span class="p">(</span><span class="n">jobname</span><span class="p">,</span> <span class="n">basedir</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">start_subprocess</span><span class="p">([</span><span class="n">RUNSTATUS_SH</span><span class="p">],</span> <span class="n">cwd</span><span class="o">=</span><span class="n">sixjobs_path</span><span class="p">,</span> <span class="n">ssh</span><span class="o">=</span><span class="n">ssh</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">resubmit</span><span class="p">:</span>
+            <span class="n">submit_sixtrack</span><span class="p">(</span><span class="n">jobname</span><span class="p">,</span> <span class="n">basedir</span><span class="p">,</span> <span class="n">ssh</span><span class="p">,</span> <span class="n">resubmit</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">StageSkip</span><span class="p">(</span><span class="s2">&quot;Resubmitted incomplete sixtrack jobs.&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">StageSkip</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Sixtrack for </span><span class="si">{</span><span class="n">jobname</span><span class="si">}</span><span class="s2"> seems to be incomplete.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Run possibly not finished. Check (debug-) log or your Scheduler.&quot;</span>
+            <span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Sixtrack results are all present.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="sixdb_load"><a class="viewcode-back" href="../../../modules/sixdesk_tools.html#pylhc.sixdesk_tools.submit.sixdb_load">[docs]</a><span class="k">def</span> <span class="nf">sixdb_load</span><span class="p">(</span><span class="n">jobname</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">basedir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">python</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">ssh</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Creates sixdb database and loads the study results into it. &quot;&quot;&quot;</span>
+    <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Loading study into database.&quot;</span><span class="p">)</span>
+    <span class="n">sixjobs_path</span> <span class="o">=</span> <span class="n">get_sixjobs_path</span><span class="p">(</span><span class="n">jobname</span><span class="p">,</span> <span class="n">basedir</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">start_subprocess</span><span class="p">([</span><span class="n">python</span><span class="p">,</span> <span class="n">SIXDB</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;load_dir&quot;</span><span class="p">],</span> <span class="n">cwd</span><span class="o">=</span><span class="n">sixjobs_path</span><span class="p">,</span> <span class="n">ssh</span><span class="o">=</span><span class="n">ssh</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">StageSkip</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sixdb loading for </span><span class="si">{</span><span class="n">jobname</span><span class="si">}</span><span class="s2"> failed. Check (debug-) log.&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Created database for study.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="sixdb_cmd"><a class="viewcode-back" href="../../../modules/sixdesk_tools.html#pylhc.sixdesk_tools.submit.sixdb_cmd">[docs]</a><span class="k">def</span> <span class="nf">sixdb_cmd</span><span class="p">(</span><span class="n">jobname</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">basedir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">python</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">cmd</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">ssh</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Performs analysis on the sixdb database. &quot;&quot;&quot;</span>
+    <span class="n">cmd_str</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+    <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Performing sixdb command `</span><span class="si">{</span><span class="n">cmd_str</span><span class="si">}</span><span class="s2">`.&quot;</span><span class="p">)</span>
+    <span class="n">sixjobs_path</span> <span class="o">=</span> <span class="n">get_sixjobs_path</span><span class="p">(</span><span class="n">jobname</span><span class="p">,</span> <span class="n">basedir</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">start_subprocess</span><span class="p">([</span><span class="n">python</span><span class="p">,</span> <span class="n">SIXDB</span><span class="p">,</span> <span class="n">jobname</span><span class="p">]</span> <span class="o">+</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">cwd</span><span class="o">=</span><span class="n">sixjobs_path</span><span class="p">,</span> <span class="n">ssh</span><span class="o">=</span><span class="n">ssh</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">StageSkip</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;SixBD command </span><span class="si">{</span><span class="n">cmd_str</span><span class="si">}</span><span class="s2"> for </span><span class="si">{</span><span class="n">jobname</span><span class="si">}</span><span class="s2"> failed. Check (debug-) log.&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;SixDB command &#39;</span><span class="si">{</span><span class="n">cmd_str</span><span class="si">}</span><span class="s2">&#39; successfully run.&quot;</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019-2020, pyLHC/OMC-TEAM
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

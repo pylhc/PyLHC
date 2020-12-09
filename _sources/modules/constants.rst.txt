@@ -10,6 +10,10 @@ Constants Definitions
     :members:
 
 
+.. automodule:: pylhc.constants.autosix
+    :members:
+
+
 .. automodule:: pylhc.constants.forced_da_analysis
     :members:
 

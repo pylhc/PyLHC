@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Machine Settings Info &mdash; pylhc 0.0.3 documentation</title>
+  <title>Machine Information Tools &mdash; pylhc 0.0.3 documentation</title>
   
 
   
@@ -37,8 +37,8 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Constants Definitions" href="../modules/constants.html" />
-    <link rel="prev" title="HTCondor Job Submitter" href="job_submitter.html" /> 
+    <link rel="next" title="HTCondor Job Submitter" href="submitter.html" />
+    <link rel="prev" title="Analysis Tools" href="analysis.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -92,20 +92,18 @@
             
               <p class="caption"><span class="caption-text">Entrypoints</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="bsrt_analysis.html">BSRT Analysis</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="bsrt_analysis.html#id1">BSRT Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="analysis.html">Analysis Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="analysis.html#bsrt-analysis">BSRT Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="analysis.html#forced-da-analysis">Forced DA Analysis</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="forced_da_analysis.html">Forced DA Analysis</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="forced_da_analysis.html#id1">Forced DA Analysis</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="job_submitter.html">HTCondor Job Submitter</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="job_submitter.html#job-submitter">Job Submitter</a></li>
-</ul>
-</li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Machine Settings Info</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Machine Information Tools</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#print-machine-settings-overview">Print Machine Settings Overview</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="submitter.html">HTCondor Job Submitter</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="submitter.html#job-submitter">Job Submitter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="submitter.html#autosix">AutoSix</a></li>
 </ul>
 </li>
 </ul>
@@ -114,6 +112,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../modules/constants.html">Constants Definitions</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../modules/constants.html#constants-general">Constants: General</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modules/constants.html#constants-external-paths">Constants: External Paths</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/constants.html#constants-autosix">Constants: Autosix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modules/constants.html#constants-forced-da-analysis">Constants: Forced DA Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modules/constants.html#constants-machine-settings-info">Constants: Machine Settings Info</a></li>
 </ul>
@@ -126,6 +125,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../modules/htc.html">HTCondor Tools</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../modules/htc.html#htcondor-utilities">HTCondor Utilities</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modules/htc.html#mask-resolver">Mask Resolver</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/sixdesk_tools.html">Sixdesk Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../modules/sixdesk_tools.html#create-sixdesk-workspace">Create SixDesk Workspace</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/sixdesk_tools.html#sixdesk-submission-utils">SixDesk Submission Utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/sixdesk_tools.html#post-process-da">Post Process DA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/sixdesk_tools.html#sixdesk-utilities">SixDesk Utilities</a></li>
 </ul>
 </li>
 </ul>
@@ -174,13 +180,13 @@
     
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>Machine Settings Info</li>
+      <li>Machine Information Tools</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="../_sources/entrypoints/machine_settings_info.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/entrypoints/machine_info.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -194,7 +200,7 @@
            <div itemprop="articleBody">
             
   <div class="section" id="module-pylhc.machine_settings_info">
-<span id="machine-settings-info"></span><h1>Machine Settings Info<a class="headerlink" href="#module-pylhc.machine_settings_info" title="Permalink to this headline">¶</a></h1>
+<span id="machine-information-tools"></span><h1>Machine Information Tools<a class="headerlink" href="#module-pylhc.machine_settings_info" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="print-machine-settings-overview">
 <h2>Print Machine Settings Overview<a class="headerlink" href="#print-machine-settings-overview" title="Permalink to this headline">¶</a></h2>
 <p>Prints an overview over the machine settings at a provided given time, or the current settings if
@@ -218,6 +224,11 @@ optional arguments:
   --out OUT, -o OUT     Output path.
 </pre></div>
 </div>
+<dl class="field-list simple">
+<dt class="field-odd">author</dt>
+<dd class="field-odd"><p>jdilly</p>
+</dd>
+</dl>
 <dl class="py data">
 <dt id="pylhc.machine_settings_info.DEFAULT_BP_RE">
 <code class="sig-prename descclassname">pylhc.machine_settings_info.</code><code class="sig-name descname">DEFAULT_BP_RE</code><em class="property"> = '^(RAMP|SQUEEZE)[_-]'</em><a class="headerlink" href="#pylhc.machine_settings_info.DEFAULT_BP_RE" title="Permalink to this definition">¶</a></dt>
@@ -299,10 +310,10 @@ Default: <code class="docutils literal notranslate"><span class="pre">None</span
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../modules/constants.html" class="btn btn-neutral float-right" title="Constants Definitions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="submitter.html" class="btn btn-neutral float-right" title="HTCondor Job Submitter" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="job_submitter.html" class="btn btn-neutral float-left" title="HTCondor Job Submitter" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="analysis.html" class="btn btn-neutral float-left" title="Analysis Tools" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -312,7 +323,7 @@ Default: <code class="docutils literal notranslate"><span class="pre">None</span
   <div role="contentinfo">
     <p>
         
-        &copy; Copyright 
+        &copy; Copyright 2019-2020, pyLHC/OMC-TEAM
 
     </p>
   </div>

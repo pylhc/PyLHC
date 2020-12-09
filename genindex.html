@@ -90,20 +90,18 @@
             
               <p class="caption"><span class="caption-text">Entrypoints</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="entrypoints/bsrt_analysis.html">BSRT Analysis</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="entrypoints/bsrt_analysis.html#id1">BSRT Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="entrypoints/analysis.html">Analysis Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="entrypoints/analysis.html#bsrt-analysis">BSRT Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="entrypoints/analysis.html#forced-da-analysis">Forced DA Analysis</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="entrypoints/forced_da_analysis.html">Forced DA Analysis</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="entrypoints/forced_da_analysis.html#id1">Forced DA Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="entrypoints/machine_info.html">Machine Information Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="entrypoints/machine_info.html#print-machine-settings-overview">Print Machine Settings Overview</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="entrypoints/job_submitter.html">HTCondor Job Submitter</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="entrypoints/job_submitter.html#job-submitter">Job Submitter</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="entrypoints/machine_settings_info.html">Machine Settings Info</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="entrypoints/machine_settings_info.html#print-machine-settings-overview">Print Machine Settings Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="entrypoints/submitter.html">HTCondor Job Submitter</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="entrypoints/submitter.html#job-submitter">Job Submitter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="entrypoints/submitter.html#autosix">AutoSix</a></li>
 </ul>
 </li>
 </ul>
@@ -112,6 +110,7 @@
 <li class="toctree-l1"><a class="reference internal" href="modules/constants.html">Constants Definitions</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="modules/constants.html#constants-general">Constants: General</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/constants.html#constants-external-paths">Constants: External Paths</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/constants.html#constants-autosix">Constants: Autosix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/constants.html#constants-forced-da-analysis">Constants: Forced DA Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/constants.html#constants-machine-settings-info">Constants: Machine Settings Info</a></li>
 </ul>
@@ -124,6 +123,13 @@
 <li class="toctree-l1"><a class="reference internal" href="modules/htc.html">HTCondor Tools</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="modules/htc.html#htcondor-utilities">HTCondor Utilities</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/htc.html#mask-resolver">Mask Resolver</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules/sixdesk_tools.html">Sixdesk Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/sixdesk_tools.html#create-sixdesk-workspace">Create SixDesk Workspace</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/sixdesk_tools.html#sixdesk-submission-utils">SixDesk Submission Utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/sixdesk_tools.html#post-process-da">Post Process DA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/sixdesk_tools.html#sixdesk-utilities">SixDesk Utilities</a></li>
 </ul>
 </li>
 </ul>
@@ -196,11 +202,15 @@
  <a href="#B"><strong>B</strong></a>
  | <a href="#C"><strong>C</strong></a>
  | <a href="#D"><strong>D</strong></a>
+ | <a href="#E"><strong>E</strong></a>
  | <a href="#F"><strong>F</strong></a>
  | <a href="#G"><strong>G</strong></a>
+ | <a href="#I"><strong>I</strong></a>
+ | <a href="#K"><strong>K</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
  | <a href="#P"><strong>P</strong></a>
+ | <a href="#R"><strong>R</strong></a>
  | <a href="#S"><strong>S</strong></a>
  | <a href="#W"><strong>W</strong></a>
  
@@ -208,7 +218,7 @@
 <h2 id="B">B</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="entrypoints/forced_da_analysis.html#pylhc.forced_da_analysis.BoolOrPathOrDataFrame">BoolOrPathOrDataFrame (class in pylhc.forced_da_analysis)</a>
+      <li><a href="entrypoints/analysis.html#pylhc.forced_da_analysis.BoolOrPathOrDataFrame">BoolOrPathOrDataFrame (class in pylhc.forced_da_analysis)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -216,11 +226,27 @@
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/htc.html#pylhc.htc.mask.create_jobs_from_mask">create_jobs_from_mask() (in module pylhc.htc.mask)</a>
+      <li><a href="modules/sixdesk_tools.html#pylhc.sixdesk_tools.utils.check_mask">check_mask() (in module pylhc.sixdesk_tools.utils)</a>
+</li>
+      <li><a href="entrypoints/submitter.html#pylhc.job_submitter.check_replace_dict">check_replace_dict() (in module pylhc.job_submitter)</a>
+</li>
+      <li><a href="modules/sixdesk_tools.html#pylhc.sixdesk_tools.submit.check_sixtrack_input">check_sixtrack_input() (in module pylhc.sixdesk_tools.submit)</a>
+</li>
+      <li><a href="modules/sixdesk_tools.html#pylhc.sixdesk_tools.submit.check_sixtrack_output">check_sixtrack_output() (in module pylhc.sixdesk_tools.submit)</a>
+</li>
+      <li><a href="modules/sixdesk_tools.html#pylhc.sixdesk_tools.utils.check_stage">check_stage() (in module pylhc.sixdesk_tools.utils)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/sixdesk_tools.html#pylhc.sixdesk_tools.post_process_da.create_da_tfs">create_da_tfs() (in module pylhc.sixdesk_tools.post_process_da)</a>
+</li>
+      <li><a href="modules/sixdesk_tools.html#pylhc.sixdesk_tools.create_workspace.create_job">create_job() (in module pylhc.sixdesk_tools.create_workspace)</a>
+</li>
+      <li><a href="modules/htc.html#pylhc.htc.mask.create_jobs_from_mask">create_jobs_from_mask() (in module pylhc.htc.mask)</a>
+</li>
       <li><a href="modules/htc.html#pylhc.htc.utils.create_multijob_for_bashfiles">create_multijob_for_bashfiles() (in module pylhc.htc.utils)</a>
+</li>
+      <li><a href="modules/sixdesk_tools.html#pylhc.sixdesk_tools.post_process_da.create_polar_plots">create_polar_plots() (in module pylhc.sixdesk_tools.post_process_da)</a>
 </li>
       <li><a href="modules/htc.html#pylhc.htc.utils.create_subfile_from_job">create_subfile_from_job() (in module pylhc.htc.utils)</a>
 </li>
@@ -230,7 +256,15 @@
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="entrypoints/machine_settings_info.html#pylhc.machine_settings_info.DEFAULT_BP_RE">DEFAULT_BP_RE (in module pylhc.machine_settings_info)</a>
+      <li><a href="entrypoints/machine_info.html#pylhc.machine_settings_info.DEFAULT_BP_RE">DEFAULT_BP_RE (in module pylhc.machine_settings_info)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="E">E</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/sixdesk_tools.html#pylhc.sixdesk_tools.post_process_da.extract_da_data_from_db">extract_da_data_from_db() (in module pylhc.sixdesk_tools.post_process_da)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -250,11 +284,11 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/data_extract.html#pylhc.data_extract.lsa.LSAClient.find_trims_at_time">find_trims_at_time() (pylhc.data_extract.lsa.LSAClient method)</a>
 </li>
-      <li><a href="entrypoints/forced_da_analysis.html#pylhc.forced_da_analysis.fun_exp_decay">fun_exp_decay() (in module pylhc.forced_da_analysis)</a>
+      <li><a href="entrypoints/analysis.html#pylhc.forced_da_analysis.fun_exp_decay">fun_exp_decay() (in module pylhc.forced_da_analysis)</a>
 </li>
-      <li><a href="entrypoints/forced_da_analysis.html#pylhc.forced_da_analysis.fun_exp_sigma">fun_exp_sigma() (in module pylhc.forced_da_analysis)</a>
+      <li><a href="entrypoints/analysis.html#pylhc.forced_da_analysis.fun_exp_sigma">fun_exp_sigma() (in module pylhc.forced_da_analysis)</a>
 </li>
-      <li><a href="entrypoints/forced_da_analysis.html#pylhc.forced_da_analysis.fun_linear">fun_linear() (in module pylhc.forced_da_analysis)</a>
+      <li><a href="entrypoints/analysis.html#pylhc.forced_da_analysis.fun_linear">fun_linear() (in module pylhc.forced_da_analysis)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -262,14 +296,16 @@
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/htc.html#pylhc.htc.mask.generate_jobdf_index">generate_jobdf_index() (in module pylhc.htc.mask)</a>
+</li>
       <li><a href="modules/data_extract.html#pylhc.data_extract.lsa.LSAClient.get_beamprocess_info">get_beamprocess_info() (pylhc.data_extract.lsa.LSAClient method)</a>
 </li>
-      <li><a href="entrypoints/machine_settings_info.html#pylhc.machine_settings_info.get_info">get_info() (in module pylhc.machine_settings_info)</a>
-</li>
-      <li><a href="modules/data_extract.html#pylhc.data_extract.lsa.LSAClient.get_knob_circuits">get_knob_circuits() (pylhc.data_extract.lsa.LSAClient method)</a>
+      <li><a href="entrypoints/machine_info.html#pylhc.machine_settings_info.get_info">get_info() (in module pylhc.machine_settings_info)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/data_extract.html#pylhc.data_extract.lsa.LSAClient.get_knob_circuits">get_knob_circuits() (pylhc.data_extract.lsa.LSAClient method)</a>
+</li>
       <li><a href="modules/data_extract.html#pylhc.data_extract.lsa.LSAClient.get_madx_name_from_circuit">get_madx_name_from_circuit() (pylhc.data_extract.lsa.LSAClient method)</a>
 </li>
       <li><a href="modules/constants.html#pylhc.constants.general.get_proton_beta">get_proton_beta() (in module pylhc.constants.general)</a>
@@ -279,10 +315,30 @@
   </ul></td>
 </tr></table>
 
+<h2 id="I">I</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/sixdesk_tools.html#pylhc.sixdesk_tools.create_workspace.init_workspace">init_workspace() (in module pylhc.sixdesk_tools.create_workspace)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/sixdesk_tools.html#pylhc.sixdesk_tools.utils.is_locked">is_locked() (in module pylhc.sixdesk_tools.utils)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="K">K</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="entrypoints/submitter.html#pylhc.job_submitter.keys_to_path">keys_to_path() (in module pylhc.job_submitter)</a>
+</li>
+  </ul></td>
+</tr></table>
+
 <h2 id="L">L</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="entrypoints/machine_settings_info.html#pylhc.machine_settings_info.log_summary">log_summary() (in module pylhc.machine_settings_info)</a>
+      <li><a href="entrypoints/machine_info.html#pylhc.machine_settings_info.log_summary">log_summary() (in module pylhc.machine_settings_info)</a>
 </li>
       <li><a href="modules/data_extract.html#pylhc.data_extract.lsa.LSA">LSA (class in pylhc.data_extract.lsa)</a>
 </li>
@@ -298,13 +354,19 @@
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="entrypoints/submitter.html#pylhc.autosix.main">main() (in module pylhc.autosix)</a>
+</li>
       <li><a href="modules/htc.html#pylhc.htc.utils.make_subfile">make_subfile() (in module pylhc.htc.utils)</a>
 </li>
       <li>
     module
 
       <ul>
-        <li><a href="entrypoints/bsrt_analysis.html#module-pylhc.BSRT_analysis">pylhc.BSRT_analysis</a>
+        <li><a href="entrypoints/submitter.html#module-pylhc.autosix">pylhc.autosix</a>
+</li>
+        <li><a href="entrypoints/analysis.html#module-pylhc.bsrt_analysis">pylhc.bsrt_analysis</a>
+</li>
+        <li><a href="modules/constants.html#module-pylhc.constants.autosix">pylhc.constants.autosix</a>
 </li>
         <li><a href="modules/constants.html#module-pylhc.constants.external_paths">pylhc.constants.external_paths</a>
 </li>
@@ -318,15 +380,23 @@
 </li>
         <li><a href="modules/data_extract.html#module-pylhc.data_extract.timber">pylhc.data_extract.timber</a>
 </li>
-        <li><a href="entrypoints/forced_da_analysis.html#module-pylhc.forced_da_analysis">pylhc.forced_da_analysis</a>
+        <li><a href="entrypoints/analysis.html#module-pylhc.forced_da_analysis">pylhc.forced_da_analysis</a>
 </li>
         <li><a href="modules/htc.html#module-pylhc.htc.mask">pylhc.htc.mask</a>
 </li>
         <li><a href="modules/htc.html#module-pylhc.htc.utils">pylhc.htc.utils</a>
 </li>
-        <li><a href="entrypoints/job_submitter.html#module-pylhc.job_submitter">pylhc.job_submitter</a>
+        <li><a href="entrypoints/submitter.html#module-pylhc.job_submitter">pylhc.job_submitter</a>
 </li>
-        <li><a href="entrypoints/machine_settings_info.html#module-pylhc.machine_settings_info">pylhc.machine_settings_info</a>
+        <li><a href="entrypoints/machine_info.html#module-pylhc.machine_settings_info">pylhc.machine_settings_info</a>
+</li>
+        <li><a href="modules/sixdesk_tools.html#module-pylhc.sixdesk_tools.create_workspace">pylhc.sixdesk_tools.create_workspace</a>
+</li>
+        <li><a href="modules/sixdesk_tools.html#module-pylhc.sixdesk_tools.post_process_da">pylhc.sixdesk_tools.post_process_da</a>
+</li>
+        <li><a href="modules/sixdesk_tools.html#module-pylhc.sixdesk_tools.submit">pylhc.sixdesk_tools.submit</a>
+</li>
+        <li><a href="modules/sixdesk_tools.html#module-pylhc.sixdesk_tools.utils">pylhc.sixdesk_tools.utils</a>
 </li>
       </ul></li>
   </ul></td>
@@ -335,17 +405,35 @@
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="entrypoints/forced_da_analysis.html#pylhc.forced_da_analysis.PathOrDataframe">PathOrDataframe (in module pylhc.forced_da_analysis)</a>
+      <li><a href="entrypoints/analysis.html#pylhc.forced_da_analysis.PathOrDataframe">PathOrDataframe (in module pylhc.forced_da_analysis)</a>
 </li>
-      <li><a href="entrypoints/forced_da_analysis.html#pylhc.forced_da_analysis.PathOrPagestore">PathOrPagestore (in module pylhc.forced_da_analysis)</a>
+      <li><a href="entrypoints/analysis.html#pylhc.forced_da_analysis.PathOrPagestore">PathOrPagestore (in module pylhc.forced_da_analysis)</a>
 </li>
-      <li><a href="entrypoints/forced_da_analysis.html#pylhc.forced_da_analysis.PathOrString">PathOrString (in module pylhc.forced_da_analysis)</a>
+      <li><a href="entrypoints/analysis.html#pylhc.forced_da_analysis.PathOrString">PathOrString (in module pylhc.forced_da_analysis)</a>
+</li>
+      <li><a href="modules/sixdesk_tools.html#pylhc.sixdesk_tools.post_process_da.plot_polar">plot_polar() (in module pylhc.sixdesk_tools.post_process_da)</a>
+</li>
+      <li><a href="modules/sixdesk_tools.html#pylhc.sixdesk_tools.post_process_da.post_process_da">post_process_da() (in module pylhc.sixdesk_tools.post_process_da)</a>
 </li>
       <li>
-    pylhc.BSRT_analysis
+    pylhc.autosix
 
       <ul>
-        <li><a href="entrypoints/bsrt_analysis.html#module-pylhc.BSRT_analysis">module</a>
+        <li><a href="entrypoints/submitter.html#module-pylhc.autosix">module</a>
+</li>
+      </ul></li>
+      <li>
+    pylhc.bsrt_analysis
+
+      <ul>
+        <li><a href="entrypoints/analysis.html#module-pylhc.bsrt_analysis">module</a>
+</li>
+      </ul></li>
+      <li>
+    pylhc.constants.autosix
+
+      <ul>
+        <li><a href="modules/constants.html#module-pylhc.constants.autosix">module</a>
 </li>
       </ul></li>
       <li>
@@ -376,8 +464,6 @@
         <li><a href="modules/constants.html#module-pylhc.constants.machine_settings_info">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pylhc.data_extract.lsa
 
@@ -385,6 +471,8 @@
         <li><a href="modules/data_extract.html#module-pylhc.data_extract.lsa">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pylhc.data_extract.timber
 
@@ -396,7 +484,7 @@
     pylhc.forced_da_analysis
 
       <ul>
-        <li><a href="entrypoints/forced_da_analysis.html#module-pylhc.forced_da_analysis">module</a>
+        <li><a href="entrypoints/analysis.html#module-pylhc.forced_da_analysis">module</a>
 </li>
       </ul></li>
       <li>
@@ -417,27 +505,79 @@
     pylhc.job_submitter
 
       <ul>
-        <li><a href="entrypoints/job_submitter.html#module-pylhc.job_submitter">module</a>
+        <li><a href="entrypoints/submitter.html#module-pylhc.job_submitter">module</a>
 </li>
       </ul></li>
       <li>
     pylhc.machine_settings_info
 
       <ul>
-        <li><a href="entrypoints/machine_settings_info.html#module-pylhc.machine_settings_info">module</a>
+        <li><a href="entrypoints/machine_info.html#module-pylhc.machine_settings_info">module</a>
 </li>
       </ul></li>
+      <li>
+    pylhc.sixdesk_tools.create_workspace
+
+      <ul>
+        <li><a href="modules/sixdesk_tools.html#module-pylhc.sixdesk_tools.create_workspace">module</a>
+</li>
+      </ul></li>
+      <li>
+    pylhc.sixdesk_tools.post_process_da
+
+      <ul>
+        <li><a href="modules/sixdesk_tools.html#module-pylhc.sixdesk_tools.post_process_da">module</a>
+</li>
+      </ul></li>
+      <li>
+    pylhc.sixdesk_tools.submit
+
+      <ul>
+        <li><a href="modules/sixdesk_tools.html#module-pylhc.sixdesk_tools.submit">module</a>
+</li>
+      </ul></li>
+      <li>
+    pylhc.sixdesk_tools.utils
+
+      <ul>
+        <li><a href="modules/sixdesk_tools.html#module-pylhc.sixdesk_tools.utils">module</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="R">R</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/sixdesk_tools.html#pylhc.sixdesk_tools.create_workspace.remove_twiss_fail_check">remove_twiss_fail_check() (in module pylhc.sixdesk_tools.create_workspace)</a>
+</li>
   </ul></td>
 </tr></table>
 
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/htc.html#pylhc.htc.utils.submit_jobfile">submit_jobfile() (in module pylhc.htc.utils)</a>
+      <li><a href="entrypoints/submitter.html#pylhc.autosix.setup_and_run">setup_and_run() (in module pylhc.autosix)</a>
+</li>
+      <li><a href="modules/sixdesk_tools.html#pylhc.sixdesk_tools.utils.should_run_stage">should_run_stage() (in module pylhc.sixdesk_tools.utils)</a>
+</li>
+      <li><a href="modules/sixdesk_tools.html#pylhc.sixdesk_tools.submit.sixdb_cmd">sixdb_cmd() (in module pylhc.sixdesk_tools.submit)</a>
+</li>
+      <li><a href="modules/sixdesk_tools.html#pylhc.sixdesk_tools.submit.sixdb_load">sixdb_load() (in module pylhc.sixdesk_tools.submit)</a>
+</li>
+      <li><a href="modules/sixdesk_tools.html#pylhc.sixdesk_tools.utils.stage_done">stage_done() (in module pylhc.sixdesk_tools.utils)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="entrypoints/forced_da_analysis.html#pylhc.forced_da_analysis.swap_fun_parameters">swap_fun_parameters() (in module pylhc.forced_da_analysis)</a>
+      <li><a href="modules/sixdesk_tools.html#pylhc.sixdesk_tools.utils.StageSkip">StageSkip</a>
+</li>
+      <li><a href="modules/htc.html#pylhc.htc.utils.submit_jobfile">submit_jobfile() (in module pylhc.htc.utils)</a>
+</li>
+      <li><a href="modules/sixdesk_tools.html#pylhc.sixdesk_tools.submit.submit_mask">submit_mask() (in module pylhc.sixdesk_tools.submit)</a>
+</li>
+      <li><a href="modules/sixdesk_tools.html#pylhc.sixdesk_tools.submit.submit_sixtrack">submit_sixtrack() (in module pylhc.sixdesk_tools.submit)</a>
+</li>
+      <li><a href="entrypoints/analysis.html#pylhc.forced_da_analysis.swap_fun_parameters">swap_fun_parameters() (in module pylhc.forced_da_analysis)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -449,9 +589,9 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="entrypoints/machine_settings_info.html#pylhc.machine_settings_info.write_knob_defitions">write_knob_defitions() (in module pylhc.machine_settings_info)</a>
+      <li><a href="entrypoints/machine_info.html#pylhc.machine_settings_info.write_knob_defitions">write_knob_defitions() (in module pylhc.machine_settings_info)</a>
 </li>
-      <li><a href="entrypoints/machine_settings_info.html#pylhc.machine_settings_info.write_summary">write_summary() (in module pylhc.machine_settings_info)</a>
+      <li><a href="entrypoints/machine_info.html#pylhc.machine_settings_info.write_summary">write_summary() (in module pylhc.machine_settings_info)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -469,7 +609,7 @@
   <div role="contentinfo">
     <p>
         
-        &copy; Copyright 
+        &copy; Copyright 2019-2020, pyLHC/OMC-TEAM
 
     </p>
   </div>

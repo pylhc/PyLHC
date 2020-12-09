@@ -90,20 +90,18 @@
             
               <p class="caption"><span class="caption-text">Entrypoints</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../entrypoints/bsrt_analysis.html">BSRT Analysis</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../entrypoints/bsrt_analysis.html#id1">BSRT Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../entrypoints/analysis.html">Analysis Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../entrypoints/analysis.html#bsrt-analysis">BSRT Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../entrypoints/analysis.html#forced-da-analysis">Forced DA Analysis</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../entrypoints/forced_da_analysis.html">Forced DA Analysis</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../entrypoints/forced_da_analysis.html#id1">Forced DA Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../entrypoints/machine_info.html">Machine Information Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../entrypoints/machine_info.html#print-machine-settings-overview">Print Machine Settings Overview</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../entrypoints/job_submitter.html">HTCondor Job Submitter</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../entrypoints/job_submitter.html#job-submitter">Job Submitter</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../entrypoints/machine_settings_info.html">Machine Settings Info</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../entrypoints/machine_settings_info.html#print-machine-settings-overview">Print Machine Settings Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../entrypoints/submitter.html">HTCondor Job Submitter</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../entrypoints/submitter.html#job-submitter">Job Submitter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../entrypoints/submitter.html#autosix">AutoSix</a></li>
 </ul>
 </li>
 </ul>
@@ -112,6 +110,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../modules/constants.html">Constants Definitions</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../modules/constants.html#constants-general">Constants: General</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modules/constants.html#constants-external-paths">Constants: External Paths</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/constants.html#constants-autosix">Constants: Autosix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modules/constants.html#constants-forced-da-analysis">Constants: Forced DA Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modules/constants.html#constants-machine-settings-info">Constants: Machine Settings Info</a></li>
 </ul>
@@ -124,6 +123,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../modules/htc.html">HTCondor Tools</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../modules/htc.html#htcondor-utilities">HTCondor Utilities</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modules/htc.html#mask-resolver">Mask Resolver</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/sixdesk_tools.html">Sixdesk Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../modules/sixdesk_tools.html#create-sixdesk-workspace">Create SixDesk Workspace</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/sixdesk_tools.html#sixdesk-submission-utils">SixDesk Submission Utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/sixdesk_tools.html#post-process-da">Post Process DA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/sixdesk_tools.html#sixdesk-utilities">SixDesk Utilities</a></li>
 </ul>
 </li>
 </ul>
@@ -188,13 +194,19 @@
            <div itemprop="articleBody">
             
   <h1>All modules for which code is available</h1>
-<ul><li><a href="pylhc/constants/general.html">pylhc.constants.general</a></li>
+<ul><li><a href="pylhc/autosix.html">pylhc.autosix</a></li>
+<li><a href="pylhc/constants/general.html">pylhc.constants.general</a></li>
 <li><a href="pylhc/data_extract/lsa.html">pylhc.data_extract.lsa</a></li>
 <li><a href="pylhc/data_extract/timber.html">pylhc.data_extract.timber</a></li>
 <li><a href="pylhc/forced_da_analysis.html">pylhc.forced_da_analysis</a></li>
 <li><a href="pylhc/htc/mask.html">pylhc.htc.mask</a></li>
 <li><a href="pylhc/htc/utils.html">pylhc.htc.utils</a></li>
+<li><a href="pylhc/job_submitter.html">pylhc.job_submitter</a></li>
 <li><a href="pylhc/machine_settings_info.html">pylhc.machine_settings_info</a></li>
+<li><a href="pylhc/sixdesk_tools/create_workspace.html">pylhc.sixdesk_tools.create_workspace</a></li>
+<li><a href="pylhc/sixdesk_tools/post_process_da.html">pylhc.sixdesk_tools.post_process_da</a></li>
+<li><a href="pylhc/sixdesk_tools/submit.html">pylhc.sixdesk_tools.submit</a></li>
+<li><a href="pylhc/sixdesk_tools/utils.html">pylhc.sixdesk_tools.utils</a></li>
 </ul>
 
            </div>
@@ -208,7 +220,7 @@
   <div role="contentinfo">
     <p>
         
-        &copy; Copyright 
+        &copy; Copyright 2019-2020, pyLHC/OMC-TEAM
 
     </p>
   </div>

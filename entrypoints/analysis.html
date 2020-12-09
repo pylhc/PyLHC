@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Forced DA Analysis &mdash; pylhc 0.0.3 documentation</title>
+  <title>Analysis Tools &mdash; pylhc 0.0.3 documentation</title>
   
 
   
@@ -37,8 +37,8 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="HTCondor Job Submitter" href="job_submitter.html" />
-    <link rel="prev" title="BSRT Analysis" href="bsrt_analysis.html" /> 
+    <link rel="next" title="Machine Information Tools" href="machine_info.html" />
+    <link rel="prev" title="Welcome to PyLHC’s documentation!" href="../index.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -92,20 +92,18 @@
             
               <p class="caption"><span class="caption-text">Entrypoints</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="bsrt_analysis.html">BSRT Analysis</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="bsrt_analysis.html#id1">BSRT Analysis</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Analysis Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#bsrt-analysis">BSRT Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#forced-da-analysis">Forced DA Analysis</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Forced DA Analysis</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#id1">Forced DA Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="machine_info.html">Machine Information Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="machine_info.html#print-machine-settings-overview">Print Machine Settings Overview</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="job_submitter.html">HTCondor Job Submitter</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="job_submitter.html#job-submitter">Job Submitter</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="machine_settings_info.html">Machine Settings Info</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="machine_settings_info.html#print-machine-settings-overview">Print Machine Settings Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="submitter.html">HTCondor Job Submitter</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="submitter.html#job-submitter">Job Submitter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="submitter.html#autosix">AutoSix</a></li>
 </ul>
 </li>
 </ul>
@@ -114,6 +112,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../modules/constants.html">Constants Definitions</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../modules/constants.html#constants-general">Constants: General</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modules/constants.html#constants-external-paths">Constants: External Paths</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/constants.html#constants-autosix">Constants: Autosix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modules/constants.html#constants-forced-da-analysis">Constants: Forced DA Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modules/constants.html#constants-machine-settings-info">Constants: Machine Settings Info</a></li>
 </ul>
@@ -126,6 +125,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../modules/htc.html">HTCondor Tools</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../modules/htc.html#htcondor-utilities">HTCondor Utilities</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modules/htc.html#mask-resolver">Mask Resolver</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/sixdesk_tools.html">Sixdesk Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../modules/sixdesk_tools.html#create-sixdesk-workspace">Create SixDesk Workspace</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/sixdesk_tools.html#sixdesk-submission-utils">SixDesk Submission Utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/sixdesk_tools.html#post-process-da">Post Process DA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/sixdesk_tools.html#sixdesk-utilities">SixDesk Utilities</a></li>
 </ul>
 </li>
 </ul>
@@ -174,13 +180,13 @@
     
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>Forced DA Analysis</li>
+      <li>Analysis Tools</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="../_sources/entrypoints/forced_da_analysis.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/entrypoints/analysis.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -193,10 +199,21 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-pylhc.forced_da_analysis">
-<span id="forced-da-analysis"></span><h1>Forced DA Analysis<a class="headerlink" href="#module-pylhc.forced_da_analysis" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="id1">
-<h2>Forced DA Analysis<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+  <div class="section" id="module-pylhc.bsrt_analysis">
+<span id="analysis-tools"></span><h1>Analysis Tools<a class="headerlink" href="#module-pylhc.bsrt_analysis" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="bsrt-analysis">
+<h2>BSRT Analysis<a class="headerlink" href="#bsrt-analysis" title="Permalink to this headline">¶</a></h2>
+<p>Top-level script to query BRST data, then perform an analysis and output the generated plots. The
+script runs through the following steps:
+- Processes the output files of <code class="docutils literal notranslate"><span class="pre">BSRT_logger.py</span></code> for a given timeframe, returns them in as a
+<cite>TfsDataFrame</cite> for further processing.
+- Additionally, plots for quick checks of fit parameters, auxiliary variables and beam evolution
+are generated.
+- If provided a <cite>TfsDataFrame</cite> file with timestamps, plots of the 2D distribution and comparison
+of fit parameters to cross sections are added.</p>
+</div>
+<span class="target" id="module-pylhc.forced_da_analysis"></span><div class="section" id="forced-da-analysis">
+<h2>Forced DA Analysis<a class="headerlink" href="#forced-da-analysis" title="Permalink to this headline">¶</a></h2>
 <p>Top-level script to run the forced DA analysis, following the procedure described in
 <a class="reference external" href="https://journals.aps.org/prab/pdf/10.1103/PhysRevAccelBeams.22.031002">CarlierForcedDA2019</a>.</p>
 <p>Arguments:</p>
@@ -272,6 +289,11 @@ either from omc3 styles or default mpl.</p>
 <p>Default: <code class="docutils literal notranslate"><span class="pre">{}</span></code></p>
 </li>
 </ul>
+<dl class="field-list simple">
+<dt class="field-odd">author</dt>
+<dd class="field-odd"><p>jdilly</p>
+</dd>
+</dl>
 <dl class="py class">
 <dt id="pylhc.forced_da_analysis.BoolOrPathOrDataFrame">
 <em class="property">class </em><code class="sig-prename descclassname">pylhc.forced_da_analysis.</code><code class="sig-name descname">BoolOrPathOrDataFrame</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/forced_da_analysis.html#BoolOrPathOrDataFrame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pylhc.forced_da_analysis.BoolOrPathOrDataFrame" title="Permalink to this definition">¶</a></dt>
@@ -332,10 +354,10 @@ either from omc3 styles or default mpl.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="job_submitter.html" class="btn btn-neutral float-right" title="HTCondor Job Submitter" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="machine_info.html" class="btn btn-neutral float-right" title="Machine Information Tools" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="bsrt_analysis.html" class="btn btn-neutral float-left" title="BSRT Analysis" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="../index.html" class="btn btn-neutral float-left" title="Welcome to PyLHC’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -345,7 +367,7 @@ either from omc3 styles or default mpl.</p>
   <div role="contentinfo">
     <p>
         
-        &copy; Copyright 
+        &copy; Copyright 2019-2020, pyLHC/OMC-TEAM
 
     </p>
   </div>
