@@ -82,13 +82,9 @@ def _get_beta_fit(
     perr = np.sqrt(np.diag(pcov))
 
     # Get the fitted beta and add the errors to get min/max values
-    nstd = 1.
-    popt_up = popt + nstd * perr
-    popt_dw = popt - nstd * perr
-
     beta_fit = beta_function(positions[valid], *popt)
-    beta_fit_up = beta_function(positions, *popt_up)
-    beta_fit_dw = beta_function(positions, *popt_dw)
+    beta_fit_up = beta_function(positions, *(popt + perr))
+    beta_fit_dw = beta_function(positions, *(popt - perr))
 
     beta_fit_err = np.sqrt((1/2) * ((beta_fit - beta_fit_up)**2 + (beta_fit - beta_fit_dw)**2))
 
