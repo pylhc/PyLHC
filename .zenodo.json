@@ -6,14 +6,5 @@
         },
     ],
     "title": "PyLHC",
-    "description": "Additional tools for particle accelerator data analysis and machine information.",
-    "keywords": [
-        "python",
-        "accelerator",
-        "analysis",
-        "htcondor",
-        "sixdesk",
-        "pylhc",
-        "lhc"
-    ],
+    "description": "Additional tools for particle accelerator data analysis and machine information."    
 }
