@@ -178,7 +178,7 @@ def write_bash(
             f.write(f"{SHEBANG}\n")
             if output_dir is not None:
                 f.write(f"mkdir {str(output_dir)}\n")
-            f.write(f"{exec_path} {str(job_dir / job[COLUMN_JOB_FILE])} {cmds}\n")
+            f.write(f"{str(exec_path)} {str(job_dir / job[COLUMN_JOB_FILE])} {cmds}\n")
         shell_scripts[idx] = bash_file_name
     job_df[COLUMN_SHELL_SCRIPT] = shell_scripts
     return job_df

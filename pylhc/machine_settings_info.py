@@ -25,6 +25,9 @@ Can be run from command line, parameters as given in :meth:`print_machine_settin
     --accel ACCEL, -a ACCEL
                           Accelerator name.
     --out OUT, -o OUT     Output path.
+
+
+:author: jdilly
 """
 import re
 from collections import OrderedDict
@@ -47,32 +50,43 @@ DEFAULT_BP_RE = "^(RAMP|SQUEEZE)[_-]"
 
 # Main #########################################################################
 
-
 def _get_params() -> dict:
     """Parse Commandline Arguments and return them as options."""
     return EntryPointParameters(
         time=dict(
-            flags=["--time", "-t"], default=None, type=str, help="Time as 'Y-m-d H:M:S.f' format."
-        ),
+            flags=["--time", "-t"],
+            default=None,
+            type=str,
+            help="Time as 'Y-m-d H:M:S.f' format."),
         knobs=dict(
-            flags=["--knobs", "-k"], default=None, nargs="+", type=str, help="List of knobnames."
-        ),
+            flags=["--knobs", "-k"],
+            default=None,
+            nargs="+",
+            type=str,
+            help="List of knobnames."),
         bp_regexp=dict(
             flags=["--bp_regexp", "-r"],
             default=DEFAULT_BP_RE,
             type=str,
-            help="Beamprocess regexp filter.",
-        ),
-        accel=dict(flags=["--accel", "-a"], default="lhc", type=str, help="Accelerator name."),
-        out=dict(flags=["--out", "-o"], default=None, type=str, help="Output path."),
+            help="Beamprocess regexp filter."),
+        accel=dict(
+            flags=["--accel", "-a"],
+            default='lhc',
+            type=str,
+            help="Accelerator name."),
+        out=dict(
+            flags=["--out", "-o"],
+            default=None,
+            type=str,
+            help="Output path."),
         knob_def=dict(
-            flags=["--knob_def", "-d"], action="store_true", help="Set to extract knob definitions."
-        ),
+            flags=["--knob_def", "-d"],
+            action="store_true",
+            help="Set to extract knob definitions."),
         log=dict(
             flags=["--log", "-l"],
             action="store_true",
-            help="Write summary into log (automatically done if no output path is given).",
-        ),
+            help="Write summary into log (automatically done if no output path is given)."),
     )
 
 
@@ -161,19 +175,17 @@ def write_summary(
 ):
     """Write summary into a **tfs** file."""
     info_tfs = tfs.TfsDataFrame(trims.items(), columns=[const.column_knob, const.column_value])
-    info_tfs.headers = OrderedDict(
-        [
-            (const.head_time, acc_time.cern_utc_string()),
-            (const.head_beamprocess, bp_info.name),
-            (const.head_fill, bp_info.fill),
-            (const.head_beamprocess_start, bp_info.start.cern_utc_string()),
-            (const.head_context_category, bp_info.contextCategory),
-            (const.head_beamprcess_description, bp_info.description),
-            (const.head_optics, o_info.name),
-            (const.head_optics_start, o_info.start.cern_utc_string()),
-            ("Hint:", "All times given in UTC."),
-        ]
-    )
+    info_tfs.headers = OrderedDict([
+        (const.head_time,                   acc_time.cern_utc_string()),
+        (const.head_beamprocess,            bp_info.name),
+        (const.head_fill,                   bp_info.fill),
+        (const.head_beamprocess_start,      bp_info.start.cern_utc_string()),
+        (const.head_context_category,       bp_info.contextCategory),
+        (const.head_beamprcess_description, bp_info.description),
+        (const.head_optics,                 o_info.name),
+        (const.head_optics_start,           o_info.start.cern_utc_string()),
+        ("Hint:",                           "All times given in UTC.")
+    ])
     tfs.write(str(Path(output_path, const.info_name)), info_tfs)
 
 
@@ -202,9 +214,7 @@ def _get_last_beamprocess(bps, acc_time: AccDatetime, regexp: str) -> (str, AccD
     Also returns the start time of the beam-process in utc.
     """
     ts = acc_time.timestamp()
-    LOG.debug(
-        f"Looking for beamprocesses before '{acc_time.cern_utc_string()}', matching '{regexp}'"
-    )
+    LOG.debug(f"Looking for beamprocesses before '{acc_time.cern_utc_string()}', matching '{regexp}'")
     time, name = None, None
     reg = re.compile(regexp, re.IGNORECASE)
     for time, name in reversed(bps):

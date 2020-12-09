@@ -73,7 +73,6 @@ def test_md2162_timberdb(tmp_path):
 
 # Helper -----------------------------------------------------------------------
 
-
 def check_output(output_dir: Path) -> None:
     assert len(list(output_dir.glob("*.pdf"))) == 5
     assert len(list(output_dir.glob("*.tfs"))) == 4

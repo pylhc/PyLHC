@@ -82,6 +82,9 @@ Arguments:
 
   Default: ``{}``
 
+
+:author: jdilly
+
 .. _CarlierForcedDA2019: https://journals.aps.org/prab/pdf/10.1103/PhysRevAccelBeams.22.031002
 """
 import os
