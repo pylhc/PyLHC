@@ -57,6 +57,15 @@ def _get_beta_fit(
 
     def beta_function(x, a, b):
         return a + ((x - b) ** 2) / a
+
+    def err_function(x, popt, pcov):
+        sa, sb, sab = pcov[0,0], pcov[1,1], pcov[0,1]
+        a, b = popt[0], popt[1]
+
+        beta_err = ((a**2 - (x-b)**2) / a**2)**2 * sa
+        beta_err += 4 * ((x-b) / a)**2 * sb
+        beta_err -= 4 * (x-b) * (a**2 - (x-b)**2) / a**3 * sab
+        return beta_err
     
     positions = beta_phase_tfs.reindex(bpms)[f"{S}"]
     beta_phase = beta_phase_tfs.reindex(bpms)[f"{BETA}{plane}"]
@@ -66,27 +75,41 @@ def _get_beta_fit(
     ip_position = (positions[-1] - positions[0]) / 2
     initial_values = (BETA_STAR_ESTIMATION, ip_position)
 
-    # Get the curve fit for the expected 1parabola
+    # Get the curve fit for the expected parabola
     valid = ~(np.isnan(positions) | np.isnan(beta_phase))
+
+    additional_args = {}
+    if sum(beta_phase_err[valid]) != 0:
+        additional_args = {'sigma': beta_phase_err[valid]}
+
     popt, pcov = curve_fit(
         beta_function,
         positions[valid],
         beta_phase[valid],
         p0=initial_values,
-        sigma=beta_phase_err[valid],
         maxfev=1000000,
         absolute_sigma=True,
+        **additional_args,
     )
-
+    
     # Get the error from the covariance matrix
     perr = np.sqrt(np.diag(pcov))
 
     # Get the fitted beta and add the errors to get min/max values
     beta_fit = beta_function(positions[valid], *popt)
-    beta_fit_up = beta_function(positions, *(popt + perr))
-    beta_fit_dw = beta_function(positions, *(popt - perr))
+    beta_fit_err = err_function(positions[valid], popt, pcov)
 
-    beta_fit_err = np.sqrt((1/2) * ((beta_fit - beta_fit_up)**2 + (beta_fit - beta_fit_dw)**2))
+    import matplotlib.pyplot as plt
+    fig, ax = plt.subplots()
+    bfit, = ax.plot(positions[valid], beta_fit[valid])
+    b_meas, = ax.plot(positions[valid], beta_phase[valid], marker='o')
+
+    ax.errorbar(positions[valid], beta_fit[valid], yerr=beta_fit_err)
+    ax.legend((bfit, b_meas), ('β fit', 'β^φ'), loc='upper right', shadow=True)
+
+    plt.show()
+
+    #beta_fit_err qrt((1/2) * ((beta_fit - beta_fit_up)**2 + (beta_fit - beta_fit_dw)**2))
 
     return pd.DataFrame({f"{BETA}{plane}": beta_fit, f"{ERR}{BETA}{plane}": beta_fit_err})
 
