@@ -38,8 +38,7 @@ To use those, you should make sure to install the relevant extra dependencies wi
 
 ## Description
 
-This package provides tools useful in our workflows working on accelerator physical, but that are not neccessary for optics measurements analysis.
-The latter tools can be found in [omc3](https://github.com/pylhc/omc3) (Python 3.7+) or [Beta-Beat.src](https://github.com/pylhc/Beta-Beat.src) (Python 2.7)
+This package provides tools for particle accelerator data analysis, simulations management and machine information extraction; complementing the optics measurement analysis tools of the [omc3 package](https://github.com/pylhc/omc3).
 
 ## Functionality
 
