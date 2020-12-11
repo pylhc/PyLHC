@@ -3,7 +3,7 @@
         {
             "name": "OMC-Team",
             "affiliation": "CERN"
-        },
+        }
     ],
     "title": "PyLHC",
     "description": "Additional tools for particle accelerator data analysis and machine information."    
