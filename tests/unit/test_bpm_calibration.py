@@ -11,15 +11,12 @@ from pylhc import bpm_calibration as calibration
 from pylhc.constants.calibration import BPMS
 
 INPUTS_DIR = Path(__file__).parent.parent / 'inputs' / 'calibration'
-MEASUREMENTS_BETA = INPUTS_DIR / 'measurements' / 'for_beta'
-MEASUREMENTS_DISPERSION = INPUTS_DIR / 'measurements' / 'for_dispersion'
-MEASUREMENTS_SAME_BETA = INPUTS_DIR / 'measurements' / 'same_beta'
-MEASUREMENTS_MISSING_BPM = INPUTS_DIR / 'measurements' / 'missing_bpms'
+MEASUREMENTS = INPUTS_DIR / 'measurements'
 EXPECTED_OUTPUT = INPUTS_DIR / 'output'
 
 
 def test_calibration_same_betabeat(tmp_path):
-    factors = calibration.main(inputdir=MEASUREMENTS_BETA,
+    factors = calibration.main(inputdir=MEASUREMENTS / 'for_beta',
                                outputdir=tmp_path,
                                ips=[1, 4, 5])
 
@@ -71,7 +68,7 @@ def test_no_beta_tfs(tmp_path):
 
 def test_wrong_ip(tmp_path):
     with pytest.raises(ArgumentError) as e:
-        calibration.main(inputdir=MEASUREMENTS_BETA,
+        calibration.main(inputdir=MEASUREMENTS / 'for_beta',
                          outputdir=tmp_path,
                          ips=[15, 22])
 
@@ -80,7 +77,7 @@ def test_wrong_ip(tmp_path):
 
 
 def test_calibration_same_dispersion(tmp_path):
-    factors = calibration.main(inputdir=MEASUREMENTS_DISPERSION,
+    factors = calibration.main(inputdir=MEASUREMENTS / 'for_dispersion',
                                outputdir=tmp_path,
                                method='dispersion',
                                ips=[1,5])
@@ -101,7 +98,7 @@ def test_calibration_same_dispersion(tmp_path):
 
 
 def test_beta_equal(tmp_path):
-    factors = calibration.main(inputdir=MEASUREMENTS_SAME_BETA,
+    factors = calibration.main(inputdir=MEASUREMENTS / 'same_beta',
                                outputdir=tmp_path,
                                method='beta')
 
@@ -115,7 +112,7 @@ def test_beta_equal(tmp_path):
 
 
 def test_missing_bpms(tmp_path):
-    calibration.main(inputdir=MEASUREMENTS_MISSING_BPM,
+    calibration.main(inputdir=MEASUREMENTS / 'missing_bpms',
                      outputdir=tmp_path,
                      method='beta',
                      ips=[1,5])
@@ -128,9 +125,44 @@ def test_missing_bpms(tmp_path):
     
 
 def test_number_in_out(tmp_path):
-    tfs_in = tfs.read(MEASUREMENTS_BETA / 'beta_phase_x.tfs')
-    factors = calibration.main(inputdir=MEASUREMENTS_BETA,
+    tfs_in = tfs.read(MEASUREMENTS / 'for_beta' / 'beta_phase_x.tfs')
+    factors = calibration.main(inputdir=MEASUREMENTS / 'for_beta',
                                outputdir=tmp_path,
                                method='beta')
 
     assert len(factors["X"]) == len(tfs_in)
+
+
+def test_no_error_tracking(tmp_path):
+    # Test with tracking data on ballistic optics at IR4 without noise
+    factors = calibration.main(inputdir=MEASUREMENTS / 'tracking',
+                               outputdir=tmp_path,
+                               ips=[4])
+
+    x_df = factors['X'].reset_index(drop=True)
+    y_df = factors['Y'].reset_index(drop=True)
+    ir4_x_df = factors['X'].reindex(BPMS[4][1]).reset_index(drop=True)
+    ir4_y_df = factors['X'].reindex(BPMS[4][1]).reset_index(drop=True)
+    precision = 1e-3
+    
+    # All factors ≃ 1
+    expected = pd.Series([1.0] * len(factors['X']['CALIBRATION']))
+    assert_series_equal(x_df['CALIBRATION'], expected, atol=precision, check_names=False)
+    assert_series_equal(y_df['CALIBRATION'], expected, atol=precision, check_names=False)
+    
+    # And their error ≃
+    expected = pd.Series([0.0] * len(factors['X']['CALIBRATION']))
+    assert_series_equal(x_df['ERROR_CALIBRATION'], expected, atol=precision, check_names=False)
+    assert_series_equal(y_df['ERROR_CALIBRATION'], expected, atol=precision, check_names=False)
+
+    # Same with fit
+    expected = pd.Series([1.0] * len(ir4_x_df['CALIBRATION_FIT']))
+    assert_series_equal(ir4_x_df['CALIBRATION_FIT'], expected, atol=precision, check_names=False)
+    assert_series_equal(ir4_y_df['CALIBRATION_FIT'], expected, atol=precision, check_names=False)
+    
+    # and its errors
+    expected = pd.Series([0.0] * len(ir4_x_df['ERROR_CALIBRATION_FIT']))
+    assert_series_equal(ir4_x_df['ERROR_CALIBRATION_FIT'], expected, atol=precision, check_names=False)
+    assert_series_equal(ir4_y_df['ERROR_CALIBRATION_FIT'], expected, atol=precision, check_names=False)
+
+
