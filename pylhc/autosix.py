@@ -204,12 +204,21 @@ Arguments:
     Mask to name jobs from replace_dict
 
 
-- **python** *(PathOrStr)*:
+- **python3** *(PathOrStr)*:
 
     Path to python to use with sixdb (python3 with requirements
     installed).
 
     default: ``python3``
+
+
+- **python2** *(PathOrStr)*:
+
+    Path to python to use with run_six.sh (python2 with requirements installed).
+    ONLY THE PATH TO THE DIRECTORY OF THE python BINARY IS NEEDED!
+    And it can't be an Anaconda Distribution.
+
+    default: None (uses the first `python` in path)
 
 
 - **resubmit**:
@@ -321,8 +330,16 @@ def get_params():
         help="Path to executable.",
     )
     params.add_parameter(
-        name="python",
-        default=DEFAULTS["python"],
+        name="python2",
+        default=DEFAULTS["python2"],
+        type=PathOrStr,
+        help=("Path to python to use with run_six.sh (python2 with requirements installed)."
+              " ONLY THE PATH TO THE DIRECTORY OF THE python BINARY IS NEEDED!"
+              " And it can't be an Anaconda Distribution."),
+    )
+    params.add_parameter(
+        name="python3",
+        default=DEFAULTS["python3"],
         type=PathOrStr,
         help="Path to python to use with sixdb (python3 with requirements installed).",
     )
@@ -388,7 +405,8 @@ def main(opt):
             basedir=opt.working_directory,
             # kwargs:
             ssh=opt.ssh,
-            python=opt.python,
+            python2=opt.python2,
+            python3=opt.python3,
             unlock=opt.unlock,
             resubmit=opt.resubmit,
             da_turnstep=opt.da_turnstep,
@@ -426,7 +444,8 @@ def setup_and_run(jobname: str, basedir: Path, **kwargs):
     LOG.info(f"vv---------------- Job {jobname} -------------------vv")
     unlock: bool = kwargs.pop("unlock", False)
     ssh: str = kwargs.pop("ssh", None)
-    python: Union[Path, str] = kwargs.pop("python", DEFAULTS["python"])
+    python2: Union[Path, str] = kwargs.pop("python2", DEFAULTS["python2"])
+    python3: Union[Path, str] = kwargs.pop("python3", DEFAULTS["python3"])
     resubmit: bool = kwargs.pop("resubmit", False)
     da_turnstep: int = kwargs.pop("da_turnstep", DEFAULTS["da_turnstep"])
     ignore_twissfail_check: bool = kwargs.pop("ignore_twissfail_check", False)
@@ -499,7 +518,7 @@ def setup_and_run(jobname: str, basedir: Path, **kwargs):
         > /afs/cern.ch/project/sixtrack/SixDesk_utilities/pro/utilities/bash/run_six.sh -a
         """
         if check_ok:
-            submit_sixtrack(jobname, basedir, ssh=ssh)
+            submit_sixtrack(jobname, basedir, python=python2, ssh=ssh)
             return  # takes even longer
 
     with check_stage(STAGES.check_sixtrack_output, jobname, basedir) as check_ok:
@@ -515,7 +534,7 @@ def setup_and_run(jobname: str, basedir: Path, **kwargs):
         > /afs/cern.ch/project/sixtrack/SixDesk_utilities/pro/utilities/bash/run_six.sh -i
         """
         if check_ok:
-            check_sixtrack_output(jobname, basedir, ssh=ssh, resubmit=resubmit)
+            check_sixtrack_output(jobname, basedir, python=python2, ssh=ssh, resubmit=resubmit)
 
     with check_stage(STAGES.sixdb_load, jobname, basedir) as check_ok:
         """
@@ -524,7 +543,7 @@ def setup_and_run(jobname: str, basedir: Path, **kwargs):
         > python3 /afs/cern.ch/project/sixtrack/SixDesk_utilities/pro/utilities/externals/SixDeskDB/sixdb . load_dir
         """
         if check_ok:
-            sixdb_load(jobname, basedir, python=python, ssh=ssh)
+            sixdb_load(jobname, basedir, python=python3, ssh=ssh)
 
     with check_stage(STAGES.sixdb_cmd, jobname, basedir) as check_ok:
         """
@@ -537,7 +556,7 @@ def setup_and_run(jobname: str, basedir: Path, **kwargs):
         > python3 /afs/cern.ch/project/sixtrack/SixDesk_utilities/pro/utilities/externals/SixDeskDB/sixdb $jobname plot_da_vs_turns
         """
         if check_ok:
-            sixdb_cmd(jobname, basedir, cmd=["da"], python=python, ssh=ssh)
+            sixdb_cmd(jobname, basedir, cmd=["da"], python=python3, ssh=ssh)
 
             # da_vs_turns is broken at the moment (jdilly, 19.10.2020)
             # sixdb_cmd(jobname, basedir, cmd=['da_vs_turns', '-turnstep', str(da_turnstep), '-outfile'],

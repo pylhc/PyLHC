@@ -18,7 +18,7 @@ def find_exact_time_for_beamprocess(acc_time: AccDatetime) -> AccDatetime:
     KnobExtractor, the timing event for SQUEEZE or RAMP.
     I don't think this is correct (jdilly).
     """
-    db = pytimber.LoggingDB()
+    db = pytimber.LoggingDB(source="nxcals")
     t1, t2 = acc_time.sub(days=1).local_string(), acc_time.local_string()
 
     event_ts, event_val = db.get("HX:SRMP-POW", t1, t2)["HX:SRMP-POW"]

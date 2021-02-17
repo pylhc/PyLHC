@@ -49,13 +49,17 @@ def check_sixtrack_input(jobname: str, basedir: Path, ssh: str = None, resubmit:
         LOG.info("Check for input files was successful.")
 
 
-def submit_sixtrack(jobname: str, basedir: Path, ssh: str = None, resubmit: bool = False):
+def submit_sixtrack(jobname: str, basedir: Path, python: Path = None, ssh: str = None, resubmit: bool = False):
     """ Generate simulation files and check if runnable and submit. """
     re_str = "Re-" if resubmit else ""
     LOG.info(f"{re_str}Submitting to sixtrack.")
     sixjobs_path = get_sixjobs_path(jobname, basedir)
+    args = ["-i"] if resubmit else ["-a"]
+    if python is not None:
+        if not python.is_dir():
+            python = python.parent
+        args += ["-P", str(python)]
     try:
-        args = ["-i"] if resubmit else ["-a"]
         start_subprocess([RUNSIX_SH] + args, cwd=sixjobs_path, ssh=ssh)  # throws OSError if failed
     except OSError as e:
         raise StageSkip(
@@ -66,7 +70,7 @@ def submit_sixtrack(jobname: str, basedir: Path, ssh: str = None, resubmit: bool
         LOG.info(f"{re_str}Submitted jobs to Sixtrack")
 
 
-def check_sixtrack_output(jobname: str, basedir: Path, ssh: str = None, resubmit: bool = False):
+def check_sixtrack_output(jobname: str, basedir: Path, python: Union[Path, str], ssh: str = None, resubmit: bool = False):
     """ Checks if the sixtrack output is all there. """
     LOG.info("Checking if sixtrack has finished.")
     sixjobs_path = get_sixjobs_path(jobname, basedir)
@@ -74,12 +78,16 @@ def check_sixtrack_output(jobname: str, basedir: Path, ssh: str = None, resubmit
         start_subprocess([RUNSTATUS_SH], cwd=sixjobs_path, ssh=ssh)
     except OSError as e:
         if resubmit:
-            submit_sixtrack(jobname, basedir, ssh, resubmit=True)
-            raise StageSkip("Resubmitted incomplete sixtrack jobs.")
+            submit_sixtrack(jobname, basedir, python=python, ssh=ssh, resubmit=True)
+            raise StageSkip(
+                f"Sixtrack for {jobname} seems to be incomplete."
+                " Resubmitted incomplete sixtrack jobs."
+                " Wait until they have finished and run again."
+            )
         else:
             raise StageSkip(
                 f"Sixtrack for {jobname} seems to be incomplete."
-                f"Run possibly not finished. Check (debug-) log or your Scheduler."
+                f" Run possibly not finished. Check (debug-) log or your Scheduler."
             ) from e
     else:
         LOG.info("Sixtrack results are all present.")

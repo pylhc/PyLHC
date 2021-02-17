@@ -28,7 +28,8 @@ SIXDESKLOCKFILE = "sixdesklock"
 HEADER_BASEDIR = "BASEDIR"
 
 DEFAULTS = dict(
-    python="python3",
+    python2=None,
+    python3="python3",
     da_turnstep=100,
     executable=MADX_BIN,
 )
