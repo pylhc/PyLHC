@@ -1,5 +1,10 @@
 # pylhc Changelog
 
+## Version 0.1.1
+
+- Added:
+    - `python2` parameter for autosix.
+
 ## Version 0.1.0
 
 - Added:
