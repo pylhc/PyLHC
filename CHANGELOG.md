@@ -1,5 +1,13 @@
 # pylhc Changelog
 
+## Version 0.1.1
+
+- Added:
+    - `python2` parameter for autosix.
+  
+- Changed:
+    - Bugfix for non-unique column names when indexing (`forced_da_analysis`)
+
 ## Version 0.1.0
 
 - Added:

@@ -31,7 +31,7 @@ with README.open("r") as docs:
 DEPENDENCIES = [
     "numpy>=1.19",
     "scipy>=1.4.0",
-    "pandas>=1.0",
+    "pandas>=1.0,<1.2",  # limit because of https://github.com/pandas-dev/pandas/issues/39872
     "matplotlib>=3.2.0",
     "pjlsa>=0.0.14",
     "pytimber>=2.8.0",
