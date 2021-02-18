@@ -3,11 +3,11 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pylhc.autosix &mdash; pylhc 0.1.0 documentation</title>
+  <title>pylhc.autosix &mdash; pylhc 0.1.1 documentation</title>
   
 
   
@@ -17,7 +17,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -30,7 +33,6 @@
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -157,6 +159,8 @@
         <div class="rst-content">
         
           
+
+
 
 
 
@@ -402,12 +406,21 @@
 <span class="sd">    Mask to name jobs from replace_dict</span>
 
 
-<span class="sd">- **python** *(PathOrStr)*:</span>
+<span class="sd">- **python3** *(PathOrStr)*:</span>
 
 <span class="sd">    Path to python to use with sixdb (python3 with requirements</span>
 <span class="sd">    installed).</span>
 
 <span class="sd">    default: ``python3``</span>
+
+
+<span class="sd">- **python2** *(PathOrStr)*:</span>
+
+<span class="sd">    Path to python to use with run_six.sh (python2 with requirements installed).</span>
+<span class="sd">    ONLY THE PATH TO THE DIRECTORY OF THE python BINARY IS NEEDED!</span>
+<span class="sd">    And it can&#39;t be an Anaconda Distribution.</span>
+
+<span class="sd">    default: None (uses the first `python` in path)</span>
 
 
 <span class="sd">- **resubmit**:</span>
@@ -519,8 +532,16 @@
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Path to executable.&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">params</span><span class="o">.</span><span class="n">add_parameter</span><span class="p">(</span>
-        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;python&quot;</span><span class="p">,</span>
-        <span class="n">default</span><span class="o">=</span><span class="n">DEFAULTS</span><span class="p">[</span><span class="s2">&quot;python&quot;</span><span class="p">],</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;python2&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">DEFAULTS</span><span class="p">[</span><span class="s2">&quot;python2&quot;</span><span class="p">],</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">PathOrStr</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;Path to python to use with run_six.sh (python2 with requirements installed).&quot;</span>
+              <span class="s2">&quot; ONLY THE PATH TO THE DIRECTORY OF THE python BINARY IS NEEDED!&quot;</span>
+              <span class="s2">&quot; And it can&#39;t be an Anaconda Distribution.&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">params</span><span class="o">.</span><span class="n">add_parameter</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;python3&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">DEFAULTS</span><span class="p">[</span><span class="s2">&quot;python3&quot;</span><span class="p">],</span>
         <span class="nb">type</span><span class="o">=</span><span class="n">PathOrStr</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Path to python to use with sixdb (python3 with requirements installed).&quot;</span><span class="p">,</span>
     <span class="p">)</span>
@@ -586,7 +607,8 @@
             <span class="n">basedir</span><span class="o">=</span><span class="n">opt</span><span class="o">.</span><span class="n">working_directory</span><span class="p">,</span>
             <span class="c1"># kwargs:</span>
             <span class="n">ssh</span><span class="o">=</span><span class="n">opt</span><span class="o">.</span><span class="n">ssh</span><span class="p">,</span>
-            <span class="n">python</span><span class="o">=</span><span class="n">opt</span><span class="o">.</span><span class="n">python</span><span class="p">,</span>
+            <span class="n">python2</span><span class="o">=</span><span class="n">opt</span><span class="o">.</span><span class="n">python2</span><span class="p">,</span>
+            <span class="n">python3</span><span class="o">=</span><span class="n">opt</span><span class="o">.</span><span class="n">python3</span><span class="p">,</span>
             <span class="n">unlock</span><span class="o">=</span><span class="n">opt</span><span class="o">.</span><span class="n">unlock</span><span class="p">,</span>
             <span class="n">resubmit</span><span class="o">=</span><span class="n">opt</span><span class="o">.</span><span class="n">resubmit</span><span class="p">,</span>
             <span class="n">da_turnstep</span><span class="o">=</span><span class="n">opt</span><span class="o">.</span><span class="n">da_turnstep</span><span class="p">,</span>
@@ -624,7 +646,8 @@
     <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;vv---------------- Job </span><span class="si">{</span><span class="n">jobname</span><span class="si">}</span><span class="s2"> -------------------vv&quot;</span><span class="p">)</span>
     <span class="n">unlock</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;unlock&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
     <span class="n">ssh</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;ssh&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-    <span class="n">python</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;python&quot;</span><span class="p">,</span> <span class="n">DEFAULTS</span><span class="p">[</span><span class="s2">&quot;python&quot;</span><span class="p">])</span>
+    <span class="n">python2</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;python2&quot;</span><span class="p">,</span> <span class="n">DEFAULTS</span><span class="p">[</span><span class="s2">&quot;python2&quot;</span><span class="p">])</span>
+    <span class="n">python3</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;python3&quot;</span><span class="p">,</span> <span class="n">DEFAULTS</span><span class="p">[</span><span class="s2">&quot;python3&quot;</span><span class="p">])</span>
     <span class="n">resubmit</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;resubmit&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
     <span class="n">da_turnstep</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;da_turnstep&quot;</span><span class="p">,</span> <span class="n">DEFAULTS</span><span class="p">[</span><span class="s2">&quot;da_turnstep&quot;</span><span class="p">])</span>
     <span class="n">ignore_twissfail_check</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;ignore_twissfail_check&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
@@ -697,7 +720,7 @@
 <span class="sd">        &gt; /afs/cern.ch/project/sixtrack/SixDesk_utilities/pro/utilities/bash/run_six.sh -a</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">check_ok</span><span class="p">:</span>
-            <span class="n">submit_sixtrack</span><span class="p">(</span><span class="n">jobname</span><span class="p">,</span> <span class="n">basedir</span><span class="p">,</span> <span class="n">ssh</span><span class="o">=</span><span class="n">ssh</span><span class="p">)</span>
+            <span class="n">submit_sixtrack</span><span class="p">(</span><span class="n">jobname</span><span class="p">,</span> <span class="n">basedir</span><span class="p">,</span> <span class="n">python</span><span class="o">=</span><span class="n">python2</span><span class="p">,</span> <span class="n">ssh</span><span class="o">=</span><span class="n">ssh</span><span class="p">)</span>
             <span class="k">return</span>  <span class="c1"># takes even longer</span>
 
     <span class="k">with</span> <span class="n">check_stage</span><span class="p">(</span><span class="n">STAGES</span><span class="o">.</span><span class="n">check_sixtrack_output</span><span class="p">,</span> <span class="n">jobname</span><span class="p">,</span> <span class="n">basedir</span><span class="p">)</span> <span class="k">as</span> <span class="n">check_ok</span><span class="p">:</span>
@@ -713,7 +736,7 @@
 <span class="sd">        &gt; /afs/cern.ch/project/sixtrack/SixDesk_utilities/pro/utilities/bash/run_six.sh -i</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">check_ok</span><span class="p">:</span>
-            <span class="n">check_sixtrack_output</span><span class="p">(</span><span class="n">jobname</span><span class="p">,</span> <span class="n">basedir</span><span class="p">,</span> <span class="n">ssh</span><span class="o">=</span><span class="n">ssh</span><span class="p">,</span> <span class="n">resubmit</span><span class="o">=</span><span class="n">resubmit</span><span class="p">)</span>
+            <span class="n">check_sixtrack_output</span><span class="p">(</span><span class="n">jobname</span><span class="p">,</span> <span class="n">basedir</span><span class="p">,</span> <span class="n">python</span><span class="o">=</span><span class="n">python2</span><span class="p">,</span> <span class="n">ssh</span><span class="o">=</span><span class="n">ssh</span><span class="p">,</span> <span class="n">resubmit</span><span class="o">=</span><span class="n">resubmit</span><span class="p">)</span>
 
     <span class="k">with</span> <span class="n">check_stage</span><span class="p">(</span><span class="n">STAGES</span><span class="o">.</span><span class="n">sixdb_load</span><span class="p">,</span> <span class="n">jobname</span><span class="p">,</span> <span class="n">basedir</span><span class="p">)</span> <span class="k">as</span> <span class="n">check_ok</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -722,7 +745,7 @@
 <span class="sd">        &gt; python3 /afs/cern.ch/project/sixtrack/SixDesk_utilities/pro/utilities/externals/SixDeskDB/sixdb . load_dir</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">check_ok</span><span class="p">:</span>
-            <span class="n">sixdb_load</span><span class="p">(</span><span class="n">jobname</span><span class="p">,</span> <span class="n">basedir</span><span class="p">,</span> <span class="n">python</span><span class="o">=</span><span class="n">python</span><span class="p">,</span> <span class="n">ssh</span><span class="o">=</span><span class="n">ssh</span><span class="p">)</span>
+            <span class="n">sixdb_load</span><span class="p">(</span><span class="n">jobname</span><span class="p">,</span> <span class="n">basedir</span><span class="p">,</span> <span class="n">python</span><span class="o">=</span><span class="n">python3</span><span class="p">,</span> <span class="n">ssh</span><span class="o">=</span><span class="n">ssh</span><span class="p">)</span>
 
     <span class="k">with</span> <span class="n">check_stage</span><span class="p">(</span><span class="n">STAGES</span><span class="o">.</span><span class="n">sixdb_cmd</span><span class="p">,</span> <span class="n">jobname</span><span class="p">,</span> <span class="n">basedir</span><span class="p">)</span> <span class="k">as</span> <span class="n">check_ok</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -735,7 +758,7 @@
 <span class="sd">        &gt; python3 /afs/cern.ch/project/sixtrack/SixDesk_utilities/pro/utilities/externals/SixDeskDB/sixdb $jobname plot_da_vs_turns</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">check_ok</span><span class="p">:</span>
-            <span class="n">sixdb_cmd</span><span class="p">(</span><span class="n">jobname</span><span class="p">,</span> <span class="n">basedir</span><span class="p">,</span> <span class="n">cmd</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;da&quot;</span><span class="p">],</span> <span class="n">python</span><span class="o">=</span><span class="n">python</span><span class="p">,</span> <span class="n">ssh</span><span class="o">=</span><span class="n">ssh</span><span class="p">)</span>
+            <span class="n">sixdb_cmd</span><span class="p">(</span><span class="n">jobname</span><span class="p">,</span> <span class="n">basedir</span><span class="p">,</span> <span class="n">cmd</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;da&quot;</span><span class="p">],</span> <span class="n">python</span><span class="o">=</span><span class="n">python3</span><span class="p">,</span> <span class="n">ssh</span><span class="o">=</span><span class="n">ssh</span><span class="p">)</span>
 
             <span class="c1"># da_vs_turns is broken at the moment (jdilly, 19.10.2020)</span>
             <span class="c1"># sixdb_cmd(jobname, basedir, cmd=[&#39;da_vs_turns&#39;, &#39;-turnstep&#39;, str(da_turnstep), &#39;-outfile&#39;],</span>
@@ -801,28 +824,25 @@
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2019-2020, pyLHC/OMC-TEAM
+        &#169; Copyright 2019-2020, pyLHC/OMC-TEAM.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 

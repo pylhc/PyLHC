@@ -3,11 +3,11 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Data Extraction &mdash; pylhc 0.1.0 documentation</title>
+  <title>Data Extraction &mdash; pylhc 0.1.1 documentation</title>
   
 
   
@@ -17,7 +17,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -30,7 +33,6 @@
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
-        <script src="../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -174,6 +176,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -185,7 +189,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../_sources/modules/data_extract.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -206,24 +210,24 @@
 <p>This module provides useful functions to conveniently wrap the functionality of <code class="docutils literal notranslate"><span class="pre">pjlsa</span></code>.</p>
 <dl class="py class">
 <dt id="pylhc.data_extract.lsa.LSA">
-<em class="property">class </em><code class="sig-prename descclassname">pylhc.data_extract.lsa.</code><code class="sig-name descname">LSA</code><a class="reference internal" href="../_modules/pylhc/data_extract/lsa.html#LSA"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pylhc.data_extract.lsa.LSA" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pylhc.data_extract.lsa.</span></code><code class="sig-name descname"><span class="pre">LSA</span></code><a class="reference internal" href="../_modules/pylhc/data_extract/lsa.html#LSA"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.data_extract.lsa.LSA" title="Permalink to this definition">¶</a></dt>
 <dd><p>Import this class to use LSA like the client without the need to instantiate it.</p>
 </dd></dl>
 
 <dl class="py class">
 <dt id="pylhc.data_extract.lsa.LSAClient">
-<em class="property">class </em><code class="sig-prename descclassname">pylhc.data_extract.lsa.</code><code class="sig-name descname">LSAClient</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">server</span><span class="o">=</span><span class="default_value">'gpn'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/data_extract/lsa.html#LSAClient"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pylhc.data_extract.lsa.LSAClient" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pylhc.data_extract.lsa.</span></code><code class="sig-name descname"><span class="pre">LSAClient</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">server</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'gpn'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/data_extract/lsa.html#LSAClient"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.data_extract.lsa.LSAClient" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extension of the LSAClient.</p>
 <dl class="py method">
 <dt id="pylhc.data_extract.lsa.LSAClient.find_active_beamprocess_at_time">
-<code class="sig-name descname">find_active_beamprocess_at_time</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">acc_time</span><span class="p">:</span> <span class="n">omc3.utils.time_tools.AccDatetime</span></em>, <em class="sig-param"><span class="n">accelerator</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'lhc'</span></em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="../_modules/pylhc/data_extract/lsa.html#LSAClient.find_active_beamprocess_at_time"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pylhc.data_extract.lsa.LSAClient.find_active_beamprocess_at_time" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">find_active_beamprocess_at_time</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">acc_time</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">omc3.utils.time_tools.AccDatetime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accelerator</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'lhc'</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">str</span><a class="reference internal" href="../_modules/pylhc/data_extract/lsa.html#LSAClient.find_active_beamprocess_at_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.data_extract.lsa.LSAClient.find_active_beamprocess_at_time" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find the active beam process at the time given. Same as what online model extractor
 (KnobExtractor) does, but returns empty map for some reason.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="pylhc.data_extract.lsa.LSAClient.find_knob_names">
-<code class="sig-name descname">find_knob_names</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">accelerator</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'lhc'</span></em>, <em class="sig-param"><span class="n">regexp</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">''</span></em><span class="sig-paren">)</span> &#x2192; list<a class="reference internal" href="../_modules/pylhc/data_extract/lsa.html#LSAClient.find_knob_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pylhc.data_extract.lsa.LSAClient.find_knob_names" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">find_knob_names</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">accelerator</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'lhc'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regexp</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">list</span><a class="reference internal" href="../_modules/pylhc/data_extract/lsa.html#LSAClient.find_knob_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.data_extract.lsa.LSAClient.find_knob_names" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return knobs for accelerator.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -240,7 +244,7 @@
 
 <dl class="py method">
 <dt id="pylhc.data_extract.lsa.LSAClient.find_last_fill">
-<code class="sig-name descname">find_last_fill</code><span class="sig-paren">(</span><em class="sig-param">acc_time: omc3.utils.time_tools.AccDatetime</em>, <em class="sig-param">accelerator: str = 'lhc') -&gt; (&lt;class 'str'&gt;</em>, <em class="sig-param">&lt;class 'list'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/data_extract/lsa.html#LSAClient.find_last_fill"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pylhc.data_extract.lsa.LSAClient.find_last_fill" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">find_last_fill</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">acc_time:</span> <span class="pre">omc3.utils.time_tools.AccDatetime</span></em>, <em class="sig-param"><span class="pre">accelerator:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'lhc')</span> <span class="pre">-&gt;</span> <span class="pre">(&lt;class</span> <span class="pre">'str'&gt;</span></em>, <em class="sig-param"><span class="pre">&lt;class</span> <span class="pre">'list'&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/data_extract/lsa.html#LSAClient.find_last_fill"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.data_extract.lsa.LSAClient.find_last_fill" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return last fill name and content.</p>
 <blockquote>
 <div><dl class="simple">
@@ -261,7 +265,7 @@ accelerator (str): Name of the accelerator.</p>
 
 <dl class="py method">
 <dt id="pylhc.data_extract.lsa.LSAClient.find_trims_at_time">
-<code class="sig-name descname">find_trims_at_time</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">beamprocess</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">knobs</span><span class="p">:</span> <span class="n">list</span></em>, <em class="sig-param"><span class="n">acc_time</span><span class="p">:</span> <span class="n">omc3.utils.time_tools.AccDatetime</span></em>, <em class="sig-param"><span class="n">accelerator</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'lhc'</span></em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="../_modules/pylhc/data_extract/lsa.html#LSAClient.find_trims_at_time"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pylhc.data_extract.lsa.LSAClient.find_trims_at_time" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">find_trims_at_time</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">beamprocess</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">knobs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acc_time</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">omc3.utils.time_tools.AccDatetime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accelerator</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'lhc'</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="reference internal" href="../_modules/pylhc/data_extract/lsa.html#LSAClient.find_trims_at_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.data_extract.lsa.LSAClient.find_trims_at_time" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get trims for knobs at specific time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -280,7 +284,7 @@ accelerator (str): Name of the accelerator.</p>
 
 <dl class="py method">
 <dt id="pylhc.data_extract.lsa.LSAClient.get_beamprocess_info">
-<code class="sig-name descname">get_beamprocess_info</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">beamprocess</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/data_extract/lsa.html#LSAClient.get_beamprocess_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pylhc.data_extract.lsa.LSAClient.get_beamprocess_info" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">get_beamprocess_info</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">beamprocess</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/data_extract/lsa.html#LSAClient.get_beamprocess_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.data_extract.lsa.LSAClient.get_beamprocess_info" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get context info of the given beamprocess.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -294,7 +298,7 @@ accelerator (str): Name of the accelerator.</p>
 
 <dl class="py method">
 <dt id="pylhc.data_extract.lsa.LSAClient.get_knob_circuits">
-<code class="sig-name descname">get_knob_circuits</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">knob_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">optics</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; tfs.handler.TfsDataFrame<a class="reference internal" href="../_modules/pylhc/data_extract/lsa.html#LSAClient.get_knob_circuits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pylhc.data_extract.lsa.LSAClient.get_knob_circuits" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">get_knob_circuits</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">knob_name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optics</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">tfs.handler.TfsDataFrame</span><a class="reference internal" href="../_modules/pylhc/data_extract/lsa.html#LSAClient.get_knob_circuits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.data_extract.lsa.LSAClient.get_knob_circuits" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a dataframe of the structure of the knob. Similar to online model extractor
 (KnobExtractor.getKnobHiercarchy)</p>
 <dl class="field-list simple">
@@ -312,7 +316,7 @@ accelerator (str): Name of the accelerator.</p>
 
 <dl class="py method">
 <dt id="pylhc.data_extract.lsa.LSAClient.get_madx_name_from_circuit">
-<code class="sig-name descname">get_madx_name_from_circuit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">circuit</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/data_extract/lsa.html#LSAClient.get_madx_name_from_circuit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pylhc.data_extract.lsa.LSAClient.get_madx_name_from_circuit" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">get_madx_name_from_circuit</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/data_extract/lsa.html#LSAClient.get_madx_name_from_circuit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.data_extract.lsa.LSAClient.get_madx_name_from_circuit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the <code class="docutils literal notranslate"><span class="pre">MAD-X</span></code> Strength Name (Circuit/Knob) from the given circuit name.</p>
 </dd></dl>
 
@@ -320,7 +324,7 @@ accelerator (str): Name of the accelerator.</p>
 
 <dl class="py class">
 <dt id="pylhc.data_extract.lsa.LSAMeta">
-<em class="property">class </em><code class="sig-prename descclassname">pylhc.data_extract.lsa.</code><code class="sig-name descname">LSAMeta</code><a class="reference internal" href="../_modules/pylhc/data_extract/lsa.html#LSAMeta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pylhc.data_extract.lsa.LSAMeta" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">pylhc.data_extract.lsa.</span></code><code class="sig-name descname"><span class="pre">LSAMeta</span></code><a class="reference internal" href="../_modules/pylhc/data_extract/lsa.html#LSAMeta"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.data_extract.lsa.LSAMeta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Metaclass for single instance LSAClient.</p>
 </dd></dl>
 
@@ -330,7 +334,7 @@ accelerator (str): Name of the accelerator.</p>
 <p>This module provides useful functions to conveniently wrap the functionality of <code class="docutils literal notranslate"><span class="pre">pytimber</span></code>.</p>
 <dl class="py function">
 <dt id="pylhc.data_extract.timber.find_exact_time_for_beamprocess">
-<code class="sig-prename descclassname">pylhc.data_extract.timber.</code><code class="sig-name descname">find_exact_time_for_beamprocess</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">acc_time</span><span class="p">:</span> <span class="n">omc3.utils.time_tools.AccDatetime</span></em><span class="sig-paren">)</span> &#x2192; omc3.utils.time_tools.AccDatetime<a class="reference internal" href="../_modules/pylhc/data_extract/timber.html#find_exact_time_for_beamprocess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pylhc.data_extract.timber.find_exact_time_for_beamprocess" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">pylhc.data_extract.timber.</span></code><code class="sig-name descname"><span class="pre">find_exact_time_for_beamprocess</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">acc_time</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">omc3.utils.time_tools.AccDatetime</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">omc3.utils.time_tools.AccDatetime</span><a class="reference internal" href="../_modules/pylhc/data_extract/timber.html#find_exact_time_for_beamprocess"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.data_extract.timber.find_exact_time_for_beamprocess" title="Permalink to this definition">¶</a></dt>
 <dd><p>Finds the last entry where HX:SRMP-POW equals 123. Which is, according to the online model
 KnobExtractor, the timing event for SQUEEZE or RAMP.
 I don’t think this is correct (jdilly).</p>
@@ -344,37 +348,29 @@ I don’t think this is correct (jdilly).</p>
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="htc.html" class="btn btn-neutral float-right" title="HTCondor Tools" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="constants.html" class="btn btn-neutral float-left" title="Constants Definitions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="htc.html" class="btn btn-neutral float-right" title="HTCondor Tools" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="constants.html" class="btn btn-neutral float-left" title="Constants Definitions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2019-2020, pyLHC/OMC-TEAM
+        &#169; Copyright 2019-2020, pyLHC/OMC-TEAM.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 

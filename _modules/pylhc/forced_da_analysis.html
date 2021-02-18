@@ -3,11 +3,11 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pylhc.forced_da_analysis &mdash; pylhc 0.1.0 documentation</title>
+  <title>pylhc.forced_da_analysis &mdash; pylhc 0.1.1 documentation</title>
   
 
   
@@ -17,7 +17,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -30,7 +33,6 @@
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -157,6 +159,8 @@
         <div class="rst-content">
         
           
+
+
 
 
 
@@ -951,7 +955,7 @@
     <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">TIME_COLUMN</span><span class="p">)</span>
     <span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">_convert_time_index</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
     <span class="n">rename_dict</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">plane</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">plane</span><span class="p">:</span>  <span class="c1"># can be XY</span>
         <span class="n">rename_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
             <span class="p">{</span>
                 <span class="sa">f</span><span class="s2">&quot;2J</span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="s2">RES&quot;</span><span class="p">:</span> <span class="n">column_action</span><span class="p">(</span><span class="n">p</span><span class="p">),</span>
@@ -961,7 +965,8 @@
             <span class="p">}</span>
         <span class="p">)</span>
     <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">rename_dict</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s2">&quot;columns&quot;</span><span class="p">)</span>
-    <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">rename_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">rename_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span> <span class="o">*</span> <span class="mf">1e-6</span>
+    <span class="n">renamed_cols</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">rename_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">renamed_cols</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">renamed_cols</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1e-6</span>
     <span class="k">return</span> <span class="n">df</span>
 
 
@@ -1636,28 +1641,25 @@
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2019-2020, pyLHC/OMC-TEAM
+        &#169; Copyright 2019-2020, pyLHC/OMC-TEAM.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
