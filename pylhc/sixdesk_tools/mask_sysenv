@@ -1,0 +1,135 @@
+#!/bin/bash
+# February 29, 2012
+# All the variables the user will not normally want to see!
+# March 25th, 2017
+# synchronising with new scripts + appname
+#
+# app name, used by any platform
+export appName=sixtrack
+# 
+
+# # The path to all scripts etc bin,Bin,scripts, exes, dots
+# export sixdeskpath=/afs/cern.ch/group/si/slap/bin/sixdesk
+# # The following SixTrack version is used for the one-turn
+# # SixTrack run to get the Beta values and for all LSF tasks (except DA)
+# # and the BNL EXE which is the same I hope
+# export SIXTRACKEXE=$sixdeskpath/exes/$appName
+# if test "$BIGNBLZ" != ""
+# then
+#   export SIXTRACKEXE=$sixdeskpath/exes/SixTrack_bignblz_pro
+# fi
+# export SIXTRACKBNLEXE=$sixdeskpath/exes/SixTrack_bnl_pro
+# # Latest DA version from
+# export SIXTRACKDAEXE=$sixdeskpath/exes/SixTrack_crlibm_da_lf95v4200
+
+# The following version of mad-X is used by the mad6t jobs.
+# All now call a madx executable so -X is no longer required.
+export MADX_PATH="%(MADXPATH)s"
+# Doesn't seem to work!
+#export MADX="madx_pro"
+# and the MUST? use for Massimo
+#export MADX="madx_dev"
+# and the new default
+export MADX="%(MADXBIN)s"
+
+export sixdeskplatform=`echo "$platform" | tr '[A-Z]' '[a-z]'`
+
+# Turn ON/OFF CASTOR........... true or false 
+export sixdeskcastor="true"
+#
+if test "$BNL" != ""
+then
+  export sixdeskbnlin="fort.54"
+  export bnlfilenames="beambeam-output.dat beambeamlostID.dat SixTwiss.dat checkdist.dat"
+  export bnlfortnames="fort.52 fort.53 fort.51 fort.97"
+  if test "$sixdeskplatform" = "boinc"
+  then
+    export sixdeskbnlout="fort.10"
+  elif test "$sixdeskplatform" = "cpss"
+  then
+    export sixdeskbnlout=$bnlfortnames
+  elif test "$sixdeskplatform" = "lsf"
+  then
+    export sixdeskbnlout=$bnlfilenames
+  else
+    echo "UNKNOWN sixdeskplatform $sixdeskplatform"
+    exit 1
+  fi
+fi
+
+# Not really needed anymore but must be non-zero!
+export sixdeskcr=1 
+
+export LHCDesName=$LHCDescrip
+export LHCDesHome=$LHCDescrip
+
+export sixdeskhome=$basedir/$workspace/sixjobs
+export sixdesklogs=$scratchdir/sixdesklogs/$workspace
+export sixdesklogdir=$sixdesklogs/$LHCDescrip
+export cronlogs=$scratchdir/cronlogs/$workspace
+export cronlogdir=$cronlogs/$LHCDescrip
+
+export sixdesktrack=$trackdir/track
+
+export sixdeskwork=$scratchdir/work/$workspace/$LHCDescrip
+
+export sixdeskjobs=$sixdeskwork/$sixdeskplatform"jobs"
+export sixdeskjobs_logs=$sixdeskjobs/jobs_logs
+
+export sixdeskstudy=$sixdeskhome/studies/$LHCDescrip
+
+# For BOINC 
+# The SixTrack executable is now ????.
+# export sixdeskpts=boinc:users
+# export boincdir=/afs/cern.ch/user/b/boinc/scratch0
+# export sixdeskboincdirname=$workspace"_"$LHCDescrip
+# # and use boinctest (for Igor and new BOINC release)
+# export sixdeskboinctest=false
+# sixdeskboincdir=$boincdir/boinc/$sixdeskboincdirname
+# if ${sixdeskboinctest} ; then
+#   sixdeskboincdir=$boincdir/boinctest/$sixdeskboincdirname
+# fi
+# export sixdeskboincdir
+export sixdeskparts=`expr $sixdeskpairs \* 2`
+if test "$short" -eq 1 -o "$da" -eq 1
+then
+  sixdeskturns=$turnss
+fi
+if test "$long" -eq 1
+then
+  sixdeskturns=$turnsl
+fi
+if test "$BNL" != ""
+then
+  sixdeskturns=$bnlturns
+fi
+export sixdeskturns
+sixdeskfpopse=`expr $sixdeskturns \* $sixdeskparts`
+#sixdeskfpopse=`expr $sixdeskfpopse \* 2`
+#sixdeskfpopse=`expr $sixdeskfpopse / 3`
+sixdeskfpopse=`expr $sixdeskfpopse / 2`
+#sixdeskfpopse=`expr $sixdeskfpopse \* 3`
+export sixdeskfpopse=$sixdeskfpopse"000000"
+# For CPSS
+# sixdeskprog/uploadProgram Variables
+# sixdeskProgramName, sixdeskFileName, sixdeskTargetFileName
+# sixdeskVersion, sixdeskAuthor, sixdeskDescription
+export sixdeskexec="$sixdeskpath/exes/SixTrack_4411_crlibm_bnl_ifort_icpss.exe"
+export sixdeskOsMin="5.0"
+export sixdeskOsMax="9.9"
+export sixdeskCpuSpeedMin="100"
+export sixdeskclientv=2.5
+export sixdeskProgramName="Sixtrack V4211 Tilt Lost CRLIBM CR BNL"
+export sixdeskFileName="$sixdeskexec"
+export sixdeskTargetFileName="sixtrack.exe"
+export sixdeskVersion="4.2.11 BNL"
+export sixdeskAuthor="Frank Schmidt & Eric McIntosh"
+export sixdeskProgramDescription="Lahey 7.1 Sixtrack[CR] with crlibm made fom .s"
+# sixdeskgroup/createTaskGroup Variables
+# sixdeskTaskGroupName, sixdeskTaskGroupDescription,
+# sixdeskStatus, sixdeskPriority, sixdeskComments
+export sixdeskTaskGroupName=$LOGNAME"_"$workspace"_"$LHCDescrip
+export sixdeskTaskGroupDescription=$workspace"_"$LHCDescrip
+export sixdeskStatus="Active"
+export sixdeskPriority="Normal"
+export sixdeskComments="$LHCDescrip"

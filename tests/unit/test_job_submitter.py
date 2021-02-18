@@ -28,15 +28,10 @@ class TestHTCondorSubmitter:
         and delete the results afterwards manually (so you can check them before."""
         user = "jdilly"
         path = Path("/", "afs", "cern.ch", "user", user[0], user, "htc_temp")
-
-        try:
-            path.mkdir(exist_ok=True)
-        except IOError:
-            return
-        else:
-            with _create_setup(path) as (args, setup):
-                job_submit(**setup)
-                _test_output(args, post_run=False)
+        path.mkdir(exist_ok=True)
+        with _create_setup(path) as (args, setup):
+            job_submit(**setup)
+            _test_output(args, post_run=False)
         # _test_output(args, post_run=True)  # you can use this if you like after htcondor is done
 
 

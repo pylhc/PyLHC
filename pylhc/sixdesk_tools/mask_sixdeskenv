@@ -1,0 +1,311 @@
+#!/bin/bash
+# July 1st, 2012.
+# Better message handling, fewer locks on the database by
+# relying on the study lock, faster run_post???
+# February 29, 2012 using new defaults
+# Tested with job_tracking collision
+# NOTA BENE: there is a new option for a more precise proton mass
+# and also a new flag to ignore tunes (tune=0)
+# and a new bunch_charge option for both collision and injection
+# March 25th, 2017
+# synchronising with new scripts
+
+export pmass=938.272013
+# or you can use the older value
+# by uncommenting the next line
+# export pmass=938.271998
+
+# New bunch_charge variable for fort.3.mother1_[col/inj]
+export bunch_charge=1.1500e+11
+
+# The name of the "study" .le. 16 characters ([a-z A-Z 0-9 + - _ . ,]
+# It must NOT contain a "percent-sign" (replacing "#") nor "_""_"
+# It now includes the Version info e.g. v64lhc
+# (If running mad6t you must have a $LHCDescrip.mask file in the subdirectory mask)
+export LHCDescrip=%(JOBNAME)s
+
+# The workspace for the scripts, sixdesk.log and links to sixtrack_input, track and work, 
+# It must NOT contain a "percent-sign" (replacing "#") nor "__" (two consecutive underscores)
+export workspace=%(WORKSPACE)s
+
+# The directory for the workspace normally $HOME
+initial=`echo $LOGNAME | cut -c 1`
+export basedir=%(BASEDIR)s
+
+# The scratch directory for temporary input files, jobs, sixdesk databases etc (not normally backed up)
+export scratchdir=%(SCRATCHDIR)s
+
+# The root track directory for all the tracking input and output
+# This directory can be used by multiple workspaces for scalability
+# but the default now includes the workspace name (track is added
+# by sysenv to make $sixdesktrackdir and the LHCDescrip is added
+# as necessary by run_six etc etc).
+export trackdir=$scratchdir/$workspace
+
+# The backed up or scratch directory for the mad6t input
+# It may be set to an existing sixtrack_input if you do not need to run mad6t.
+export sixtrack_input=$scratchdir/sixtrack_input/$workspace/$LHCDescrip
+
+# Flag for run_six for re-running cases
+# 0 => Jobs will not be re-submitted, 
+# 1 => Jobs will not be re-submitted if fort.10.gz exists
+# 2 => Jobs will be re-submitted anyway using existing input files
+export sixdeskforce=%(RESUBMISSION)d
+
+# One and one only of the following options must be selected
+# BOINC for LHC@home, LSF for LSF batch, CPSS for Windows desktops at CERN, GRID or HTCondor
+export platform=%(PLATFORM)s
+
+# The message logging level: 0 => basic and error messages, 1 => plus info,
+# >= 2 => + plus info and debug
+export sixdesklevel=%(LOGLEVEL)s
+
+# sixdeskecho = "" => only minimum information is echoed to stdout
+export sixdeskecho="yes please"
+
+# Options for run_mad6t (but sixtrack_inputdir defined above)
+# If CORR_TEST = 1, check_mad6t will copy all the corrector strengths
+# for each seed into one file in sixtrack_inputdir
+export CORR_TEST=0
+
+#If fort_34 is null, the fort.34 files will not be copied to sixtrack_inputdir
+export fort_34=""
+
+# Start and end seed for mad6t
+export istamad=%(FIRSTSEED)d
+export iendmad=%(LASTSEED)d
+
+# Note that all mad6t runs are with the local LSF batch system,
+# even if tracking is being performed on BOINC, CPSS or the GRID,
+# BUT they can now be done interactively with run_mad6t -i !!!
+
+# And set BIGNBLZ to be non-null to use the special bignblz SixTrack
+# available only for LSF and NOT BOINC.
+export BIGNBLZ=""
+
+# LSF batch queue for mad6t jobs. Normally 8nm is enough, but for
+# lhc.D1-D2-MQonly-inj-no-skew study 1nh was necessary.
+export madlsfq=8nh
+export shortlsfq=8nh
+export longlsfq=1nd
+export dalsfq=1nd
+# equivalent queues for htcondor
+export madHTCq=tomorrow
+export shortHTCq=workday
+export longHTCq=testmatch
+export daHTCq=testmatch
+
+# Format: "col" or "inj" ( also for run_six)
+export runtype="%(ENERGY)s"
+# and the beam can be set to "" or b1 or B1 for beam1, or to b2 or B2 for beam2
+# and "_b1" or "_b2" is appended to the mask filename
+export beam=""
+
+# Options for run_six
+# idfor = 0 => closed orbit added, = 1 => initial co-ordinates unchanged
+export idfor=0
+
+#The algorithm for beam-beam interactions 
+# 0 is the "old" way, "1" is the new Erskine/McIntosh algorithm
+export ibtype=0
+
+#general parameters
+# No of particle pairs, normally 30 (other values ARE NOW SUPPORTED
+# in the range 1 to 32
+export sixdeskpairs=%(NPAIRS)d
+
+# seeds for everything except mad6t
+export ista=$istamad
+export iend=$iendmad
+
+# angle step
+export kstep=1
+
+#normalized emittance
+export emit=%(EMITTANCE)f
+export emit_beam=$emit
+
+# Crossing angle for substitution in mask and mother file
+# uncomment it, to make it operational
+# export xing=185
+
+# e0 gamma
+if test $runtype = "inj"
+then
+  export e0=450000.
+  export gamma=479.6
+elif test $runtype = "col"
+then
+  export e0=6500000.
+  export gamma=6927.6
+fi
+
+#phase space dimension
+export dimen=%(DIMENSIONS)d
+
+#switch for chromaticity correction
+# If chrom=0 no correction is applied but two one turn runs are made
+# using chrom_eps to generate sensible values (for info only).
+# If chrom=1 then chromx and chromy are used
+export chrom=0
+export chromx=2.0
+export chromy=2.0
+export chrom_eps=0.0000001
+
+#initial relative momentum deviation
+if test $runtype = "inj"
+then
+  export dpini=0.00075
+elif test $runtype = "col"
+then
+  export dpini=0.00027
+fi
+export dpmax=0.002
+
+#tunes
+# If tune=0, the tunes are ignored.
+export tune=0
+
+# Multiple tunescans can be specified 
+# tunescans will be computed on a straight line from 
+# (tunex,tuney) with gradient deltay/deltax until and including (tunex1,tuney1)
+# The tunes must be 10 <= tune < 100 in format dd.dd[d][d]
+if test $runtype = "inj"
+then
+  #tunes (injection)
+  export tunex=64.282
+  export tuney=59.312
+  export deltax=0.001
+  export deltay=0.001
+  export tunex1=64.282
+  export tuney1=59.312
+elif test $runtype = "col"
+then
+  #tunes (collision)
+  export tunex=62.31
+  export tuney=60.32
+  export deltax=0.001
+  export deltay=0.001
+  export tunex1=62.31
+  export tuney1=60.32
+fi
+# switch for tune scans on a squared domain
+# uncomment it, to make it operational
+# export squaredTuneScan=yes
+
+#switch for Guignard resonance calculation
+export reson=0
+
+#switch for precise tune determination
+export sussix=0
+# Note if sussix = 1, short must be 1 (long/da 0)
+
+# Now we have short or long term parameters
+# only one of short and long may be 1
+#short term parameters
+export short=0
+if test $short -eq 1
+then
+  export ns1s=1
+  export ns2s=10
+  export nss=10
+  #
+  export turnss=1000
+  export turnsse=3
+  export writebins=1
+  # kini=0 is the momemtum detuning and then set to 1
+  export kini=0
+  export kend=5
+  export kmax=5
+  # and set up the LSF job type and queue
+  export lsfq=$shortlsfq
+  export HTCq=$shortHTCq
+  export lsfjobtype=sixmedium
+fi
+ 
+#long term parameters
+export long=1
+if test $long -eq 1
+then
+# amplitudes which must be 0 <= amplitude < 100 in format [d][d][.][d][d][d]
+  export ns1l=%(AMPMIN).3f
+  export ns2l=%(AMPMAX).3f
+  export nsincl=%(AMPSTEP).3f
+  #
+  export turnsl=%(TURNS)d
+  export turnsle=%(TURNSPOWER)d
+  export writebinl=%(WRITEBINS)d
+  export kinil=1
+  export kendl=%(ANGLES)d
+  export kmaxl=%(ANGLES)d
+          # and set up the LSF job type and queue
+  export lsfq=$longlsfq
+  export HTCq=$longHTCq
+  export lsfjobtype=sixtracking
+
+  # reduce angle steps at small angles, achieving a constant density painting of the phase space
+  # export reduce_angs_with_amplitude=10
+fi  
+
+#da parameters 
+
+export da=0
+if test $da -eq 1
+then
+  export sixdeskM="-M 1000000"
+  export lsfq=$dalsfq
+  export HTCq=$daHTCq
+  export lsfjobtype=sixda
+# some physics needed here
+# dimda = 4 or 6 but MUST be set to NOT null for short/long
+  export dimda=4
+  export NO=4
+  ((NO1=NO+1))
+  export NO1
+  export NV=5
+  export turnss=1
+else
+  export dimda=0 
+fi
+
+# Parameters for run_join10
+# Range of tracked turns
+if test $short = 1
+then
+  export turnsemax=$turnsse
+fi
+if test $long = 1
+then
+  export turnsemax=$turnsle
+fi
+
+# For run_post
+if test $long = 1
+then
+  export turnse=$turnsle
+fi
+if test $short = 1
+then
+  export turnse=$turnsse
+fi
+
+# flag for short and long plotting
+# iplot=1 produces plots for each seed 
+# iplot=2 prints as well using $PRINT_CMD
+export iplot=0
+
+# kvar=0 => kend=$kendl, kvar=1 => kend=$kinil
+# kvar should be set to 1 to obtain the DA
+# as a function of the angles (when long=1)
+# The DA over ALL seeds and angles is plotted for each angle
+# even if iplot=0
+if test "$long" -eq 1
+then
+  export kvar=1
+else
+  export kvar=0
+fi
+# BNL variables for bnlelens 
+# Later I could separate out elens and bnl dependencies in sixtrack.s
+# as we may wish to run LHC elens studies
+export BNL=""

@@ -6,6 +6,7 @@ This module provides functionality to resolve and write script masks for ``HTCon
 submission.
 """
 import logging
+import re
 from pathlib import Path
 
 import pandas as pd
@@ -48,6 +49,19 @@ def create_jobs_from_mask(
         jobs[idx] = jobfile_fullpath.name
     job_df[COLUMN_JOB_FILE] = jobs
     return job_df
+
+
+def find_named_variables_in_mask(mask):
+    return set(re.findall(r"%\((\w+)\)", mask))
+
+
+def generate_jobdf_index(old_df, jobid_mask, keys, values):
+    """ Generates index for jobdf from mask for job_id naming. """
+    if not jobid_mask:
+        nold = len(old_df.index) if old_df is not None else 0
+        start = nold-1 if nold > 0 else 0
+        return range(start, start + values.shape[0])
+    return [jobid_mask % dict(zip(keys, v)) for v in values]
 
 
 if __name__ == "__main__":

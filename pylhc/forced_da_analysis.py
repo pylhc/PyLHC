@@ -82,6 +82,9 @@ Arguments:
 
   Default: ``{}``
 
+
+:author: jdilly
+
 .. _CarlierForcedDA2019: https://journals.aps.org/prab/pdf/10.1103/PhysRevAccelBeams.22.031002
 """
 import os
@@ -750,7 +753,7 @@ def _get_old_kick_file(kick_dir, plane):
     df = df.set_index(TIME_COLUMN)
     df.index = _convert_time_index(df.index, path)
     rename_dict = {}
-    for p in plane:
+    for p in plane:  # can be XY
         rename_dict.update(
             {
                 f"2J{p}RES": column_action(p),
@@ -760,7 +763,8 @@ def _get_old_kick_file(kick_dir, plane):
             }
         )
     df = df.rename(rename_dict, axis="columns")
-    df.loc[:, rename_dict.values()] = df.loc[:, rename_dict.values()] * 1e-6
+    renamed_cols = list(set(rename_dict.values()))
+    df.loc[:, renamed_cols] = df.loc[:, renamed_cols] * 1e-6
     return df
 
 
