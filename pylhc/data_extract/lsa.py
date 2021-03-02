@@ -9,13 +9,17 @@ import re
 from contextlib import suppress
 
 import tfs
-from omc3.utils.mock import cern_network_import
+from omc3.utils.mock import cern_network_import, CERNNetworkMockPackage
 from omc3.utils.time_tools import AccDatetime
 
 LOG = logging.getLogger(__name__)
 
 jpype = cern_network_import("jpype")
 pjlsa = cern_network_import("pjlsa")
+try:
+    pjLSAClient = pjlsa.LSAClient
+except ImportError:
+    pjLSAClient = object
 
 RELEVANT_BP_CONTEXTS = ("OPERATIONAL", "MD")
 RELEVANT_BP_CATEGORIES = ("DISCRETE",)
@@ -28,8 +32,15 @@ COL_CIRCUIT = "CIRCUIT"
 PREF_DELTA = "DELTA_"
 
 
-class LSAClient(pjlsa.LSAClient):
+class LSAClient(pjLSAClient):
     """Extension of the LSAClient."""
+    def __getattr__(self, item):
+        """ Overwrite __getattr__ to raise the proper import errors at the proper time."""
+        try:
+            super().__getattr__(item)
+        except AttributeError as e:
+            pjlsa.pjLSAClient  # might raise the Mock-Class import error
+            raise e  # if that worked, raise the actual attribute error
 
     def find_knob_names(self, accelerator: str = "lhc", regexp: str = "") -> list:
         """
