@@ -43,11 +43,11 @@ DEPENDENCIES = [
 EXTRA_DEPENDENCIES = {
     "cern": [
         "omc3[cern]",
-        "jpype1<0.8.0,>=0.7.3",  # limit from pylsa
         "pjlsa>=0.0.14",
-        "pytimber>=2.8.0",
+        "pytimber>=3.0.0",  # NXCALS support
         # "cmmnbuild-dep-manager/@https://gitlab.cern.ch/scripting-tools/cmmnbuild-dep-manager/repository/archive.tar.gz?ref=master",
         "pyjapc",
+        "jpype1",  # pylsa limits version, so install here
     ],
     "test": [
         "pytest>=5.2",

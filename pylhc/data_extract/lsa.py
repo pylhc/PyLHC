@@ -8,15 +8,14 @@ import logging
 import re
 from contextlib import suppress
 
-import jpype
 import tfs
 from omc3.utils.mock import cern_network_import
 from omc3.utils.time_tools import AccDatetime
 
 LOG = logging.getLogger(__name__)
 
+jpype = cern_network_import("jpype")
 pjlsa = cern_network_import("pjlsa")
-pjLSAClient = cern_network_import("pjlsa.LSAClient")
 
 RELEVANT_BP_CONTEXTS = ("OPERATIONAL", "MD")
 RELEVANT_BP_CATEGORIES = ("DISCRETE",)
@@ -29,7 +28,7 @@ COL_CIRCUIT = "CIRCUIT"
 PREF_DELTA = "DELTA_"
 
 
-class LSAClient(pjLSAClient):
+class LSAClient(pjlsa.LSAClient):
     """Extension of the LSAClient."""
 
     def find_knob_names(self, accelerator: str = "lhc", regexp: str = "") -> list:
