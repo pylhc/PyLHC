@@ -11,6 +11,7 @@ from contextlib import suppress
 import jpype
 import tfs
 from generic_parser import DotDict
+from omc3.utils.mock import cern_network_import
 from omc3.utils.time_tools import AccDatetime
 
 LOG = logging.getLogger(__name__)
