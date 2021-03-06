@@ -528,7 +528,7 @@ def setup_and_run(jobname: str, basedir: Path, **kwargs):
         messages are logged to debug).
         > cd $basedir/workspace-$jobname/sixjobs
         > /afs/cern.ch/project/sixtrack/SixDesk_utilities/pro/utilities/bash/run_status
-
+        
         If not, and resubmit is active
         > cd $basedir/workspace-$jobname/sixjobs
         > /afs/cern.ch/project/sixtrack/SixDesk_utilities/pro/utilities/bash/run_six.sh -i
@@ -600,13 +600,19 @@ def _check_opts(mask_text, opt):
     return opt
 
 
+def get_jobs_and_values(jobid_mask, **kwargs):
+    values_grid = np.array(list(itertools.product(*kwargs.values())), dtype=object)
+    job_names = generate_jobdf_index(None, jobid_mask, kwargs.keys(), values_grid),
+    return job_names, values_grid
+
+
 def _generate_jobs(basedir, jobid_mask, **kwargs) -> tfs.TfsDataFrame:
     """ Generates product matrix for job-values and stores it as TfsDataFrame. """
     LOG.debug("Creating Jobs")
-    values_grid = np.array(list(itertools.product(*kwargs.values())), dtype=object)
+    job_names, values_grid = get_jobs_and_values(jobid_mask, **kwargs)
     job_df = tfs.TfsDataFrame(
         headers={HEADER_BASEDIR: basedir},
-        index=generate_jobdf_index(None, jobid_mask, kwargs.keys(), values_grid),
+        index=job_names,
         columns=list(kwargs.keys()),
         data=values_grid,
     )

@@ -60,7 +60,7 @@ def submit_sixtrack(jobname: str, basedir: Path, python: Path = None, ssh: str =
             python = python.parent
         args += ["-P", str(python)]
     try:
-        start_subprocess([RUNSIX_SH] + args, cwd=sixjobs_path, ssh=ssh)  # throws OSError if failed
+        start_subprocess([RUNSIX_SH] + args, cwd=sixjobs_path, ssh=ssh, check_log='exit status: 1')
     except OSError as e:
         raise StageSkip(
             f"{re_str}Submit to sixtrack for {jobname} ended in error."

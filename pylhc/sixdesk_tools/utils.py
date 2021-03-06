@@ -129,7 +129,7 @@ def is_locked(jobname: str, basedir: Path, unlock: bool = False):
 # Commandline ------------------------------------------------------------------
 
 
-def start_subprocess(command, cwd=None, ssh: str = None):
+def start_subprocess(command, cwd=None, ssh: str = None, check_log: str = None):
     if isinstance(command, str):
         command = [command]
 
@@ -158,7 +158,12 @@ def start_subprocess(command, cwd=None, ssh: str = None):
         decoded = line.decode("utf-8").strip()
         if decoded:
             LOG.debug(decoded)
+            if check_log is not None and check_log in decoded:
+                raise OSError(
+                    f"'{check_log}' found in last logging message. "
+                    "Something went wrong with the last command. Check (debug-)log."
+                )
 
     # Wait for finish and check result
     if process.wait() != 0:
-        raise EnvironmentError("Something went wrong with the last command. Check (debug-)log.")
+        raise OSError("Something went wrong with the last command. Check (debug-)log.")

@@ -69,6 +69,9 @@ STAGES = DotDict({key: key for key in STAGE_ORDER})
 
 # SixDB and Postprocess ---
 
+SIXTRACK_OUTPUT_FILES = "fort.10.gz", "Sixout.zip"
+SIXTRACK_INPUT_CHECK_FILES = "JOB_NOT_YET_STARTED", "JOB_NOT_YET_COMPLETED"
+
 HEADER_NTOTAL, HEADER_INFO, HEADER_HINT = "NTOTAL", "INFO", "HINT"
 MEAN, STD, MIN, MAX, N = "MEAN", "STD", "MIN", "MAX", "N"
 SEED, ANGLE, ALOST1, ALOST2, AMP = "SEED", "ANGLE", "ALOST1", "ALOST2", "A"
@@ -99,6 +102,10 @@ def get_sysenv_path(jobname: str, basedir: Path) -> Path:
 
 def get_masks_path(jobname: str, basedir: Path) -> Path:
     return get_sixjobs_path(jobname, basedir) / "mask"
+
+
+def get_track_path(jobname: str, basedir: Path) -> Path:
+    return get_sixjobs_path(jobname, basedir) / "track"
 
 
 def get_database_path(jobname: str, basedir: Path) -> Path:
