@@ -602,7 +602,7 @@ def _check_opts(mask_text, opt):
 
 def get_jobs_and_values(jobid_mask, **kwargs):
     values_grid = np.array(list(itertools.product(*kwargs.values())), dtype=object)
-    job_names = generate_jobdf_index(None, jobid_mask, kwargs.keys(), values_grid),
+    job_names = generate_jobdf_index(None, jobid_mask, kwargs.keys(), values_grid)
     return job_names, values_grid
 
 
