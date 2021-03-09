@@ -40,6 +40,8 @@ from pylhc.constants.autosix import (
 from scipy.interpolate import interp1d
 from tfs import TfsDataFrame, write_tfs
 
+from pylhc.sixdesk_tools.utils import StageSkip
+
 LOG = logging_tools.get_logger(__name__)
 
 DA_COLUMNS = (ALOST1, ALOST2)
@@ -63,8 +65,11 @@ ALPHA_FILL_STD = 0.2
 def post_process_da(jobname: str, basedir: Path):
     """ Post process the DA results into dataframes and DA plots. """
     LOG.info("Post-Processing Sixdesk Results.")
-    df_da, df_angle, df_seed = create_da_tfs(jobname, basedir)
-    create_polar_plots(jobname, basedir, df_da, df_angle)
+    try:
+        df_da, df_angle, df_seed = create_da_tfs(jobname, basedir)
+        create_polar_plots(jobname, basedir, df_da, df_angle)
+    except Exception as e:
+        raise StageSkip(f"Post Processing failed: {e.args[0]}") from e
     LOG.info("Post-Processing finished.")
 
 
