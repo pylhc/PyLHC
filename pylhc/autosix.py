@@ -416,6 +416,7 @@ def main(opt):
             resubmit=opt.resubmit,
             da_turnstep=opt.da_turnstep,
             ignore_twissfail_check=opt.ignore_twissfail_check,
+            max_stage=opt.max_stage,
             # kwargs passed only to create_jobs:
             mask_text=mask,
             binary_path=opt.executable,
