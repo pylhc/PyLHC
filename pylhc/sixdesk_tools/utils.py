@@ -46,7 +46,7 @@ class StageSkip(Exception):
 
 
 @contextmanager
-def check_stage(stage: Stage, jobname: str, basedir: Path, max_stage: Stage):
+def check_stage(stage: Stage, jobname: str, basedir: Path, max_stage: Stage = None):
     """ Wrapper for stage functions to add stage to stagefile. """
     if not should_run_stage(stage, jobname, basedir, max_stage):
         yield False
@@ -67,7 +67,7 @@ def stage_done(stage: Stage, jobname: str, basedir: Path):
         f.write(f"{stage.name}\n")
 
 
-def should_run_stage(stage: Stage, jobname: str, basedir: Path, max_stage: Stage):
+def should_run_stage(stage: Stage, jobname: str, basedir: Path, max_stage: Stage = None):
     """ Checks if the stage should be run. """
     stage_file = get_stagefile_path(jobname, basedir)
     if not stage_file.exists():
@@ -89,7 +89,7 @@ def should_run_stage(stage: Stage, jobname: str, basedir: Path, max_stage: Stage
         return True
 
     # check if user requested a stop at a certain stage
-    if stage > max_stage:
+    if (max_stage is not None) and (stage > max_stage):
         LOG.info(f"Stage {stage.name} would run after requested "
                  f"maximum stage {max_stage.name}. Skipping.")
         return False

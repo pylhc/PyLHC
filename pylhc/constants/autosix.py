@@ -26,8 +26,16 @@ SIXDESKLOCKFILE = "sixdesklock"
 
 HEADER_BASEDIR = "BASEDIR"
 
+# Defaults ---
+
+DEFAULTS = dict(
+    python2=None,
+    python3="python3",
+    da_turnstep=100,
+    executable=MADX_BIN,
+)
+
 # Stages ---
-STAGE_ORDER = []
 Stage = IntEnum('Stage',
                 names=[
                     "create_job",
@@ -42,16 +50,6 @@ Stage = IntEnum('Stage',
                     "final",
                 ],
                 start=0)
-
-# Defaults ---
-
-DEFAULTS = dict(
-    python2=None,
-    python3="python3",
-    da_turnstep=100,
-    executable=MADX_BIN,
-    max_stage=list(Stage)[-1].name
-)
 
 # Sixenv ---
 SIXENV_REQUIRED = ["TURNS", "AMPMIN", "AMPMAX", "AMPSTEP", "ANGLES"]

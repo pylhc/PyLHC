@@ -390,7 +390,6 @@ def get_params():
         name="max_stage",
         type=str,
         help="Last stage to be run. All following stages are skipped.",
-        default=DEFAULTS["max_stage"],
     )
     return params
 
@@ -439,7 +438,7 @@ def setup_and_run(jobname: str, basedir: Path, **kwargs):
         resubmit(bool): Resubmit jobs if checks fail
         da_turnstep (int): Step in turns for DA
         ignore_twissfail_check (bool): Hack to ignore check for 'Twiss fail' after run
-        max_stage (str): Last stage to run (defaults to last possible stage)
+        max_stage (str): Last stage to run
 
     Keyword Args (needed for create jobs):
         mask_text (str): Content of the mask to use.
@@ -457,7 +456,9 @@ def setup_and_run(jobname: str, basedir: Path, **kwargs):
     da_turnstep: int = kwargs.pop("da_turnstep", DEFAULTS["da_turnstep"])
     ignore_twissfail_check: bool = kwargs.pop("ignore_twissfail_check", False)
     stop_workspace_init: bool = kwargs.pop("stop_workspace_init", False)
-    max_stage: Stage = Stage[kwargs.pop("max_stage", DEFAULTS["max_stage"])]
+    max_stage: str = kwargs.pop("max_stage", None)
+    if max_stage is not None:
+        max_stage = Stage[max_stage]
 
     if is_locked(jobname, basedir, unlock=unlock):
         LOG.info(f"{jobname} is locked. Try 'unlock' flag if this causes errors.")
