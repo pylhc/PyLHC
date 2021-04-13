@@ -12,7 +12,7 @@ from omc3.utils import logging_tools
 
 from pylhc.constants.autosix import (
     SIXDESKLOCKFILE,
-    STAGE_ORDER,
+    Stage,
     get_workspace_path,
     get_stagefile_path,
 )
@@ -46,9 +46,9 @@ class StageSkip(Exception):
 
 
 @contextmanager
-def check_stage(stage: str, jobname: str, basedir: Path):
+def check_stage(stage: Stage, jobname: str, basedir: Path, max_stage: Stage):
     """ Wrapper for stage functions to add stage to stagefile. """
-    if not should_run_stage(jobname, basedir, stage):
+    if not should_run_stage(stage, jobname, basedir, max_stage):
         yield False
     else:
         try:
@@ -57,44 +57,48 @@ def check_stage(stage: str, jobname: str, basedir: Path):
             if str(e):
                 LOG.error(str(e))
         else:
-            stage_done(jobname, basedir, stage)
+            stage_done(stage, jobname, basedir)
 
 
-def stage_done(jobname: str, basedir: Path, stage: str):
+def stage_done(stage: Stage, jobname: str, basedir: Path):
     """ Append current stage name to stagefile. """
     stage_file = get_stagefile_path(jobname, basedir)
     with open(stage_file, "a+") as f:
-        f.write(f"{stage}\n")
+        f.write(f"{stage.name}\n")
 
 
-def should_run_stage(jobname: str, basedir: Path, stage: str):
+def should_run_stage(stage: Stage, jobname: str, basedir: Path, max_stage: Stage):
     """ Checks if the stage should be run. """
-    stage_idx = STAGE_ORDER.index(stage)
-
     stage_file = get_stagefile_path(jobname, basedir)
     if not stage_file.exists():
-        if stage_idx == 0:
+        if stage.value == 0:
             return True
         else:
             LOG.debug(f"Stage {stage} not run because previous stage(s) missing.")
             return False
 
     with open(stage_file, "r") as f:
-        txt = f.read().split("\n")
-    txt = [line.strip() for line in txt if line.strip()]
+        stage_file_txt = f.read().split("\n")
+    run_stages = [line.strip() for line in stage_file_txt if line.strip()]
 
-    if stage in txt:
-        LOG.info(f"Stage {stage} has already been run. Skipping.")
+    if stage.name in run_stages:
+        LOG.info(f"Stage {stage.name} has already been run. Skipping.")
         return False
 
-    if stage_idx == 0:
+    if stage.value == 0:
         return True
+
+    # check if user requested a stop at a certain stage
+    if stage > max_stage:
+        LOG.info(f"Stage {stage.name} would run after requested "
+                 f"maximum stage {max_stage.name}. Skipping.")
+        return False
 
     # check if last run stage is also the stage before current stage in stage order
-    if txt[-1] == STAGE_ORDER[stage_idx - 1]:
+    if run_stages[-1] == Stage(stage-1).name:
         return True
 
-    LOG.debug(f"Stage {stage} not run because previous stage(s) missing.")
+    LOG.debug(f"Stage {stage.name} not run because previous stage(s) missing.")
     return False
 
 

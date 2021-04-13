@@ -9,7 +9,7 @@ from pathlib import Path
 from omc3.utils import logging_tools
 
 from pylhc.autosix import get_jobs_and_values
-from pylhc.constants.autosix import get_stagefile_path, STAGES, get_track_path, get_workspace_path, \
+from pylhc.constants.autosix import get_stagefile_path, Stage, get_track_path, get_workspace_path, \
     SIXTRACK_INPUT_CHECK_FILES, SIXTRACK_OUTPUT_FILES
 
 LOG = logging_tools.get_logger(__name__)
@@ -40,18 +40,18 @@ def set_stages_for_all_jobs(basedir, stage_name):
 
 def set_stages_for_jobs(basedir, jobs, stage_name):
     """ Sets the last run stage of all given jobs to `stage_name`. """
-    if stage_name not in STAGES:
+    if stage_name not in Stage.__members__:
         raise ValueError(f"Unknown stage '{stage_name}'")
 
     for jobname in jobs:
         stage_file = get_stagefile_path(jobname, basedir)
         if stage_file.exists():
             stage_file.unlink()
-        for stage in STAGES:
+        for stage in Stage:
             with open(stage_file, "a+") as f:
-                f.write(f"{stage}\n")
+                f.write(f"{stage.name}\n")
 
-            if stage == stage_name:
+            if stage.name == stage_name:
                 break
 
 

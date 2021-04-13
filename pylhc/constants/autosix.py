@@ -10,9 +10,8 @@ Collections of constants and paths used in autosix.
 """
 from pathlib import Path
 
-from generic_parser import DotDict
-
 from pylhc.constants.external_paths import SIXDESK_UTILS, MADX_BIN
+from enum import IntEnum
 
 # Program Paths ----------------------------------------------------------------
 SETENV_SH = SIXDESK_UTILS / "set_env.sh"
@@ -27,11 +26,31 @@ SIXDESKLOCKFILE = "sixdesklock"
 
 HEADER_BASEDIR = "BASEDIR"
 
+# Stages ---
+STAGE_ORDER = []
+Stage = IntEnum('Stage',
+                names=[
+                    "create_job",
+                    "initialize_workspace",
+                    "submit_mask",
+                    "check_input",
+                    "submit_sixtrack",
+                    "check_sixtrack_output",
+                    "sixdb_load",
+                    "sixdb_cmd",
+                    "post_process",
+                    "final",
+                ],
+                start=0)
+
+# Defaults ---
+
 DEFAULTS = dict(
     python2=None,
     python3="python3",
     da_turnstep=100,
     executable=MADX_BIN,
+    max_stage=list(Stage)[-1].name
 )
 
 # Sixenv ---
@@ -49,22 +68,6 @@ SIXENV_DEFAULT = dict(
     WRITEBINS=500,
 )
 SEED_KEYS = ["FIRSTSEED", "LASTSEED"]
-
-
-# Stages ---
-STAGE_ORDER = [
-    "create_job",
-    "initialize_workspace",
-    "submit_mask",
-    "check_input",
-    "submit_sixtrack",
-    "check_sixtrack_output",
-    "sixdb_load",
-    "sixdb_cmd",
-    "post_process",
-    "final",
-]
-STAGES = DotDict({key: key for key in STAGE_ORDER})
 
 
 # SixDB and Postprocess ---
