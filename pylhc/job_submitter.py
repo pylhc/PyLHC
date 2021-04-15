@@ -83,7 +83,8 @@ import itertools
 import multiprocessing
 import subprocess
 import sys
-from collections import OrderedDict, Iterable
+from collections import OrderedDict
+from collections.abc import Iterable
 from functools import partial
 from pathlib import Path
 
