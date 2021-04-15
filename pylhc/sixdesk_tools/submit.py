@@ -39,7 +39,8 @@ def check_sixtrack_input(jobname: str, basedir: Path, ssh: str = None, resubmit:
         if resubmit:
             LOG.info("Resubmitting mask to run wrong seeds for sixtrack input generation.")
             start_subprocess([MAD_TO_SIXTRACK_SH, "-w"], cwd=sixjobs_path, ssh=ssh)
-            raise StageSkip("Resubmitted input generation jobs.")
+            raise StageSkip("Resubmitted input generation jobs "
+                            "(Not really an error, but the run is now interrupted).")
         else:
             raise StageSkip(
                 "Checking input files failed. Check (debug-) logs. "
