@@ -9,8 +9,9 @@ from pathlib import Path
 from omc3.utils import logging_tools
 
 from pylhc.autosix import get_jobs_and_values
-from pylhc.constants.autosix import get_stagefile_path, Stage, get_track_path, get_workspace_path, \
-    SIXTRACK_INPUT_CHECK_FILES, SIXTRACK_OUTPUT_FILES
+from pylhc.constants.autosix import (get_stagefile_path, Stage, get_track_path,
+                                     get_workspace_path, SIXTRACK_INPUT_CHECK_FILES,
+                                     SIXTRACK_OUTPUT_FILES, get_database_path)
 
 LOG = logging_tools.get_logger(__name__)
 
@@ -20,60 +21,79 @@ LOG = logging_tools.get_logger(__name__)
 def get_last_stage(jobname, basedir):
     """ Get the last run stage of job `jobname`. """
     stage_file = get_stagefile_path(jobname, basedir)
-    last_stage = stage_file.read_text().strip('\n').split('\n')[-1]
+    last_stage = Stage[stage_file.read_text().strip('\n').split('\n')[-1]]
     return last_stage
 
 
 # Set Stages ---
 
-def set_stages_for_setup(basedir, stage_name, jobid_mask, replace_dict):
+def set_stages_for_setup(basedir: Path, stage_name: str, jobid_mask: str, replace_dict: dict):
     """ Sets the last run stage for all jobs from given job-setups. """
     jobs, _ = get_jobs_and_values(jobid_mask, **replace_dict)
-    set_stages_for_jobs(basedir, jobs, stage_name)
+    for job in jobs:
+        LOG.info(f"Setting stage to {stage_name} in {jobname}")
+        set_stages(job, basedir, stage_name)
 
 
-def set_stages_for_all_jobs(basedir, stage_name):
-    """ Sets the last run stage for all jobs in sexdeskbase dir. """
-    jobs = get_all_jobs_in_base(basedir)
-    set_stages_for_jobs(basedir, jobs, stage_name)
-
-
-def set_stages_for_jobs(basedir, jobs, stage_name):
+def set_stages(jobname: str, basedir: Path, stage_name: str):
     """ Sets the last run stage of all given jobs to `stage_name`. """
     if stage_name not in Stage.__members__:
         raise ValueError(f"Unknown stage '{stage_name}'")
 
-    for jobname in jobs:
-        stage_file = get_stagefile_path(jobname, basedir)
-        if stage_file.exists():
-            stage_file.unlink()
-        for stage in Stage:
-            with open(stage_file, "a+") as f:
-                f.write(f"{stage.name}\n")
+    stage_file = get_stagefile_path(jobname, basedir)
+    if stage_file.exists():
+        stage_file.unlink()
+    for stage in Stage:
+        with open(stage_file, "a+") as f:
+            f.write(f"{stage.name}\n")
 
-            if stage.name == stage_name:
-                break
+        if stage.name == stage_name:
+            break
+
+
+def skip_stages(jobname: str, basedir: Path, stage_name: str):
+    """ Skip stages until `stagename`, i.e. similar to `set_stages` but only if
+    the stage hasn't been reached yet. Inverse to `reset_stages`"""
+    if stage_name not in Stage.__members__:
+        raise ValueError(f"Unknown stage '{stage_name}'")
+
+    new_stage = Stage[stage_name]
+    last_stage = get_last_stage(jobname, basedir)
+    if last_stage < new_stage:
+        LOG.info(f"Skipping stage form {last_stage.name} to {new_stage.name} in {jobname}")
+        set_stages(jobname, basedir, stage_name)
+    else:
+        LOG.debug(f"Stage {last_stage.name} unchanged in {jobname}")
+
+
+def reset_stages(jobname: str, basedir: Path, stagename: str):
+    """ Reset stages until `stagename`, i.e. similar to `set_stages` but only if
+    the stage has already been run. Inverse to `skip_stages`"""
+    if stage_name not in Stage.__members__:
+        raise ValueError(f"Unknown stage '{stage_name}'")
+
+    new_stage = Stage[stage_name]
+    last_stage = get_last_stage(jobname, basedir)
+    if last_stage > new_stage:
+        LOG.info(f"Resetting stage from {last_stage.name} to {new_stage.name} in {jobname}")
+        set_stages(jobname, basedir, stage_name)
+    else:
+        LOG.debug(f"Stage {last_stage.name} unchanged in {jobname}")
 
 
 # Check Stages ---
 
-def check_stages_for_setup(basedir, stage_name, jobid_mask, replace_dict):
+def check_stages_for_setup(basedir: Path, stage_name: str, jobid_mask: str, replace_dict: dict):
     """ Check the last run stage for all jobs from given job-setups. """
     jobs, _ = get_jobs_and_values(jobid_mask, **replace_dict)
-    check_stages_for_jobs(basedir, jobs)
+    for job in jobs:
+        check_last_stage(job, basedir)
 
 
-def check_stages_for_all_jobs(basedir):
-    """ Checks the last run stages for all Jobs in sixdeskbase dir. """
-    jobs = get_all_jobs_in_base(basedir)
-    check_stages_for_jobs(basedir, jobs)
-
-
-def check_stages_for_jobs(basedir, jobs):
+def check_last_stage(jobname: str, basedir: Path):
     """ Logs names of all last run stages for given jobs. """
-    for jobname in jobs:
-        last_stage = get_last_stage(jobname, basedir)
-        LOG.info(f"'{jobname}' at stage '{last_stage}'")
+    last_stage = get_last_stage(jobname, basedir)
+    LOG.info(f"'{jobname}' at stage '{last_stage.name}'")
 
 
 # Complete check for failure ---------------------------------------------------
@@ -87,7 +107,7 @@ def find_obviously_failed_sixtrack_submissions(basedir: Path):
     for job in get_all_jobs_in_base(basedir):
         try:
             LOG.debug(str(job))
-            track = get_track_path(jobname=job, basedir=base)
+            track = get_track_path(jobname=job, basedir=basedir)
             first_seed = get_first_dir(track) / 'simul'
             tunes = get_first_dir(first_seed)
             amp = get_first_dir(tunes, '*_*')
@@ -97,9 +117,9 @@ def find_obviously_failed_sixtrack_submissions(basedir: Path):
             file_names = [f.name for f in angle.glob("*")]
             out_files_present = [f for f in SIXTRACK_OUTPUT_FILES if f in file_names]
             if not len(out_files_present):
-                raise OSError(str(get_workspace_path(jobname=job, basedir=base)))
+                raise OSError(str(get_workspace_path(jobname=job, basedir=basedir)))
         except OSError as e:
-            LOG.error(f"{e.args[0]} (stage: {get_last_stage(jobname=job, basedir=basedir)})")
+            LOG.error(f"{e.args[0]} (stage: {get_last_stage(jobname=job, basedir=basedir).name})")
             jobs.append(str(job))
     return jobs
 
@@ -167,8 +187,37 @@ def check_sixtrack_output_data(jobname: str, basedir: Path):
                             raise OSError(f"None of the expected output files '{SIXTRACK_OUTPUT_FILES}' "
                                           f"are present in {str(angle_dir)}")
 
+# Long Database Names Hack -----------------------------------------------------
+
+
+def create_database_symlink(jobname: str, basedir: Path):
+    db_path = get_database_path(jobname, basedir)
+    if db_path.exists():
+        LOG.debug(f"Database already exists in {jobname}.")
+        return
+
+    real_db_path = db_path.parent / "my.db"
+    real_db_path.touch()
+
+    db_path.symlink_to(real_db_path)
+    LOG.info(f"Crated database link in {jobname}.")
+
+
+def move_database_symlink(jobname: str, basedir: Path):
+    db_path = get_database_path(jobname, basedir)
+    real_db_path = db_path.parent / "my.db"
+    if real_db_path.exists():
+        real_db_path.rename(db_path)
+        LOG.info(f"Renamed database to its proper name in {jobname}.")
+
 
 # Helper -----------------------------------------------------------------------
+
+def for_all_jobs(func: callable, basedir: Path, *args, **kwargs):
+    """ Do function for all jobs in basedir. """
+    for job in get_all_jobs_in_base(basedir):
+        func(job, basedir, *args, **kwargs)
+
 
 def get_all_jobs_in_base(basedir):
     """ Returns all job-names in the sixdeskbase dir. """
