@@ -85,9 +85,15 @@ def create_da_tfs(jobname: str, basedir: Path) -> Tuple[TfsDataFrame, TfsDataFra
     df_angle = _create_stats_df(df_da, ANGLE)
     df_seed = _create_stats_df(df_da, SEED, global_index=0)
 
-    write_tfs(get_tfs_da_path(jobname, basedir), df_da)
-    write_tfs(get_tfs_da_angle_stats_path(jobname, basedir), df_angle, save_index=ANGLE)
-    write_tfs(get_tfs_da_seed_stats_path(jobname, basedir), df_seed, save_index=SEED)
+    try:
+        write_tfs(get_tfs_da_path(jobname, basedir), df_da)
+        write_tfs(get_tfs_da_angle_stats_path(jobname, basedir), df_angle, save_index=ANGLE)
+        write_tfs(get_tfs_da_seed_stats_path(jobname, basedir), df_seed, save_index=SEED)
+    except OSError:
+        write_tfs(str(get_tfs_da_path(jobname, basedir)).replace("-by-", "-"), df_da)
+        write_tfs(str(get_tfs_da_angle_stats_path(jobname, basedir)).replace("-by-", "-"), df_angle, save_index=ANGLE)
+        write_tfs(str(get_tfs_da_seed_stats_path(jobname, basedir)).replace("-by-", "-"), df_seed, save_index=SEED)
+
 
     return df_da, df_angle, df_seed
 
