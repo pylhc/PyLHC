@@ -69,7 +69,8 @@ def post_process_da(jobname: str, basedir: Path):
         df_da, df_angle, df_seed = create_da_tfs(jobname, basedir)
         create_polar_plots(jobname, basedir, df_da, df_angle)
     except Exception as e:
-        raise StageSkip(f"Post Processing failed: {str(e)}") from e
+        LOG.exception("Post Processing Failed.")
+        raise StageSkip("Post Processing failed!") from e
     LOG.info("Post-Processing finished.")
 
 
