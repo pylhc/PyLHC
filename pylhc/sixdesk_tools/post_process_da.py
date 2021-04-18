@@ -89,7 +89,7 @@ def create_da_tfs(jobname: str, basedir: Path) -> Tuple[TfsDataFrame, TfsDataFra
         write_tfs(get_tfs_da_path(jobname, basedir), df_da)
         write_tfs(get_tfs_da_angle_stats_path(jobname, basedir), df_angle, save_index=ANGLE)
         write_tfs(get_tfs_da_seed_stats_path(jobname, basedir), df_seed, save_index=SEED)
-    except OSError:
+    except OSError:  # TODO remove
         da_path = get_tfs_da_path(jobname, basedir)
         angle_path = get_tfs_da_angle_stats_path(jobname, basedir)
         seed_path = get_tfs_da_seed_stats_path(jobname, basedir)
@@ -171,7 +171,11 @@ def create_polar_plots(jobname: str, basedir: Path, df_da: TfsDataFrame, df_angl
     for da_col in DA_COLUMNS:
         fig = plot_polar(df_angles, da_col, jobname, df_da)
         fig.tight_layout(), fig.tight_layout()
-        fig.savefig(outdir_path / fig.canvas.get_default_filename())
+        try:  # TODO  remove
+            fig.savefig(outdir_path / fig.canvas.get_default_filename())
+        except OSError:
+            fig.savefig(outdir_path / fig.canvas.get_default_filename().replace("-by-", "-"))
+
     # plt.show()
 
 
