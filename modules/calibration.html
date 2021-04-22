@@ -1,0 +1,364 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>BPM Calibration Utilities &mdash; pylhc 0.1.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Constants Definitions" href="constants.html" />
+    <link rel="prev" title="HTCondor Job Submitter" href="../entrypoints/submitter.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html">
+          
+
+          
+            
+            <img src="../_static/omc_logo.svg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Entrypoints</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../entrypoints/analysis.html">Analysis Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../entrypoints/analysis.html#bsrt-analysis">BSRT Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../entrypoints/analysis.html#forced-da-analysis">Forced DA Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../entrypoints/bpm_calibration.html">BPM Calibration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../entrypoints/bpm_calibration.html#id1">BPM Calibration</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../entrypoints/machine_info.html">Machine Information Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../entrypoints/machine_info.html#print-machine-settings-overview">Print Machine Settings Overview</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../entrypoints/submitter.html">HTCondor Job Submitter</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../entrypoints/submitter.html#job-submitter">Job Submitter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../entrypoints/submitter.html#autosix">AutoSix</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Modules</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">BPM Calibration Utilities</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#beta">Beta</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dispersion">Dispersion</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="constants.html">Constants Definitions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="constants.html#constants-general">Constants: General</a></li>
+<li class="toctree-l2"><a class="reference internal" href="constants.html#constants-external-paths">Constants: External Paths</a></li>
+<li class="toctree-l2"><a class="reference internal" href="constants.html#constants-autosix">Constants: Autosix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="constants.html#constants-forced-da-analysis">Constants: Forced DA Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="constants.html#constants-machine-settings-info">Constants: Machine Settings Info</a></li>
+<li class="toctree-l2"><a class="reference internal" href="constants.html#constants-bpm-calibration">Constants: BPM Calibration</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="data_extract.html">Data Extraction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="data_extract.html#pylsa">PyLSA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_extract.html#timber">Timber</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="htc.html">HTCondor Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="htc.html#htcondor-utilities">HTCondor Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="htc.html#mask-resolver">Mask Resolver</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="sixdesk_tools.html">Sixdesk Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="sixdesk_tools.html#create-sixdesk-workspace">Create SixDesk Workspace</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sixdesk_tools.html#sixdesk-submission-utils">SixDesk Submission Utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sixdesk_tools.html#post-process-da">Post Process DA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sixdesk_tools.html#sixdesk-utilities">SixDesk Utilities</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pylhc</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>BPM Calibration Utilities</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/modules/calibration.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-pylhc.calibration.beta">
+<span id="bpm-calibration-utilities"></span><h1>BPM Calibration Utilities<a class="headerlink" href="#module-pylhc.calibration.beta" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="beta">
+<h2>Beta<a class="headerlink" href="#beta" title="Permalink to this headline">¶</a></h2>
+<p>The functions in this script compute the calibration factors for the LHC BPMs
+using the beta method. The <cite>get_calibration_factors_from_beta</cite> is intended
+to be used with the script <cite>bpm_calibration.py</cite>.</p>
+<dl class="py function">
+<dt id="pylhc.calibration.beta.get_calibration_factors_from_beta">
+<code class="sig-prename descclassname"><span class="pre">pylhc.calibration.beta.</span></code><code class="sig-name descname"><span class="pre">get_calibration_factors_from_beta</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ips</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pathlib.Path</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">pandas.core.frame.DataFrame</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../_modules/pylhc/calibration/beta.html#get_calibration_factors_from_beta"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.calibration.beta.get_calibration_factors_from_beta" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is the main function to compute the calibration factors for
+the beta method.
+Given a list of IPs and the path containing the corresponding Tfs files,
+this function returns the calibration factors using both the beta from
+phase and its fitted values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ips</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) -- IPs to compute the calibration factors for.</p></li>
+<li><p><strong>input_path</strong> (<em>Path</em>) -- Path of the directory containing the beta files.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>The returned DataFrame object contains the
+calibration factors for each BPM along with their error. Both the beta
+from phase and beta from phase fitted values are used, resulting in 6
+colums:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>NAME: BPM Name</p></li>
+<li><p>S: Position</p></li>
+<li><p>CALIBRATION: Calibration factors computed from beta from phase</p></li>
+<li><p>ERROR_CALIBRATION: Associated error to the above calibration
+factors</p></li>
+<li><p>CALIBRATION_FIT: Calibration factor computed from fitted beta
+from phase</p></li>
+<li><p>ERROR_CALIBRATION_FIT: Associated error to the above calibration
+factors</p></li>
+</ul>
+</div></blockquote>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Dict[str, pd.DataFrame]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<span class="target" id="module-pylhc.calibration.dispersion"></span><div class="section" id="dispersion">
+<h2>Dispersion<a class="headerlink" href="#dispersion" title="Permalink to this headline">¶</a></h2>
+<p>The functions in this script compute the calibration factors for the LHC BPMs
+using the dispersion method. The <cite>get_calibration_factors_from_dispersion</cite> is
+intended to be used with the script <cite>bpm_calibration.py</cite>.</p>
+<dl class="py function">
+<dt id="pylhc.calibration.dispersion.get_calibration_factors_from_dispersion">
+<code class="sig-prename descclassname"><span class="pre">pylhc.calibration.dispersion.</span></code><code class="sig-name descname"><span class="pre">get_calibration_factors_from_dispersion</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ips</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pathlib.Path</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">pandas.core.frame.DataFrame</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../_modules/pylhc/calibration/dispersion.html#get_calibration_factors_from_dispersion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.calibration.dispersion.get_calibration_factors_from_dispersion" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is the main function to compute the calibration factors for
+the dispersion method.
+Given an IP and a path containing the corresponding Tfs files, this
+function returns the calibration factors using both the dispersion and its
+fitted values.
+The calibration factors based on the dispersion are only computed for the
+X plane.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ips</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) -- IPs to compute the calibration factors for.</p></li>
+<li><p><strong>input_path</strong> (<em>Path</em>) -- Path of the directory containing the beta files.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>The returned DataFrame object contains the
+calibration factors for each BPM along with their error. Both the
+dispersion and dispersion from fit values are used, resulting in 6
+colums:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>NAME: BPM Name</p></li>
+<li><p>S: Position</p></li>
+<li><p>CALIBRATION: Calibration factors computed from the dispersion</p></li>
+<li><p>ERROR_CALIBRATION: Associated error to the above calibration
+factors</p></li>
+<li><p>CALIBRATION_FIT: Calibration factors computed from the fitted
+dispersion</p></li>
+<li><p>ERROR_CALIBRATION_FIT: Associated error to the above calibration
+factors</p></li>
+</ul>
+</div></blockquote>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Dict[str, pd.DataFrame]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="constants.html" class="btn btn-neutral float-right" title="Constants Definitions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../entrypoints/submitter.html" class="btn btn-neutral float-left" title="HTCondor Job Submitter" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2019-2020, pyLHC/OMC-TEAM.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

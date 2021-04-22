@@ -1,0 +1,485 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>pylhc.calibration.dispersion &mdash; pylhc 0.1.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/custom.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html">
+          
+
+          
+            
+            <img src="../../../_static/omc_logo.svg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Entrypoints</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../entrypoints/analysis.html">Analysis Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/analysis.html#bsrt-analysis">BSRT Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/analysis.html#forced-da-analysis">Forced DA Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../entrypoints/bpm_calibration.html">BPM Calibration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/bpm_calibration.html#id1">BPM Calibration</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../entrypoints/machine_info.html">Machine Information Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/machine_info.html#print-machine-settings-overview">Print Machine Settings Overview</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../entrypoints/submitter.html">HTCondor Job Submitter</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/submitter.html#job-submitter">Job Submitter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/submitter.html#autosix">AutoSix</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/calibration.html">BPM Calibration Utilities</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/calibration.html#beta">Beta</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/calibration.html#dispersion">Dispersion</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/constants.html">Constants Definitions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/constants.html#constants-general">Constants: General</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/constants.html#constants-external-paths">Constants: External Paths</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/constants.html#constants-autosix">Constants: Autosix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/constants.html#constants-forced-da-analysis">Constants: Forced DA Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/constants.html#constants-machine-settings-info">Constants: Machine Settings Info</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/constants.html#constants-bpm-calibration">Constants: BPM Calibration</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/data_extract.html">Data Extraction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/data_extract.html#pylsa">PyLSA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/data_extract.html#timber">Timber</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/htc.html">HTCondor Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/htc.html#htcondor-utilities">HTCondor Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/htc.html#mask-resolver">Mask Resolver</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/sixdesk_tools.html">Sixdesk Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/sixdesk_tools.html#create-sixdesk-workspace">Create SixDesk Workspace</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/sixdesk_tools.html#sixdesk-submission-utils">SixDesk Submission Utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/sixdesk_tools.html#post-process-da">Post Process DA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/sixdesk_tools.html#sixdesk-utilities">SixDesk Utilities</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pylhc</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>pylhc.calibration.dispersion</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pylhc.calibration.dispersion</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Dispersion</span>
+<span class="sd">----------</span>
+
+<span class="sd">The functions in this script compute the calibration factors for the LHC BPMs</span>
+<span class="sd">using the dispersion method. The `get_calibration_factors_from_dispersion` is</span>
+<span class="sd">intended to be used with the script `bpm_calibration.py`.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">curve_fit</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span>
+
+<span class="kn">from</span> <span class="nn">omc3.utils</span> <span class="kn">import</span> <span class="n">logging_tools</span>
+<span class="kn">from</span> <span class="nn">omc3.optics_measurements.constants</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ERR</span><span class="p">,</span>
+    <span class="n">EXT</span><span class="p">,</span>
+    <span class="n">NORM_DISP_NAME</span><span class="p">,</span>
+    <span class="n">DISPERSION_NAME</span><span class="p">,</span>
+    <span class="n">S</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">pylhc.constants.calibration</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">BPMS</span><span class="p">,</span>
+    <span class="n">D_BPMS</span><span class="p">,</span>
+    <span class="n">D</span><span class="p">,</span>
+    <span class="n">IPS</span><span class="p">,</span>
+    <span class="n">LABELS</span><span class="p">,</span>
+    <span class="n">ND</span><span class="p">,</span>
+    <span class="n">TFS_INDEX</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">pylhc.constants.general</span> <span class="kn">import</span> <span class="n">PLANES</span>
+<span class="kn">from</span> <span class="nn">tfs.handler</span> <span class="kn">import</span> <span class="n">TfsDataFrame</span>
+<span class="kn">import</span> <span class="nn">tfs</span>
+
+
+<span class="n">LOG</span> <span class="o">=</span> <span class="n">logging_tools</span><span class="o">.</span><span class="n">get_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_get_dispersion_fit</span><span class="p">(</span>
+    <span class="n">positions</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">dispersion_values</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">dispersion_err</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function returns a fit of the given dispersion values along with the</span>
+<span class="sd">    associated error.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      positions (pd.Series): Positions of the BPMs to be fitted.</span>
+<span class="sd">      dispersion_values (pd.Series): Values of the BPMs to be fitted.</span>
+<span class="sd">      dispersion_err (pd.Series): Associated errors to the values.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      Tuple[pd.Series, pd.Series]: The elements returned are the values of the</span>
+<span class="sd">      fit of the dispersion values and the associated error.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">dispersion_function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">b</span>
+
+    <span class="c1"># Filter the values we have to only keep the asked BPMs</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="n">dispersion_values</span><span class="p">[</span><span class="n">dispersion_values</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">positions</span><span class="o">.</span><span class="n">index</span><span class="p">)]</span>
+    <span class="n">err</span> <span class="o">=</span> <span class="n">dispersion_err</span><span class="p">[</span><span class="n">dispersion_values</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">positions</span><span class="o">.</span><span class="n">index</span><span class="p">)]</span>
+
+    <span class="c1"># Get the curve fit for the expected affine function</span>
+    <span class="n">valid</span> <span class="o">=</span> <span class="o">~</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">positions</span><span class="p">)</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">values</span><span class="p">))</span>
+    <span class="n">fit</span><span class="p">,</span> <span class="n">fit_cov</span> <span class="o">=</span> <span class="n">curve_fit</span><span class="p">(</span><span class="n">dispersion_function</span><span class="p">,</span> <span class="n">positions</span><span class="p">[</span><span class="n">valid</span><span class="p">],</span> <span class="n">values</span><span class="p">[</span><span class="n">valid</span><span class="p">],</span> <span class="n">sigma</span><span class="o">=</span><span class="n">err</span><span class="p">[</span><span class="n">valid</span><span class="p">])</span>
+
+    <span class="c1"># Get the error from the covariance matrix</span>
+    <span class="n">fit_err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">fit_cov</span><span class="p">))</span>
+
+    <span class="c1"># Get the fitted beta and add the errors to get min/max values</span>
+    <span class="n">dispersion_fit</span> <span class="o">=</span> <span class="n">dispersion_function</span><span class="p">(</span><span class="n">positions</span><span class="p">,</span> <span class="n">fit</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">fit</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">dispersion_max_fit</span> <span class="o">=</span> <span class="n">dispersion_function</span><span class="p">(</span>
+        <span class="n">positions</span><span class="p">,</span> <span class="n">fit</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">fit_err</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">fit</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">fit_err</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">dispersion_min_fit</span> <span class="o">=</span> <span class="n">dispersion_function</span><span class="p">(</span>
+        <span class="n">positions</span><span class="p">,</span> <span class="n">fit</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">fit_err</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">fit</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">fit_err</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">dispersion_fit_err</span> <span class="o">=</span> <span class="p">(</span><span class="n">dispersion_max_fit</span> <span class="o">-</span> <span class="n">dispersion_min_fit</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+
+    <span class="k">return</span> <span class="n">dispersion_fit</span><span class="p">,</span> <span class="n">dispersion_fit_err</span>
+
+
+<span class="k">def</span> <span class="nf">_get_factors_from_dispersion</span><span class="p">(</span>
+        <span class="n">dispersion</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">],</span> <span class="n">phase</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">phase_err</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function computes the calibration factors for the dispersion method</span>
+<span class="sd">    with the non fitted dispersion values. The associated error is also</span>
+<span class="sd">    calculated.</span>
+<span class="sd">    The equations being the same for the factors from dispersion and dispersion</span>
+<span class="sd">    fit, this function can be used for both.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      dispersion (Dict[str, pd.Series]): Dictionnary containing 4 keys: phase,</span>
+<span class="sd">        phase_err, amp and amp_err. Each key is related to the method used to</span>
+<span class="sd">        obtain the dispersion and its error. The keys differ for the dispersion</span>
+<span class="sd">        fit method, as a _fit part is added.</span>
+<span class="sd">      phase (str): key for the dispersion from phase</span>
+<span class="sd">      phase_err (str): key for the dispersion from phase error</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      Tuple[pd.Series, pd.Series]: The first Series are the calibration</span>
+<span class="sd">        factors, the second one their error.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Get the ratios, those are our calibration factors</span>
+    <span class="n">factors</span> <span class="o">=</span> <span class="n">dispersion</span><span class="p">[</span><span class="n">phase</span><span class="p">]</span> <span class="o">/</span> <span class="n">dispersion</span><span class="p">[</span><span class="s2">&quot;amp&quot;</span><span class="p">]</span>
+
+    <span class="c1"># Code in BBs</span>
+    <span class="n">calibration_error</span> <span class="o">=</span> <span class="p">(</span><span class="n">dispersion</span><span class="p">[</span><span class="n">phase_err</span><span class="p">]</span> <span class="o">/</span> <span class="n">dispersion</span><span class="p">[</span><span class="s2">&quot;amp&quot;</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="n">calibration_error</span> <span class="o">+=</span> <span class="p">(</span>
+        <span class="n">dispersion</span><span class="p">[</span><span class="s2">&quot;amp_err&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">dispersion</span><span class="p">[</span><span class="n">phase</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">dispersion</span><span class="p">[</span><span class="s2">&quot;amp&quot;</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="n">calibration_error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">calibration_error</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">factors</span><span class="p">,</span> <span class="n">calibration_error</span>
+
+
+<div class="viewcode-block" id="get_calibration_factors_from_dispersion"><a class="viewcode-back" href="../../../modules/calibration.html#pylhc.calibration.dispersion.get_calibration_factors_from_dispersion">[docs]</a><span class="k">def</span> <span class="nf">get_calibration_factors_from_dispersion</span><span class="p">(</span>
+    <span class="n">ips</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">input_path</span><span class="p">:</span> <span class="n">Path</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function is the main function to compute the calibration factors for</span>
+<span class="sd">    the dispersion method.</span>
+<span class="sd">    Given an IP and a path containing the corresponding Tfs files, this</span>
+<span class="sd">    function returns the calibration factors using both the dispersion and its</span>
+<span class="sd">    fitted values.</span>
+<span class="sd">    The calibration factors based on the dispersion are only computed for the</span>
+<span class="sd">    X plane.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      ips (List[int]): IPs to compute the calibration factors for.</span>
+<span class="sd">      input_path (Path): Path of the directory containing the beta files.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      Dict[str, pd.DataFrame]: The returned DataFrame object contains the</span>
+<span class="sd">      calibration factors for each BPM along with their error. Both the</span>
+<span class="sd">      dispersion and dispersion from fit values are used, resulting in 6</span>
+<span class="sd">      colums:</span>
+<span class="sd">        - NAME: BPM Name</span>
+<span class="sd">        - S: Position</span>
+<span class="sd">        - CALIBRATION: Calibration factors computed from the dispersion</span>
+<span class="sd">        - ERROR_CALIBRATION: Associated error to the above calibration</span>
+<span class="sd">          factors</span>
+<span class="sd">        - CALIBRATION_FIT: Calibration factors computed from the fitted</span>
+<span class="sd">          dispersion</span>
+<span class="sd">        - ERROR_CALIBRATION_FIT: Associated error to the above calibration</span>
+<span class="sd">          factors</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Computing the calibration factors via dispersion&quot;</span><span class="p">)</span>
+    <span class="c1"># Load the normalized dispersion tfs file</span>
+    <span class="n">norm_dispersion_tfs</span> <span class="o">=</span> <span class="n">tfs</span><span class="o">.</span><span class="n">read</span><span class="p">(</span>
+        <span class="n">input_path</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">NORM_DISP_NAME</span><span class="si">}</span><span class="s2">x</span><span class="si">{</span><span class="n">EXT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">TFS_INDEX</span>
+    <span class="p">)</span>
+    <span class="n">dispersion_tfs</span> <span class="o">=</span> <span class="n">tfs</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">input_path</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">DISPERSION_NAME</span><span class="si">}</span><span class="s2">x</span><span class="si">{</span><span class="n">EXT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">TFS_INDEX</span><span class="p">)</span>
+
+    <span class="c1"># Get the beam concerned by those tfs files</span>
+    <span class="n">beam</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">dispersion_tfs</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="c1"># Loop over the IPs and compute the calibration factors</span>
+    <span class="n">calibration_factors</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">ip</span> <span class="ow">in</span> <span class="n">ips</span><span class="p">:</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Computing the calibration factors for IP </span><span class="si">{</span><span class="n">ip</span><span class="si">}</span><span class="s2">, plane X&quot;</span><span class="p">)</span>
+        <span class="c1"># Filter our TFS files to only keep the BPMs for the selected IR</span>
+        <span class="n">bpms</span> <span class="o">=</span> <span class="n">dispersion_tfs</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">BPMS</span><span class="p">[</span><span class="n">ip</span><span class="p">][</span><span class="n">beam</span><span class="p">])</span>
+        <span class="n">d_bpms</span> <span class="o">=</span> <span class="n">dispersion_tfs</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">D_BPMS</span><span class="p">[</span><span class="n">ip</span><span class="p">][</span><span class="n">beam</span><span class="p">])</span>
+            
+        <span class="c1"># Check for possible missing bpms</span>
+        <span class="k">for</span> <span class="n">bpm_set</span> <span class="ow">in</span> <span class="p">[</span><span class="n">bpms</span><span class="p">,</span> <span class="n">d_bpms</span><span class="p">]:</span>
+            <span class="n">missing</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">bpm_set</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">bpm_set</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">missing</span><span class="p">:</span>
+                <span class="n">LOG</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;    One or several BPMs are missing in the input&quot;</span>
+                            <span class="s2">&quot; DataFrame, the calibration factors calculation&quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;from fit may not be accurate: </span><span class="si">{</span><span class="n">missing</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Get the positions of the BPMs and the subset used for the fit</span>
+        <span class="n">bpms</span> <span class="o">=</span> <span class="n">bpms</span><span class="o">.</span><span class="n">index</span>
+        <span class="n">d_bpms</span> <span class="o">=</span> <span class="n">d_bpms</span><span class="o">.</span><span class="n">index</span>
+        <span class="n">positions</span> <span class="o">=</span> <span class="n">dispersion_tfs</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">bpms</span><span class="p">)[</span><span class="n">S</span><span class="p">]</span>
+        <span class="n">positions_fit</span> <span class="o">=</span> <span class="n">dispersion_tfs</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">d_bpms</span><span class="p">)[</span><span class="n">S</span><span class="p">]</span>
+
+        <span class="c1"># Get the dispersion and dispersion from phase from the tfs files</span>
+        <span class="n">dispersion</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">normalised_dispersion</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="n">dispersion</span><span class="p">[</span><span class="s2">&quot;amp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dispersion_tfs</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">bpms</span><span class="p">)[</span><span class="sa">f</span><span class="s2">&quot;DX&quot;</span><span class="p">]</span>
+        <span class="n">dispersion</span><span class="p">[</span><span class="s2">&quot;amp_err&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dispersion_tfs</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">bpms</span><span class="p">)[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ERR</span><span class="si">}{</span><span class="n">D</span><span class="si">}</span><span class="s2">X&quot;</span><span class="p">]</span>
+
+        <span class="n">dispersion</span><span class="p">[</span><span class="s2">&quot;phase&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">norm_dispersion_tfs</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">bpms</span><span class="p">)[</span><span class="sa">f</span><span class="s2">&quot;DX&quot;</span><span class="p">]</span>
+        <span class="n">dispersion</span><span class="p">[</span><span class="s2">&quot;phase_err&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">norm_dispersion_tfs</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">bpms</span><span class="p">)[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ERR</span><span class="si">}{</span><span class="n">D</span><span class="si">}</span><span class="s2">X&quot;</span><span class="p">]</span>
+
+        <span class="c1"># Compute the calibration factors using the dispersion from phase and amp</span>
+        <span class="n">calibration</span><span class="p">,</span> <span class="n">calibration_err</span> <span class="o">=</span> <span class="n">_get_factors_from_dispersion</span><span class="p">(</span>
+            <span class="n">dispersion</span><span class="p">,</span> <span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="s2">&quot;phase_err&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Fit the dispersion from phase</span>
+        <span class="n">dispersion</span><span class="p">[</span><span class="s2">&quot;phase_fit&quot;</span><span class="p">],</span> <span class="n">dispersion</span><span class="p">[</span><span class="s2">&quot;phase_fit_err&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_get_dispersion_fit</span><span class="p">(</span>
+            <span class="n">positions_fit</span><span class="p">,</span> <span class="n">dispersion</span><span class="p">[</span><span class="s2">&quot;phase&quot;</span><span class="p">],</span> <span class="n">dispersion</span><span class="p">[</span><span class="s2">&quot;phase_err&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Compute the calibration factors using the fitted dispersion from amp / phase</span>
+        <span class="n">calibration_fit</span><span class="p">,</span> <span class="n">calibration_fit_err</span> <span class="o">=</span> <span class="n">_get_factors_from_dispersion</span><span class="p">(</span>
+            <span class="n">dispersion</span><span class="p">,</span> <span class="s2">&quot;phase_fit&quot;</span><span class="p">,</span> <span class="s2">&quot;phase_fit_err&quot;</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Assemble the calibration factors in one dataframe</span>
+        <span class="n">factors_for_ip</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">positions</span><span class="p">,</span>
+                <span class="n">calibration</span><span class="p">,</span>
+                <span class="n">calibration_err</span><span class="p">,</span>
+                <span class="n">calibration_fit</span><span class="p">,</span>
+                <span class="n">calibration_fit_err</span><span class="p">,</span>
+            <span class="p">],</span>
+            <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">factors_for_ip</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">LABELS</span>
+        <span class="n">factors_for_ip</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">TFS_INDEX</span>
+
+        <span class="k">if</span> <span class="s2">&quot;X&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">calibration_factors</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">calibration_factors</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;X&quot;</span><span class="p">:</span> <span class="n">factors_for_ip</span><span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">calibration_factors</span><span class="p">[</span><span class="s2">&quot;X&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">calibration_factors</span><span class="p">[</span><span class="s2">&quot;X&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">factors_for_ip</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">calibration_factors</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2019-2020, pyLHC/OMC-TEAM.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
