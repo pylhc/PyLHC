@@ -99,18 +99,6 @@ def _get_beta_fit(
     beta_fit = beta_function(positions[valid], *popt)
     beta_fit_err = err_function(positions[valid], popt, pcov)
 
-    import matplotlib.pyplot as plt
-    fig, ax = plt.subplots()
-    bfit, = ax.plot(positions[valid], beta_fit[valid])
-    b_meas, = ax.plot(positions[valid], beta_phase[valid], marker='o')
-
-    ax.errorbar(positions[valid], beta_fit[valid], yerr=beta_fit_err)
-    ax.legend((bfit, b_meas), ('β fit', 'β^φ'), loc='upper right', shadow=True)
-
-    plt.show()
-
-    #beta_fit_err qrt((1/2) * ((beta_fit - beta_fit_up)**2 + (beta_fit - beta_fit_dw)**2))
-
     return pd.DataFrame({f"{BETA}{plane}": beta_fit, f"{ERR}{BETA}{plane}": beta_fit_err})
 
 
