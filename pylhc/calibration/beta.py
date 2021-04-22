@@ -1,5 +1,5 @@
 """
-beta
+Beta
 -----
 
 The functions in this script compute the calibration factors for the LHC BPMs

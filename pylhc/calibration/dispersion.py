@@ -1,6 +1,6 @@
 """
-beta
------
+Dispersion
+----------
 
 The functions in this script compute the calibration factors for the LHC BPMs
 using the dispersion method. The `get_calibration_factors_from_dispersion` is
