@@ -6,6 +6,8 @@ General constants to be used in ``PyLHC``, to help with consistency.
 """
 import numpy as np
 
+BEAMS = (1, 2)
+
 PLANES = ("X", "Y")
 PLANE_TO_HV = dict(X="H", Y="V")
 
