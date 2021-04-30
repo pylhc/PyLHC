@@ -279,7 +279,12 @@ from pylhc.job_submitter import (
     check_replace_dict,
     keys_to_path,
 )
-from pylhc.sixdesk_tools.create_workspace import create_job, remove_twiss_fail_check, init_workspace
+from pylhc.sixdesk_tools.create_workspace import (
+    create_job,
+    remove_twiss_fail_check,
+    init_workspace,
+    fix_pythonfile_call
+)
 from pylhc.sixdesk_tools.post_process_da import post_process_da
 from pylhc.sixdesk_tools.submit import (
     submit_mask,
@@ -496,6 +501,7 @@ def setup_and_run(jobname: str, basedir: Path, **kwargs):
                 raise StageSkip()
 
             init_workspace(jobname, basedir, ssh=ssh)
+            fix_pythonfile_call(jobname, basedir)  # Hack for python files (but should not cause trouble with madx)
             if ignore_twissfail_check:  # Hack
                 remove_twiss_fail_check(jobname, basedir)
 
