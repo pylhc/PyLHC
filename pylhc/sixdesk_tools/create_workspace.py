@@ -81,7 +81,7 @@ def remove_twiss_fail_check(jobname: str, basedir: Path):
 
 def fix_pythonfile_call(jobname: str, basedir: Path):
     """ Removes '<' in the `binary file` line in mad6t.sh so __file__ works. """
-    LOG.info("Applying twiss-fail hack.")
+    LOG.info("Applying python-file call fix.")
     for mad6t_path in (
             get_mad6t_mask_path(jobname, basedir),
             get_mad6t1_mask_path(jobname, basedir),
