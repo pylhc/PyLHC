@@ -91,7 +91,7 @@ def fix_pythonfile_call(jobname: str, basedir: Path):
 
         for idx, line in enumerate(lines):
             if line.startswith('$MADX_PATH/$MADX'):
-                lines[idx] = f'$MADX_PATH/$MADX $junktmp/$filejob."$i" > $filejob.out."$i"'
+                lines[idx] = f'$MADX_PATH/$MADX $junktmp/$filejob."$i" > $filejob.out."$i"\n'
                 break
         else:
             raise IOError(f"'$MADX_PATH/$MADX' line not found in {mad6t_path.name}")
