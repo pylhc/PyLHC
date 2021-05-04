@@ -253,8 +253,12 @@ def get_params():
 
 @entrypoint(get_params(), strict=True)
 def main(opt):
-    _check_htcondor_presence()
-    LOG.info("Starting HTCondor Job-submitter.")
+    if not opt.run_local:
+        LOG.info("Starting HTCondor Job-submitter.")
+        _check_htcondor_presence()
+    else:
+        LOG.info("Starting Job-submitter.")
+
     opt = _check_opts(opt)
     save_config(opt.working_directory, opt, __file__)
 
