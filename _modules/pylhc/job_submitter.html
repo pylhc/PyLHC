@@ -308,9 +308,13 @@
 <span class="kn">from</span> <span class="nn">omc3.utils</span> <span class="kn">import</span> <span class="n">logging_tools</span>
 <span class="kn">from</span> <span class="nn">omc3.utils.iotools</span> <span class="kn">import</span> <span class="n">PathOrStr</span><span class="p">,</span> <span class="n">save_config</span>
 
-<span class="kn">import</span> <span class="nn">pylhc.htc.mask</span> <span class="k">as</span> <span class="nn">mask_processing</span>
 <span class="kn">import</span> <span class="nn">pylhc.htc.utils</span> <span class="k">as</span> <span class="nn">htcutils</span>
-<span class="kn">from</span> <span class="nn">pylhc.htc.mask</span> <span class="kn">import</span> <span class="n">find_named_variables_in_mask</span><span class="p">,</span> <span class="n">generate_jobdf_index</span>
+<span class="kn">from</span> <span class="nn">pylhc.htc.mask</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">create_jobs_from_mask</span><span class="p">,</span>
+    <span class="n">generate_jobdf_index</span><span class="p">,</span>
+    <span class="n">find_named_variables_in_mask</span><span class="p">,</span>
+    <span class="n">check_percentage_signs_in_mask</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">pylhc.htc.utils</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">COLUMN_JOB_DIRECTORY</span><span class="p">,</span>
     <span class="n">COLUMN_SHELL_SCRIPT</span><span class="p">,</span>
@@ -461,8 +465,12 @@
 
 <span class="nd">@entrypoint</span><span class="p">(</span><span class="n">get_params</span><span class="p">(),</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">opt</span><span class="p">):</span>
-    <span class="n">_check_htcondor_presence</span><span class="p">()</span>
-    <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting HTCondor Job-submitter.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">opt</span><span class="o">.</span><span class="n">run_local</span><span class="p">:</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting HTCondor Job-submitter.&quot;</span><span class="p">)</span>
+        <span class="n">_check_htcondor_presence</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting Job-submitter.&quot;</span><span class="p">)</span>
+
     <span class="n">opt</span> <span class="o">=</span> <span class="n">_check_opts</span><span class="p">(</span><span class="n">opt</span><span class="p">)</span>
     <span class="n">save_config</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">working_directory</span><span class="p">,</span> <span class="n">opt</span><span class="p">,</span> <span class="vm">__file__</span><span class="p">)</span>
 
@@ -547,7 +555,7 @@
 
     <span class="c1"># creating all madx jobs</span>
     <span class="n">script_extension</span> <span class="o">=</span> <span class="n">_get_script_extension</span><span class="p">(</span><span class="n">script_extension</span><span class="p">,</span> <span class="n">executable</span><span class="p">,</span> <span class="n">maskfile</span><span class="p">)</span>
-    <span class="n">job_df</span> <span class="o">=</span> <span class="n">mask_processing</span><span class="o">.</span><span class="n">create_jobs_from_mask</span><span class="p">(</span>
+    <span class="n">job_df</span> <span class="o">=</span> <span class="n">create_jobs_from_mask</span><span class="p">(</span>
         <span class="n">job_df</span><span class="p">,</span> <span class="n">maskfile</span><span class="p">,</span> <span class="n">replace_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">script_extension</span>
     <span class="p">)</span>
 
@@ -687,6 +695,7 @@
         <span class="p">[</span><span class="n">opt</span><span class="o">.</span><span class="n">replace_dict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">not_in_mask</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">replace_dict</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Empty replace-dictionary&quot;</span><span class="p">)</span>
+    <span class="n">check_percentage_signs_in_mask</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
 
     <span class="n">print_dict_tree</span><span class="p">(</span><span class="n">opt</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Input parameter&quot;</span><span class="p">,</span> <span class="n">print_fun</span><span class="o">=</span><span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">)</span>
     <span class="n">opt</span><span class="o">.</span><span class="n">replace_dict</span> <span class="o">=</span> <span class="n">check_replace_dict</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">replace_dict</span><span class="p">)</span>

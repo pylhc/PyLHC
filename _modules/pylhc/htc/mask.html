@@ -263,8 +263,23 @@
     <span class="k">return</span> <span class="n">job_df</span></div>
 
 
-<span class="k">def</span> <span class="nf">find_named_variables_in_mask</span><span class="p">(</span><span class="n">mask</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">find_named_variables_in_mask</span><span class="p">(</span><span class="n">mask</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
     <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;%\((\w+)\)&quot;</span><span class="p">,</span> <span class="n">mask</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="check_percentage_signs_in_mask"><a class="viewcode-back" href="../../../modules/htc.html#pylhc.htc.mask.check_percentage_signs_in_mask">[docs]</a><span class="k">def</span> <span class="nf">check_percentage_signs_in_mask</span><span class="p">(</span><span class="n">mask</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Checks for &#39;%&#39; in the mask, that are not replacement variables. &quot;&quot;&quot;</span>
+    <span class="n">cleaned_mask</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;%\((\w+)\)&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
+    <span class="n">n_signs</span> <span class="o">=</span> <span class="n">cleaned_mask</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;%&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">n_signs</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span>
+
+    <span class="c1"># Help the user find the %</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cleaned_mask</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="s2">&quot;%&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+            <span class="n">positions</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">char</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="k">if</span> <span class="n">char</span> <span class="o">==</span> <span class="s2">&quot;%&quot;</span><span class="p">]</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Problematic &#39;%&#39; sign(s) in line </span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">, pos </span><span class="si">{</span><span class="s1">&#39; ,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">positions</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">n_signs</span><span class="si">}</span><span class="s2"> problematic &#39;%&#39; signs found in template. Please remove.&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="generate_jobdf_index"><a class="viewcode-back" href="../../../modules/htc.html#pylhc.htc.mask.generate_jobdf_index">[docs]</a><span class="k">def</span> <span class="nf">generate_jobdf_index</span><span class="p">(</span><span class="n">old_df</span><span class="p">,</span> <span class="n">jobid_mask</span><span class="p">,</span> <span class="n">keys</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
