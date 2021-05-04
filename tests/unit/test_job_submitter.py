@@ -1,19 +1,17 @@
 import sys
-import tempfile
-from contextlib import contextmanager
 from pathlib import Path
 
 import pytest
 from generic_parser import DotDict
 
-try:
-    from pylhc.job_submitter import main as job_submit
-except NotImplementedError:  # might have been triggered because htcondor not found if not on linux
-    pass  # let the skipif marker take care if the rest
-
+from pylhc.job_submitter import main as job_submit
 
 skip_not_linux = pytest.mark.skipif(
     sys.platform != "linux", reason="htcondor python bindings from PyPI are only on linux"
+)
+
+skip_on_linux = pytest.mark.skipif(
+    sys.platform == "linux", reason="htcondor python bindings are present"
 )
 
 
@@ -41,6 +39,14 @@ def test_missing_keys(tmp_path):
     with pytest.raises(KeyError) as e:
         job_submit(**setup)
     assert "PARAM3" in e.value.args[0]
+
+
+@skip_on_linux
+def test_missing_keys(tmp_path):
+    args, setup = _create_setup(tmp_path)
+    with pytest.raises(EnvironmentError) as e:
+        job_submit(**setup)
+    assert "htcondor bindings" in e.value.args[0]
 
 
 @skip_not_linux
