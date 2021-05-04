@@ -42,7 +42,7 @@ def test_missing_keys(tmp_path):
 
 
 @skip_on_linux
-def test_missing_keys(tmp_path):
+def test_not_on_linux(tmp_path):
     args, setup = _create_setup(tmp_path)
     with pytest.raises(EnvironmentError) as e:
         job_submit(**setup)
