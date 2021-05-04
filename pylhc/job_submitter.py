@@ -96,9 +96,13 @@ from generic_parser.tools import print_dict_tree
 from omc3.utils import logging_tools
 from omc3.utils.iotools import PathOrStr, save_config
 
-import pylhc.htc.mask as mask_processing
 import pylhc.htc.utils as htcutils
-from pylhc.htc.mask import find_named_variables_in_mask, generate_jobdf_index
+from pylhc.htc.mask import (
+    create_jobs_from_mask,
+    generate_jobdf_index,
+    find_named_variables_in_mask,
+    check_percentage_signs_in_mask
+)
 from pylhc.htc.utils import (
     COLUMN_JOB_DIRECTORY,
     COLUMN_SHELL_SCRIPT,
@@ -335,7 +339,7 @@ def _create_jobs(
 
     # creating all madx jobs
     script_extension = _get_script_extension(script_extension, executable, maskfile)
-    job_df = mask_processing.create_jobs_from_mask(
+    job_df = create_jobs_from_mask(
         job_df, maskfile, replace_dict.keys(), script_extension
     )
 
@@ -475,6 +479,7 @@ def _check_opts(opt):
         [opt.replace_dict.pop(key) for key in not_in_mask]
         if len(opt.replace_dict) == 0:
             raise KeyError("Empty replace-dictionary")
+    check_percentage_signs_in_mask(mask)
 
     print_dict_tree(opt, name="Input parameter", print_fun=LOG.debug)
     opt.replace_dict = check_replace_dict(opt.replace_dict)
