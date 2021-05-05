@@ -51,8 +51,23 @@ def create_jobs_from_mask(
     return job_df
 
 
-def find_named_variables_in_mask(mask):
+def find_named_variables_in_mask(mask: str):
     return set(re.findall(r"%\((\w+)\)", mask))
+
+
+def check_percentage_signs_in_mask(mask: str):
+    """ Checks for '%' in the mask, that are not replacement variables. """
+    cleaned_mask = re.sub(r"%\((\w+)\)", "", mask)
+    n_signs = cleaned_mask.count("%")
+    if n_signs == 0:
+        return
+
+    # Help the user find the %
+    for idx, line in enumerate(cleaned_mask.split("\n")):
+        if "%" in line:
+            positions = [str(i) for i, char in enumerate(line) if char == "%"]
+            LOG.error(f"Problematic '%' sign(s) in line {idx}, pos {' ,'.join(positions)}.")
+    raise KeyError(f"{n_signs} problematic '%' signs found in template. Please remove.")
 
 
 def generate_jobdf_index(old_df, jobid_mask, keys, values):
