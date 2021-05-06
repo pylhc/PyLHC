@@ -35,7 +35,7 @@ DEPENDENCIES = [
     "matplotlib>=3.2.0",
     "htcondor>=8.9.2 ; sys_platform=='linux'",  # no bindings for macOS or windows on PyPI
     "tfs-pandas>=2.0",
-    "generic-parser>=1.0.6",
+    "generic-parser>=1.0.8",
     "parse>=1.15.0",
     "omc3",
 ]
