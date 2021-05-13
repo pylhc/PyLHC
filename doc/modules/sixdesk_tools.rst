@@ -12,3 +12,6 @@ Sixdesk Tools
 
 .. automodule:: pylhc.sixdesk_tools.utils
     :members:
+
+.. automodule:: pylhc.sixdesk_tools.troubleshooting
+    :members:

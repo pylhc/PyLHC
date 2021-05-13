@@ -190,11 +190,12 @@ Arguments:
     default: ``/afs/cern.ch/user/m/mad/bin/madx``
 
 
-- **ignore_twissfail_check**:
+- **apply_mad6t_hacks**:
 
-    Ignore the check for 'Twiss fail' in the submission file. This is a
-    hack needed in case this check greps the wrong lines, e.g. in madx-
-    comments. USE WITH CARE!!
+    Apply two hacks: Removes '<' in binary call and
+    ignore the check for 'Twiss fail' in the submission file.
+    This hack is needed in case this check greps the wrong lines,
+    e.g. in madx- comments. USE WITH CARE!!
 
     action: ``store_true``
 
@@ -265,7 +266,7 @@ from omc3.utils import logging_tools
 from omc3.utils.iotools import PathOrStr, save_config
 
 from pylhc.constants.autosix import (
-    STAGES,
+    Stage,
     HEADER_BASEDIR,
     get_stagefile_path,
     DEFAULTS,
@@ -279,7 +280,12 @@ from pylhc.job_submitter import (
     check_replace_dict,
     keys_to_path,
 )
-from pylhc.sixdesk_tools.create_workspace import create_job, remove_twiss_fail_check, init_workspace
+from pylhc.sixdesk_tools.create_workspace import (
+    create_job,
+    remove_twiss_fail_check,
+    init_workspace,
+    fix_pythonfile_call
+)
 from pylhc.sixdesk_tools.post_process_da import post_process_da
 from pylhc.sixdesk_tools.submit import (
     submit_mask,
@@ -359,10 +365,11 @@ def get_params():
         action="store_true",
     )
     params.add_parameter(
-        name="ignore_twissfail_check",
+        name="apply_mad6t_hacks",
         help=(
-            "Ignore the check for 'Twiss fail' in the submission file. "
-            "This is a hack needed in case this check greps the wrong lines, "
+            "Apply two hacks: Removes '<' in binary call and"
+            "ignore the check for 'Twiss fail' in the submission file. "
+            "This is hack needed in case this check greps the wrong lines, "
             "e.g. in madx-comments. USE WITH CARE!!"
         ),
         action="store_true",
@@ -385,6 +392,11 @@ def get_params():
         type=int,
         help="Step between turns used in DA-vs-Turns plot.",
         default=DEFAULTS["da_turnstep"],
+    )
+    params.add_parameter(
+        name="max_stage",
+        type=str,
+        help="Last stage to be run. All following stages are skipped.",
     )
     return params
 
@@ -410,7 +422,8 @@ def main(opt):
             unlock=opt.unlock,
             resubmit=opt.resubmit,
             da_turnstep=opt.da_turnstep,
-            ignore_twissfail_check=opt.ignore_twissfail_check,
+            apply_mad6t_hacks=opt.apply_mad6t_hacks,
+            max_stage=opt.max_stage,
             # kwargs passed only to create_jobs:
             mask_text=mask,
             binary_path=opt.executable,
@@ -433,6 +446,7 @@ def setup_and_run(jobname: str, basedir: Path, **kwargs):
         resubmit(bool): Resubmit jobs if checks fail
         da_turnstep (int): Step in turns for DA
         ignore_twissfail_check (bool): Hack to ignore check for 'Twiss fail' after run
+        max_stage (str): Last stage to run
 
     Keyword Args (needed for create jobs):
         mask_text (str): Content of the mask to use.
@@ -448,13 +462,16 @@ def setup_and_run(jobname: str, basedir: Path, **kwargs):
     python3: Union[Path, str] = kwargs.pop("python3", DEFAULTS["python3"])
     resubmit: bool = kwargs.pop("resubmit", False)
     da_turnstep: int = kwargs.pop("da_turnstep", DEFAULTS["da_turnstep"])
-    ignore_twissfail_check: bool = kwargs.pop("ignore_twissfail_check", False)
+    apply_mad6t_hacks: bool = kwargs.pop("apply_mad6t_hacks", False)
     stop_workspace_init: bool = kwargs.pop("stop_workspace_init", False)
+    max_stage: str = kwargs.pop("max_stage", None)
+    if max_stage is not None:
+        max_stage = Stage[max_stage]
 
     if is_locked(jobname, basedir, unlock=unlock):
         LOG.info(f"{jobname} is locked. Try 'unlock' flag if this causes errors.")
 
-    with check_stage(STAGES.create_job, jobname, basedir) as check_ok:
+    with check_stage(Stage.create_job, jobname, basedir, max_stage) as check_ok:
         """
         create workspace
         > cd $basedir
@@ -466,7 +483,7 @@ def setup_and_run(jobname: str, basedir: Path, **kwargs):
         if check_ok:
             create_job(jobname, basedir, ssh=ssh, **kwargs)
 
-    with check_stage(STAGES.initialize_workspace, jobname, basedir) as check_ok:
+    with check_stage(Stage.initialize_workspace, jobname, basedir, max_stage) as check_ok:
         """
         initialize workspace
         > cd $basedir/workspace-$jobname/sixjobs
@@ -486,10 +503,11 @@ def setup_and_run(jobname: str, basedir: Path, **kwargs):
                 raise StageSkip()
 
             init_workspace(jobname, basedir, ssh=ssh)
-            if ignore_twissfail_check:  # Hack
-                remove_twiss_fail_check(jobname, basedir)
+            if apply_mad6t_hacks:
+                fix_pythonfile_call(jobname, basedir)  # removes "<" in call
+                remove_twiss_fail_check(jobname, basedir)  # removes 'grep twiss fail'
 
-    with check_stage(STAGES.submit_mask, jobname, basedir) as check_ok:
+    with check_stage(Stage.submit_mask, jobname, basedir, max_stage) as check_ok:
         """
         submit for input generation
         > cd $basedir/workspace-$jobname/sixjobs
@@ -499,7 +517,7 @@ def setup_and_run(jobname: str, basedir: Path, **kwargs):
             submit_mask(jobname, basedir, ssh=ssh)
             return  # takes a while, so we interrupt here
 
-    with check_stage(STAGES.check_input, jobname, basedir) as check_ok:
+    with check_stage(Stage.check_input, jobname, basedir, max_stage) as check_ok:
         """
         Check if input files have been generated properly
         > cd $basedir/workspace-$jobname/sixjobs
@@ -511,7 +529,7 @@ def setup_and_run(jobname: str, basedir: Path, **kwargs):
         if check_ok:
             check_sixtrack_input(jobname, basedir, ssh=ssh, resubmit=resubmit)
 
-    with check_stage(STAGES.submit_sixtrack, jobname, basedir) as check_ok:
+    with check_stage(Stage.submit_sixtrack, jobname, basedir, max_stage) as check_ok:
         """
         Generate simulation files (-g) and check if runnable (-c) and submit (-s) (-g -c -s == -a).
         > cd $basedir/workspace-$jobname/sixjobs
@@ -521,14 +539,14 @@ def setup_and_run(jobname: str, basedir: Path, **kwargs):
             submit_sixtrack(jobname, basedir, python=python2, ssh=ssh)
             return  # takes even longer
 
-    with check_stage(STAGES.check_sixtrack_output, jobname, basedir) as check_ok:
+    with check_stage(Stage.check_sixtrack_output, jobname, basedir, max_stage) as check_ok:
         """
         Checks sixtrack output via run_status. If this fails even though all
         jobs have finished on the scheduler, check the log-output (run_status
         messages are logged to debug).
         > cd $basedir/workspace-$jobname/sixjobs
         > /afs/cern.ch/project/sixtrack/SixDesk_utilities/pro/utilities/bash/run_status
-
+        
         If not, and resubmit is active
         > cd $basedir/workspace-$jobname/sixjobs
         > /afs/cern.ch/project/sixtrack/SixDesk_utilities/pro/utilities/bash/run_six.sh -i
@@ -536,7 +554,7 @@ def setup_and_run(jobname: str, basedir: Path, **kwargs):
         if check_ok:
             check_sixtrack_output(jobname, basedir, python=python2, ssh=ssh, resubmit=resubmit)
 
-    with check_stage(STAGES.sixdb_load, jobname, basedir) as check_ok:
+    with check_stage(Stage.sixdb_load, jobname, basedir, max_stage) as check_ok:
         """
         Gather results into database via sixdb.
         > cd $basedir/workspace-$jobname/sixjobs
@@ -545,7 +563,7 @@ def setup_and_run(jobname: str, basedir: Path, **kwargs):
         if check_ok:
             sixdb_load(jobname, basedir, python=python3, ssh=ssh)
 
-    with check_stage(STAGES.sixdb_cmd, jobname, basedir) as check_ok:
+    with check_stage(Stage.sixdb_cmd, jobname, basedir, max_stage) as check_ok:
         """
         Analysise results in database via sixdb.
         > cd $basedir/workspace-$jobname/sixjobs
@@ -563,7 +581,7 @@ def setup_and_run(jobname: str, basedir: Path, **kwargs):
             #           python=python, ssh=ssh)
             # sixdb_cmd(jobname, basedir, cmd=['plot_da_vs_turns'], python=python, ssh=ssh)
 
-    with check_stage(STAGES.post_process, jobname, basedir) as check_ok:
+    with check_stage(Stage.post_process, jobname, basedir, max_stage) as check_ok:
         """
         Extracts the analysed data in the database and writes them to three tfs files:
 
@@ -577,7 +595,7 @@ def setup_and_run(jobname: str, basedir: Path, **kwargs):
         if check_ok:
             post_process_da(jobname, basedir)
 
-    with check_stage(STAGES.final, jobname, basedir) as check_ok:
+    with check_stage(Stage.final, jobname, basedir, max_stage) as check_ok:
         """ Just info about finishing this script and where to check the stagefile. """
         if check_ok:
             stage_file = get_stagefile_path(jobname, basedir)
@@ -600,13 +618,19 @@ def _check_opts(mask_text, opt):
     return opt
 
 
+def get_jobs_and_values(jobid_mask, **kwargs):
+    values_grid = np.array(list(itertools.product(*kwargs.values())), dtype=object)
+    job_names = generate_jobdf_index(None, jobid_mask, kwargs.keys(), values_grid)
+    return job_names, values_grid
+
+
 def _generate_jobs(basedir, jobid_mask, **kwargs) -> tfs.TfsDataFrame:
     """ Generates product matrix for job-values and stores it as TfsDataFrame. """
     LOG.debug("Creating Jobs")
-    values_grid = np.array(list(itertools.product(*kwargs.values())), dtype=object)
+    job_names, values_grid = get_jobs_and_values(jobid_mask, **kwargs)
     job_df = tfs.TfsDataFrame(
         headers={HEADER_BASEDIR: basedir},
-        index=generate_jobdf_index(None, jobid_mask, kwargs.keys(), values_grid),
+        index=job_names,
         columns=list(kwargs.keys()),
         data=values_grid,
     )

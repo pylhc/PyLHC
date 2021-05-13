@@ -79,6 +79,26 @@ def remove_twiss_fail_check(jobname: str, basedir: Path):
             f.writelines(lines)
 
 
+def fix_pythonfile_call(jobname: str, basedir: Path):
+    """ Removes '<' in the `binary file` line in mad6t.sh so __file__ works. """
+    LOG.info("Applying python-file call fix.")
+    for mad6t_path in (
+            get_mad6t_mask_path(jobname, basedir),
+            get_mad6t1_mask_path(jobname, basedir),
+    ):
+        with open(mad6t_path, "r") as f:
+            lines = f.readlines()
+
+        for idx, line in enumerate(lines):
+            if line.startswith('$MADX_PATH/$MADX'):
+                lines[idx] = f'$MADX_PATH/$MADX $junktmp/$filejob."$i" > $filejob.out."$i"\n'
+                break
+        else:
+            raise IOError(f"'$MADX_PATH/$MADX' line not found in {mad6t_path.name}")
+
+        with open(mad6t_path, "w") as f:
+            f.writelines(lines)
+
 # Helper -----------------------------------------------------------------------
 
 

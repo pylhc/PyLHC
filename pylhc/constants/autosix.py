@@ -10,9 +10,8 @@ Collections of constants and paths used in autosix.
 """
 from pathlib import Path
 
-from generic_parser import DotDict
-
 from pylhc.constants.external_paths import SIXDESK_UTILS, MADX_BIN
+from enum import IntEnum
 
 # Program Paths ----------------------------------------------------------------
 SETENV_SH = SIXDESK_UTILS / "set_env.sh"
@@ -27,12 +26,30 @@ SIXDESKLOCKFILE = "sixdesklock"
 
 HEADER_BASEDIR = "BASEDIR"
 
+# Defaults ---
+
 DEFAULTS = dict(
     python2=None,
     python3="python3",
     da_turnstep=100,
     executable=MADX_BIN,
 )
+
+# Stages ---
+Stage = IntEnum('Stage',
+                names=[
+                    "create_job",
+                    "initialize_workspace",
+                    "submit_mask",
+                    "check_input",
+                    "submit_sixtrack",
+                    "check_sixtrack_output",
+                    "sixdb_load",
+                    "sixdb_cmd",
+                    "post_process",
+                    "final",
+                ],
+                start=0)
 
 # Sixenv ---
 SIXENV_REQUIRED = ["TURNS", "AMPMIN", "AMPMAX", "AMPSTEP", "ANGLES"]
@@ -51,23 +68,10 @@ SIXENV_DEFAULT = dict(
 SEED_KEYS = ["FIRSTSEED", "LASTSEED"]
 
 
-# Stages ---
-STAGE_ORDER = [
-    "create_job",
-    "initialize_workspace",
-    "submit_mask",
-    "check_input",
-    "submit_sixtrack",
-    "check_sixtrack_output",
-    "sixdb_load",
-    "sixdb_cmd",
-    "post_process",
-    "final",
-]
-STAGES = DotDict({key: key for key in STAGE_ORDER})
-
-
 # SixDB and Postprocess ---
+
+SIXTRACK_OUTPUT_FILES = "fort.10.gz", "Sixout.zip"
+SIXTRACK_INPUT_CHECK_FILES = "JOB_NOT_YET_STARTED", "JOB_NOT_YET_COMPLETED"
 
 HEADER_NTOTAL, HEADER_INFO, HEADER_HINT = "NTOTAL", "INFO", "HINT"
 MEAN, STD, MIN, MAX, N = "MEAN", "STD", "MIN", "MAX", "N"
@@ -99,6 +103,10 @@ def get_sysenv_path(jobname: str, basedir: Path) -> Path:
 
 def get_masks_path(jobname: str, basedir: Path) -> Path:
     return get_sixjobs_path(jobname, basedir) / "mask"
+
+
+def get_track_path(jobname: str, basedir: Path) -> Path:
+    return get_sixjobs_path(jobname, basedir) / "track"
 
 
 def get_database_path(jobname: str, basedir: Path) -> Path:

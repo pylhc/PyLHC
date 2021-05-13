@@ -39,7 +39,8 @@ def check_sixtrack_input(jobname: str, basedir: Path, ssh: str = None, resubmit:
         if resubmit:
             LOG.info("Resubmitting mask to run wrong seeds for sixtrack input generation.")
             start_subprocess([MAD_TO_SIXTRACK_SH, "-w"], cwd=sixjobs_path, ssh=ssh)
-            raise StageSkip("Resubmitted input generation jobs.")
+            raise StageSkip("Resubmitted input generation jobs "
+                            "(Not really an error, but the run is now interrupted).")
         else:
             raise StageSkip(
                 "Checking input files failed. Check (debug-) logs. "
@@ -60,7 +61,7 @@ def submit_sixtrack(jobname: str, basedir: Path, python: Path = None, ssh: str =
             python = python.parent
         args += ["-P", str(python)]
     try:
-        start_subprocess([RUNSIX_SH] + args, cwd=sixjobs_path, ssh=ssh)  # throws OSError if failed
+        start_subprocess([RUNSIX_SH] + args, cwd=sixjobs_path, ssh=ssh, check_log='exit status: 1')
     except OSError as e:
         raise StageSkip(
             f"{re_str}Submit to sixtrack for {jobname} ended in error."

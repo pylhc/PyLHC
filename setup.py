@@ -86,6 +86,7 @@ setuptools.setup(
         "Topic :: Scientific/Engineering :: Visualization",
     ],
     packages=setuptools.find_packages(exclude=["tests*", "doc"]),
+    include_package_data=True,
     install_requires=DEPENDENCIES,
     tests_require=EXTRA_DEPENDENCIES["test"],
     extras_require=EXTRA_DEPENDENCIES,

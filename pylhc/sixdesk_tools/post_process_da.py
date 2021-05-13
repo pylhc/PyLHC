@@ -40,6 +40,8 @@ from pylhc.constants.autosix import (
 from scipy.interpolate import interp1d
 from tfs import TfsDataFrame, write_tfs
 
+from pylhc.sixdesk_tools.utils import StageSkip
+
 LOG = logging_tools.get_logger(__name__)
 
 DA_COLUMNS = (ALOST1, ALOST2)
@@ -63,8 +65,12 @@ ALPHA_FILL_STD = 0.2
 def post_process_da(jobname: str, basedir: Path):
     """ Post process the DA results into dataframes and DA plots. """
     LOG.info("Post-Processing Sixdesk Results.")
-    df_da, df_angle, df_seed = create_da_tfs(jobname, basedir)
-    create_polar_plots(jobname, basedir, df_da, df_angle)
+    try:
+        df_da, df_angle, df_seed = create_da_tfs(jobname, basedir)
+        create_polar_plots(jobname, basedir, df_da, df_angle)
+    except Exception as e:
+        LOG.exception("Post Processing Failed.")
+        raise StageSkip("Post Processing failed!") from e
     LOG.info("Post-Processing finished.")
 
 
@@ -79,9 +85,17 @@ def create_da_tfs(jobname: str, basedir: Path) -> Tuple[TfsDataFrame, TfsDataFra
     df_angle = _create_stats_df(df_da, ANGLE)
     df_seed = _create_stats_df(df_da, SEED, global_index=0)
 
-    write_tfs(get_tfs_da_path(jobname, basedir), df_da)
-    write_tfs(get_tfs_da_angle_stats_path(jobname, basedir), df_angle, save_index=ANGLE)
-    write_tfs(get_tfs_da_seed_stats_path(jobname, basedir), df_seed, save_index=SEED)
+    try:
+        write_tfs(get_tfs_da_path(jobname, basedir), df_da)
+        write_tfs(get_tfs_da_angle_stats_path(jobname, basedir), df_angle, save_index=ANGLE)
+        write_tfs(get_tfs_da_seed_stats_path(jobname, basedir), df_seed, save_index=SEED)
+    except OSError:  # TODO remove
+        da_path = get_tfs_da_path(jobname, basedir)
+        angle_path = get_tfs_da_angle_stats_path(jobname, basedir)
+        seed_path = get_tfs_da_seed_stats_path(jobname, basedir)
+        write_tfs(da_path.with_name(da_path.name.replace("-by-", "-")), df_da)
+        write_tfs(angle_path.with_name(angle_path.name.replace("-by-", "-")), df_angle, save_index=ANGLE)
+        write_tfs(seed_path.with_name(seed_path.name.replace("-by-", "-")), df_seed, save_index=SEED)
 
     return df_da, df_angle, df_seed
 
@@ -157,7 +171,11 @@ def create_polar_plots(jobname: str, basedir: Path, df_da: TfsDataFrame, df_angl
     for da_col in DA_COLUMNS:
         fig = plot_polar(df_angles, da_col, jobname, df_da)
         fig.tight_layout(), fig.tight_layout()
-        fig.savefig(outdir_path / fig.canvas.get_default_filename())
+        try:  # TODO  remove
+            fig.savefig(outdir_path / fig.canvas.get_default_filename())
+        except OSError:
+            fig.savefig(outdir_path / fig.canvas.get_default_filename().replace("-by-", "-"))
+
     # plt.show()
 
 
