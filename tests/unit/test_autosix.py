@@ -162,12 +162,7 @@ def test_polar_plot_interpolated(tmp_path):
 
 def test_twissfail_removal(tmp_path):
     jobname = "test_job"
-    mad6t = get_mad6t_mask_path(jobname, tmp_path)
-    mad6t1 = get_mad6t1_mask_path(jobname, tmp_path)
-    mad6t.parent.mkdir(parents=True)
-    mad6t.write_text(_mad6t_text())
-    mad6t1.write_text(_mad6t_text())
-
+    mad6t, mad6t1 = _create_mad6t_files(jobname, tmp_path)
     remove_twiss_fail_check(jobname, tmp_path)
 
     for f in (mad6t, mad6t1):
@@ -188,6 +183,15 @@ def _create_subprocess_mocks(jobname, dirpath):
     mock_crate = patch('pylhc.sixdesk_tools.create_workspace.start_subprocess', new=subprocess_mock)
     mock_submit = patch('pylhc.sixdesk_tools.submit.start_subprocess', new=subprocess_mock)
     return mock_crate, mock_submit
+
+
+def _create_mad6t_files(jobname, tmppath):
+    mad6t = get_mad6t_mask_path(jobname, tmppath)
+    mad6t1 = get_mad6t1_mask_path(jobname, tmppath)
+    mad6t.parent.mkdir(parents=True)
+    mad6t.write_text(_mad6t_text())
+    mad6t1.write_text(_mad6t_text())
+    return mad6t, mad6t1
 
 
 def _mad6t_text():

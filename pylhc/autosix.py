@@ -190,11 +190,12 @@ Arguments:
     default: ``/afs/cern.ch/user/m/mad/bin/madx``
 
 
-- **ignore_twissfail_check**:
+- **apply_mad6t_hacks**:
 
-    Ignore the check for 'Twiss fail' in the submission file. This is a
-    hack needed in case this check greps the wrong lines, e.g. in madx-
-    comments. USE WITH CARE!!
+    Apply two hacks: Removes '<' in binary call and
+    ignore the check for 'Twiss fail' in the submission file.
+    This hack is needed in case this check greps the wrong lines,
+    e.g. in madx- comments. USE WITH CARE!!
 
     action: ``store_true``
 
@@ -364,10 +365,11 @@ def get_params():
         action="store_true",
     )
     params.add_parameter(
-        name="ignore_twissfail_check",
+        name="apply_mad6t_hacks",
         help=(
-            "Ignore the check for 'Twiss fail' in the submission file. "
-            "This is a hack needed in case this check greps the wrong lines, "
+            "Apply two hacks: Removes '<' in binary call and"
+            "ignore the check for 'Twiss fail' in the submission file. "
+            "This is hack needed in case this check greps the wrong lines, "
             "e.g. in madx-comments. USE WITH CARE!!"
         ),
         action="store_true",
@@ -420,7 +422,7 @@ def main(opt):
             unlock=opt.unlock,
             resubmit=opt.resubmit,
             da_turnstep=opt.da_turnstep,
-            ignore_twissfail_check=opt.ignore_twissfail_check,
+            apply_mad6t_hacks=opt.apply_mad6t_hacks,
             max_stage=opt.max_stage,
             # kwargs passed only to create_jobs:
             mask_text=mask,
@@ -460,7 +462,7 @@ def setup_and_run(jobname: str, basedir: Path, **kwargs):
     python3: Union[Path, str] = kwargs.pop("python3", DEFAULTS["python3"])
     resubmit: bool = kwargs.pop("resubmit", False)
     da_turnstep: int = kwargs.pop("da_turnstep", DEFAULTS["da_turnstep"])
-    ignore_twissfail_check: bool = kwargs.pop("ignore_twissfail_check", False)
+    apply_mad6t_hacks: bool = kwargs.pop("apply_mad6t_hacks", False)
     stop_workspace_init: bool = kwargs.pop("stop_workspace_init", False)
     max_stage: str = kwargs.pop("max_stage", None)
     if max_stage is not None:
@@ -501,9 +503,9 @@ def setup_and_run(jobname: str, basedir: Path, **kwargs):
                 raise StageSkip()
 
             init_workspace(jobname, basedir, ssh=ssh)
-            fix_pythonfile_call(jobname, basedir)  # Hack for python files (but should not cause trouble with madx)
-            if ignore_twissfail_check:  # Hack
-                remove_twiss_fail_check(jobname, basedir)
+            if apply_mad6t_hacks:
+                fix_pythonfile_call(jobname, basedir)  # removes "<" in call
+                remove_twiss_fail_check(jobname, basedir)  # removes 'grep twiss fail'
 
     with check_stage(Stage.submit_mask, jobname, basedir, max_stage) as check_ok:
         """
