@@ -30,6 +30,7 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
         <script src="../../../_static/jquery.js"></script>
         <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/doctools.js"></script>
@@ -142,6 +143,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../modules/sixdesk_tools.html#sixdesk-submission-utils">SixDesk Submission Utils</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../modules/sixdesk_tools.html#post-process-da">Post Process DA</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../modules/sixdesk_tools.html#sixdesk-utilities">SixDesk Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/sixdesk_tools.html#sixdesk-troubleshooting-tools">SixDesk Troubleshooting tools</a></li>
 </ul>
 </li>
 </ul>
@@ -252,6 +254,8 @@
 <span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">interp1d</span>
 <span class="kn">from</span> <span class="nn">tfs</span> <span class="kn">import</span> <span class="n">TfsDataFrame</span><span class="p">,</span> <span class="n">write_tfs</span>
 
+<span class="kn">from</span> <span class="nn">pylhc.sixdesk_tools.utils</span> <span class="kn">import</span> <span class="n">StageSkip</span>
+
 <span class="n">LOG</span> <span class="o">=</span> <span class="n">logging_tools</span><span class="o">.</span><span class="n">get_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 <span class="n">DA_COLUMNS</span> <span class="o">=</span> <span class="p">(</span><span class="n">ALOST1</span><span class="p">,</span> <span class="n">ALOST2</span><span class="p">)</span>
@@ -275,8 +279,12 @@
 <div class="viewcode-block" id="post_process_da"><a class="viewcode-back" href="../../../modules/sixdesk_tools.html#pylhc.sixdesk_tools.post_process_da.post_process_da">[docs]</a><span class="k">def</span> <span class="nf">post_process_da</span><span class="p">(</span><span class="n">jobname</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">basedir</span><span class="p">:</span> <span class="n">Path</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Post process the DA results into dataframes and DA plots. &quot;&quot;&quot;</span>
     <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Post-Processing Sixdesk Results.&quot;</span><span class="p">)</span>
-    <span class="n">df_da</span><span class="p">,</span> <span class="n">df_angle</span><span class="p">,</span> <span class="n">df_seed</span> <span class="o">=</span> <span class="n">create_da_tfs</span><span class="p">(</span><span class="n">jobname</span><span class="p">,</span> <span class="n">basedir</span><span class="p">)</span>
-    <span class="n">create_polar_plots</span><span class="p">(</span><span class="n">jobname</span><span class="p">,</span> <span class="n">basedir</span><span class="p">,</span> <span class="n">df_da</span><span class="p">,</span> <span class="n">df_angle</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">df_da</span><span class="p">,</span> <span class="n">df_angle</span><span class="p">,</span> <span class="n">df_seed</span> <span class="o">=</span> <span class="n">create_da_tfs</span><span class="p">(</span><span class="n">jobname</span><span class="p">,</span> <span class="n">basedir</span><span class="p">)</span>
+        <span class="n">create_polar_plots</span><span class="p">(</span><span class="n">jobname</span><span class="p">,</span> <span class="n">basedir</span><span class="p">,</span> <span class="n">df_da</span><span class="p">,</span> <span class="n">df_angle</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">&quot;Post Processing Failed.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">StageSkip</span><span class="p">(</span><span class="s2">&quot;Post Processing failed!&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
     <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Post-Processing finished.&quot;</span><span class="p">)</span></div>
 
 
@@ -291,9 +299,17 @@
     <span class="n">df_angle</span> <span class="o">=</span> <span class="n">_create_stats_df</span><span class="p">(</span><span class="n">df_da</span><span class="p">,</span> <span class="n">ANGLE</span><span class="p">)</span>
     <span class="n">df_seed</span> <span class="o">=</span> <span class="n">_create_stats_df</span><span class="p">(</span><span class="n">df_da</span><span class="p">,</span> <span class="n">SEED</span><span class="p">,</span> <span class="n">global_index</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
-    <span class="n">write_tfs</span><span class="p">(</span><span class="n">get_tfs_da_path</span><span class="p">(</span><span class="n">jobname</span><span class="p">,</span> <span class="n">basedir</span><span class="p">),</span> <span class="n">df_da</span><span class="p">)</span>
-    <span class="n">write_tfs</span><span class="p">(</span><span class="n">get_tfs_da_angle_stats_path</span><span class="p">(</span><span class="n">jobname</span><span class="p">,</span> <span class="n">basedir</span><span class="p">),</span> <span class="n">df_angle</span><span class="p">,</span> <span class="n">save_index</span><span class="o">=</span><span class="n">ANGLE</span><span class="p">)</span>
-    <span class="n">write_tfs</span><span class="p">(</span><span class="n">get_tfs_da_seed_stats_path</span><span class="p">(</span><span class="n">jobname</span><span class="p">,</span> <span class="n">basedir</span><span class="p">),</span> <span class="n">df_seed</span><span class="p">,</span> <span class="n">save_index</span><span class="o">=</span><span class="n">SEED</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">write_tfs</span><span class="p">(</span><span class="n">get_tfs_da_path</span><span class="p">(</span><span class="n">jobname</span><span class="p">,</span> <span class="n">basedir</span><span class="p">),</span> <span class="n">df_da</span><span class="p">)</span>
+        <span class="n">write_tfs</span><span class="p">(</span><span class="n">get_tfs_da_angle_stats_path</span><span class="p">(</span><span class="n">jobname</span><span class="p">,</span> <span class="n">basedir</span><span class="p">),</span> <span class="n">df_angle</span><span class="p">,</span> <span class="n">save_index</span><span class="o">=</span><span class="n">ANGLE</span><span class="p">)</span>
+        <span class="n">write_tfs</span><span class="p">(</span><span class="n">get_tfs_da_seed_stats_path</span><span class="p">(</span><span class="n">jobname</span><span class="p">,</span> <span class="n">basedir</span><span class="p">),</span> <span class="n">df_seed</span><span class="p">,</span> <span class="n">save_index</span><span class="o">=</span><span class="n">SEED</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>  <span class="c1"># TODO remove</span>
+        <span class="n">da_path</span> <span class="o">=</span> <span class="n">get_tfs_da_path</span><span class="p">(</span><span class="n">jobname</span><span class="p">,</span> <span class="n">basedir</span><span class="p">)</span>
+        <span class="n">angle_path</span> <span class="o">=</span> <span class="n">get_tfs_da_angle_stats_path</span><span class="p">(</span><span class="n">jobname</span><span class="p">,</span> <span class="n">basedir</span><span class="p">)</span>
+        <span class="n">seed_path</span> <span class="o">=</span> <span class="n">get_tfs_da_seed_stats_path</span><span class="p">(</span><span class="n">jobname</span><span class="p">,</span> <span class="n">basedir</span><span class="p">)</span>
+        <span class="n">write_tfs</span><span class="p">(</span><span class="n">da_path</span><span class="o">.</span><span class="n">with_name</span><span class="p">(</span><span class="n">da_path</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;-by-&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)),</span> <span class="n">df_da</span><span class="p">)</span>
+        <span class="n">write_tfs</span><span class="p">(</span><span class="n">angle_path</span><span class="o">.</span><span class="n">with_name</span><span class="p">(</span><span class="n">angle_path</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;-by-&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)),</span> <span class="n">df_angle</span><span class="p">,</span> <span class="n">save_index</span><span class="o">=</span><span class="n">ANGLE</span><span class="p">)</span>
+        <span class="n">write_tfs</span><span class="p">(</span><span class="n">seed_path</span><span class="o">.</span><span class="n">with_name</span><span class="p">(</span><span class="n">seed_path</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;-by-&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)),</span> <span class="n">df_seed</span><span class="p">,</span> <span class="n">save_index</span><span class="o">=</span><span class="n">SEED</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">df_da</span><span class="p">,</span> <span class="n">df_angle</span><span class="p">,</span> <span class="n">df_seed</span></div>
 
@@ -369,7 +385,11 @@
     <span class="k">for</span> <span class="n">da_col</span> <span class="ow">in</span> <span class="n">DA_COLUMNS</span><span class="p">:</span>
         <span class="n">fig</span> <span class="o">=</span> <span class="n">plot_polar</span><span class="p">(</span><span class="n">df_angles</span><span class="p">,</span> <span class="n">da_col</span><span class="p">,</span> <span class="n">jobname</span><span class="p">,</span> <span class="n">df_da</span><span class="p">)</span>
         <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">(),</span> <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-        <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outdir_path</span> <span class="o">/</span> <span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">get_default_filename</span><span class="p">())</span></div>
+        <span class="k">try</span><span class="p">:</span>  <span class="c1"># TODO  remove</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outdir_path</span> <span class="o">/</span> <span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">get_default_filename</span><span class="p">())</span>
+        <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outdir_path</span> <span class="o">/</span> <span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">get_default_filename</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;-by-&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">))</span></div>
+
     <span class="c1"># plt.show()</span>
 
 

@@ -30,6 +30,7 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
@@ -144,6 +145,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../modules/sixdesk_tools.html#sixdesk-submission-utils">SixDesk Submission Utils</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modules/sixdesk_tools.html#post-process-da">Post Process DA</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modules/sixdesk_tools.html#sixdesk-utilities">SixDesk Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/sixdesk_tools.html#sixdesk-troubleshooting-tools">SixDesk Troubleshooting tools</a></li>
 </ul>
 </li>
 </ul>
@@ -286,14 +288,14 @@ This is inferred automatically for [‘madx’, ‘python3’, ‘python2’]. O
 </dd>
 </dl>
 <dl class="py function">
-<dt id="pylhc.job_submitter.check_replace_dict">
-<code class="sig-prename descclassname"><span class="pre">pylhc.job_submitter.</span></code><code class="sig-name descname"><span class="pre">check_replace_dict</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">replace_dict</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">collections.OrderedDict</span><a class="reference internal" href="../_modules/pylhc/job_submitter.html#check_replace_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.job_submitter.check_replace_dict" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pylhc.job_submitter.check_replace_dict">
+<span class="sig-prename descclassname"><span class="pre">pylhc.job_submitter.</span></span><span class="sig-name descname"><span class="pre">check_replace_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">replace_dict</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">collections.OrderedDict</span><a class="reference internal" href="../_modules/pylhc/job_submitter.html#check_replace_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.job_submitter.check_replace_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Makes all entries in replace-dict iterable.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="pylhc.job_submitter.keys_to_path">
-<code class="sig-prename descclassname"><span class="pre">pylhc.job_submitter.</span></code><code class="sig-name descname"><span class="pre">keys_to_path</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dict_</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">keys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/job_submitter.html#keys_to_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.job_submitter.keys_to_path" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pylhc.job_submitter.keys_to_path">
+<span class="sig-prename descclassname"><span class="pre">pylhc.job_submitter.</span></span><span class="sig-name descname"><span class="pre">keys_to_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dict_</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">keys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/job_submitter.html#keys_to_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.job_submitter.keys_to_path" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert all keys to Path</p>
 </dd></dl>
 
@@ -468,11 +470,12 @@ dict are lists of values to replace these or single entries.</p>
 <p>default: <code class="docutils literal notranslate"><span class="pre">/afs/cern.ch/user/m/mad/bin/madx</span></code></p>
 </div></blockquote>
 </li>
-<li><p><strong>ignore_twissfail_check</strong>:</p>
+<li><p><strong>apply_mad6t_hacks</strong>:</p>
 <blockquote>
-<div><p>Ignore the check for ‘Twiss fail’ in the submission file. This is a
-hack needed in case this check greps the wrong lines, e.g. in madx-
-comments. USE WITH CARE!!</p>
+<div><p>Apply two hacks: Removes ‘&lt;’ in binary call and
+ignore the check for ‘Twiss fail’ in the submission file.
+This hack is needed in case this check greps the wrong lines,
+e.g. in madx- comments. USE WITH CARE!!</p>
 <p>action: <code class="docutils literal notranslate"><span class="pre">store_true</span></code></p>
 </div></blockquote>
 </li>
@@ -528,14 +531,14 @@ manual changes.</p>
 </dd>
 </dl>
 <dl class="py function">
-<dt id="pylhc.autosix.main">
-<code class="sig-prename descclassname"><span class="pre">pylhc.autosix.</span></code><code class="sig-name descname"><span class="pre">main</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">opt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/autosix.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.autosix.main" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pylhc.autosix.main">
+<span class="sig-prename descclassname"><span class="pre">pylhc.autosix.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">opt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/autosix.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.autosix.main" title="Permalink to this definition">¶</a></dt>
 <dd><p>Loop to create jobs from replace dict product matrix.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="pylhc.autosix.setup_and_run">
-<code class="sig-prename descclassname"><span class="pre">pylhc.autosix.</span></code><code class="sig-name descname"><span class="pre">setup_and_run</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jobname</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basedir</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pathlib.Path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/autosix.html#setup_and_run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.autosix.setup_and_run" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="pylhc.autosix.setup_and_run">
+<span class="sig-prename descclassname"><span class="pre">pylhc.autosix.</span></span><span class="sig-name descname"><span class="pre">setup_and_run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jobname</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basedir</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pathlib.Path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/autosix.html#setup_and_run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.autosix.setup_and_run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Main submitting procedure for single job.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -551,7 +554,8 @@ ssh (str): ssh-server to use
 python (str): python binary to use for sixDB
 resubmit(bool): Resubmit jobs if checks fail
 da_turnstep (int): Step in turns for DA
-ignore_twissfail_check (bool): Hack to ignore check for ‘Twiss fail’ after run</p>
+ignore_twissfail_check (bool): Hack to ignore check for ‘Twiss fail’ after run
+max_stage (str): Last stage to run</p>
 </dd>
 <dt>Keyword Args (needed for create jobs):</dt><dd><p>mask_text (str): Content of the mask to use.
 binary_path (Path): path to binary to use in jobs
