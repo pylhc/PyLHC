@@ -25,6 +25,7 @@ with python 3.6+ and with ``tfs-pandas`` installed.
 
 
 author: Joschua Dilly
+
 """
 import argparse
 import logging
@@ -395,7 +396,8 @@ def parse_args():
 def main(**opt) -> Tuple[str, tfs.TfsDataFrame]:
     """ Get correctors and their optimal powering to minimize the given RDTs.
 
-    Keyword Args
+    Keyword Args:
+
         optics (list[str/Path/DataFrame]): Path(s) to optics file(s) or DataFrame(s) of optics
         errors (list[str/Path/DataFrame]): Path(s) to error file(s) or DataFrame(s) of errors.
                                            Needs to contain only the involved elements (e.g. only the ones in the IRs).
@@ -425,10 +427,11 @@ def main(**opt) -> Tuple[str, tfs.TfsDataFrame]:
         iterations (int): Reiterate correction, starting with the previously
                           calculated values.
 
-    Returns
-        (tupel): string, Dataframe
-        the string is containing the madx-commands used to power the correctors,
-        the dataframe is containing the same values in a pandas DataFrame.
+    Returns:
+
+        tupel[string, Dataframe]:
+        the string contains the madx-commands used to power the correctors;
+        the dataframe contains the same values in a pandas DataFrame.
     """
     LOG.info("Starting IRNL Correction.")
     timer = Timer("Start", print_fun=LOG.debug)
