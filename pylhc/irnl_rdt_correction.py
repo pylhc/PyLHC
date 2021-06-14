@@ -370,7 +370,8 @@ def parse_args():
         "--iterations",
         dest="iterations",
         type=int,
-        help="Reiterate correction, starting with new values.",
+        help=("Reiterate correction, "
+              "starting with the previously calculated values."),
         default=DEFAULTS["iterations"]
     )
     parser.add_argument(
@@ -421,7 +422,8 @@ def main(**opt) -> Tuple[str, tfs.TfsDataFrame]:
         ignore_missing_columns (bool): If set, missing strength columns in any
                                        of the input files are assumed to be
                                        zero, instead of crashing.
-        iterations (int): Reiterate correction, starting with new values.
+        iterations (int): Reiterate correction, starting with the previously
+                          calculated values.
 
     Returns
         (tupel): string, Dataframe
@@ -587,8 +589,8 @@ def _get_needed_orders(rdt_maps: Sequence[dict], feed_down: int):
 def build_equation_system(rdt_maps: Sequence[dict], correctors: Sequence[IRCorrector], ip: int,
                           optics_dfs: Sequence, errors_dfs: Sequence,
                           feeddown: int) -> Tuple[np.ndarray, np.ndarray]:
-    """ Builds equation system as in Eq. (43) for a given ip for all given
-    optics and error files (i.e. beams) and rdts.
+    """ Builds equation system as in Eq. (43) in [#DillyNonlinearIRCorrections2022]_
+    for a given ip for all given optics and error files (i.e. beams) and rdts.
 
     Returns
         b_matrix: np.array N_rdts x  N_correctors
@@ -780,7 +782,8 @@ def get_corrector_coefficient(rdt: RDT, corrector: IRCorrector, optics_df: DataF
 def get_integral_sign(n: int, side: str) -> int:
     """ Sign of the integral and corrector for this side.
 
-    This is the exp(iπnθ(s_w−s_IP)) part of Eq. (40),
+    This is the exp(iπnθ(s_w−s_IP)) part of Eq. (40) in
+    [#DillyNonlinearIRCorrections2022]_,
     """
     if side == "R":
         # return (-1)**n
