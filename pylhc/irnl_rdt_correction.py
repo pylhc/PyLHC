@@ -9,7 +9,7 @@ feed-down and using feed-down to correct lower order RDTs.
 Details can be found in [#DillyNonlinearIRCorrections2022]_ .
 
 This script is written to be used stand-alone if needed
-with python 3.6+ and with `tfs-pandas` installed.
+with python 3.6+ and with ``tfs-pandas`` installed.
 
 
 .. rubric:: References
@@ -130,7 +130,7 @@ class RDT:
 # Additional Classes ---
 
 class DotDict(dict):
-    """ Make dict fields accessible by `.`"""
+    """ Make dict fields accessible by attributes."""
     def __init__(self, *args, **kwargs):
         super(DotDict, self).__init__(*args, **kwargs)
 
@@ -218,7 +218,7 @@ DEFAULTS = {'feeddown': 0,
             'accel': 'lhc',
             'solver': 'lstsq',
             'update_optics': True,
-            'iterations': 3,
+            'iterations': 1,
             'ignore_corrector_settings': False,
             'rdts2': None,
             'ignore_missing_columns': False,
@@ -304,9 +304,10 @@ def parse_args():
     parser.add_argument(
         "--output",
         dest="output",
-        help="Path to write command and tfs_df file. "
-             f"Extension is ignored and replaced with {EXT_TFS} and {EXT_MADX} "
-             "for the Dataframe and the command file respectively.",
+        help=("Path to write command and tfs_df file. "
+              f"Extension is ignored and replaced with {EXT_TFS} and {EXT_MADX} "
+              "for the Dataframe and the command file respectively."
+              ),
     )
     parser.add_argument(
         "--rdts",
@@ -369,8 +370,7 @@ def parse_args():
         "--iterations",
         dest="iterations",
         type=int,
-        help=("Amount of iterations of the corrections. Only used if RDT is "
-              "corrected by correctors of different orders."),
+        help="Reiterate correction, starting with new values.",
         default=DEFAULTS["iterations"]
     )
     parser.add_argument(
@@ -421,6 +421,7 @@ def main(**opt) -> Tuple[str, tfs.TfsDataFrame]:
         ignore_missing_columns (bool): If set, missing strength columns in any
                                        of the input files are assumed to be
                                        zero, instead of crashing.
+        iterations (int): Reiterate correction, starting with new values.
 
     Returns
         (tupel): string, Dataframe
