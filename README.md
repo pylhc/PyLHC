@@ -49,7 +49,7 @@ This package provides tools for particle accelerator data analysis, simulations 
 
 ## Quality checks
 
-- Unit and accuracy tests are ran automatically through CI [Github Actions](https://github.com/pylhc/PyLHC/actions). See our workflows in this [readme](.github/workflows/README.md).
+- Unit and accuracy tests are run automatically through CI [Github Actions](https://github.com/pylhc/PyLHC/actions). See our workflows in this [readme](.github/workflows/README.md).
 - Additional checks for code-complexity, design-rules, test-coverage and duplication are made through [CodeClimate](https://codeclimate.com/github/pylhc/PyLHC).
 - Pull requests implementing functionality or fixes are merged into the master branch after passing CI, and getting a reviewer's approval.
 
