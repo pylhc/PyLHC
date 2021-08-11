@@ -84,6 +84,7 @@ project = ABOUT_PYLHC["__title__"]
 copyright = "2019-2020, pyLHC/OMC-TEAM"
 author = ABOUT_PYLHC["__author__"]
 
+# Override link in 'Edit on Github'
 rst_prolog = f"""
 :github_url: {ABOUT_PYLHC['__url__']}
 """
