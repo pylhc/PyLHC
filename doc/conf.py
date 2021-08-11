@@ -134,7 +134,6 @@ html_theme_options = {
 
 html_logo = "_static/img/omc_logo.svg"
 html_static_path = ["_static"]
-html_show_sourcelink = False
 html_context = {
     "css_files": ["_static/css/custom.css"],
     'display_github': True,
