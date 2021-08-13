@@ -34,7 +34,7 @@ pip install git+https://github.com/pylhc/PyLHC.git#egg=pylhc
 After installing, scripts can be run with either `python -m pylhc.SCRIPT --FLAG ARGUMENT` or by calling the `.py` files directly.
 
 Note: some scripts access functionality only available on the CERN Technical Network.
-To use those, you should make sure to install the relevant extra dependencies with `pip install path/to/Pylhc[tech]`.
+To use those, you should make sure to install the relevant extra dependencies with `pip install path/to/Pylhc[cern]`.
 
 ## Description
 
