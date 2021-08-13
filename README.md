@@ -67,7 +67,7 @@ pip install --editable PyLHC
 
 You can install extra dependencies (as defined in `setup.py`) suited to your use case with the following commands:
 ```
-pip install --editable PyLHC[tech]
+pip install --editable PyLHC[cern]
 pip install --editable PyLHC[test]
 pip install --editable PyLHC[test,doc]
 pip install --editable PyLHC[all]

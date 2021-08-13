@@ -8,19 +8,18 @@ import logging
 import re
 from contextlib import suppress
 
-import jpype
 import tfs
-from generic_parser import DotDict
+from omc3.utils.mock import cern_network_import, CERNNetworkMockPackage
 from omc3.utils.time_tools import AccDatetime
 
 LOG = logging.getLogger(__name__)
 
+jpype = cern_network_import("jpype")
+pjlsa = cern_network_import("pjlsa")
 try:
-    from pjlsa import pjlsa  # need to import submodule as it otherwise catches the ImportError...
+    pjLSAClient = pjlsa.LSAClient
 except ImportError:
-    # Problematic when running setup.py (as this class is not tested), mock class
-    LOG.error("pjLSA not properly imported. Mocking class, but will fail if used!")
-    pjlsa = DotDict(LSAClient=object, ParametersRequestBuilder=object, Acclerators=object)
+    pjLSAClient = object
 
 RELEVANT_BP_CONTEXTS = ("OPERATIONAL", "MD")
 RELEVANT_BP_CATEGORIES = ("DISCRETE",)
@@ -33,8 +32,15 @@ COL_CIRCUIT = "CIRCUIT"
 PREF_DELTA = "DELTA_"
 
 
-class LSAClient(pjlsa.LSAClient):
+class LSAClient(pjLSAClient):
     """Extension of the LSAClient."""
+    def __getattr__(self, item):
+        """ Overwrite __getattr__ to raise the proper import errors at the proper time."""
+        try:
+            super().__getattr__(item)
+        except AttributeError as e:
+            pjlsa.pjLSAClient  # might raise the Mock-Class import error
+            raise e  # if that worked, raise the actual attribute error
 
     def find_knob_names(self, accelerator: str = "lhc", regexp: str = "") -> list:
         """
@@ -213,8 +219,9 @@ class LSAMeta(type):
 
 
 class LSA(metaclass=LSAMeta):
-    """Import this class to use LSA like the client without the need to instantiate it."""
-
+    """Import this class to use LSA like the client without the need to instantiate it.
+    Disadvantage: It will always use the default Server.
+    """
     pass
 
 
