@@ -18,7 +18,7 @@ BSRT_INPUTS = INPUTS_DIR / "bsrt_analysis"
 
 def test_bsrt_df(_bsrt_df):
     results = bsrt_analysis.main(directory=str(BSRT_INPUTS), beam="B1")
-    assert_frame_equal(results["bsrt_df"].sort_index(), _bsrt_df.sort_index())
+    assert_frame_equal(results["bsrt_df"].sort_index(axis=1), _bsrt_df.sort_index(axis=1))
 
 
 def test_select_by_time():
