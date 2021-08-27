@@ -6,8 +6,10 @@ This module provides useful functions to conveniently wrap the functionality of 
 """
 import logging
 
-import pytimber
+from omc3.utils.mock import cern_network_import
 from omc3.utils.time_tools import AccDatetime
+
+pytimber = cern_network_import("pytimber")
 
 LOG = logging.getLogger(__name__)
 

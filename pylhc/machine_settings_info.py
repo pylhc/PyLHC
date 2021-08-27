@@ -39,7 +39,7 @@ from omc3.utils import logging_tools
 from omc3.utils.time_tools import AccDatetime, AcceleratorDatetime
 
 from pylhc.constants import machine_settings_info as const
-from pylhc.data_extract.lsa import COL_NAME as lsa_col_name, LSA
+from pylhc.data_extract.lsa import COL_NAME as LSA_COLUMN_NAME, LSA
 
 LOG = logging_tools.get_logger(__name__)
 
@@ -193,7 +193,7 @@ def write_knob_defitions(output_path: str, definitions: dict):
     """Write Knob definitions into a **tfs** file."""
     for knob, definition in definitions.items():
         path = Path(output_path, f"{knob.replace('/', '_')}{const.knobdef_suffix}")
-        tfs.write(str(path), definition, save_index=lsa_col_name)
+        tfs.write(str(path), definition, save_index=LSA_COLUMN_NAME)
 
 
 # Beamprocess ##################################################################

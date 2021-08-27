@@ -15,8 +15,10 @@ import pickle
 import sys
 import time
 
-import pyjapc
 from omc3.definitions import formats
+from omc3.utils.mock import cern_network_import
+
+pyjapc = cern_network_import("pyjapc")
 
 
 ##########################################
