@@ -84,6 +84,11 @@ project = ABOUT_PYLHC["__title__"]
 copyright = "2019-2020, pyLHC/OMC-TEAM"
 author = ABOUT_PYLHC["__author__"]
 
+# Override link in 'Edit on Github'
+rst_prolog = f"""
+:github_url: {ABOUT_PYLHC['__url__']}
+"""
+
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.
@@ -124,11 +129,19 @@ html_theme_options = {
     "display_version": True,
     "logo_only": True,
     "navigation_depth": 2,
+    "style_external_links": True,
 }
 
 html_logo = "_static/img/omc_logo.svg"
 html_static_path = ["_static"]
-html_context = {"css_files": ["_static/css/custom.css"]}
+html_context = {
+    "css_files": ["_static/css/custom.css"],
+    'display_github': True,
+    # the following are only needed if :github_url: is not set
+    'github_user': author,
+    'github_repo': project,
+    'github_version': 'master/doc/',
+}
 
 smartquotes_action = "qe"  # renders only quotes and ellipses (...) but not dashes (option: D)
 
