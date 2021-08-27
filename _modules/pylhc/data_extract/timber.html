@@ -91,7 +91,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Entrypoints</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Entrypoints</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../entrypoints/analysis.html">Analysis Tools</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/analysis.html#bsrt-analysis">BSRT Analysis</a></li>
@@ -104,10 +104,11 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../entrypoints/machine_info.html">Machine Information Tools</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/machine_info.html#print-machine-settings-overview">Print Machine Settings Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/machine_info.html#bsrt-logger">BSRT logger</a></li>
 </ul>
 </li>
 </ul>
-<p class="caption"><span class="caption-text">Modules</span></p>
+<p class="caption" role="heading"><span class="caption-text">Modules</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules/calibration.html">BPM Calibration Utilities</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../modules/calibration.html#beta">Beta</a></li>
@@ -200,8 +201,10 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 
-<span class="kn">import</span> <span class="nn">pytimber</span>
+<span class="kn">from</span> <span class="nn">omc3.utils.mock</span> <span class="kn">import</span> <span class="n">cern_network_import</span>
 <span class="kn">from</span> <span class="nn">omc3.utils.time_tools</span> <span class="kn">import</span> <span class="n">AccDatetime</span>
+
+<span class="n">pytimber</span> <span class="o">=</span> <span class="n">cern_network_import</span><span class="p">(</span><span class="s2">&quot;pytimber&quot;</span><span class="p">)</span>
 
 <span class="n">LOG</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 

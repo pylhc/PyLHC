@@ -93,7 +93,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Entrypoints</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Entrypoints</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="analysis.html">Analysis Tools</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="analysis.html#bsrt-analysis">BSRT Analysis</a></li>
@@ -106,10 +106,11 @@
 </li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Machine Information Tools</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#print-machine-settings-overview">Print Machine Settings Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bsrt-logger">BSRT logger</a></li>
 </ul>
 </li>
 </ul>
-<p class="caption"><span class="caption-text">Modules</span></p>
+<p class="caption" role="heading"><span class="caption-text">Modules</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../modules/calibration.html">BPM Calibration Utilities</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../modules/calibration.html#beta">Beta</a></li>
@@ -244,11 +245,11 @@ optional arguments:
 <dt class="field-odd">Keyword Arguments</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>*--Optional--*</strong> -- </p></li>
-<li><p><strong>accel *</strong> (<em>-</em>) -- <p>Accelerator name.</p>
+<li><p><strong>*</strong> (<em>- time</em>) -- <p>Accelerator name.</p>
 <p>Flags: <strong>[‘--accel’, ‘-a’]</strong>
 Default: <code class="docutils literal notranslate"><span class="pre">lhc</span></code></p>
 </p></li>
-<li><p><strong>bp_regexp *</strong> (<em>-</em>) -- <p>Beamprocess regexp filter.</p>
+<li><p><strong>*</strong> -- <p>Beamprocess regexp filter.</p>
 <p>Flags: <strong>[‘--bp_regexp’, ‘-r’]</strong>
 Default: <code class="docutils literal notranslate"><span class="pre">^(RAMP|SQUEEZE)[_-]</span></code></p>
 </p></li>
@@ -256,7 +257,7 @@ Default: <code class="docutils literal notranslate"><span class="pre">^(RAMP|SQU
 <p>Flags: <strong>[‘--knob_def’, ‘-d’]</strong>
 Action: <code class="docutils literal notranslate"><span class="pre">store_true</span></code></p>
 </p></li>
-<li><p><strong>knobs *</strong> (<em>-</em>) -- <p>List of knobnames.</p>
+<li><p><strong>*</strong> -- <p>List of knobnames.</p>
 <p>Flags: <strong>[‘--knobs’, ‘-k’]</strong>
 Default: <code class="docutils literal notranslate"><span class="pre">()</span></code></p>
 </p></li>
@@ -264,11 +265,11 @@ Default: <code class="docutils literal notranslate"><span class="pre">()</span><
 <p>Flags: <strong>[‘--log’, ‘-l’]</strong>
 Action: <code class="docutils literal notranslate"><span class="pre">store_true</span></code></p>
 </p></li>
-<li><p><strong>out *</strong> (<em>-</em>) -- <p>Output path.</p>
+<li><p><strong>*</strong> -- <p>Output path.</p>
 <p>Flags: <strong>[‘--out’, ‘-o’]</strong>
 Default: <code class="docutils literal notranslate"><span class="pre">None</span></code></p>
 </p></li>
-<li><p><strong>time *</strong> (<em>-</em>) -- <p>Time as ‘Y-m-d H:M:S.f’ format.</p>
+<li><p><strong>*</strong> -- <p>Time as ‘Y-m-d H:M:S.f’ format.</p>
 <p>Flags: <strong>[‘--time’, ‘-t’]</strong>
 Default: <code class="docutils literal notranslate"><span class="pre">None</span></code></p>
 </p></li>
@@ -295,6 +296,14 @@ Default: <code class="docutils literal notranslate"><span class="pre">None</span
 <dd><p>Write summary into a <strong>tfs</strong> file.</p>
 </dd></dl>
 
+</div>
+<span class="target" id="module-pylhc.bsrt_logger"></span><div class="section" id="bsrt-logger">
+<h2>BSRT logger<a class="headerlink" href="#bsrt-logger" title="Permalink to this headline">¶</a></h2>
+<p>Script used during Run II to log detailed BSRT data and save it for later analysis. Data from the
+BSRT for each timestep is put in a <cite>dictionary</cite> and append to a <cite>list</cite>. The <cite>list</cite> is then saved
+to disk through pickling. Proper testing requires communication with <code class="docutils literal notranslate"><span class="pre">FESA</span></code> s class, possible
+only from the Technical Network.</p>
+<p>Original authors: E. H. Maclean, T. Persson and G. Trad.</p>
 </div>
 </div>
 

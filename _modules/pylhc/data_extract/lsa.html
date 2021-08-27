@@ -91,7 +91,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Entrypoints</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Entrypoints</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../entrypoints/analysis.html">Analysis Tools</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/analysis.html#bsrt-analysis">BSRT Analysis</a></li>
@@ -104,10 +104,11 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../entrypoints/machine_info.html">Machine Information Tools</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/machine_info.html#print-machine-settings-overview">Print Machine Settings Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/machine_info.html#bsrt-logger">BSRT logger</a></li>
 </ul>
 </li>
 </ul>
-<p class="caption"><span class="caption-text">Modules</span></p>
+<p class="caption" role="heading"><span class="caption-text">Modules</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules/calibration.html">BPM Calibration Utilities</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../modules/calibration.html#beta">Beta</a></li>
@@ -202,19 +203,18 @@
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">suppress</span>
 
-<span class="kn">import</span> <span class="nn">jpype</span>
 <span class="kn">import</span> <span class="nn">tfs</span>
-<span class="kn">from</span> <span class="nn">generic_parser</span> <span class="kn">import</span> <span class="n">DotDict</span>
+<span class="kn">from</span> <span class="nn">omc3.utils.mock</span> <span class="kn">import</span> <span class="n">cern_network_import</span><span class="p">,</span> <span class="n">CERNNetworkMockPackage</span>
 <span class="kn">from</span> <span class="nn">omc3.utils.time_tools</span> <span class="kn">import</span> <span class="n">AccDatetime</span>
 
 <span class="n">LOG</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
+<span class="n">jpype</span> <span class="o">=</span> <span class="n">cern_network_import</span><span class="p">(</span><span class="s2">&quot;jpype&quot;</span><span class="p">)</span>
+<span class="n">pjlsa</span> <span class="o">=</span> <span class="n">cern_network_import</span><span class="p">(</span><span class="s2">&quot;pjlsa&quot;</span><span class="p">)</span>
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">pjlsa</span> <span class="kn">import</span> <span class="n">pjlsa</span>  <span class="c1"># need to import submodule as it otherwise catches the ImportError...</span>
+    <span class="n">pjLSAClient</span> <span class="o">=</span> <span class="n">pjlsa</span><span class="o">.</span><span class="n">LSAClient</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="c1"># Problematic when running setup.py (as this class is not tested), mock class</span>
-    <span class="n">LOG</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;pjLSA not properly imported. Mocking class, but will fail if used!&quot;</span><span class="p">)</span>
-    <span class="n">pjlsa</span> <span class="o">=</span> <span class="n">DotDict</span><span class="p">(</span><span class="n">LSAClient</span><span class="o">=</span><span class="nb">object</span><span class="p">,</span> <span class="n">ParametersRequestBuilder</span><span class="o">=</span><span class="nb">object</span><span class="p">,</span> <span class="n">Acclerators</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
+    <span class="n">pjLSAClient</span> <span class="o">=</span> <span class="nb">object</span>
 
 <span class="n">RELEVANT_BP_CONTEXTS</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;OPERATIONAL&quot;</span><span class="p">,</span> <span class="s2">&quot;MD&quot;</span><span class="p">)</span>
 <span class="n">RELEVANT_BP_CATEGORIES</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;DISCRETE&quot;</span><span class="p">,)</span>
@@ -227,8 +227,15 @@
 <span class="n">PREF_DELTA</span> <span class="o">=</span> <span class="s2">&quot;DELTA_&quot;</span>
 
 
-<div class="viewcode-block" id="LSAClient"><a class="viewcode-back" href="../../../modules/data_extract.html#pylhc.data_extract.lsa.LSAClient">[docs]</a><span class="k">class</span> <span class="nc">LSAClient</span><span class="p">(</span><span class="n">pjlsa</span><span class="o">.</span><span class="n">LSAClient</span><span class="p">):</span>
+<div class="viewcode-block" id="LSAClient"><a class="viewcode-back" href="../../../modules/data_extract.html#pylhc.data_extract.lsa.LSAClient">[docs]</a><span class="k">class</span> <span class="nc">LSAClient</span><span class="p">(</span><span class="n">pjLSAClient</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Extension of the LSAClient.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Overwrite __getattr__ to raise the proper import errors at the proper time.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__getattr__</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">pjlsa</span><span class="o">.</span><span class="n">pjLSAClient</span>  <span class="c1"># might raise the Mock-Class import error</span>
+            <span class="k">raise</span> <span class="n">e</span>  <span class="c1"># if that worked, raise the actual attribute error</span>
 
 <div class="viewcode-block" id="LSAClient.find_knob_names"><a class="viewcode-back" href="../../../modules/data_extract.html#pylhc.data_extract.lsa.LSAClient.find_knob_names">[docs]</a>    <span class="k">def</span> <span class="nf">find_knob_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">accelerator</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;lhc&quot;</span><span class="p">,</span> <span class="n">regexp</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -407,8 +414,9 @@
 
 
 <div class="viewcode-block" id="LSA"><a class="viewcode-back" href="../../../modules/data_extract.html#pylhc.data_extract.lsa.LSA">[docs]</a><span class="k">class</span> <span class="nc">LSA</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">LSAMeta</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Import this class to use LSA like the client without the need to instantiate it.&quot;&quot;&quot;</span>
-
+    <span class="sd">&quot;&quot;&quot;Import this class to use LSA like the client without the need to instantiate it.</span>
+<span class="sd">    Disadvantage: It will always use the default Server.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
 
