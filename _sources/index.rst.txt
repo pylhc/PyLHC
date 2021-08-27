@@ -1,7 +1,7 @@
 Welcome to PyLHC's documentation!
 =================================
 
-``PyLHC`` is a collection of useful scripts and tools for the OMC Team at CERN. `CERN <https://home.cern/>`_.
+``PyLHC`` is a collection of useful scripts and tools for the OMC Team at `CERN <https://home.cern/>`_.
 
 
 Package Reference
