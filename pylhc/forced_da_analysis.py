@@ -100,7 +100,6 @@ import matplotlib.pyplot as plt
 import matplotlib.transforms as mtrans
 import numpy as np
 import pandas as pd
-import pytimber
 import scipy.odr
 import scipy.optimize
 import tfs
@@ -118,12 +117,16 @@ from omc3.plotting.utils import annotations, colors, lines, style
 from omc3.tune_analysis.bbq_tools import clean_outliers_moving_average
 from omc3.utils import logging_tools
 from omc3.utils.iotools import save_config
+from omc3.utils.mock import cern_network_import
 from omc3.utils.time_tools import CERNDatetime
 from pandas import DataFrame, Series
 from pandas.plotting import register_matplotlib_converters
-from pytimber.pagestore import PageStore
 from tfs import TfsDataFrame
 from tfs.tools import significant_digits
+
+pytimber = cern_network_import('pytimber')
+PageStore = cern_network_import('pytimber.pagestore.PageStore')
+
 
 from pylhc.constants.forced_da_analysis import (
     BSRT_EMITTANCE_TO_METER,
