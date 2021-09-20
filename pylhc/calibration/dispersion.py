@@ -32,7 +32,6 @@ from pylhc.constants.calibration import (
     TFS_INDEX,
 )
 from pylhc.constants.general import PLANES
-from tfs.handler import TfsDataFrame
 import tfs
 
 
