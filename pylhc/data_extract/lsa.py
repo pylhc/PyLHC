@@ -68,7 +68,9 @@ class LSAClient(pjlsa.LSAClient):
         start_time = acc_time.sub(days=1)  # assumes a fill is not longer than a day
         try:
             fills = self.find_beam_process_history(
-                t1=start_time.local_string, t2=acc_time.local_string, accelerator=accelerator
+                t1=start_time.local_string, t2=acc_time.local_string,
+                accelerator=accelerator,
+                source=source
             )
         except TypeError:
             raise ValueError(
