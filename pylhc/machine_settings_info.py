@@ -83,6 +83,11 @@ def _get_params() -> dict:
             flags=["--knob_def", "-d"],
             action="store_true",
             help="Set to extract knob definitions."),
+        source=dict(
+            flags=["--source", "-s"],
+            type=str,
+            default="nxcals",
+            help="Source to extract data from."),
         log=dict(
             flags=["--log", "-l"],
             action="store_true",
@@ -132,7 +137,7 @@ def get_info(opt) -> (AccDatetime, DotDict, DotDict, dict, dict):
     AccDT = AcceleratorDatetime[opt.accel]
     acc_time = AccDT.now() if opt.time is None else AccDT.from_utc_string(opt.time)
 
-    beamprocess_info = _get_beamprocess(acc_time, opt.bp_regexp, opt.accel)
+    beamprocess_info = _get_beamprocess(acc_time, opt.bp_regexp, opt.accel, opt.source)
     optics_info = _get_optics(acc_time, beamprocess_info.name, beamprocess_info.start)
     trims = LSA.find_trims_at_time(beamprocess_info.name, opt.knobs, acc_time, opt.accel)
     knobs_definitions = _get_knob_definitions(opt.knob_def, opt.knobs, optics_info.name)
@@ -199,9 +204,9 @@ def write_knob_defitions(output_path: str, definitions: dict):
 # Beamprocess ##################################################################
 
 
-def _get_beamprocess(acc_time: AccDatetime, regexp: str, accel: str) -> DotDict:
+def _get_beamprocess(acc_time: AccDatetime, regexp: str, accel: str, source: str) -> DotDict:
     """Get the info about the active beamprocess at ``acc_time``."""
-    fill_no, fill_bps = LSA.find_last_fill(acc_time, accel)
+    fill_no, fill_bps = LSA.find_last_fill(acc_time, accel, source)
     beamprocess, start_time = _get_last_beamprocess(fill_bps, acc_time, regexp)
     bp_info = LSA.get_beamprocess_info(beamprocess)
     bp_info.update({"name": beamprocess, "fill": fill_no, "start": start_time})
