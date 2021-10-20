@@ -54,7 +54,7 @@ class LSAClient(pjlsa.LSAClient):
         reg = re.compile(regexp, re.IGNORECASE)
         return sorted(filter(reg.search, [pp.getName() for pp in lst]))
 
-    def find_last_fill(self, acc_time: AccDatetime, accelerator: str = "lhc") -> (str, list):
+    def find_last_fill(self, acc_time: AccDatetime, accelerator: str = "lhc", source: str = "nxcals") -> (str, list):
         """
         Return last fill name and content.
 
@@ -67,8 +67,8 @@ class LSAClient(pjlsa.LSAClient):
          """
         start_time = acc_time.sub(days=1)  # assumes a fill is not longer than a day
         try:
-            fills = self.findBeamProcessHistory(
-                t1=start_time.local_string(), t2=acc_time.local_string(), accelerator=accelerator
+            fills = self.find_beam_process_history(
+                t1=start_time.local_string, t2=acc_time.local_string, accelerator=accelerator
             )
         except TypeError:
             raise ValueError(
@@ -76,6 +76,21 @@ class LSAClient(pjlsa.LSAClient):
             )
         last_fill = sorted(fills.keys())[-1]
         return last_fill, fills[last_fill]
+
+    def find_beam_process_history(self, t1, t2, accelerator="lhc", source='nxcals'):
+        """ As FindBeamProcessHistory from pjLSA but with source pass-through. """
+        cts = self.findUserContextMappingHistory(t1, t2, accelerator=accelerator)
+        import pytimber
+
+        db = pytimber.LoggingDB(source=source)
+        fillnts, fillnv = db.get("HX:FILLN", t1, t2)["HX:FILLN"]
+        fills = {}
+        for ts, name in zip(cts.timestamp, cts.name):
+            idx = fillnts.searchsorted(ts) - 1
+            filln = int(fillnv[idx])
+            fills.setdefault(filln, []).insert(0, (ts, name))
+            # print(filln,len(fills[filln]))
+        return fills
 
     def find_trims_at_time(
         self, beamprocess: str, knobs: list, acc_time: AccDatetime, accelerator: str = "lhc"
