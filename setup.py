@@ -31,13 +31,12 @@ with README.open("r") as docs:
 DEPENDENCIES = [
     "numpy>=1.19",
     "scipy>=1.4.0",
-    "pandas>=1.0,<1.2",  # limit because of https://github.com/pandas-dev/pandas/issues/39872
+    "pandas>=1.0,!=1.2",  # not 1.2 because of https://github.com/pandas-dev/pandas/issues/39872
     "matplotlib>=3.2.0",
-    "htcondor>=8.9.2 ; sys_platform=='linux'",  # no bindings for macOS or windows on PyPI
-    "tfs-pandas>=2.0",
+    "tfs-pandas>=3.0",
     "generic-parser>=1.0.8",
     "parse>=1.15.0",
-    "omc3>=0.2.0",
+    "omc3@https://github.com/pylhc/omc3/tarball/master",
 ]
 
 EXTRA_DEPENDENCIES = {
@@ -87,6 +86,7 @@ setuptools.setup(
         "Topic :: Scientific/Engineering :: Visualization",
     ],
     packages=setuptools.find_packages(exclude=["tests*", "doc"]),
+    include_package_data=True,
     install_requires=DEPENDENCIES,
     tests_require=EXTRA_DEPENDENCIES["test"],
     extras_require=EXTRA_DEPENDENCIES,

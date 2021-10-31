@@ -54,21 +54,21 @@ class TestOnCernNetwork:
             )
 
 
-def test_md2162_timberdb(tmp_path):
-    data_dir = INPUT / "kicks_horizontal_md2162"
-    fda_analysis(
-        fit="linear",
-        beam=1,
-        kick_directory=data_dir,
-        energy=6500.0,
-        plane="X",
-        output_directory=tmp_path,
-        pagestore_db=data_dir / "MD2162_ACD_TimberDB_Fill6196.db",
-        emittance_type="fit_sigma",
-        show_wirescan_emittance=True,
-        # show=True,
-    )
-    check_output(tmp_path)
+    def test_md2162_timberdb(tmp_path):
+        data_dir = INPUT / "kicks_horizontal_md2162"
+        fda_analysis(
+            fit="linear",
+            beam=1,
+            kick_directory=data_dir,
+            energy=6500.0,
+            plane="X",
+            output_directory=tmp_path,
+            pagestore_db=data_dir / "MD2162_ACD_TimberDB_Fill6196.db",
+            emittance_type="fit_sigma",
+            show_wirescan_emittance=True,
+            # show=True,
+        )
+        check_output(tmp_path)
 
 
 # Helper -----------------------------------------------------------------------

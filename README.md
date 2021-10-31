@@ -1,4 +1,4 @@
-# <img src="https://twiki.cern.ch/twiki/pub/BEABP/Logos/OMC_logo.png" height="28"> PyLHC Tools
+# <img src="https://raw.githubusercontent.com/pylhc/pylhc.github.io/master/docs/assets/logos/OMC_logo.svg" height="28"> PyLHC Tools
 
 [![Cron Testing](https://github.com/pylhc/PyLHC/workflows/Cron%20Testing/badge.svg)](https://github.com/pylhc/PyLHC/actions?query=workflow%3A%22Cron+Testing%22)
 [![Code Climate coverage](https://img.shields.io/codeclimate/coverage/pylhc/PyLHC.svg?style=popout)](https://codeclimate.com/github/pylhc/PyLHC)
@@ -33,8 +33,8 @@ pip install git+https://github.com/pylhc/PyLHC.git#egg=pylhc
 
 After installing, scripts can be run with either `python -m pylhc.SCRIPT --FLAG ARGUMENT` or by calling the `.py` files directly.
 
-Note: some of the scripts access functionality only available on the CERN Technical Network.
-To use those, you should make sure to install the relevant extra dependencies with `pip install path/to/Pylhc[tech]`.
+Note: some scripts access functionality only available on the CERN Technical Network.
+To use those, you should make sure to install the relevant extra dependencies with `pip install path/to/Pylhc[cern]`.
 
 ## Description
 
@@ -42,8 +42,6 @@ This package provides tools for particle accelerator data analysis, simulations 
 
 ## Functionality
 
-- `HTCondor Job Submitter` - Allows to generate jobs based on a templates and submit them to HTCondor. ([**job_submitter.py**](pylhc/job_submitter.py))
-- `AutoSix` - Allows to generate and submit parametric SixDesk studies easily. ([**autosix.py**](pylhc/autosix.py))
 - `Forced DA Analysis` - Script to analyse forced DA. ([**forced_da_analysis.py**](pylhc/forced_da_analysis.py))
 - `Machine Settings Info` - Prints an overview over the machine settings at a given time. ([**machine_settings_info.py**](pylhc/machine_settings_info.py))
 - `BSRT Logger` and `BSRT Analysis` - Saves data coming straight from LHC BSRT FESA class and allows subsequent analysis. ([**bsrt_logger.py**](pylhc/bsrt_logger.py) & [**bsrt_analysis.py**](pylhc/bsrt_analysis.py) )
