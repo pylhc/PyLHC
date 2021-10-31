@@ -37,7 +37,7 @@ DEPENDENCIES = [
     "tfs-pandas>=2.0",
     "generic-parser>=1.0.8",
     "parse>=1.15.0",
-    "omc3",
+    "omc3>=0.2.0",
 ]
 
 EXTRA_DEPENDENCIES = {
