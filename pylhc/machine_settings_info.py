@@ -187,12 +187,13 @@ def log_summary(acc_time: AccDatetime, bp_info: DotDict, o_info: DotDict, trims:
             f"Optics:       {o_info.Name}\n"
             f"  Start:      {o_info.StartTime.utc_string[:-7]} UTC\n"
         )
-    summary += "-----------------------------------------\n"
 
     if trims is not None:
+        summary += "----------- Trims -----------------------\n"
         for trim, value in trims.items():
             summary += f"{trim:30s}: {value:g}\n"
-        summary += "-----------------------------------------\n\n"
+
+    summary += "-----------------------------------------\n\n"
     LOG.info(summary)
 
 
