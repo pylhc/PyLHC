@@ -33,15 +33,15 @@ DEPENDENCIES = [
     "scipy>=1.4.0",
     "pandas>=1.0,!=1.2",  # not 1.2 because of https://github.com/pandas-dev/pandas/issues/39872
     "matplotlib>=3.2.0",
-    "tfs-pandas>=3.0",
+    "tfs-pandas>=3.0.2",
     "generic-parser>=1.0.8",
     "parse>=1.15.0",
-    "omc3@https://github.com/pylhc/omc3/tarball/master",
+    "omc3>=0.2.0",
 ]
 
 EXTRA_DEPENDENCIES = {
     "cern": [
-        "omc3[cern]@https://github.com/pylhc/omc3/tarball/master",
+        "omc3[cern]>=0.2.0",
         "pjlsa>=0.0.14",
         "pytimber>=3.0.0",  # NXCALS support
         # "cmmnbuild-dep-manager/@https://gitlab.cern.ch/scripting-tools/cmmnbuild-dep-manager/repository/archive.tar.gz?ref=master",
@@ -53,6 +53,8 @@ EXTRA_DEPENDENCIES = {
         "pytest-cov>=2.7",
         "pytest-regressions>=2.0.0",
         "pytest-mpl>=0.11",
+        "hypothesis>=5.0.0",
+        "attrs>=19.2.0",
     ],
     "doc": ["sphinx", "sphinx_rtd_theme"],
 }
