@@ -145,9 +145,15 @@ def get_info(opt) -> Tuple[AccDatetime, DotDict, DotDict, dict, dict]:
     acc_time = AccDT.now() if opt.time is None else AccDT.from_utc_string(opt.time)
 
     beamprocess_info = _get_beamprocess(acc_time, opt.accel, opt.source)
-    optics_info = _get_optics(acc_time, beamprocess_info.Name, beamprocess_info.StartTime)
-    trims = LSA.find_trims_at_time(beamprocess_info.Object, opt.knobs, acc_time, opt.accel)
-    knobs_definitions = _get_knob_definitions(opt.knob_definitions, opt.knobs, optics_info.Name)
+
+    optics_info, knob_definitions, trims = None, None, None
+    try:
+        optics_info = _get_optics(acc_time, beamprocess_info.Name, beamprocess_info.StartTime)
+    except ValueError as e:
+        LOG.error(str(e))
+    else:
+        trims = LSA.find_trims_at_time(beamprocess_info.Object, opt.knobs, acc_time, opt.accel)
+        knobs_definitions = _get_knob_definitions(opt.knob_definitions, opt.knobs, optics_info.Name)
 
     if opt.log:
         log_summary(acc_time, beamprocess_info, optics_info, trims)
@@ -156,7 +162,8 @@ def get_info(opt) -> Tuple[AccDatetime, DotDict, DotDict, dict, dict]:
         out = Path(opt.output_dir)
         out.mkdir(parents=True, exist_ok=True)
         write_summary(out, acc_time, beamprocess_info, optics_info, trims)
-        write_knob_defitions(out, knobs_definitions)
+        if knob_definitions is not None:
+            write_knob_defitions(out, knobs_definitions)
 
     return acc_time, beamprocess_info, optics_info, trims, knobs_definitions
 
@@ -174,13 +181,18 @@ def log_summary(acc_time: AccDatetime, bp_info: DotDict, o_info: DotDict, trims:
         f"  Start:      {bp_info.StartTime.utc_string[:-7]} UTC\n"
         f"  Context:    {bp_info.ContextCategory}\n"
         f"  Descr.:     {bp_info.Description}\n"
-        f"Optics:       {o_info.Name}\n"
-        f"  Start:      {o_info.StartTime.utc_string[:-7]} UTC\n"
-        "-----------------------------------------\n"
     )
-    for trim, value in trims.items():
-        summary += f"{trim:30s}: {value:g}\n"
-    summary += "-----------------------------------------\n\n"
+    if o_info is not None:
+        summary += (
+            f"Optics:       {o_info.Name}\n"
+            f"  Start:      {o_info.StartTime.utc_string[:-7]} UTC\n"
+        )
+    summary += "-----------------------------------------\n"
+
+    if trims is not None:
+        for trim, value in trims.items():
+            summary += f"{trim:30s}: {value:g}\n"
+        summary += "-----------------------------------------\n\n"
     LOG.info(summary)
 
 
@@ -188,18 +200,24 @@ def write_summary(
     output_path: Path, acc_time: AccDatetime, bp_info: DotDict, o_info: DotDict, trims: dict
 ):
     """Write summary into a **tfs** file."""
-    info_tfs = tfs.TfsDataFrame(trims.items(), columns=[const.column_knob, const.column_value])
+    if trims is not None:
+        trims = trims.items()
+
+    info_tfs = tfs.TfsDataFrame(trims, columns=[const.column_knob, const.column_value])
     info_tfs.headers = OrderedDict([
+        ("Hint:",                           "All times given in UTC."),
         (const.head_time,                   acc_time.cern_utc_string()),
         (const.head_beamprocess,            bp_info.Name),
         (const.head_fill,                   bp_info.Fill),
         (const.head_beamprocess_start,      bp_info.StartTime.cern_utc_string()),
         (const.head_context_category,       bp_info.ContextCategory),
         (const.head_beamprcess_description, bp_info.Description),
-        (const.head_optics,                 o_info.Name),
-        (const.head_optics_start,           o_info.StartTime.cern_utc_string()),
-        ("Hint:",                           "All times given in UTC.")
-    ])
+        ])
+    if o_info is not None:
+        info_tfs.headers.update(OrderedDict([
+            (const.head_optics,                 o_info.Name),
+            (const.head_optics_start,           o_info.StartTime.cern_utc_string()),
+        ]))
     tfs.write(output_path / const.info_name, info_tfs)
 
 
