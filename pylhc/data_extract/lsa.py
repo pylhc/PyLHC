@@ -4,17 +4,14 @@ PyLSA
 
 This module provides useful functions to conveniently wrap the functionality of ``pjlsa``.
 """
-from typing import Callable, Union, Dict
-
+import jpype
 import logging
 import re
-from contextlib import suppress
-
 import tfs
-import jpype
 from jpype import java, JException
-from omc3.utils.mock import cern_network_import, CERNNetworkMockPackage
+from omc3.utils.mock import cern_network_import
 from omc3.utils.time_tools import AccDatetime
+from typing import Callable, Union, Dict, Tuple
 
 LOG = logging.getLogger(__name__)
 pytimber = cern_network_import("pytimber")
@@ -66,16 +63,19 @@ class LSAClient(pjLSAClient):
         reg = re.compile(regexp, re.IGNORECASE)
         return sorted(filter(reg.search, [pp.getName() for pp in lst]))
 
-    def find_last_fill(self, acc_time: AccDatetime, accelerator: str = "lhc", source: str = "nxcals") -> (str, list):
+    def find_last_fill(
+            self, acc_time: AccDatetime, accelerator: str = "lhc", source: str = "nxcals"
+    ) -> Tuple[str, list]:
         """
         Return last fill name and BeamProcesses.
 
          Args:
             acc_time: (AccDatetime): Accelerator datetime object.
             accelerator (str): Name of the accelerator.
+            source (str): pytimber source
 
         Returns:
-            tupel: Last fill name (str), Beamprocesses of last fill (list).
+            tuple: Last fill name (str), Beamprocesses of last fill (list).
          """
         start_time = acc_time.sub(days=1)  # assumes a fill is not longer than a day
         try:
@@ -91,7 +91,9 @@ class LSAClient(pjLSAClient):
         last_fill = sorted(fills.keys())[-1]
         return last_fill, fills[last_fill]
 
-    def find_beamprocess_history(self, t_start: AccDatetime, t_end: AccDatetime, accelerator="lhc") -> Dict:
+    def find_beamprocess_history(
+            self, t_start: AccDatetime, t_end: AccDatetime, accelerator: str = "lhc", source: str = "nxcals"
+    ) -> Dict:
         """
         Finds the BeamProcesses between t_start and t_end and sorts then by fills.
         Adapted from pjlsa's FindBeamProcessHistory but with source pass-through
@@ -101,6 +103,7 @@ class LSAClient(pjLSAClient):
             t_start (AccDatetime): start time
             t_end (AccDatetime): end time
             accelerator (str): Name of the accelerator.
+            source (str): pytimber source
 
         Returns:
             Dictionary of fills (keys) with a list of Timestamps and BeamProcesses.
@@ -156,7 +159,7 @@ class LSAClient(pjLSAClient):
         Get context info of the given beamprocess.
 
         Args:
-            beamprocess (str): Name of the beamprocess.
+            beamprocess (str, object): Name of the beamprocess or Beamprocess object.
 
         Returns:
             Dictionary with context info.
@@ -169,11 +172,17 @@ class LSAClient(pjLSAClient):
 
     def find_active_beamprocess_at_time(
             self, acc_time: AccDatetime, accelerator: str = "lhc",
-            bp_group: str = "POWERCONVERTERS"  # the Beamprocesses relevant for OMC, others: 'ADT', 'KICKERS', 'SPOOLS', 'COLLIMATORS'
+            bp_group: str = "POWERCONVERTERS"  # the Beamprocesses relevant for OMC,
     ):
         """
         Find the active beam process at the time given.
         Same as what online model extractor (KnobExtractor) does.
+
+        Args:
+            acc_time: (AccDatetime): Accelerator datetime object.
+            accelerator (str): Name of the accelerator.
+            bp_group (str): BeamProcess Group, choices : 'POWERCONVERTERS', 'ADT', 'KICKERS', 'SPOOLS', 'COLLIMATORS'
+
 
         Returns:
             'cern.lsa.domain.settings.spi.StandAloneBeamProcessImpl'
@@ -213,11 +222,12 @@ class LSAClient(pjLSAClient):
             raise IOError(f"Knob '{knob_name}' does not exist")
         try:
             knob_settings = knob.getKnobFactors().getFactorsForOptic(optics)
-        except jpype.JException(jpype.java.lang.IllegalArgumentException):
+        except jpype.java.lang.IllegalArgumentException:
             raise IOError(f"Knob '{knob_name}' not available for optics '{optics}'")
 
         for knob_factor in knob_settings:
-            circuit = knob_factor.componentName
+            factor = knob_factor.getFactor()
+            circuit = knob_factor.getComponentName()
             param = self._parameterService.findParameterByName(circuit)
             type_ = param.getParameterType().getName()
             madx_name = self.get_madx_name_from_circuit(circuit)
@@ -227,9 +237,9 @@ class LSAClient(pjLSAClient):
                     "It will not be found in knob-definition!"
                 )
             else:
-                LOG.debug(f"  Found component '{circuit}': {madx_name}, {knob_factor.factor}")
+                LOG.debug(f"  Found component '{circuit}': {madx_name}, {factor}")
                 df.loc[madx_name, COL_CIRCUIT] = circuit
-                df.loc[madx_name, f"{PREF_DELTA}{type_.upper()}"] = knob_factor.factor
+                df.loc[madx_name, f"{PREF_DELTA}{type_.upper()}"] = factor
         return df.fillna(0)
 
     def get_madx_name_from_circuit(self, circuit: str):

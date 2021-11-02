@@ -10,8 +10,8 @@ Can be run from command line, parameters as given in :meth:`pylhc.machine_settin
 .. code-block:: none
 
     usage: machine_settings_info.py [-h] [--time TIME] [--knobs KNOBS [KNOBS ...]]
-                                    [--accel ACCEL] [--output_dir OUTPUT_DIR]
-                                    [--knob_definitions] [--log]
+                                [--accel ACCEL] [--output_dir OUTPUT_DIR]
+                                [--knob_definitions] [--source SOURCE] [--log]
 
     optional arguments:
       -h, --help            show this help message and exit
@@ -21,22 +21,23 @@ Can be run from command line, parameters as given in :meth:`pylhc.machine_settin
       --accel ACCEL         Accelerator name.
       --output_dir OUTPUT_DIR
                             Output directory.
+      --source SOURCE       Source to extract data from.
       --knob_definitions    Set to extract knob definitions.
       --log                 Write summary into log (automatically done if no
                             output path is given).
 
+
 :author: jdilly
 """
-from omc3.utils.iotools import PathOrStr
-from typing import Tuple, Iterable
-
 from collections import OrderedDict
-from pathlib import Path
 
 import tfs
 from generic_parser import DotDict, EntryPointParameters, entrypoint
 from omc3.utils import logging_tools
+from omc3.utils.iotools import PathOrStr
 from omc3.utils.time_tools import AccDatetime, AcceleratorDatetime
+from pathlib import Path
+from typing import Tuple, Iterable
 
 from pylhc.constants import machine_settings_info as const
 from pylhc.data_extract.lsa import COL_NAME as LSA_COLUMN_NAME, LSA
@@ -123,6 +124,13 @@ def get_info(opt) -> Tuple[AccDatetime, DotDict, DotDict, dict, dict]:
         default: ``None``
 
 
+    - **source** *(str)*:
+
+        Source to extract data from.
+
+        default: ``nxcals``
+
+
     - **time** *(str)*:
 
         UTC Time as 'Y-m-d H:M:S.f' format.
@@ -139,12 +147,12 @@ def get_info(opt) -> Tuple[AccDatetime, DotDict, DotDict, dict, dict]:
     beamprocess_info = _get_beamprocess(acc_time, opt.accel, opt.source)
     optics_info = _get_optics(acc_time, beamprocess_info.Name, beamprocess_info.StartTime)
     trims = LSA.find_trims_at_time(beamprocess_info.Object, opt.knobs, acc_time, opt.accel)
-    knobs_definitions = _get_knob_definitions(opt.knob_def, opt.knobs, optics_info.Name)
+    knobs_definitions = _get_knob_definitions(opt.knob_definitions, opt.knobs, optics_info.Name)
 
     if opt.log:
         log_summary(acc_time, beamprocess_info, optics_info, trims)
 
-    if opt.out is not None:
+    if opt.output_dir is not None:
         out = Path(opt.output_dir)
         out.mkdir(parents=True, exist_ok=True)
         write_summary(out, acc_time, beamprocess_info, optics_info, trims)
