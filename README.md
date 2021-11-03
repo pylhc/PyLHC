@@ -1,4 +1,4 @@
-# <img src="https://twiki.cern.ch/twiki/pub/BEABP/Logos/OMC_logo.png" height="28"> PyLHC Tools
+# <img src="https://raw.githubusercontent.com/pylhc/pylhc.github.io/master/docs/assets/logos/OMC_logo.svg" height="28"> PyLHC Tools
 
 [![Cron Testing](https://github.com/pylhc/PyLHC/workflows/Cron%20Testing/badge.svg)](https://github.com/pylhc/PyLHC/actions?query=workflow%3A%22Cron+Testing%22)
 [![Code Climate coverage](https://img.shields.io/codeclimate/coverage/pylhc/PyLHC.svg?style=popout)](https://codeclimate.com/github/pylhc/PyLHC)
@@ -34,7 +34,7 @@ pip install git+https://github.com/pylhc/PyLHC.git#egg=pylhc
 After installing, scripts can be run with either `python -m pylhc.SCRIPT --FLAG ARGUMENT` or by calling the `.py` files directly.
 
 Note: some scripts access functionality only available on the CERN Technical Network.
-To use those, you should make sure to install the relevant extra dependencies with `pip install path/to/Pylhc[tech]`.
+To use those, you should make sure to install the relevant extra dependencies with `pip install path/to/Pylhc[cern]`.
 
 ## Description
 
@@ -67,7 +67,7 @@ pip install --editable PyLHC
 
 You can install extra dependencies (as defined in `setup.py`) suited to your use case with the following commands:
 ```
-pip install --editable PyLHC[tech]
+pip install --editable PyLHC[cern]
 pip install --editable PyLHC[test]
 pip install --editable PyLHC[test,doc]
 pip install --editable PyLHC[all]
