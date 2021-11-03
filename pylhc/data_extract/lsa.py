@@ -70,7 +70,7 @@ class LSAClient(pjLSAClient):
         Return last fill name and BeamProcesses.
 
          Args:
-            acc_time: (AccDatetime): Accelerator datetime object.
+            acc_time (AccDatetime): Accelerator datetime object.
             accelerator (str): Name of the accelerator.
             source (str): pytimber source
 
@@ -132,7 +132,7 @@ class LSAClient(pjLSAClient):
         Args:
             beamprocess (str): Name of the beamprocess.
             knobs (list): List of strings of the knobs to check.
-            acc_time: (AccDatetime): Accelerator datetime object.
+            acc_time (AccDatetime): Accelerator datetime object.
             accelerator (str): Name of the accelerator.
 
         Returns:
@@ -179,7 +179,7 @@ class LSAClient(pjLSAClient):
         Same as what online model extractor (KnobExtractor) does.
 
         Args:
-            acc_time: (AccDatetime): Accelerator datetime object.
+            acc_time (AccDatetime): Accelerator datetime object.
             accelerator (str): Name of the accelerator.
             bp_group (str): BeamProcess Group, choices : 'POWERCONVERTERS', 'ADT', 'KICKERS', 'SPOOLS', 'COLLIMATORS'
 

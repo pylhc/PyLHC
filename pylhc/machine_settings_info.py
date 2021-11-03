@@ -37,7 +37,7 @@ from omc3.utils import logging_tools
 from omc3.utils.iotools import PathOrStr
 from omc3.utils.time_tools import AccDatetime, AcceleratorDatetime
 from pathlib import Path
-from typing import Tuple, Iterable
+from typing import Tuple, Iterable, Dict
 
 from pylhc.constants import machine_settings_info as const
 from pylhc.data_extract.lsa import COL_NAME as LSA_COLUMN_NAME, LSA
@@ -171,8 +171,16 @@ def get_info(opt) -> Tuple[AccDatetime, DotDict, DotDict, dict, dict]:
 # Output #######################################################################
 
 
-def log_summary(acc_time: AccDatetime, bp_info: DotDict, o_info: DotDict, trims: dict):
-    """Log the summary."""
+def log_summary(acc_time: AccDatetime, bp_info: DotDict,
+                optics_info: DotDict = None, trims: Dict[str, float] = None):
+    """Log the summary.
+
+    Args:
+        acc_time (AccDatetime): User given Time
+        bp_info (DotDict): BeamProcess Info Dictionary
+        optics_info (DotDict): Optics Info Dictionary
+        trims (dict): Trims key-value dictionary
+    """
     summary = (
         "\n----------- Summary ---------------------\n"
         f"Given Time:   {acc_time.utc_string[:-7]} UTC\n"
@@ -182,10 +190,10 @@ def log_summary(acc_time: AccDatetime, bp_info: DotDict, o_info: DotDict, trims:
         f"  Context:    {bp_info.ContextCategory}\n"
         f"  Descr.:     {bp_info.Description}\n"
     )
-    if o_info is not None:
+    if optics_info is not None:
         summary += (
-            f"Optics:       {o_info.Name}\n"
-            f"  Start:      {o_info.StartTime.utc_string[:-7]} UTC\n"
+            f"Optics:       {optics_info.Name}\n"
+            f"  Start:      {optics_info.StartTime.utc_string[:-7]} UTC\n"
         )
 
     if trims is not None:
@@ -198,9 +206,18 @@ def log_summary(acc_time: AccDatetime, bp_info: DotDict, o_info: DotDict, trims:
 
 
 def write_summary(
-    output_path: Path, acc_time: AccDatetime, bp_info: DotDict, o_info: DotDict, trims: dict
+    output_path: Path, acc_time: AccDatetime, bp_info: DotDict,
+    optics_info: DotDict = None, trims: Dict[str, float] = None
 ):
-    """Write summary into a **tfs** file."""
+    """Write summary into a ``tfs`` file.
+
+    Args:
+        output_path (Path): Folder to write output file into
+        acc_time (AccDatetime): User given Time
+        bp_info (DotDict): BeamProcess Info Dictionary
+        optics_info (DotDict): Optics Info Dictionary
+        trims (dict): Trims key-value dictionary
+    """
     if trims is not None:
         trims = trims.items()
 
@@ -214,10 +231,10 @@ def write_summary(
         (const.head_context_category,       bp_info.ContextCategory),
         (const.head_beamprcess_description, bp_info.Description),
         ])
-    if o_info is not None:
+    if optics_info is not None:
         info_tfs.headers.update(OrderedDict([
-            (const.head_optics,                 o_info.Name),
-            (const.head_optics_start,           o_info.StartTime.cern_utc_string()),
+            (const.head_optics, optics_info.Name),
+            (const.head_optics_start, optics_info.StartTime.cern_utc_string()),
         ]))
     tfs.write(output_path / const.info_name, info_tfs)
 
