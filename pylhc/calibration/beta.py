@@ -8,7 +8,7 @@ to be used with the script `bpm_calibration.py`.
 
 """
 from pathlib import Path
-from typing import Dict, List, Sequence, Tuple, Union
+from typing import Dict, List, Sequence, Tuple
 
 import numpy as np
 import pandas as pd
@@ -25,7 +25,7 @@ LOG = logging_tools.get_logger(__name__)
 
 def _get_beta_fit(
     bpms: Sequence[str],
-    beta_phase_tfs: Union[pd.DataFrame, tfs.TfsDataFrame],
+    beta_phase_tfs: pd.DataFrame,
     plane: str,
 ) -> pd.DataFrame:
     """
@@ -34,8 +34,8 @@ def _get_beta_fit(
 
     Args:
         bpms (Sequence[str]): Names of the BPMs to use for the fitting.
-        beta_phase_tfs (Union[pd.DataFrame, tfs.TfsDataFrame]): A ``DataFrame`` with beta from phase values
-            to be fitted at the given BPMs.
+        beta_phase_tfs (pd.DataFrame): A ``DataFrame`` with beta from phase values to be fitted at the
+            given BPMs.
         plane (str): plane to perform the fit on.
 
     Returns:
@@ -91,8 +91,8 @@ def _get_beta_fit(
 
 
 def _get_factors_from_phase(
-    beta_phase_tfs: Union[pd.DataFrame, tfs.TfsDataFrame],
-    beta_amp_tfs: Union[pd.DataFrame, tfs.TfsDataFrame],
+    beta_phase_tfs: pd.DataFrame,
+    beta_amp_tfs: pd.DataFrame,
     plane: str,
 ) -> pd.DataFrame:
     """
@@ -102,8 +102,8 @@ def _get_factors_from_phase(
     function can be used for both.
 
     Args:
-        beta_phase_tfs (Union[pd.DataFrame, tfs.TfsDataFrame]): A ``DataFrame`` with beta from phase values.
-        beta_amp_tfs (Union[pd.DataFrame, tfs.TfsDataFrame]): A ``DataFrame`` with beta from amplitude values.
+        beta_phase_tfs (pd.DataFrame): A ``DataFrame`` with beta from phase values.
+        beta_amp_tfs (pd.DataFrame): A ``DataFrame`` with beta from amplitude values.
         plane (str): Plane of the BPM measurements.
 
     Returns:
@@ -126,8 +126,8 @@ def _get_factors_from_phase(
 
 
 def _get_factors_from_phase_fit(
-    beta_phase_tfs: Union[pd.DataFrame, tfs.TfsDataFrame],
-    beta_amp_tfs: Union[pd.DataFrame, tfs.TfsDataFrame],
+    beta_phase_tfs: pd.DataFrame,
+    beta_amp_tfs: pd.DataFrame,
     ips: Sequence[int],
     plane: str,
 ) -> Tuple[pd.Series, pd.Series]:
@@ -138,8 +138,8 @@ def _get_factors_from_phase_fit(
     mainly to loop over IPs and filter the BPM list.
 
     Args:
-        beta_phase_tfs (Union[pd.DataFrame, tfs.TfsDataFrame]): A ``DataFrame`` with beta from phase values.
-        beta_amp_tfs (Union[pd.DataFrame, tfs.TfsDataFrame]): A ``DataFrame`` with beta from amplitude values.      
+        beta_phase_tfs (pd.DataFrame): A ``DataFrame`` with beta from phase values.
+        beta_amp_tfs (pd.DataFrame): A ``DataFrame`` with beta from amplitude values.
         ips (Sequence[int]): List of IPs to compute the factors for.
         plane (str): Plane of the BPM measurements.
 
