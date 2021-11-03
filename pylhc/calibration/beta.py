@@ -8,64 +8,53 @@ to be used with the script `bpm_calibration.py`.
 
 """
 from pathlib import Path
-from scipy.optimize import curve_fit
+from typing import Dict, List, Sequence, Tuple
+
 import numpy as np
 import pandas as pd
-from typing import Tuple, List, Dict
-
-from omc3.utils import logging_tools
-from omc3.optics_measurements.constants import (
-    AMP_BETA_NAME,
-    BETA,
-    BETA_NAME,
-    ERR,
-    EXT,
-    S,
-)
-from pylhc.constants.calibration import (
-    BPMS,
-    BETA_STAR_ESTIMATION,
-    IPS,
-    LABELS,
-    TFS_INDEX,
-)
-from pylhc.constants.general import PLANES
 import tfs
+from omc3.optics_measurements.constants import AMP_BETA_NAME, BETA, BETA_NAME, ERR, EXT, S
+from omc3.utils import logging_tools
+from scipy.optimize import curve_fit
 
+from pylhc.constants.calibration import BETA_STAR_ESTIMATION, BPMS, IPS, LABELS, TFS_INDEX
+from pylhc.constants.general import PLANES
 
 LOG = logging_tools.get_logger(__name__)
 
 
 def _get_beta_fit(
-    bpms: List[str],
+    bpms: Sequence[str],
     beta_phase_tfs: pd.DataFrame,
-    plane: str
-) -> Tuple[pd.Series, pd.Series]:
+    plane: str,
+) -> pd.DataFrame:
     """
     This function returns a fit of the given beta values along with the
     associated error.
 
     Args:
-        positions (pd.Series): Positions of the BPMs to be fitted.
-        beta_values (pd.Series): Values of the BPMs to be fitted.
-        beta_err (pd.Series): Associated errors to the values.
+        bpms (Sequence[str]): Names of the BPMs to use for the fitting.
+        beta_phase_tfs (pd.DataFrame): A ``DataFrame`` with beta from phase values to be fitted at the
+            given BPMs.
+        plane (str): plane to perform the fit on.
 
     Returns:
-        Tuple[pd.Series, pd.Series]: The elements returned are the values of
-        the fit of the beta values and the associated error.
+        A ``pandas.DataFrame`` with the resulting values from the fit of the input beta values and the
+        associated errors, as columns.
     """
+
     def beta_function(x, a, b):
         return a + ((x - b) ** 2) / a
 
     def err_function(x, popt, pcov):
-        sa, sb, sab = pcov[0,0], pcov[1,1], pcov[0,1]
+        sa, sb, sab = pcov[0, 0], pcov[1, 1], pcov[0, 1]
         a, b = popt[0], popt[1]
 
-        beta_err = ((a**2 - (x-b)**2) / a**2)**2 * sa
-        beta_err += 4 * ((x-b) / a)**2 * sb
-        beta_err -= 4 * (x-b) * (a**2 - (x-b)**2) / a**3 * sab
+        beta_err = ((a ** 2 - (x - b) ** 2) / a ** 2) ** 2 * sa
+        beta_err += 4 * ((x - b) / a) ** 2 * sb
+        beta_err -= 4 * (x - b) * (a ** 2 - (x - b) ** 2) / a ** 3 * sab
         return beta_err
-    
+
     positions = beta_phase_tfs.reindex(bpms)[f"{S}"]
     beta_phase = beta_phase_tfs.reindex(bpms)[f"{BETA}{plane}"]
     beta_phase_err = beta_phase_tfs.reindex(bpms)[f"{ERR}{BETA}{plane}"]
@@ -79,7 +68,7 @@ def _get_beta_fit(
 
     additional_args = {}
     if sum(beta_phase_err[valid]) != 0:
-        additional_args = {'sigma': beta_phase_err[valid]}
+        additional_args = {"sigma": beta_phase_err[valid]}
 
     popt, pcov = curve_fit(
         beta_function,
@@ -90,7 +79,7 @@ def _get_beta_fit(
         absolute_sigma=True,
         **additional_args,
     )
-    
+
     # Get the error from the covariance matrix
     perr = np.sqrt(np.diag(pcov))
 
@@ -105,7 +94,7 @@ def _get_factors_from_phase(
     beta_phase_tfs: pd.DataFrame,
     beta_amp_tfs: pd.DataFrame,
     plane: str,
-) -> Tuple[pd.Series, pd.Series]:
+) -> pd.DataFrame:
     """
     This function computes the calibration factors for the beta method with the
     beta from phase values. The associated error is also calculated.
@@ -113,14 +102,12 @@ def _get_factors_from_phase(
     function can be used for both.
 
     Args:
-      beta_phase (pd.Series): Series of the beta from phase values
-      beta_phase_err (pd.Series): Series of the error associated to the beta from phase values
-      beta_amp (pd.Series): Series of the beta from amplitude values
-      beta_amp_err (pd.Series): Series of the error associated to the beta from amplitude values
+        beta_phase_tfs (pd.DataFrame): A ``DataFrame`` with beta from phase values.
+        beta_amp_tfs (pd.DataFrame): A ``DataFrame`` with beta from amplitude values.
+        plane (str): Plane of the BPM measurements.
 
     Returns:
-      Tuple[pd.Series, pd.Series]: The first Series are the calibration
-      factors, the second one their error.
+        A ``pandas.DataFrame`` with the computed calibration factors and their associated errors as columns.
     """
     beta_phase = beta_phase_tfs[f"{BETA}{plane}"]
     beta_phase_err = beta_phase_tfs[f"{ERR}{BETA}{plane}"]
@@ -139,10 +126,10 @@ def _get_factors_from_phase(
 
 
 def _get_factors_from_phase_fit(
-    beta_phase_tfs: tfs.TfsDataFrame, 
-    beta_amp_tfs: tfs.TfsDataFrame,
-    ips: List[int],
-    plane: str
+    beta_phase_tfs: pd.DataFrame,
+    beta_amp_tfs: pd.DataFrame,
+    ips: Sequence[int],
+    plane: str,
 ) -> Tuple[pd.Series, pd.Series]:
     """
     This function computes the calibration factors for the beta method with the
@@ -151,10 +138,10 @@ def _get_factors_from_phase_fit(
     mainly to loop over IPs and filter the BPM list.
 
     Args:
-      beta_phase_tfs (tfs.TfsDataFrame): TfsDataFrame containing all beta from phase values
-      beta_amp_tfs (tfs.TfsDataFrame): TfsDataFrame containing all beta from amplitude values
-      ips (List[int]): List of IPs to compute the factors for
-      plane (str): Plane of the BPM measurements
+        beta_phase_tfs (pd.DataFrame): A ``DataFrame`` with beta from phase values.
+        beta_amp_tfs (pd.DataFrame): A ``DataFrame`` with beta from amplitude values.
+        ips (Sequence[int]): List of IPs to compute the factors for.
+        plane (str): Plane of the BPM measurements.
 
     Returns:
       Tuple[pd.Series, pd.Series]: The first Series are the calibration
@@ -173,20 +160,18 @@ def _get_factors_from_phase_fit(
         for bpm_set in [bpms, bpms_amp]:
             missing = set(bpm_set.loc[bpm_set.isnull().values].index)
             if missing:
-                LOG.warning("    One or several BPMs are missing in the input"
-                            " DataFrame, the calibration factors calculation"
-                            f" from fit may not be accurate: {missing}")
+                LOG.warning(
+                    "    One or several BPMs are missing in the input"
+                    " DataFrame, the calibration factors calculation"
+                    f" from fit may not be accurate: {missing}"
+                )
 
         # Curve fit the beta from phase values
         beta_phase_fit = _get_beta_fit(BPMS[ip][beam], beta_phase_tfs, plane)
-    
+
         # Get the factors and put them all together to have all ips in one
         # Series
-        c_fit = _get_factors_from_phase(
-            beta_phase_fit,
-            beta_amp_tfs.reindex(BPMS[ip][beam]),
-            plane
-        )
+        c_fit = _get_factors_from_phase(beta_phase_fit, beta_amp_tfs.reindex(BPMS[ip][beam]), plane)
         if calibration_phase_fit is None:
             calibration_phase_fit = c_fit
         else:
@@ -194,13 +179,11 @@ def _get_factors_from_phase_fit(
 
     # Change the colum names for _fit
     calibration_phase_fit.columns = (LABELS[3], LABELS[4])
-    
+
     return calibration_phase_fit
 
 
-def get_calibration_factors_from_beta(
-    ips: List[int], input_path: Path
-) -> Dict[str, pd.DataFrame]:
+def get_calibration_factors_from_beta(ips: Sequence[int], input_path: Path) -> Dict[str, pd.DataFrame]:
     """
     This function is the main function to compute the calibration factors for
     the beta method.
@@ -209,7 +192,7 @@ def get_calibration_factors_from_beta(
     phase and its fitted values.
 
     Args:
-      ips (List[int]): IPs to compute the calibration factors for.
+      ips (Sequence[int]): IPs to compute the calibration factors for.
       input_path (Path): Path of the directory containing the beta files.
 
     Returns:
@@ -236,21 +219,15 @@ def get_calibration_factors_from_beta(
         LOG.info(f"  Computing the calibration factors for plane {plane}")
 
         # Load the tfs files for beta from phase and beta from amp
-        beta_phase_tfs = tfs.read(
-            input_path / f"{BETA_NAME}{plane.lower()}{EXT}", index=TFS_INDEX
-        )
-        beta_amp_tfs = tfs.read(
-            input_path / f"{AMP_BETA_NAME}{plane.lower()}{EXT}", index=TFS_INDEX
-        )
-        
+        beta_phase_tfs = tfs.read(input_path / f"{BETA_NAME}{plane.lower()}{EXT}", index=TFS_INDEX)
+        beta_amp_tfs = tfs.read(input_path / f"{AMP_BETA_NAME}{plane.lower()}{EXT}", index=TFS_INDEX)
+
         # Get the calibration factors from phase
         calibration_phase = _get_factors_from_phase(beta_phase_tfs, beta_amp_tfs, plane)
-        
+
         # Calibration from phase fit can only be obtained via ballistic optics
         if ips is not None:
-            calibration_phase_fit = _get_factors_from_phase_fit(
-                beta_phase_tfs, beta_amp_tfs, ips, plane
-            )
+            calibration_phase_fit = _get_factors_from_phase_fit(beta_phase_tfs, beta_amp_tfs, ips, plane)
         else:
             calibration_phase_fit = pd.DataFrame(columns=(LABELS[3], LABELS[4]))
 
