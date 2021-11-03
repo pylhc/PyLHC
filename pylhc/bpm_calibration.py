@@ -52,22 +52,18 @@ Arguments:
     default: ``beta``
 """
 from pathlib import Path
+from typing import List, Tuple
+
 import numpy as np
 import pandas as pd
-from typing import Tuple, List, Dict
-
-from generic_parser import EntryPointParameters, entrypoint
-from omc3.utils import logging_tools
-from omc3.optics_measurements.constants import EXT
-from pylhc.constants.calibration import (
-    CALIBRATION_NAME,
-    IPS,
-    METHODS,
-)
-from pylhc.calibration.dispersion import get_calibration_factors_from_dispersion
-from pylhc.calibration.beta import get_calibration_factors_from_beta
 import tfs
+from generic_parser import EntryPointParameters, entrypoint
+from omc3.optics_measurements.constants import EXT
+from omc3.utils import logging_tools
 
+from pylhc.calibration.beta import get_calibration_factors_from_beta
+from pylhc.calibration.dispersion import get_calibration_factors_from_dispersion
+from pylhc.constants.calibration import CALIBRATION_NAME, IPS, METHODS
 
 LOG = logging_tools.get_logger(__name__)
 
@@ -121,7 +117,7 @@ def main(opt):
 
     # Fill NaN with 1 because of missing BPMs and that fit cannot be done everywhere
     for plane in factors.keys():
-        factors[plane].fillna(1, inplace=True)
+        factors[plane] = factors[plane].fillna(1)
     LOG.debug("".join([f"\nPlane {plane}:\n{factors[plane]}" for plane in factors.keys()]))
 
     # Write the TFS file to the desired output directory
