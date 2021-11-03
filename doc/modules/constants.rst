@@ -6,14 +6,6 @@ Constants Definitions
     :members:
 
 
-.. automodule:: pylhc.constants.external_paths
-    :members:
-
-
-.. automodule:: pylhc.constants.autosix
-    :members:
-
-
 .. automodule:: pylhc.constants.forced_da_analysis
     :members:
 

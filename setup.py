@@ -37,6 +37,7 @@ DEPENDENCIES = [
     "generic-parser>=1.0.8",
     "parse>=1.15.0",
     "omc3>=0.2.0",
+    "jpype1>=1.3.0"
 ]
 
 EXTRA_DEPENDENCIES = {
@@ -46,7 +47,6 @@ EXTRA_DEPENDENCIES = {
         "pytimber>=3.0.0",  # NXCALS support
         # "cmmnbuild-dep-manager/@https://gitlab.cern.ch/scripting-tools/cmmnbuild-dep-manager/repository/archive.tar.gz?ref=master",
         "pyjapc",
-        "jpype1",  # pylsa limits version, so install here
     ],
     "test": [
         "pytest>=5.2",

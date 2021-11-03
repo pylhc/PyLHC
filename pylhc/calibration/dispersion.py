@@ -137,7 +137,8 @@ def get_calibration_factors_from_dispersion(
       Dict[str, pd.DataFrame]: The returned DataFrame object contains the
       calibration factors for each BPM along with their error. Both the
       dispersion and dispersion from fit values are used, resulting in 6
-      colums:
+      columns:
+
         - NAME: BPM Name
         - S: Position
         - CALIBRATION: Calibration factors computed from the dispersion

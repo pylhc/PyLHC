@@ -54,7 +54,6 @@ def _get_beta_fit(
         Tuple[pd.Series, pd.Series]: The elements returned are the values of
         the fit of the beta values and the associated error.
     """
-
     def beta_function(x, a, b):
         return a + ((x - b) ** 2) / a
 
@@ -155,7 +154,6 @@ def _get_factors_from_phase_fit(
       beta_phase_tfs (tfs.TfsDataFrame): TfsDataFrame containing all beta from phase values
       beta_amp_tfs (tfs.TfsDataFrame): TfsDataFrame containing all beta from amplitude values
       ips (List[int]): List of IPs to compute the factors for
-      beam (int): Beam number
       plane (str): Plane of the BPM measurements
 
     Returns:
@@ -218,7 +216,8 @@ def get_calibration_factors_from_beta(
        Dict[str, pd.DataFrame]: The returned DataFrame object contains the
        calibration factors for each BPM along with their error. Both the beta
        from phase and beta from phase fitted values are used, resulting in 6
-       colums:
+       columns:
+
          - NAME: BPM Name
          - S: Position
          - CALIBRATION: Calibration factors computed from beta from phase
@@ -228,6 +227,7 @@ def get_calibration_factors_from_beta(
            from phase
          - ERROR_CALIBRATION_FIT: Associated error to the above calibration
            factors
+
     """
     LOG.info("Computing the calibration factors via beta")
     # Loop over each plane and compute the calibration factors
