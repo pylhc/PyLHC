@@ -86,7 +86,8 @@ def get_info(opt) -> Tuple[AccDatetime, DotDict, DotDict, dict, dict]:
     Get info about **Beamprocess**, **Optics** and **Knobs** at given time.
 
     Keyword Args:
-        *--Optional--*
+
+    *--Optional--*
 
     - **accel** *(str)*:
 
