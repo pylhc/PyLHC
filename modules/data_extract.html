@@ -122,9 +122,42 @@ Disadvantage: It will always use the default Server.</p>
 <dd><p>Extension of the LSAClient.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pylhc.data_extract.lsa.LSAClient.find_active_beamprocess_at_time">
-<span class="sig-name descname"><span class="pre">find_active_beamprocess_at_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">acc_time</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">omc3.utils.time_tools.AccDatetime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accelerator</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'lhc'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/pylhc/data_extract/lsa.html#LSAClient.find_active_beamprocess_at_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.data_extract.lsa.LSAClient.find_active_beamprocess_at_time" title="Permalink to this definition"></a></dt>
-<dd><p>Find the active beam process at the time given. Same as what online model extractor
-(KnobExtractor) does, but returns empty map for some reason.</p>
+<span class="sig-name descname"><span class="pre">find_active_beamprocess_at_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">acc_time</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">omc3.utils.time_tools.AccDatetime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accelerator</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'lhc'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bp_group</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'POWERCONVERTERS'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/data_extract/lsa.html#LSAClient.find_active_beamprocess_at_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.data_extract.lsa.LSAClient.find_active_beamprocess_at_time" title="Permalink to this definition"></a></dt>
+<dd><p>Find the active beam process at the time given.
+Same as what online model extractor (KnobExtractor) does.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>acc_time</strong> (<em>AccDatetime</em>) -- Accelerator datetime object.</p></li>
+<li><p><strong>accelerator</strong> (<em>str</em>) -- Name of the accelerator.</p></li>
+<li><p><strong>bp_group</strong> (<em>str</em>) -- BeamProcess Group, choices : ‘POWERCONVERTERS’, ‘ADT’, ‘KICKERS’, ‘SPOOLS’, ‘COLLIMATORS’</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>‘cern.lsa.domain.settings.spi.StandAloneBeamProcessImpl’</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pylhc.data_extract.lsa.LSAClient.find_beamprocess_history">
+<span class="sig-name descname"><span class="pre">find_beamprocess_history</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t_start</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">omc3.utils.time_tools.AccDatetime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_end</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">omc3.utils.time_tools.AccDatetime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accelerator</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'lhc'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'nxcals'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span></span></span><a class="reference internal" href="../_modules/pylhc/data_extract/lsa.html#LSAClient.find_beamprocess_history"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.data_extract.lsa.LSAClient.find_beamprocess_history" title="Permalink to this definition"></a></dt>
+<dd><p>Finds the BeamProcesses between t_start and t_end and sorts then by fills.
+Adapted from pjlsa’s FindBeamProcessHistory but with source pass-through
+and trial-loop.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t_start</strong> (<em>AccDatetime</em>) -- start time</p></li>
+<li><p><strong>t_end</strong> (<em>AccDatetime</em>) -- end time</p></li>
+<li><p><strong>accelerator</strong> (<em>str</em>) -- Name of the accelerator.</p></li>
+<li><p><strong>source</strong> (<em>str</em>) -- pytimber source</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Dictionary of fills (keys) with a list of Timestamps and BeamProcesses.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -146,12 +179,13 @@ Disadvantage: It will always use the default Server.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pylhc.data_extract.lsa.LSAClient.find_last_fill">
-<span class="sig-name descname"><span class="pre">find_last_fill</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">acc_time:</span> <span class="pre">omc3.utils.time_tools.AccDatetime</span></em>, <em class="sig-param"><span class="pre">accelerator:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'lhc')</span> <span class="pre">-&gt;</span> <span class="pre">(&lt;class</span> <span class="pre">'str'&gt;</span></em>, <em class="sig-param"><span class="pre">&lt;class</span> <span class="pre">'list'&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/data_extract/lsa.html#LSAClient.find_last_fill"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.data_extract.lsa.LSAClient.find_last_fill" title="Permalink to this definition"></a></dt>
-<dd><p>Return last fill name and content.</p>
+<span class="sig-name descname"><span class="pre">find_last_fill</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">acc_time</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">omc3.utils.time_tools.AccDatetime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accelerator</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'lhc'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'nxcals'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">list</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/pylhc/data_extract/lsa.html#LSAClient.find_last_fill"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.data_extract.lsa.LSAClient.find_last_fill" title="Permalink to this definition"></a></dt>
+<dd><p>Return last fill name and BeamProcesses.</p>
 <blockquote>
 <div><dl class="simple">
-<dt>Args:</dt><dd><p>acc_time: (AccDatetime): Accelerator datetime object.
-accelerator (str): Name of the accelerator.</p>
+<dt>Args:</dt><dd><p>acc_time (AccDatetime): Accelerator datetime object.
+accelerator (str): Name of the accelerator.
+source (str): pytimber source</p>
 </dd>
 </dl>
 </div></blockquote>
@@ -160,7 +194,7 @@ accelerator (str): Name of the accelerator.</p>
 <dd class="field-odd"><p>Last fill name (str), Beamprocesses of last fill (list).</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>tupel</p>
+<dd class="field-even"><p>tuple</p>
 </dd>
 </dl>
 </dd></dl>
@@ -174,7 +208,7 @@ accelerator (str): Name of the accelerator.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>beamprocess</strong> (<em>str</em>) -- Name of the beamprocess.</p></li>
 <li><p><strong>knobs</strong> (<em>list</em>) -- List of strings of the knobs to check.</p></li>
-<li><p><strong>acc_time</strong> -- (AccDatetime): Accelerator datetime object.</p></li>
+<li><p><strong>acc_time</strong> (<em>AccDatetime</em>) -- Accelerator datetime object.</p></li>
 <li><p><strong>accelerator</strong> (<em>str</em>) -- Name of the accelerator.</p></li>
 </ul>
 </dd>
@@ -186,11 +220,11 @@ accelerator (str): Name of the accelerator.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pylhc.data_extract.lsa.LSAClient.get_beamprocess_info">
-<span class="sig-name descname"><span class="pre">get_beamprocess_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">beamprocess</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/data_extract/lsa.html#LSAClient.get_beamprocess_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.data_extract.lsa.LSAClient.get_beamprocess_info" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_beamprocess_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">beamprocess</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">object</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span></span></span><a class="reference internal" href="../_modules/pylhc/data_extract/lsa.html#LSAClient.get_beamprocess_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.data_extract.lsa.LSAClient.get_beamprocess_info" title="Permalink to this definition"></a></dt>
 <dd><p>Get context info of the given beamprocess.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>beamprocess</strong> (<em>str</em>) -- Name of the beamprocess.</p>
+<dd class="field-odd"><p><strong>beamprocess</strong> (<em>str</em><em>, </em><em>object</em>) -- Name of the beamprocess or Beamprocess object.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Dictionary with context info.</p>
@@ -228,6 +262,25 @@ accelerator (str): Name of the accelerator.</p>
 <dt class="sig sig-object py" id="pylhc.data_extract.lsa.LSAMeta">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pylhc.data_extract.lsa.</span></span><span class="sig-name descname"><span class="pre">LSAMeta</span></span><a class="reference internal" href="../_modules/pylhc/data_extract/lsa.html#LSAMeta"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.data_extract.lsa.LSAMeta" title="Permalink to this definition"></a></dt>
 <dd><p>Metaclass for single instance LSAClient.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pylhc.data_extract.lsa.try_to_acquire_data">
+<span class="sig-prename descclassname"><span class="pre">pylhc.data_extract.lsa.</span></span><span class="sig-name descname"><span class="pre">try_to_acquire_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/data_extract/lsa.html#try_to_acquire_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.data_extract.lsa.try_to_acquire_data" title="Permalink to this definition"></a></dt>
+<dd><p>Tries to get data from function multiple times.
+TODO: Move to omc3 as is also used there in BBQ extraction.</p>
+<blockquote>
+<div><dl class="simple">
+<dt>Args:</dt><dd><p>function (Callable): function to be called, e.g. db.get
+args, kwargs: arguments passed to <code class="docutils literal notranslate"><span class="pre">function</span></code></p>
+</dd>
+</dl>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Return arguments of <code class="docutils literal notranslate"><span class="pre">function</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>

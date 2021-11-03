@@ -111,23 +111,23 @@
 <h2>Print Machine Settings Overview<a class="headerlink" href="#print-machine-settings-overview" title="Permalink to this headline"></a></h2>
 <p>Prints an overview over the machine settings at a provided given time, or the current settings if
 no time is given.</p>
-<p>Can be run from command line, parameters as given in <code class="xref py py-meth docutils literal notranslate"><span class="pre">print_machine_settings_overview.main()</span></code>.</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>print_machine_settings_overview.py [-h] [--time TIME]
-                                        [--knobs KNOBS [KNOBS ...]]
-                                        [--bp_regexp BP_REGEXP]
-                                        [--accel ACCEL]
-                                        [--out OUT]
+<p>Can be run from command line, parameters as given in <a class="reference internal" href="#pylhc.machine_settings_info.get_info" title="pylhc.machine_settings_info.get_info"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pylhc.machine_settings_info.get_info()</span></code></a>.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>usage: machine_settings_info.py [-h] [--time TIME] [--knobs KNOBS [KNOBS ...]]
+                            [--accel ACCEL] [--output_dir OUTPUT_DIR]
+                            [--knob_definitions] [--source SOURCE] [--log]
 
 optional arguments:
   -h, --help            show this help message and exit
-  --time TIME, -t TIME  Time as &#39;Y-m-d H:M:S.f&#39; format.
-  --knobs KNOBS [KNOBS ...], -k KNOBS [KNOBS ...]
+  --time TIME           UTC Time as &#39;Y-m-d H:M:S.f&#39; format.
+  --knobs KNOBS [KNOBS ...]
                         List of knobnames.
-  --bp_regexp BP_REGEXP, -r BP_REGEXP
-                        Beamprocess regexp filter.
-  --accel ACCEL, -a ACCEL
-                        Accelerator name.
-  --out OUT, -o OUT     Output path.
+  --accel ACCEL         Accelerator name.
+  --output_dir OUTPUT_DIR
+                        Output directory.
+  --source SOURCE       Source to extract data from.
+  --knob_definitions    Set to extract knob definitions.
+  --log                 Write summary into log (automatically done if no
+                        output path is given).
 </pre></div>
 </div>
 <dl class="field-list simple">
@@ -135,74 +135,96 @@ optional arguments:
 <dd class="field-odd"><p>jdilly</p>
 </dd>
 </dl>
-<dl class="py data">
-<dt class="sig sig-object py" id="pylhc.machine_settings_info.DEFAULT_BP_RE">
-<span class="sig-prename descclassname"><span class="pre">pylhc.machine_settings_info.</span></span><span class="sig-name descname"><span class="pre">DEFAULT_BP_RE</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'^(RAMP|SQUEEZE)[_-]'</span></em><a class="headerlink" href="#pylhc.machine_settings_info.DEFAULT_BP_RE" title="Permalink to this definition"></a></dt>
-<dd><p>Default regexp for interesting Beamprocesses.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>str</p>
-</dd>
-</dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="pylhc.machine_settings_info.get_info">
+<span class="sig-prename descclassname"><span class="pre">pylhc.machine_settings_info.</span></span><span class="sig-name descname"><span class="pre">get_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">opt</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">omc3.utils.time_tools.AccDatetime</span><span class="p"><span class="pre">,</span> </span><span class="pre">generic_parser.tools.DotDict</span><span class="p"><span class="pre">,</span> </span><span class="pre">generic_parser.tools.DotDict</span><span class="p"><span class="pre">,</span> </span><span class="pre">dict</span><span class="p"><span class="pre">,</span> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/pylhc/machine_settings_info.html#get_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.machine_settings_info.get_info" title="Permalink to this definition"></a></dt>
+<dd><p>Get info about <strong>Beamprocess</strong>, <strong>Optics</strong> and <strong>Knobs</strong> at given time.</p>
+<p>Keyword Args:</p>
+<p><em>--Optional--</em></p>
+<ul>
+<li><p><strong>accel</strong> <em>(str)</em>:</p>
+<blockquote>
+<div><p>Accelerator name.</p>
+<p>default: <code class="docutils literal notranslate"><span class="pre">lhc</span></code></p>
+</div></blockquote>
+</li>
+<li><p><strong>knob_definitions</strong>:</p>
+<blockquote>
+<div><p>Set to extract knob definitions.</p>
+<p>action: <code class="docutils literal notranslate"><span class="pre">store_true</span></code></p>
+</div></blockquote>
+</li>
+<li><p><strong>knobs</strong> <em>(str)</em>:</p>
+<blockquote>
+<div><p>List of knobnames.</p>
+<p>default: <code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</div></blockquote>
+</li>
+<li><p><strong>log</strong>:</p>
+<blockquote>
+<div><p>Write summary into log (automatically done if no output path is
+given).</p>
+<p>action: <code class="docutils literal notranslate"><span class="pre">store_true</span></code></p>
+</div></blockquote>
+</li>
+<li><p><strong>output_dir</strong> <em>(PathOrStr)</em>:</p>
+<blockquote>
+<div><p>Output directory.</p>
+<p>default: <code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</div></blockquote>
+</li>
+<li><p><strong>source</strong> <em>(str)</em>:</p>
+<blockquote>
+<div><p>Source to extract data from.</p>
+<p>default: <code class="docutils literal notranslate"><span class="pre">nxcals</span></code></p>
+</div></blockquote>
+</li>
+<li><p><strong>time</strong> <em>(str)</em>:</p>
+<blockquote>
+<div><p>UTC Time as ‘Y-m-d H:M:S.f’ format.</p>
+<p>default: <code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</div></blockquote>
+</li>
+</ul>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="pylhc.machine_settings_info.get_info">
-<span class="sig-prename descclassname"><span class="pre">pylhc.machine_settings_info.</span></span><span class="sig-name descname"><span class="pre">get_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">opt)</span> <span class="pre">-&gt;</span> <span class="pre">(&lt;class</span> <span class="pre">'omc3.utils.time_tools.AccDatetime'&gt;</span></em>, <em class="sig-param"><span class="pre">&lt;class</span> <span class="pre">'generic_parser.tools.DotDict'&gt;</span></em>, <em class="sig-param"><span class="pre">&lt;class</span> <span class="pre">'generic_parser.tools.DotDict'&gt;</span></em>, <em class="sig-param"><span class="pre">&lt;class</span> <span class="pre">'dict'&gt;</span></em>, <em class="sig-param"><span class="pre">&lt;class</span> <span class="pre">'dict'&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/machine_settings_info.html#get_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.machine_settings_info.get_info" title="Permalink to this definition"></a></dt>
-<dd><p>Get info about <strong>Beamprocess</strong>, <strong>Optics</strong> and <strong>Knobs</strong> at given time.</p>
+<dt class="sig sig-object py" id="pylhc.machine_settings_info.log_summary">
+<span class="sig-prename descclassname"><span class="pre">pylhc.machine_settings_info.</span></span><span class="sig-name descname"><span class="pre">log_summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">acc_time</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">omc3.utils.time_tools.AccDatetime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bp_info</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">generic_parser.tools.DotDict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optics_info</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">generic_parser.tools.DotDict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trims</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/machine_settings_info.html#log_summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.machine_settings_info.log_summary" title="Permalink to this definition"></a></dt>
+<dd><p>Log the summary.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Keyword Arguments</dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>*--Optional--*</strong> -- </p></li>
-<li><p><strong>*</strong> (<em>- time</em>) -- <p>Accelerator name.</p>
-<p>Flags: <strong>[‘--accel’, ‘-a’]</strong>
-Default: <code class="docutils literal notranslate"><span class="pre">lhc</span></code></p>
-</p></li>
-<li><p><strong>*</strong> -- <p>Beamprocess regexp filter.</p>
-<p>Flags: <strong>[‘--bp_regexp’, ‘-r’]</strong>
-Default: <code class="docutils literal notranslate"><span class="pre">^(RAMP|SQUEEZE)[_-]</span></code></p>
-</p></li>
-<li><p><strong>knob_def</strong> (<em>-</em>) -- <p>Set to extract knob definitions.</p>
-<p>Flags: <strong>[‘--knob_def’, ‘-d’]</strong>
-Action: <code class="docutils literal notranslate"><span class="pre">store_true</span></code></p>
-</p></li>
-<li><p><strong>*</strong> -- <p>List of knobnames.</p>
-<p>Flags: <strong>[‘--knobs’, ‘-k’]</strong>
-Default: <code class="docutils literal notranslate"><span class="pre">()</span></code></p>
-</p></li>
-<li><p><strong>log</strong> (<em>-</em>) -- <p>Write summary into log (automatically done if no output path is given).</p>
-<p>Flags: <strong>[‘--log’, ‘-l’]</strong>
-Action: <code class="docutils literal notranslate"><span class="pre">store_true</span></code></p>
-</p></li>
-<li><p><strong>*</strong> -- <p>Output path.</p>
-<p>Flags: <strong>[‘--out’, ‘-o’]</strong>
-Default: <code class="docutils literal notranslate"><span class="pre">None</span></code></p>
-</p></li>
-<li><p><strong>*</strong> -- <p>Time as ‘Y-m-d H:M:S.f’ format.</p>
-<p>Flags: <strong>[‘--time’, ‘-t’]</strong>
-Default: <code class="docutils literal notranslate"><span class="pre">None</span></code></p>
-</p></li>
+<li><p><strong>acc_time</strong> (<em>AccDatetime</em>) -- User given Time</p></li>
+<li><p><strong>bp_info</strong> (<em>DotDict</em>) -- BeamProcess Info Dictionary</p></li>
+<li><p><strong>optics_info</strong> (<em>DotDict</em>) -- Optics Info Dictionary</p></li>
+<li><p><strong>trims</strong> (<em>dict</em>) -- Trims key-value dictionary</p></li>
 </ul>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="pylhc.machine_settings_info.log_summary">
-<span class="sig-prename descclassname"><span class="pre">pylhc.machine_settings_info.</span></span><span class="sig-name descname"><span class="pre">log_summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">acc_time</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">omc3.utils.time_tools.AccDatetime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bp_info</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">generic_parser.tools.DotDict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">o_info</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">generic_parser.tools.DotDict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trims</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/machine_settings_info.html#log_summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.machine_settings_info.log_summary" title="Permalink to this definition"></a></dt>
-<dd><p>Log the summary.</p>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="pylhc.machine_settings_info.write_knob_defitions">
-<span class="sig-prename descclassname"><span class="pre">pylhc.machine_settings_info.</span></span><span class="sig-name descname"><span class="pre">write_knob_defitions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">definitions</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/machine_settings_info.html#write_knob_defitions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.machine_settings_info.write_knob_defitions" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pylhc.machine_settings_info.</span></span><span class="sig-name descname"><span class="pre">write_knob_defitions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pathlib.Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">definitions</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/machine_settings_info.html#write_knob_defitions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.machine_settings_info.write_knob_defitions" title="Permalink to this definition"></a></dt>
 <dd><p>Write Knob definitions into a <strong>tfs</strong> file.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pylhc.machine_settings_info.write_summary">
-<span class="sig-prename descclassname"><span class="pre">pylhc.machine_settings_info.</span></span><span class="sig-name descname"><span class="pre">write_summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acc_time</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">omc3.utils.time_tools.AccDatetime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bp_info</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">generic_parser.tools.DotDict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">o_info</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">generic_parser.tools.DotDict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trims</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/machine_settings_info.html#write_summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.machine_settings_info.write_summary" title="Permalink to this definition"></a></dt>
-<dd><p>Write summary into a <strong>tfs</strong> file.</p>
+<span class="sig-prename descclassname"><span class="pre">pylhc.machine_settings_info.</span></span><span class="sig-name descname"><span class="pre">write_summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pathlib.Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acc_time</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">omc3.utils.time_tools.AccDatetime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bp_info</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">generic_parser.tools.DotDict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optics_info</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">generic_parser.tools.DotDict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trims</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/machine_settings_info.html#write_summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.machine_settings_info.write_summary" title="Permalink to this definition"></a></dt>
+<dd><p>Write summary into a <code class="docutils literal notranslate"><span class="pre">tfs</span></code> file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>output_path</strong> (<em>Path</em>) -- Folder to write output file into</p></li>
+<li><p><strong>acc_time</strong> (<em>AccDatetime</em>) -- User given Time</p></li>
+<li><p><strong>bp_info</strong> (<em>DotDict</em>) -- BeamProcess Info Dictionary</p></li>
+<li><p><strong>optics_info</strong> (<em>DotDict</em>) -- Optics Info Dictionary</p></li>
+<li><p><strong>trims</strong> (<em>dict</em>) -- Trims key-value dictionary</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
