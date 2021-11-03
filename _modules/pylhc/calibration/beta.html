@@ -112,64 +112,53 @@
 
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">curve_fit</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span>
+
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span>
-
-<span class="kn">from</span> <span class="nn">omc3.utils</span> <span class="kn">import</span> <span class="n">logging_tools</span>
-<span class="kn">from</span> <span class="nn">omc3.optics_measurements.constants</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">AMP_BETA_NAME</span><span class="p">,</span>
-    <span class="n">BETA</span><span class="p">,</span>
-    <span class="n">BETA_NAME</span><span class="p">,</span>
-    <span class="n">ERR</span><span class="p">,</span>
-    <span class="n">EXT</span><span class="p">,</span>
-    <span class="n">S</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="kn">from</span> <span class="nn">pylhc.constants.calibration</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">BPMS</span><span class="p">,</span>
-    <span class="n">BETA_STAR_ESTIMATION</span><span class="p">,</span>
-    <span class="n">IPS</span><span class="p">,</span>
-    <span class="n">LABELS</span><span class="p">,</span>
-    <span class="n">TFS_INDEX</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="kn">from</span> <span class="nn">pylhc.constants.general</span> <span class="kn">import</span> <span class="n">PLANES</span>
 <span class="kn">import</span> <span class="nn">tfs</span>
+<span class="kn">from</span> <span class="nn">omc3.optics_measurements.constants</span> <span class="kn">import</span> <span class="n">AMP_BETA_NAME</span><span class="p">,</span> <span class="n">BETA</span><span class="p">,</span> <span class="n">BETA_NAME</span><span class="p">,</span> <span class="n">ERR</span><span class="p">,</span> <span class="n">EXT</span><span class="p">,</span> <span class="n">S</span>
+<span class="kn">from</span> <span class="nn">omc3.utils</span> <span class="kn">import</span> <span class="n">logging_tools</span>
+<span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">curve_fit</span>
 
+<span class="kn">from</span> <span class="nn">pylhc.constants.calibration</span> <span class="kn">import</span> <span class="n">BETA_STAR_ESTIMATION</span><span class="p">,</span> <span class="n">BPMS</span><span class="p">,</span> <span class="n">IPS</span><span class="p">,</span> <span class="n">LABELS</span><span class="p">,</span> <span class="n">TFS_INDEX</span>
+<span class="kn">from</span> <span class="nn">pylhc.constants.general</span> <span class="kn">import</span> <span class="n">PLANES</span>
 
 <span class="n">LOG</span> <span class="o">=</span> <span class="n">logging_tools</span><span class="o">.</span><span class="n">get_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">_get_beta_fit</span><span class="p">(</span>
-    <span class="n">bpms</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">bpms</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
     <span class="n">beta_phase_tfs</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
-    <span class="n">plane</span><span class="p">:</span> <span class="nb">str</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">]:</span>
+    <span class="n">plane</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This function returns a fit of the given beta values along with the</span>
 <span class="sd">    associated error.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        positions (pd.Series): Positions of the BPMs to be fitted.</span>
-<span class="sd">        beta_values (pd.Series): Values of the BPMs to be fitted.</span>
-<span class="sd">        beta_err (pd.Series): Associated errors to the values.</span>
+<span class="sd">        bpms (Sequence[str]): Names of the BPMs to use for the fitting.</span>
+<span class="sd">        beta_phase_tfs (pd.DataFrame): A ``DataFrame`` with beta from phase values to be fitted at the</span>
+<span class="sd">            given BPMs.</span>
+<span class="sd">        plane (str): plane to perform the fit on.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        Tuple[pd.Series, pd.Series]: The elements returned are the values of</span>
-<span class="sd">        the fit of the beta values and the associated error.</span>
+<span class="sd">        A ``pandas.DataFrame`` with the resulting values from the fit of the input beta values and the</span>
+<span class="sd">        associated errors, as columns.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="nf">beta_function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="p">((</span><span class="n">x</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">a</span>
 
     <span class="k">def</span> <span class="nf">err_function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">popt</span><span class="p">,</span> <span class="n">pcov</span><span class="p">):</span>
-        <span class="n">sa</span><span class="p">,</span> <span class="n">sb</span><span class="p">,</span> <span class="n">sab</span> <span class="o">=</span> <span class="n">pcov</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">pcov</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">pcov</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">sa</span><span class="p">,</span> <span class="n">sb</span><span class="p">,</span> <span class="n">sab</span> <span class="o">=</span> <span class="n">pcov</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">pcov</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">pcov</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
         <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">popt</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">popt</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
-        <span class="n">beta_err</span> <span class="o">=</span> <span class="p">((</span><span class="n">a</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">b</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">a</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">sa</span>
-        <span class="n">beta_err</span> <span class="o">+=</span> <span class="mi">4</span> <span class="o">*</span> <span class="p">((</span><span class="n">x</span><span class="o">-</span><span class="n">b</span><span class="p">)</span> <span class="o">/</span> <span class="n">a</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">sb</span>
-        <span class="n">beta_err</span> <span class="o">-=</span> <span class="mi">4</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">b</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">a</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">b</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">a</span><span class="o">**</span><span class="mi">3</span> <span class="o">*</span> <span class="n">sab</span>
+        <span class="n">beta_err</span> <span class="o">=</span> <span class="p">((</span><span class="n">a</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">a</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">sa</span>
+        <span class="n">beta_err</span> <span class="o">+=</span> <span class="mi">4</span> <span class="o">*</span> <span class="p">((</span><span class="n">x</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span> <span class="o">/</span> <span class="n">a</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">sb</span>
+        <span class="n">beta_err</span> <span class="o">-=</span> <span class="mi">4</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">a</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">a</span> <span class="o">**</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">sab</span>
         <span class="k">return</span> <span class="n">beta_err</span>
-    
+
     <span class="n">positions</span> <span class="o">=</span> <span class="n">beta_phase_tfs</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">bpms</span><span class="p">)[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">S</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
     <span class="n">beta_phase</span> <span class="o">=</span> <span class="n">beta_phase_tfs</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">bpms</span><span class="p">)[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">BETA</span><span class="si">}{</span><span class="n">plane</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
     <span class="n">beta_phase_err</span> <span class="o">=</span> <span class="n">beta_phase_tfs</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">bpms</span><span class="p">)[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ERR</span><span class="si">}{</span><span class="n">BETA</span><span class="si">}{</span><span class="n">plane</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
@@ -183,7 +172,7 @@
 
     <span class="n">additional_args</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">beta_phase_err</span><span class="p">[</span><span class="n">valid</span><span class="p">])</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">additional_args</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;sigma&#39;</span><span class="p">:</span> <span class="n">beta_phase_err</span><span class="p">[</span><span class="n">valid</span><span class="p">]}</span>
+        <span class="n">additional_args</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;sigma&quot;</span><span class="p">:</span> <span class="n">beta_phase_err</span><span class="p">[</span><span class="n">valid</span><span class="p">]}</span>
 
     <span class="n">popt</span><span class="p">,</span> <span class="n">pcov</span> <span class="o">=</span> <span class="n">curve_fit</span><span class="p">(</span>
         <span class="n">beta_function</span><span class="p">,</span>
@@ -194,7 +183,7 @@
         <span class="n">absolute_sigma</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="o">**</span><span class="n">additional_args</span><span class="p">,</span>
     <span class="p">)</span>
-    
+
     <span class="c1"># Get the error from the covariance matrix</span>
     <span class="n">perr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">pcov</span><span class="p">))</span>
 
@@ -209,7 +198,7 @@
     <span class="n">beta_phase_tfs</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
     <span class="n">beta_amp_tfs</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
     <span class="n">plane</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This function computes the calibration factors for the beta method with the</span>
 <span class="sd">    beta from phase values. The associated error is also calculated.</span>
@@ -217,14 +206,12 @@
 <span class="sd">    function can be used for both.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">      beta_phase (pd.Series): Series of the beta from phase values</span>
-<span class="sd">      beta_phase_err (pd.Series): Series of the error associated to the beta from phase values</span>
-<span class="sd">      beta_amp (pd.Series): Series of the beta from amplitude values</span>
-<span class="sd">      beta_amp_err (pd.Series): Series of the error associated to the beta from amplitude values</span>
+<span class="sd">        beta_phase_tfs (pd.DataFrame): A ``DataFrame`` with beta from phase values.</span>
+<span class="sd">        beta_amp_tfs (pd.DataFrame): A ``DataFrame`` with beta from amplitude values.</span>
+<span class="sd">        plane (str): Plane of the BPM measurements.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">      Tuple[pd.Series, pd.Series]: The first Series are the calibration</span>
-<span class="sd">      factors, the second one their error.</span>
+<span class="sd">        A ``pandas.DataFrame`` with the computed calibration factors and their associated errors as columns.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">beta_phase</span> <span class="o">=</span> <span class="n">beta_phase_tfs</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">BETA</span><span class="si">}{</span><span class="n">plane</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
     <span class="n">beta_phase_err</span> <span class="o">=</span> <span class="n">beta_phase_tfs</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ERR</span><span class="si">}{</span><span class="n">BETA</span><span class="si">}{</span><span class="n">plane</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
@@ -243,10 +230,10 @@
 
 
 <span class="k">def</span> <span class="nf">_get_factors_from_phase_fit</span><span class="p">(</span>
-    <span class="n">beta_phase_tfs</span><span class="p">:</span> <span class="n">tfs</span><span class="o">.</span><span class="n">TfsDataFrame</span><span class="p">,</span> 
-    <span class="n">beta_amp_tfs</span><span class="p">:</span> <span class="n">tfs</span><span class="o">.</span><span class="n">TfsDataFrame</span><span class="p">,</span>
-    <span class="n">ips</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
-    <span class="n">plane</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">beta_phase_tfs</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">beta_amp_tfs</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">ips</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+    <span class="n">plane</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This function computes the calibration factors for the beta method with the</span>
@@ -255,10 +242,10 @@
 <span class="sd">    mainly to loop over IPs and filter the BPM list.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">      beta_phase_tfs (tfs.TfsDataFrame): TfsDataFrame containing all beta from phase values</span>
-<span class="sd">      beta_amp_tfs (tfs.TfsDataFrame): TfsDataFrame containing all beta from amplitude values</span>
-<span class="sd">      ips (List[int]): List of IPs to compute the factors for</span>
-<span class="sd">      plane (str): Plane of the BPM measurements</span>
+<span class="sd">        beta_phase_tfs (pd.DataFrame): A ``DataFrame`` with beta from phase values.</span>
+<span class="sd">        beta_amp_tfs (pd.DataFrame): A ``DataFrame`` with beta from amplitude values.</span>
+<span class="sd">        ips (Sequence[int]): List of IPs to compute the factors for.</span>
+<span class="sd">        plane (str): Plane of the BPM measurements.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">      Tuple[pd.Series, pd.Series]: The first Series are the calibration</span>
@@ -277,20 +264,18 @@
         <span class="k">for</span> <span class="n">bpm_set</span> <span class="ow">in</span> <span class="p">[</span><span class="n">bpms</span><span class="p">,</span> <span class="n">bpms_amp</span><span class="p">]:</span>
             <span class="n">missing</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">bpm_set</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">bpm_set</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">missing</span><span class="p">:</span>
-                <span class="n">LOG</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;    One or several BPMs are missing in the input&quot;</span>
-                            <span class="s2">&quot; DataFrame, the calibration factors calculation&quot;</span>
-                            <span class="sa">f</span><span class="s2">&quot; from fit may not be accurate: </span><span class="si">{</span><span class="n">missing</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">LOG</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">&quot;    One or several BPMs are missing in the input&quot;</span>
+                    <span class="s2">&quot; DataFrame, the calibration factors calculation&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot; from fit may not be accurate: </span><span class="si">{</span><span class="n">missing</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
 
         <span class="c1"># Curve fit the beta from phase values</span>
         <span class="n">beta_phase_fit</span> <span class="o">=</span> <span class="n">_get_beta_fit</span><span class="p">(</span><span class="n">BPMS</span><span class="p">[</span><span class="n">ip</span><span class="p">][</span><span class="n">beam</span><span class="p">],</span> <span class="n">beta_phase_tfs</span><span class="p">,</span> <span class="n">plane</span><span class="p">)</span>
-    
+
         <span class="c1"># Get the factors and put them all together to have all ips in one</span>
         <span class="c1"># Series</span>
-        <span class="n">c_fit</span> <span class="o">=</span> <span class="n">_get_factors_from_phase</span><span class="p">(</span>
-            <span class="n">beta_phase_fit</span><span class="p">,</span>
-            <span class="n">beta_amp_tfs</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">BPMS</span><span class="p">[</span><span class="n">ip</span><span class="p">][</span><span class="n">beam</span><span class="p">]),</span>
-            <span class="n">plane</span>
-        <span class="p">)</span>
+        <span class="n">c_fit</span> <span class="o">=</span> <span class="n">_get_factors_from_phase</span><span class="p">(</span><span class="n">beta_phase_fit</span><span class="p">,</span> <span class="n">beta_amp_tfs</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">BPMS</span><span class="p">[</span><span class="n">ip</span><span class="p">][</span><span class="n">beam</span><span class="p">]),</span> <span class="n">plane</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">calibration_phase_fit</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">calibration_phase_fit</span> <span class="o">=</span> <span class="n">c_fit</span>
         <span class="k">else</span><span class="p">:</span>
@@ -298,13 +283,11 @@
 
     <span class="c1"># Change the colum names for _fit</span>
     <span class="n">calibration_phase_fit</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">(</span><span class="n">LABELS</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">LABELS</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
-    
+
     <span class="k">return</span> <span class="n">calibration_phase_fit</span>
 
 
-<div class="viewcode-block" id="get_calibration_factors_from_beta"><a class="viewcode-back" href="../../../modules/calibration.html#pylhc.calibration.beta.get_calibration_factors_from_beta">[docs]</a><span class="k">def</span> <span class="nf">get_calibration_factors_from_beta</span><span class="p">(</span>
-    <span class="n">ips</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">input_path</span><span class="p">:</span> <span class="n">Path</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
+<div class="viewcode-block" id="get_calibration_factors_from_beta"><a class="viewcode-back" href="../../../modules/calibration.html#pylhc.calibration.beta.get_calibration_factors_from_beta">[docs]</a><span class="k">def</span> <span class="nf">get_calibration_factors_from_beta</span><span class="p">(</span><span class="n">ips</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">input_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This function is the main function to compute the calibration factors for</span>
 <span class="sd">    the beta method.</span>
@@ -313,7 +296,7 @@
 <span class="sd">    phase and its fitted values.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">      ips (List[int]): IPs to compute the calibration factors for.</span>
+<span class="sd">      ips (Sequence[int]): IPs to compute the calibration factors for.</span>
 <span class="sd">      input_path (Path): Path of the directory containing the beta files.</span>
 
 <span class="sd">    Returns:</span>
@@ -340,21 +323,15 @@
         <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Computing the calibration factors for plane </span><span class="si">{</span><span class="n">plane</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="c1"># Load the tfs files for beta from phase and beta from amp</span>
-        <span class="n">beta_phase_tfs</span> <span class="o">=</span> <span class="n">tfs</span><span class="o">.</span><span class="n">read</span><span class="p">(</span>
-            <span class="n">input_path</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">BETA_NAME</span><span class="si">}{</span><span class="n">plane</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}{</span><span class="n">EXT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">TFS_INDEX</span>
-        <span class="p">)</span>
-        <span class="n">beta_amp_tfs</span> <span class="o">=</span> <span class="n">tfs</span><span class="o">.</span><span class="n">read</span><span class="p">(</span>
-            <span class="n">input_path</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">AMP_BETA_NAME</span><span class="si">}{</span><span class="n">plane</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}{</span><span class="n">EXT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">TFS_INDEX</span>
-        <span class="p">)</span>
-        
+        <span class="n">beta_phase_tfs</span> <span class="o">=</span> <span class="n">tfs</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">input_path</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">BETA_NAME</span><span class="si">}{</span><span class="n">plane</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}{</span><span class="n">EXT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">TFS_INDEX</span><span class="p">)</span>
+        <span class="n">beta_amp_tfs</span> <span class="o">=</span> <span class="n">tfs</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">input_path</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">AMP_BETA_NAME</span><span class="si">}{</span><span class="n">plane</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}{</span><span class="n">EXT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">TFS_INDEX</span><span class="p">)</span>
+
         <span class="c1"># Get the calibration factors from phase</span>
         <span class="n">calibration_phase</span> <span class="o">=</span> <span class="n">_get_factors_from_phase</span><span class="p">(</span><span class="n">beta_phase_tfs</span><span class="p">,</span> <span class="n">beta_amp_tfs</span><span class="p">,</span> <span class="n">plane</span><span class="p">)</span>
-        
+
         <span class="c1"># Calibration from phase fit can only be obtained via ballistic optics</span>
         <span class="k">if</span> <span class="n">ips</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">calibration_phase_fit</span> <span class="o">=</span> <span class="n">_get_factors_from_phase_fit</span><span class="p">(</span>
-                <span class="n">beta_phase_tfs</span><span class="p">,</span> <span class="n">beta_amp_tfs</span><span class="p">,</span> <span class="n">ips</span><span class="p">,</span> <span class="n">plane</span>
-            <span class="p">)</span>
+            <span class="n">calibration_phase_fit</span> <span class="o">=</span> <span class="n">_get_factors_from_phase_fit</span><span class="p">(</span><span class="n">beta_phase_tfs</span><span class="p">,</span> <span class="n">beta_amp_tfs</span><span class="p">,</span> <span class="n">ips</span><span class="p">,</span> <span class="n">plane</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">calibration_phase_fit</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">(</span><span class="n">LABELS</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">LABELS</span><span class="p">[</span><span class="mi">4</span><span class="p">]))</span>
 
