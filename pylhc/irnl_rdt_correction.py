@@ -278,7 +278,7 @@ APPROXIMATE_SOLVERS = ['lstsq']
 
 # Main Functions ---
 
-def parse_args():
+def get_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--optics",
@@ -378,7 +378,6 @@ def parse_args():
     parser.add_argument(
         "--ignore_corrector_settings",
         dest="ignore_corrector_settings",
-        type=int,
         help=("Ignore the current settings of the correctors. If this is not set "
               "the corrector values of the optics are used as initial conditions."),
         action="store_true",
@@ -390,7 +389,7 @@ def parse_args():
               "are assumed to be zero, instead of crashing."),
         action="store_true",
     )
-    return parser.parse_args()
+    return parser
 
 
 def main(**opt) -> Tuple[str, tfs.TfsDataFrame]:
@@ -436,7 +435,7 @@ def main(**opt) -> Tuple[str, tfs.TfsDataFrame]:
     LOG.info("Starting IRNL Correction.")
     timer = Timer("Start", print_fun=LOG.debug)
     if not len(opt):
-        opt = vars(parse_args())
+        opt = vars(get_parser().parse_args())
     opt = DotDict(opt)
     opt = _check_opt(opt)
     timer.step("Opt Parsed")
@@ -695,7 +694,7 @@ def init_corrector_and_optics_values(correctors: Sequence[IRCorrector], optics_d
 
 
 def restore_optics_values(saved_values: dict, optics_dfs: Sequence[DataFrame]):
-    """ Restore saved inital corrector values (if any) to optics. """
+    """ Restore saved initial corrector values (if any) to optics. """
     for corrector, values in saved_values.items():
         for df, val in zip(optics_dfs, values):
             df.loc[corrector.name, corrector.strength_component] = val
@@ -893,6 +892,14 @@ def _check_corrector_order_not_lower(rdt, correctors):
 # Input ---
 
 def _check_opt(opt: DotDict) -> DotDict:
+    # check for unkown input
+    parser = get_parser()
+    known_opts = [a.dest for a in parser._actions if not isinstance(a, argparse._HelpAction)]  # best way I could figure out
+    unknown_opts = [k for k in opt.keys() if k not in known_opts]
+    if len(unknown_opts):
+        raise AttributeError(f"Unknown arguments found: '{list2str(unknown_opts)}'.\n"
+                             f"Allowed input parameters are: '{list2str(known_opts)}'")
+
     # Set defaults
     for name, default in DEFAULTS.items():
         if opt.get(name) is None:
@@ -916,6 +923,10 @@ def _check_opt(opt: DotDict) -> DotDict:
             raise ValueError(f"Parameter '{name}' is required and needs to be "
                              "iterable, even if only of length 1. "
                              f"Instead was '{inputs}'.")
+
+    # Copy DataFrames as they might be modified
+    opt.optics = [o.copy() for o in opt.optics]
+    opt.errors = [e.copy() for e in opt.errors]
 
     if opt.feeddown < 0 or not (opt.feeddown == int(opt.feeddown)):
         raise ValueError("'feeddown' needs to be a positive integer.")
