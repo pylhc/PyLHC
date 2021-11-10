@@ -488,7 +488,7 @@ def _get_ir_magnets_mask(index: pd.Index) -> pd.Series:
 
 def _get_corrector_magnets_mask(index: pd.Index) -> pd.Series:
     """Returns a boolean mask for the nonlinear corrector magnets in index."""
-    return index.str.match("MC.*XF?\.3[LR]\d$", flags=re.IGNORECASE)
+    return index.str.match(r"MC.*XF?\.3[LR]\d$", flags=re.IGNORECASE)
 
 
 def _get_opposite_sign_beam4_kl_columns(range_: Iterable):
