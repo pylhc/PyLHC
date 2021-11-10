@@ -47,6 +47,7 @@ def write_hdf(path: Union[Path, str], df: TfsDataFrame, **kwargs):
     # Actual writing of the output file ---
     df.to_hdf(path, key='data', mode='w', **kwargs)
     with h5py.File(path, mode="a") as hf:
+        hf.create_group("headers")  # empty group in case of empty headers
         for key, value in df.headers.items():
             hf.create_dataset(f"headers/{key}", data=value)
 

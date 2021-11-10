@@ -9,8 +9,41 @@ from pandas._testing import assert_dict_equal
 
 
 class TestHDF:
-    def test_read_write(self, tmp_path: Path, df_example):
+    def test_read_write(self, tmp_path: Path, df_example: TfsDataFrame):
         """Basic read-write loop test for TfsDataFrames to hdf5 format."""
+        out_file = tmp_path / "data_frame.h5"
+        write_hdf(out_file, df_example)
+
+        assert out_file.is_file()
+
+        df_read = read_hdf(out_file)
+        assert_tfs_frame_equal(df_example, df_read)
+
+    def test_write_empty_header(self, tmp_path: Path, df_example: TfsDataFrame):
+        """Test writing a TfsDataFrame with empty headers."""
+        df_example.headers = {}
+        out_file = tmp_path / "data_frame.h5"
+        write_hdf(out_file, df_example)
+
+        assert out_file.is_file()
+
+        df_read = read_hdf(out_file)
+        assert_tfs_frame_equal(df_example, df_read)
+
+    def test_write_empty_data(self, tmp_path: Path, df_example: TfsDataFrame):
+        """Test writing a TfsDataFrame with empty data."""
+        df_example = TfsDataFrame(headers=df_example.headers)
+        out_file = tmp_path / "data_frame.h5"
+        write_hdf(out_file, df_example)
+
+        assert out_file.is_file()
+
+        df_read = read_hdf(out_file)
+        assert_tfs_frame_equal(df_example, df_read)
+
+    def test_write_empty_frame(self, tmp_path: Path):
+        """Test writing an empty TfsDataFrame."""
+        df_example = TfsDataFrame()
         out_file = tmp_path / "data_frame.h5"
         write_hdf(out_file, df_example)
 
