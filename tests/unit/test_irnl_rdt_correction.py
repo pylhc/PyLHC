@@ -12,6 +12,7 @@ from pylhc.irnl_rdt_correction import (
     get_integral_sign, list2str, switch_signs_for_beam4,
     IRCorrector
 )
+from pylhc.utils import tfs_tools
 
 INPUTS = Path(__file__).parent.parent / "inputs"
 LHC_MODELS_PATH = INPUTS / "model_lhc_thin_30cm"
@@ -418,7 +419,10 @@ class TestUnit:
 
 def read_lhc_model(beam: int) -> tfs.TfsDataFrame:
     """Read the LHC model from the input directory."""
-    return tfs.read_tfs(LHC_MODELS_PATH / f"twiss.lhc.b{beam}.nominal.tfs", index="NAME")
+    # tfs files were too big, but if generated from the `.madx` the `.tfs` can be used directly.
+    # E.g. for debugging purposes.
+    # return tfs.read_tfs(LHC_MODELS_PATH / f"twiss.lhc.b{beam}.nominal.tfs", index="NAME")
+    return tfs_tools.read_hdf(LHC_MODELS_PATH / f"twiss.lhc.b{beam}.nominal.hd5")
 
 
 def generate_pseudo_model(n_ips: int, n_magnets: int, accel: str,

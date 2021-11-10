@@ -37,7 +37,9 @@ DEPENDENCIES = [
     "generic-parser>=1.0.8",
     "parse>=1.15.0",
     "omc3>=0.2.0",
-    "jpype1>=1.3.0"
+    "jpype1>=1.3.0",
+    "h5py>=2.9.0",
+    "tables>=3.6.0",
 ]
 
 EXTRA_DEPENDENCIES = {
