@@ -10,7 +10,7 @@ from pandas.testing import assert_frame_equal, assert_series_equal
 from pylhc.irnl_rdt_correction import (
     main as irnl_correct, BETA, KEYWORD, X, Y, MULTIPOLE,
     get_integral_sign, list2str, switch_signs_for_beam4,
-    IRCorrector
+    IRCorrector, RDT
 )
 from pylhc.utils import tfs_tools
 
@@ -370,7 +370,6 @@ class TestFeeddown:
                 assert abs(norm_oct_corr_fd2 + 0.5 * (x**2 - y**2) * dodecapole_error_sum) < EPS
                 assert abs(skew_oct_corr_fd2 + x * y * dodecapole_error_sum) < EPS
 
-
     @pytest.mark.parametrize('corrector', ("a5", "b5", "a6", "b6"))
     @pytest.mark.parametrize('x', (2, 0))
     @pytest.mark.parametrize('y', (2, 1.5, 0))
@@ -473,6 +472,81 @@ class TestUnit:
             switch_col_errors_mask = errors.columns.isin(["DX"] + _get_opposite_sign_beam4_kl_columns(range(MAX_N)))
             assert_frame_equal(errors.loc[:, switch_col_errors_mask], -errors_switch.loc[:, switch_col_errors_mask])
             assert_frame_equal(errors.loc[:, ~switch_col_errors_mask], errors_switch.loc[:, ~switch_col_errors_mask])
+
+    def test_ircorrector_class(self):
+        # Test Corrector
+        a5_corrector_L1 = IRCorrector(field_component="a5", accel="lhc", ip=1, side="L")
+
+        # Test Equality
+        assert a5_corrector_L1 == IRCorrector(field_component="a5", accel="lhc", ip=1, side="L")
+        assert a5_corrector_L1 != IRCorrector(field_component="a4", accel="lhc", ip=1, side="L")
+
+        # Test > and < per order (important for feed-down!)
+        assert a5_corrector_L1 > IRCorrector(field_component="a4", accel="lhc", ip=1, side="L")
+        assert a5_corrector_L1 > IRCorrector(field_component="a4", accel="lhc", ip=2, side="R")
+        assert a5_corrector_L1 > IRCorrector(field_component="b4", accel="lhc", ip=1, side="L")
+        assert a5_corrector_L1 < IRCorrector(field_component="a6", accel="lhc", ip=1, side="L")
+        assert a5_corrector_L1 < IRCorrector(field_component="b6", accel="lhc", ip=1, side="L")
+        assert a5_corrector_L1 < IRCorrector(field_component="b6", accel="lhc", ip=8, side="R")
+
+        # These ones are arbitrary, just to allow sorting/make sorting unique
+        assert a5_corrector_L1 > IRCorrector(field_component="b5", accel="lhc", ip=1, side="L")
+        assert a5_corrector_L1 < IRCorrector(field_component="a5", accel="lhc", ip=1, side="R")
+        assert a5_corrector_L1 < IRCorrector(field_component="a5", accel="lhc", ip=2, side="L")
+
+    def test_ircorrector_accel(self):
+        a4_corrector_L1 = IRCorrector(field_component="a4", accel="lhc", ip=1, side="L")
+        assert "F" not in a4_corrector_L1.name
+
+        a4_corrector_L1_hllhc = IRCorrector(field_component="a4", accel="hllhc", ip=1, side="L")
+        assert "F" in a4_corrector_L1_hllhc.name
+        assert a4_corrector_L1_hllhc.name.startswith("MCOS")
+        assert a4_corrector_L1 != a4_corrector_L1_hllhc
+
+        assert IRCorrector(field_component="a4", accel="lhc", ip=2, side="L") == IRCorrector(field_component="a4", accel="hllhc", ip=2, side="L")
+
+        assert IRCorrector(field_component="b2", accel="hllhc", ip=1, side="L").name.startswith("MCQ")
+        assert IRCorrector(field_component="a2", accel="hllhc", ip=1, side="L").name.startswith("MCQS")
+
+        assert IRCorrector(field_component="b3", accel="hllhc", ip=1, side="L").name.startswith("MCS")
+        assert IRCorrector(field_component="a3", accel="hllhc", ip=1, side="L").name.startswith("MCSS")
+
+        assert IRCorrector(field_component="b4", accel="hllhc", ip=1, side="L").name.startswith("MCO")
+        assert IRCorrector(field_component="a4", accel="hllhc", ip=1, side="L").name.startswith("MCOS")
+
+        assert IRCorrector(field_component="b5", accel="hllhc", ip=1, side="L").name.startswith("MCD")
+        assert IRCorrector(field_component="a5", accel="hllhc", ip=1, side="L").name.startswith("MCDS")
+
+        assert IRCorrector(field_component="b6", accel="hllhc", ip=1, side="L").name.startswith("MCT")
+        assert IRCorrector(field_component="a6", accel="hllhc", ip=1, side="L").name.startswith("MCTS")
+
+    def test_rdt_init(self):
+        jklm = (1,2,3,4)
+
+        rdt = RDT(name=f"f{''.join(str(ii) for ii in jklm)}")
+        assert rdt.order == sum(jklm)
+        assert rdt.jklm == jklm
+        assert rdt.j == jklm[0]
+        assert rdt.k == jklm[1]
+        assert rdt.l == jklm[2]
+        assert rdt.m == jklm[3]
+        assert not rdt.swap_beta_exp
+        assert RDT("f1001*").swap_beta_exp
+
+    def test_rdt_equality(self):
+        assert RDT("f2110") == RDT("f2110")
+        assert RDT("f2110") != RDT("f2110*")
+
+    def test_rdt_sortable(self):
+        # sortable by order
+        assert RDT("f1001") < RDT("f2001")
+        assert RDT("f1003") > RDT("f2001")
+
+        # arbitrary (so sorting is unique)
+        assert RDT("f1001") > RDT("f2000")
+        assert RDT("f3002") < RDT("f2003")
+        assert RDT("f2110") < RDT("f2110*")
+        assert RDT("f1001*") > RDT("f1001")
 
 
 # Helper -------------------------------------------------------------------------------------------
