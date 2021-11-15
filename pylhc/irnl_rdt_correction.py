@@ -458,7 +458,7 @@ def main(**opt) -> Tuple[str, tfs.TfsDataFrame]:
 
     Returns:
 
-        tupel[string, Dataframe]:
+        tuple[string, Dataframe]:
         the string contains the madx-commands used to power the correctors;
         the dataframe contains the same values in a pandas DataFrame.
     """
