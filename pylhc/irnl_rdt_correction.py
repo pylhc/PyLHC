@@ -471,7 +471,7 @@ def main(**opt) -> Tuple[str, tfs.TfsDataFrame]:
     timer.step("Opt Parsed")
 
     rdt_maps = sort_rdts(opt.rdts, opt.rdts2)
-    _check_corrector_order(rdt_maps, opt.update_optics,  opt.feeddown)
+    _check_corrector_order(rdt_maps, opt.update_optics, opt.feeddown)
     needed_orders = _get_needed_orders(rdt_maps, opt.feeddown)
     timer.step("RDT Sorted")
 
@@ -607,12 +607,21 @@ def _build_rdt_dict(rdts: Sequence) -> dict:
     return rdt_dict
 
 
-def _get_needed_orders(rdt_maps: Sequence[dict], feed_down: int):
+def _get_needed_orders(rdt_maps: Sequence[dict], feed_down: int) -> Sequence[int]:
+    """Returns the sorted orders needed for correction, based on the order
+    of the RDTs to correct plus the feed-down involved and the order of the
+    corrector, which can be higher than the RDTs in case one wants to correct
+    via feeddown."""
     needed_orders = set()
     for rdt_map in rdt_maps:
-        for rdt in rdt_map.keys():
+        for rdt, correctors in rdt_map.items():
+            # get orders from RDTs + feed-down
             for fd in range(feed_down+1):
                 needed_orders |= {rdt.order + fd, }
+
+            # get orders from correctors
+            for corrector in correctors:
+                needed_orders |= {int(corrector[1]), }
     return sorted(needed_orders)
 
 
