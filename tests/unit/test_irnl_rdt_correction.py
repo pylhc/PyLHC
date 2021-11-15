@@ -26,6 +26,7 @@ PLACEHOLDER = "PLACEHOLDER"  # MADX Keyword PLACEHOLDER
 # fields of IRCorrector --> columns in corrections tfs
 VALUE = "value"
 STRENGTH = "strength_component"
+FIELD = "field_component"
 ORDER = "order"
 IP = "ip"
 CIRCUIT = "circuit"
@@ -190,8 +191,8 @@ class TestStandardCorrection:
             assert circuit in madx_corrections
 
 
-class TestSpecialCases:
-    def test_rdts(self, tmp_path: Path):
+class TestRDT:
+    def test_different_rdts(self, tmp_path: Path):
         """Test that different RDTs can be corrected and only their correctors
         are returned. Also checks that the corrector values are varying between RDTs
         when they should. Octupole RDTs are used for this example.
@@ -276,9 +277,11 @@ class TestSpecialCases:
         non_val_columns = [col for col in df_corrections_f2200.columns if col != VALUE]
         assert_frame_equal(df_corrections_f4000[non_val_columns], df_corrections_f2002[non_val_columns])
 
+
+class TestFeeddown:
     @pytest.mark.parametrize('x', (2, 0))
-    @pytest.mark.parametrize('y', (2, 0))
-    def test_feeddown(self, tmp_path: Path, x: float, y: float):
+    @pytest.mark.parametrize('y', (1.5, 0))
+    def test_general_feeddown(self, tmp_path: Path, x: float, y: float):
         """Test feeddown functionality from decapoles to octupoles and sextupoles."""
         # Parameters -----------------------------------------------------------
         accel = 'lhc'
@@ -295,7 +298,7 @@ class TestSpecialCases:
         errors = generate_errortable(
             index=get_some_magnet_names(n_ips=n_ips, n_magnets=n_magnets),
         )
-        errors["K4L"] = error_value
+        errors["K4L"] = error_value  # normal decapole errors
 
         # Correction ---------------------------------------------------------------
         rdts = "f4000", f"f3001"
@@ -326,7 +329,7 @@ class TestSpecialCases:
         )
 
         errors["K4L"] = 0
-        errors["K5L"] = error_value
+        errors["K5L"] = error_value  # normal dodecapole errors
         _, df_corrections_fd2 = irnl_correct(
             accel=accel,
             optics=[optics],
@@ -366,6 +369,63 @@ class TestSpecialCases:
                 skew_oct_corr_fd2 = sum(df_corrections_fd2.loc[skew_oct_mask, VALUE])
                 assert abs(norm_oct_corr_fd2 + 0.5 * (x**2 - y**2) * dodecapole_error_sum) < EPS
                 assert abs(skew_oct_corr_fd2 + x * y * dodecapole_error_sum) < EPS
+
+
+    @pytest.mark.parametrize('corrector', ("a5", "b5", "a6", "b6"))
+    @pytest.mark.parametrize('x', (2, 0))
+    @pytest.mark.parametrize('y', (2, 1.5, 0))
+    def test_correct_via_feeddown(self, tmp_path: Path, x: float, y: float, corrector: str):
+        """Test correct RDT via feeddown from higher order corrector.
+        In this example: Use normal and skew deca- and dodecapole correctors
+        to correct for normal octupole errors (which make it easy to
+        just sum up over both sides).
+        """
+        # Parameters -----------------------------------------------------------
+        accel = 'hllhc'
+
+        correct_ips = (1, 3)
+        error_value = 2
+        n_magnets = 4
+        n_ips = 4
+        n_sides = 2
+
+        # Setup ----------------------------------------------------------------
+        optics = generate_pseudo_model(
+            accel=accel, n_ips=n_ips, n_magnets=n_magnets, x=x, y=y)
+        errors = generate_errortable(
+            index=get_some_magnet_names(n_ips=n_ips, n_magnets=n_magnets),
+        )
+        errors["K3L"] = error_value  # octupole errors
+
+        # Correction ---------------------------------------------------------------
+        rdts = {"f4000": [corrector]}
+        _, df_corrections = irnl_correct(
+            accel=accel,
+            optics=[optics],
+            errors=[errors],
+            beams=[1],
+            rdts=rdts,
+            output=tmp_path / "correct",
+            feeddown=0,
+            ips=correct_ips,
+            ignore_missing_columns=True,
+            iterations=1,
+        )
+
+        assert len(df_corrections.index) == len(correct_ips) * n_sides
+        assert all(df_corrections[FIELD] == corrector)
+
+        coeff = {"a5": y, "b5": x, "a6": y*x, "b6": 0.5*(x**2 - y**2)}[corrector]
+        if coeff == 0:
+            # No Feed-down possible
+            assert all(df_corrections[VALUE] < EPS)
+        else:
+            # as beta = 1
+            error_strengths = (n_sides * n_magnets * error_value)
+            for ip in correct_ips:
+                mask = df_corrections[IP] == ip
+                corrector_strengths = coeff * sum(df_corrections.loc[mask, VALUE])
+                assert abs(corrector_strengths + error_strengths) < EPS  # compensation of RDT
 
 
 class TestUnit:
