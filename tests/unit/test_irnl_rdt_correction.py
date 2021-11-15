@@ -118,12 +118,12 @@ class TestStandardCorrection:
                             assert abs(corrector_strengths) < EPS  # correctors should be equally distributed
 
                             corrector_strengths = -sum(df_corrections.loc[mask, VALUE].abs())
-                            # as beta = 1
+                            # as beta cancels out (and is 1 anyway) 
                             error_strengths = n_magnets * error_value / 2  # account for partial compensation (from above)
                         else:
                             corrector_strengths = sum(df_corrections.loc[mask, VALUE])
                             assert all(abs(df_corrections.loc[mask, VALUE] - corrector_strengths / n_sides) < EPS)
-                            # as beta = 1
+                            # as beta cancels out (and is 1 anyway) 
                             error_strengths = (n_sides * n_magnets * error_value)
                         assert abs(corrector_strengths + error_strengths) < EPS  # compensation of RDT
                     else:
@@ -189,6 +189,145 @@ class TestStandardCorrection:
         # All circuits in madx script ---
         for circuit in df_corrections[CIRCUIT]:
             assert circuit in madx_corrections
+
+
+class TestDualOptics:
+    def test_dual_optics(self, tmp_path: Path):
+            """Test that given two different optics, an approximative solution
+            will be found."""
+            # Parameters -----------------------------------------------------------
+            accel = 'hllhc'
+
+            correct_ips = (1, 3)
+            n_magnets = 4
+            n_ips = 4
+            n_sides = 2
+
+            # Setup ----------------------------------------------------------------
+            beta = 2
+            error_value = 2
+            optics1 = generate_pseudo_model(
+                accel=accel, n_ips=n_ips, n_magnets=n_magnets, betax=beta, betay=beta)
+            errors1 = generate_errortable(
+                index=get_some_magnet_names(n_ips=n_ips, n_magnets=n_magnets),
+                value=error_value,
+            )
+
+            # Optics 2
+            beta2 = 4
+            error_value2 = 3 * error_value
+            optics2 = generate_pseudo_model(
+                accel=accel, n_ips=n_ips, n_magnets=n_magnets, betax=beta2, betay=beta2)
+            errors2 = generate_errortable(
+                index=get_some_magnet_names(n_ips=n_ips, n_magnets=n_magnets),
+                value=error_value2,
+            )
+
+            # Correction ---------------------------------------------------------------
+            rdt = "f4000"
+
+            # The corrector values in this example are not uniquely defined
+            # so these methods will fail:
+            for solver in ["inv", "linear"]:
+                with pytest.raises(np.linalg.LinAlgError):
+                    _, df_corrections = irnl_correct(
+                        accel=accel,
+                        optics=[optics1, optics2],
+                        errors=[errors1, errors2],
+                        beams=[1, 1],
+                        rdts=[rdt, ],
+                        ips=correct_ips,
+                        ignore_missing_columns=True,
+                        iterations=1,
+                        solver=solver
+                    )
+
+            # Best approximation for corrector values, via least-squares:
+            _, df_corrections = irnl_correct(
+                accel=accel,
+                optics=[optics1, optics2],
+                errors=[errors1, errors2],
+                beams=[1, 1],
+                rdts=[rdt, ],
+                output=tmp_path / "correct_dual",
+                ips=correct_ips,
+                ignore_missing_columns=True,
+                iterations=1,
+                solver="lstsq",
+            )
+
+            # as beta cancels out:
+            error_strengths1 = n_sides * n_magnets * error_value
+            error_strengths2 = n_sides * n_magnets * error_value2
+
+            # build the equation system manually, and solve with least square
+            # (basically what the correction should do):
+            exp_x = (int(rdt[1]) + int(rdt[2])) / 2
+            exp_y = (int(rdt[2]) + int(rdt[3])) / 2
+            b1 = beta**(exp_x+exp_y)
+            b2 = beta2**(exp_x+exp_y)
+            dual_correction = np.linalg.lstsq(np.array([[b1, b1], [b2, b2]]),
+                                              np.array([-b1*error_strengths1, -b2*error_strengths2]))[0]
+
+            assert all(np.abs(dual_correction) > 0)  # just for safety, that there is a solution
+
+            for ip in correct_ips:
+                mask = df_corrections[IP] == ip
+                assert all(np.abs((df_corrections.loc[mask, VALUE] - dual_correction)) < EPS)
+
+    def test_dual_optics_rdts(self, tmp_path: Path):
+        """Test calculations given two different optics and different RDTs."""
+        # Parameters -----------------------------------------------------------
+        accel = 'hllhc'
+
+        correct_ips = (1, 3)
+        n_magnets = 4
+        n_ips = 4
+        n_sides = 2
+
+        # Setup ----------------------------------------------------------------
+        rdt1 = "f4000"
+        beta = 2
+        error_value = 2
+        optics1 = generate_pseudo_model(
+            accel=accel, n_ips=n_ips, n_magnets=n_magnets, betax=beta, betay=beta)
+        errors1 = generate_errortable(
+            index=get_some_magnet_names(n_ips=n_ips, n_magnets=n_magnets),
+            value=error_value,
+        )
+
+        # Optics that require same strengths with rdt2
+        rdt2 = "f2002"
+        beta2 = 4
+        error_value2 = error_value
+        optics2 = generate_pseudo_model(
+            accel=accel, n_ips=n_ips, n_magnets=n_magnets, betax=beta2, betay=beta2)
+
+        errors2 = generate_errortable(
+            index=get_some_magnet_names(n_ips=n_ips, n_magnets=n_magnets),
+            value=error_value2,
+        )
+
+        # Correction ---------------------------------------------------------------
+        _, df_corrections = irnl_correct(
+            accel=accel,
+            optics=[optics1, optics2],
+            errors=[errors1, errors2],
+            beams=[1, 1],
+            rdts=[rdt1, ],
+            rdts2=[rdt2, ],
+            ips=correct_ips,
+            ignore_missing_columns=True,
+            iterations=1,
+        )
+
+        # as beta cancels out:
+        error_strengths = n_sides * n_magnets * error_value
+
+        for ip in correct_ips:
+            mask = df_corrections[IP] == ip
+            corrector_strengths = sum(df_corrections.loc[mask, VALUE])
+            assert abs(corrector_strengths + error_strengths) < EPS  # compensation of RDT
 
 
 class TestRDT:
@@ -277,6 +416,58 @@ class TestRDT:
         non_val_columns = [col for col in df_corrections_f2200.columns if col != VALUE]
         assert_frame_equal(df_corrections_f4000[non_val_columns], df_corrections_f2002[non_val_columns])
 
+    def test_switched_beta(self):
+        """Test using the special RDTs* where the beta-exponents are switched."""
+        # Parameters -----------------------------------------------------------
+        accel = 'hllhc'
+
+        correct_ips = (1, 3)
+        n_magnets = 4
+        n_ips = 4
+        n_sides = 2
+
+        # Setup ----------------------------------------------------------------
+        beta = 2
+        error_value = 2
+        optics = generate_pseudo_model(
+            accel=accel, n_ips=n_ips, n_magnets=n_magnets, betax=beta, betay=beta)
+        errors = generate_errortable(
+            index=get_some_magnet_names(n_ips=n_ips, n_magnets=n_magnets),
+            value=error_value,
+        )
+
+        # Correction ---------------------------------------------------------------
+        _, df_corrections = irnl_correct(
+            accel=accel,
+            optics=[optics, ],
+            errors=[errors, ],
+            beams=[1, ],
+            rdts=["f4000", ],
+            ips=correct_ips,
+            ignore_missing_columns=True,
+            iterations=1,
+        )
+
+        _, df_corrections_switched = irnl_correct(
+            accel=accel,
+            optics=[optics, ],
+            errors=[errors, ],
+            beams=[1, ],
+            rdts=["f0004*", ],  # only for testing purposes use this RDT
+            ips=correct_ips,
+            ignore_missing_columns=True,
+            iterations=1,
+        )
+
+        # as beta cancels out:
+        error_strengths = n_sides * n_magnets * error_value
+
+        for ip in correct_ips:
+            mask = df_corrections_switched[IP] == ip
+            corrector_strengths_switched = sum(df_corrections_switched.loc[mask, VALUE])
+            assert abs(corrector_strengths_switched + error_strengths) < EPS  # compensation of RDT
+        assert_frame_equal(df_corrections, df_corrections_switched)
+
 
 class TestFeeddown:
     @pytest.mark.parametrize('x', (2, 0))
@@ -301,7 +492,7 @@ class TestFeeddown:
         errors["K4L"] = error_value  # normal decapole errors
 
         # Correction ---------------------------------------------------------------
-        rdts = "f4000", f"f3001"
+        rdts = "f4000", "f3001"
         _, df_corrections = irnl_correct(
             accel=accel,
             optics=[optics],
@@ -419,8 +610,8 @@ class TestFeeddown:
             # No Feed-down possible
             assert all(df_corrections[VALUE] < EPS)
         else:
-            # as beta = 1
-            error_strengths = (n_sides * n_magnets * error_value)
+            # as beta cancels out (and is 1 anyway) 
+            error_strengths = n_sides * n_magnets * error_value
             for ip in correct_ips:
                 mask = df_corrections[IP] == ip
                 corrector_strengths = coeff * sum(df_corrections.loc[mask, VALUE])
@@ -428,7 +619,7 @@ class TestFeeddown:
 
 
 class TestUnit:
-    """Unit Tests for easy to test functions (sorry for not testing more)."""
+    """Unit Tests for easy to test functions."""
     def test_get_integral_sign(self):
         for n in range(10):
             assert get_integral_sign(n, "R") == (-1)**n
@@ -521,7 +712,7 @@ class TestUnit:
         assert IRCorrector(field_component="a6", accel="hllhc", ip=1, side="L").name.startswith("MCTS")
 
     def test_rdt_init(self):
-        jklm = (1,2,3,4)
+        jklm = (1, 2, 3, 4)
 
         rdt = RDT(name=f"f{''.join(str(ii) for ii in jklm)}")
         assert rdt.order == sum(jklm)
