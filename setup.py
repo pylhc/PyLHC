@@ -47,7 +47,6 @@ EXTRA_DEPENDENCIES = {
         "omc3[cern]>=0.2.0",
         "pjlsa>=0.0.14",
         "pytimber>=3.0.0",  # NXCALS support
-        # "cmmnbuild-dep-manager/@https://gitlab.cern.ch/scripting-tools/cmmnbuild-dep-manager/repository/archive.tar.gz?ref=master",
         "pyjapc",
     ],
     "test": [

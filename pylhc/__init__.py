@@ -10,7 +10,7 @@ PyLHC is a script collection for the optics measurements and corrections group (
 __title__ = "pylhc"
 __description__ = "An accelerator physics script collection for the OMC team at CERN."
 __url__ = "https://github.com/pylhc/pylhc"
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 __author__ = "pylhc"
 __author_email__ = "pylhc@github.com"
 __license__ = "MIT"
