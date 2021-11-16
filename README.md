@@ -5,6 +5,7 @@
 [![Code Climate maintainability (percentage)](https://img.shields.io/codeclimate/maintainability-percentage/pylhc/PyLHC.svg?style=popout)](https://codeclimate.com/github/pylhc/PyLHC)
 [![GitHub last commit](https://img.shields.io/github/last-commit/pylhc/PyLHC.svg?style=popout)](https://github.com/pylhc/PyLHC/)
 [![GitHub release](https://img.shields.io/github/release/pylhc/PyLHC.svg?style=popout)](https://github.com/pylhc/PyLHC/)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5643602.svg)](https://doi.org/10.5281/zenodo.5643602)
 
 This package provides tools for particle accelerator physics complementing the optics measurement analysis tools of the [omc3 package](https://github.com/pylhc/omc3).
 It is a collection of useful scripts for the Optics Measurements and Corrections team (OMC) at CERN, with functionality for data analysis, corrections calculation, simulations management and machine information extraction.
