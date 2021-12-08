@@ -11,7 +11,7 @@ import tfs
 from jpype import java, JException
 from omc3.utils.mock import cern_network_import
 from omc3.utils.time_tools import AccDatetime
-from typing import Callable, Union, Dict, Tuple
+from typing import Callable, Union, Dict, Tuple, List
 
 LOG = logging.getLogger(__name__)
 pytimber = cern_network_import("pytimber")
@@ -42,6 +42,8 @@ class LSAClient(pjLSAClient):
         try:
             super().__getattr__(item)
         except AttributeError as e:
+            # Hint: we might also end up here, if a function is called on the
+            # client, that does not exist. Check the stacktrace!
             pjlsa.pjLSAClient  # might raise the Mock-Class import error
             raise e  # if that worked, raise the actual attribute error
 
@@ -62,6 +64,26 @@ class LSAClient(pjLSAClient):
         lst = self._parameterService.findParameters(req.build())
         reg = re.compile(regexp, re.IGNORECASE)
         return sorted(filter(reg.search, [pp.getName() for pp in lst]))
+
+    def find_existing_knobs(self, knobs: List[str]) -> List[str]:
+        """
+        Return only the knobs that exist from the given list.
+        This function was created out of the need to filter these first,
+        as knobs that exist but do not belong to a beamprocess return noting in
+        _getTrimsByBeamprocess, while knobs that do not exist at all crashed pjlsa.
+        This filter should probably have been in pjlsa's _buildParameterList.
+
+        Args:
+            knobs (list): List of strings of the knobs to check.
+
+        Returns:
+            A list of the knob names that actually exist.
+        """
+        dont_exist = [k for k in knobs if self._getParameter(k) is None]
+        if len(dont_exist):
+            LOG.warning(f"The following knobs do not exist and will be filtered: {dont_exist}.")
+            knobs = [k for k in knobs if k not in dont_exist]
+        return knobs
 
     def find_last_fill(
             self, acc_time: AccDatetime, accelerator: str = "lhc", source: str = "nxcals"
@@ -140,7 +162,18 @@ class LSAClient(pjLSAClient):
         """
         if knobs is None or len(knobs) == 0:
             knobs = self.find_knob_names(accelerator)
-        trims = self.getTrims(parameter=knobs, beamprocess=beamprocess, end=acc_time.timestamp())
+        else:
+            knobs = self.find_existing_knobs(knobs)
+            if not len(knobs):
+                raise ValueError("None of the given knobs exist!")
+
+        try:
+            trims = self.getTrims(parameter=knobs, beamprocess=beamprocess, end=acc_time.timestamp())
+        except jpype.java.lang.NullPointerException as e:
+            # In the past this happened, when a knob was not defined, but
+            # this should have been caught by the filter_existing_knobs above
+            raise ValueError(f"Something went wrong when extracting trims for the knobs: {knobs}") from e
+
         trims_not_found = [k for k in knobs if k not in trims.keys()]
         if len(trims_not_found):
             LOG.warning(f"The following knobs were not found in '{beamprocess}': {trims_not_found}")
