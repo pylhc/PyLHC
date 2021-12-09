@@ -170,6 +170,24 @@ and trial-loop.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="pylhc.data_extract.lsa.LSAClient.find_existing_knobs">
+<span class="sig-name descname"><span class="pre">find_existing_knobs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">knobs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/pylhc/data_extract/lsa.html#LSAClient.find_existing_knobs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.data_extract.lsa.LSAClient.find_existing_knobs" title="Permalink to this definition"></a></dt>
+<dd><p>Return only the knobs that exist from the given list.
+This function was created out of the need to filter these first,
+as knobs that exist but do not belong to a beamprocess return noting in
+_getTrimsByBeamprocess, while knobs that do not exist at all crashed pjlsa.
+This filter should probably have been in pjlsa’s _buildParameterList.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>knobs</strong> (<em>list</em>) -- List of strings of the knobs to check.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A list of the knob names that actually exist.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="pylhc.data_extract.lsa.LSAClient.find_knob_names">
 <span class="sig-name descname"><span class="pre">find_knob_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">accelerator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'lhc'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regexp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="../_modules/pylhc/data_extract/lsa.html#LSAClient.find_knob_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.data_extract.lsa.LSAClient.find_knob_names" title="Permalink to this definition"></a></dt>
 <dd><p>Return knobs for accelerator.</p>
