@@ -154,17 +154,18 @@ def get_info(opt) -> Tuple[AccDatetime, DotDict, DotDict, dict, dict]:
         LOG.error(str(e))
     else:
         trims = LSA.find_trims_at_time(beamprocess_info.Object, opt.knobs, acc_time, opt.accel)
-        knobs_definitions = _get_knob_definitions(opt.knob_definitions, opt.knobs, optics_info.Name)
+        if opt.knob_definitions:
+            knobs_definitions = _get_knob_definitions(opt.knobs, optics_info.Name)
 
     if opt.log:
         log_summary(acc_time, beamprocess_info, optics_info, trims)
 
     if opt.output_dir is not None:
-        out = Path(opt.output_dir)
-        out.mkdir(parents=True, exist_ok=True)
-        write_summary(out, acc_time, beamprocess_info, optics_info, trims)
+        out_path = Path(opt.output_dir)
+        out_path.mkdir(parents=True, exist_ok=True)
+        write_summary(out_path, acc_time, beamprocess_info, optics_info, trims)
         if knob_definitions is not None:
-            write_knob_defitions(out, knobs_definitions)
+            write_knob_defitions(out_path, knobs_definitions)
 
     return acc_time, beamprocess_info, optics_info, trims, knobs_definitions
 
@@ -305,15 +306,14 @@ def _get_last_optics(
 # Knobs ########################################################################
 
 
-def _get_knob_definitions(active: bool, knobs: list, optics: str):
-    """Get knob definitions if switch is activated."""
+def _get_knob_definitions(knobs: list, optics: str):
+    """Get knob definitions."""
     defs = {}
-    if active:
-        for knob in knobs:
-            try:
-                defs[knob] = LSA.get_knob_circuits(knob, optics)
-            except IOError as e:
-                LOG.warning(e.args[0])
+    for knob in knobs:
+        try:
+            defs[knob] = LSA.get_knob_circuits(knob, optics)
+        except IOError as e:
+            LOG.warning(e.args[0])
     return defs
 
 
