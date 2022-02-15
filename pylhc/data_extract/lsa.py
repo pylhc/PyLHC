@@ -138,6 +138,9 @@ class LSAClient(pjLSAClient):
             db.get, "HX:FILLN", t_start.timestamp(), t_end.timestamp()
         )["HX:FILLN"]
 
+        if not len(fillnv):
+            raise ValueError(f"No beamprocesses for {accelerator} ({source}) found between {t_start} - {t_end}.")
+
         fills = {}
         for ts, name in zip(cts.timestamp, cts.name):
             idx = fillnts.searchsorted(ts) - 1
