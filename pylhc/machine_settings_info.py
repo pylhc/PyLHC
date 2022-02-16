@@ -17,13 +17,19 @@ All gathered data is returned, if this function is called from python.
 
 .. code-block:: none
 
-    usage: machine_settings_info.py [-h] [--time TIME] [--start_time START_TIME] [--knobs KNOBS [KNOBS ...]] [--accel ACCEL] [--output_dir OUTPUT_DIR] [--knob_definitions] [--source SOURCE] [--log]
+    usage: machine_settings_info.py [-h] [--time TIME] [--start_time START_TIME]
+                                    [--knobs KNOBS [KNOBS ...]] [--accel ACCEL]
+                                    [--output_dir OUTPUT_DIR] [--knob_definitions]
+                                    [--source SOURCE] [--log]
 
     optional arguments:
     -h, --help            show this help message and exit
-    --time TIME           UTC Time as 'Y-m-d H:M:S.f' format. Acts as point in time or end time (if ``start_time`` is given).
+    --time TIME           UTC Time as 'Y-m-d H:M:S.f' format.
+                          Acts as point in time or end time
+                         (if ``start_time`` is given).
     --start_time START_TIME
-                            UTC Time as 'Y-m-d H:M:S.f' format. Defines the beginning of the time-range.
+                            UTC Time as 'Y-m-d H:M:S.f' format.
+                            Defines the beginning of the time-range.
     --knobs KNOBS [KNOBS ...]
                             List of knobnames.
     --accel ACCEL         Accelerator name.
@@ -31,7 +37,8 @@ All gathered data is returned, if this function is called from python.
                             Output directory.
     --knob_definitions    Set to extract knob definitions.
     --source SOURCE       Source to extract data from.
-    --log                 Write summary into log (automatically done if no output path is given).
+    --log                 Write summary into log
+                          (automatically done if no output path is given).
 
 
 :author: jdilly
@@ -102,7 +109,7 @@ def get_info(opt) -> Tuple[AccDatetime, DotDict, DotDict, dict, dict]:
 
     Keyword Args:
 
-    *--Optional--*
+   *--Optional--*
 
     - **accel** *(str)*:
 
@@ -147,9 +154,18 @@ def get_info(opt) -> Tuple[AccDatetime, DotDict, DotDict, dict, dict]:
         default: ``nxcals``
 
 
+    - **start_time** *(str)*:
+
+        UTC Time as 'Y-m-d H:M:S.f' format. Defines the beginning of the time-
+        range.
+
+        default: ``None``
+
+
     - **time** *(str)*:
 
-        UTC Time as 'Y-m-d H:M:S.f' format.
+        UTC Time as 'Y-m-d H:M:S.f' format. Acts as point in time or end time
+        (if ``start_time`` is given).
 
         default: ``None``
 
