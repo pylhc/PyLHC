@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pylhc.data_extract.lsa &mdash; pylhc 0.3.0 documentation</title>
+  <title>pylhc.data_extract.lsa &mdash; pylhc 0.4.0 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/custom.css" type="text/css" />
@@ -29,7 +29,7 @@
             <img src="../../../_static/omc_logo.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.3
+                0.4
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -250,6 +250,9 @@
             <span class="n">db</span><span class="o">.</span><span class="n">get</span><span class="p">,</span> <span class="s2">&quot;HX:FILLN&quot;</span><span class="p">,</span> <span class="n">t_start</span><span class="o">.</span><span class="n">timestamp</span><span class="p">(),</span> <span class="n">t_end</span><span class="o">.</span><span class="n">timestamp</span><span class="p">()</span>
         <span class="p">)[</span><span class="s2">&quot;HX:FILLN&quot;</span><span class="p">]</span>
 
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">fillnv</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No beamprocesses for </span><span class="si">{</span><span class="n">accelerator</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s2">) found between </span><span class="si">{</span><span class="n">t_start</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">t_end</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
         <span class="n">fills</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">ts</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">cts</span><span class="o">.</span><span class="n">timestamp</span><span class="p">,</span> <span class="n">cts</span><span class="o">.</span><span class="n">name</span><span class="p">):</span>
             <span class="n">idx</span> <span class="o">=</span> <span class="n">fillnts</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">ts</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
@@ -257,20 +260,25 @@
             <span class="n">fills</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">filln</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="n">ts</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">fills</span></div>
 
-<div class="viewcode-block" id="LSAClient.find_trims_at_time"><a class="viewcode-back" href="../../../modules/data_extract.html#pylhc.data_extract.lsa.LSAClient.find_trims_at_time">[docs]</a>    <span class="k">def</span> <span class="nf">find_trims_at_time</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span> <span class="n">beamprocess</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">knobs</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">acc_time</span><span class="p">:</span> <span class="n">AccDatetime</span><span class="p">,</span> <span class="n">accelerator</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;lhc&quot;</span>
+<div class="viewcode-block" id="LSAClient.get_trim_history"><a class="viewcode-back" href="../../../modules/data_extract.html#pylhc.data_extract.lsa.LSAClient.get_trim_history">[docs]</a>    <span class="k">def</span> <span class="nf">get_trim_history</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">beamprocess</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">knobs</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> 
+            <span class="n">start_time</span><span class="p">:</span> <span class="n">AccDatetime</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">end_time</span><span class="p">:</span> <span class="n">AccDatetime</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+            <span class="n">accelerator</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;lhc&quot;</span>           
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get trims for knobs at specific time.</span>
+<span class="sd">        Get trim history for knobs between specified times.</span>
+<span class="sd">        If any of the times are not given, all available data in that time-direction</span>
+<span class="sd">        is extracted.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            beamprocess (str): Name of the beamprocess.</span>
 <span class="sd">            knobs (list): List of strings of the knobs to check.</span>
-<span class="sd">            acc_time (AccDatetime): Accelerator datetime object.</span>
+<span class="sd">            start_time (AccDatetime): Accelerator datetime object.</span>
+<span class="sd">            end_time (AccDatetime): Accelerator datetime object.</span>
 <span class="sd">            accelerator (str): Name of the accelerator.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            Dictionary of knob names and their values.</span>
+<span class="sd">            Dictionary of trims and their data (as TrimTuples, i.e. NamedTuple of lists of time and data).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">knobs</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">knobs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">knobs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_knob_names</span><span class="p">(</span><span class="n">accelerator</span><span class="p">)</span>
@@ -279,8 +287,14 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">knobs</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;None of the given knobs exist!&quot;</span><span class="p">)</span>
 
+        <span class="k">if</span> <span class="n">start_time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">start_time</span> <span class="o">=</span> <span class="n">start_time</span><span class="o">.</span><span class="n">timestamp</span><span class="p">()</span> 
+        
+        <span class="k">if</span> <span class="n">end_time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">end_time</span> <span class="o">=</span> <span class="n">end_time</span><span class="o">.</span><span class="n">timestamp</span><span class="p">()</span> 
+
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">trims</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getTrims</span><span class="p">(</span><span class="n">parameter</span><span class="o">=</span><span class="n">knobs</span><span class="p">,</span> <span class="n">beamprocess</span><span class="o">=</span><span class="n">beamprocess</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">acc_time</span><span class="o">.</span><span class="n">timestamp</span><span class="p">())</span>
+            <span class="n">trims</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getTrims</span><span class="p">(</span><span class="n">parameter</span><span class="o">=</span><span class="n">knobs</span><span class="p">,</span> <span class="n">beamprocess</span><span class="o">=</span><span class="n">beamprocess</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">start_time</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end_time</span><span class="p">)</span>
         <span class="k">except</span> <span class="n">jpype</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">lang</span><span class="o">.</span><span class="n">NullPointerException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="c1"># In the past this happened, when a knob was not defined, but</span>
             <span class="c1"># this should have been caught by the filter_existing_knobs above</span>
@@ -289,15 +303,8 @@
         <span class="n">trims_not_found</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">knobs</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">trims</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">trims_not_found</span><span class="p">):</span>
             <span class="n">LOG</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The following knobs were not found in &#39;</span><span class="si">{</span><span class="n">beamprocess</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="n">trims_not_found</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">trim_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">trim</span><span class="p">:</span> <span class="n">trims</span><span class="p">[</span><span class="n">trim</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">trim</span> <span class="ow">in</span> <span class="n">trims</span><span class="o">.</span><span class="n">keys</span><span class="p">()}</span>  <span class="c1"># return last set value</span>
-        <span class="k">for</span> <span class="n">trim</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">trim_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">trim_dict</span><span class="p">[</span><span class="n">trim</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">flatten</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># the very last entry ...</span>
-            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-                <span class="k">continue</span>  <span class="c1"># single value, as expected</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">LOG</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Trim </span><span class="si">{</span><span class="n">trim</span><span class="si">}</span><span class="s2"> hat multiple data entries </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">, taking only the last one.&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">trim_dict</span></div>
+        <span class="k">return</span> <span class="n">trims</span></div>
+
 
 <div class="viewcode-block" id="LSAClient.get_beamprocess_info"><a class="viewcode-back" href="../../../modules/data_extract.html#pylhc.data_extract.lsa.LSAClient.get_beamprocess_info">[docs]</a>    <span class="k">def</span> <span class="nf">get_beamprocess_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beamprocess</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
