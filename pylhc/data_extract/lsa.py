@@ -148,20 +148,25 @@ class LSAClient(pjLSAClient):
             fills.setdefault(filln, []).insert(0, (ts, name))
         return fills
 
-    def find_trims_at_time(
-            self, beamprocess: str, knobs: list, acc_time: AccDatetime, accelerator: str = "lhc"
+    def get_trim_history(
+            self, beamprocess: str, knobs: list, 
+            start_time: AccDatetime = None, end_time: AccDatetime = None, 
+            accelerator: str = "lhc"           
     ) -> dict:
         """
-        Get trims for knobs at specific time.
+        Get trim history for knobs between specified times.
+        If any of the times are not given, all available data in that time-direction
+        is extracted.
 
         Args:
             beamprocess (str): Name of the beamprocess.
             knobs (list): List of strings of the knobs to check.
-            acc_time (AccDatetime): Accelerator datetime object.
+            start_time (AccDatetime): Accelerator datetime object.
+            end_time (AccDatetime): Accelerator datetime object.
             accelerator (str): Name of the accelerator.
 
         Returns:
-            Dictionary of knob names and their values.
+            Dictionary of trims and their data (as TrimTuples, i.e. NamedTuple of lists of time and data).
         """
         if knobs is None or len(knobs) == 0:
             knobs = self.find_knob_names(accelerator)
@@ -170,8 +175,14 @@ class LSAClient(pjLSAClient):
             if not len(knobs):
                 raise ValueError("None of the given knobs exist!")
 
+        if start_time is not None:
+            start_time = start_time.timestamp() 
+        
+        if end_time is not None:
+            end_time = end_time.timestamp() 
+
         try:
-            trims = self.getTrims(parameter=knobs, beamprocess=beamprocess, end=acc_time.timestamp())
+            trims = self.getTrims(parameter=knobs, beamprocess=beamprocess, start=start_time, end=end_time)
         except jpype.java.lang.NullPointerException as e:
             # In the past this happened, when a knob was not defined, but
             # this should have been caught by the filter_existing_knobs above
@@ -180,15 +191,8 @@ class LSAClient(pjLSAClient):
         trims_not_found = [k for k in knobs if k not in trims.keys()]
         if len(trims_not_found):
             LOG.warning(f"The following knobs were not found in '{beamprocess}': {trims_not_found}")
-        trim_dict = {trim: trims[trim].data[-1] for trim in trims.keys()}  # return last set value
-        for trim, value in trim_dict.items():
-            try:
-                trim_dict[trim] = value.flatten()[-1]  # the very last entry ...
-            except AttributeError:
-                continue  # single value, as expected
-            else:
-                LOG.warning(f"Trim {trim} hat multiple data entries {value}, taking only the last one.")
-        return trim_dict
+        return trims
+
 
     def get_beamprocess_info(self, beamprocess: Union[str, object]) -> Dict:
         """
