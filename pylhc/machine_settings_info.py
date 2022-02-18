@@ -47,11 +47,12 @@ from collections import OrderedDict, namedtuple
 
 import tfs
 from generic_parser import DotDict, EntryPointParameters, entrypoint
+from generic_parser.entry_datatypes import get_instance_faker_meta
 from omc3.utils import logging_tools
 from omc3.utils.iotools import PathOrStr
 from omc3.utils.time_tools import AccDatetime, AcceleratorDatetime
 from pathlib import Path
-from typing import Tuple, Iterable, Dict
+from typing import Tuple, Iterable, Dict, Union
 
 from pylhc.constants import machine_settings_info as const
 from pylhc.data_extract.lsa import COL_NAME as LSA_COLUMN_NAME, LSA
@@ -59,21 +60,30 @@ from pylhc.data_extract.lsa import COL_NAME as LSA_COLUMN_NAME, LSA
 LOG = logging_tools.get_logger(__name__)
 
 
+class AccDatetimeOrStr(metaclass=get_instance_faker_meta(AccDatetime, str)):
+    """A class that accepts AccDateTime and strings."""
+    def __new__(cls, value):
+        if isinstance(value, str):
+            value = value.strip("\'\"")  # behavior like dict-parser, IMPORTANT FOR EVERY STRING-FAKER
+        return value
+
+
 # Main #########################################################################
+
 
 def _get_params() -> dict:
     """Parse Commandline Arguments and return them as options."""
     return EntryPointParameters(
         time=dict(
             default=None,
-            type=str,
-            help=("UTC Time as 'Y-m-d H:M:S.f' format."
+            type=AccDatetimeOrStr,
+            help=("UTC Time as 'Y-m-d H:M:S.f' format or AccDatetime object."
                   " Acts as point in time or end time (if ``start_time`` is given).")
             ),
         start_time=dict(
             default=None,
-            type=str,
-            help=("UTC Time as 'Y-m-d H:M:S.f' format."
+            type=AccDatetimeOrStr,
+            help=("UTC Time as 'Y-m-d H:M:S.f' format or AccDatetime object."
                   " Defines the beginning of the time-range.")
              ),
         knobs=dict(
@@ -154,18 +164,18 @@ def get_info(opt) -> Dict[str, object]:
             default: ``nxcals``
 
 
-        - **start_time** *(str)*:
+        - **start_time** *(AccDatetime, str)*:
 
-            UTC Time as 'Y-m-d H:M:S.f' format. Defines the beginning of the time-
-            range.
+            UTC Time as 'Y-m-d H:M:S.f' format or AccDatetime object.
+            Defines the beginning of the time-range.
 
             default: ``None``
 
 
-        - **time** *(str)*:
+        - **time** *(AccDatetime, str)*:
 
-            UTC Time as 'Y-m-d H:M:S.f' format. Acts as point in time or end time
-            (if ``start_time`` is given).
+            UTC Time as 'Y-m-d H:M:S.f' format or AccDatetime object.
+            Acts as point in time or end time (if ``start_time`` is given).
 
             default: ``None``
 
@@ -179,13 +189,10 @@ def get_info(opt) -> Dict[str, object]:
     if opt.output_dir is None:
         opt.log = True
 
-    AccDT = AcceleratorDatetime[opt.accel]
-    acc_time = AccDT.now() if opt.time is None else AccDT.from_utc_string(opt.time)
-    acc_start_time = None if opt.start_time is None else AccDT.from_utc_string(opt.start_time)
-
+    acc_time, acc_start_time = _get_times(opt.time, opt.start_time, opt.accel)
     beamprocess_info = _get_beamprocess(acc_time, opt.accel, opt.source)
 
-    optics_info, knob_definitions, trim_histories = None, None, None
+    optics_info, knob_definitions, trim_histories, trims = None, None, None, None
     try:
         optics_info = _get_optics(acc_time, beamprocess_info.Name, beamprocess_info.StartTime)
     except ValueError as e:
@@ -429,6 +436,7 @@ def _get_knob_definitions(knobs: list, optics: str):
             LOG.warning(e.args[0])
     return defs
 
+
 def _get_last_trim(trims: dict) -> dict:
     """Returns the last trim in the trim history.
 
@@ -447,6 +455,25 @@ def _get_last_trim(trims: dict) -> dict:
         else:
             LOG.warning(f"Trim {trim} hat multiple data entries {value}, taking only the last one.")
     return trim_dict
+
+
+# Other ########################################################################
+
+
+def _get_times(time: Union[str, AccDatetime], start_time: Union[str, AccDatetime], accel: str):
+    """ Returns acc_time and acc_start_time parameters depending on the user input. """
+    acc_dt = AcceleratorDatetime[accel]
+    try:
+        time = acc_dt.now() if time is None else acc_dt.from_utc_string(time)
+    except TypeError:
+        pass  # is already AccDatetime object
+
+    try:
+        start_time = None if start_time is None else acc_dt.from_utc_string(start_time)
+    except TypeError:
+        pass  # is already AccDatetime object
+
+    return time, start_time
 
 
 # Script Mode ##################################################################
