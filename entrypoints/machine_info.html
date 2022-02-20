@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Machine Information Tools &mdash; pylhc 0.4.0 documentation</title>
+  <title>Machine Information Tools &mdash; pylhc 0.4.1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -156,6 +156,12 @@ optional arguments:
 <dd class="field-odd"><p>jdilly</p>
 </dd>
 </dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="pylhc.machine_settings_info.AccDatetimeOrStr">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pylhc.machine_settings_info.</span></span><span class="sig-name descname"><span class="pre">AccDatetimeOrStr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/machine_settings_info.html#AccDatetimeOrStr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.machine_settings_info.AccDatetimeOrStr" title="Permalink to this definition"></a></dt>
+<dd><p>A class that accepts AccDateTime and strings.</p>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="pylhc.machine_settings_info.get_info">
 <span class="sig-prename descclassname"><span class="pre">pylhc.machine_settings_info.</span></span><span class="sig-name descname"><span class="pre">get_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">opt</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">object</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/pylhc/machine_settings_info.html#get_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.machine_settings_info.get_info" title="Permalink to this definition"></a></dt>
@@ -200,17 +206,17 @@ given).</p>
 <p>default: <code class="docutils literal notranslate"><span class="pre">nxcals</span></code></p>
 </div></blockquote>
 </li>
-<li><p><strong>start_time</strong> <em>(str)</em>:</p>
+<li><p><strong>start_time</strong> <em>(AccDatetime, str)</em>:</p>
 <blockquote>
-<div><p>UTC Time as ‘Y-m-d H:M:S.f’ format. Defines the beginning of the time-
-range.</p>
+<div><p>UTC Time as ‘Y-m-d H:M:S.f’ format or AccDatetime object.
+Defines the beginning of the time-range.</p>
 <p>default: <code class="docutils literal notranslate"><span class="pre">None</span></code></p>
 </div></blockquote>
 </li>
-<li><p><strong>time</strong> <em>(str)</em>:</p>
+<li><p><strong>time</strong> <em>(AccDatetime, str)</em>:</p>
 <blockquote>
-<div><p>UTC Time as ‘Y-m-d H:M:S.f’ format. Acts as point in time or end time
-(if <code class="docutils literal notranslate"><span class="pre">start_time</span></code> is given).</p>
+<div><p>UTC Time as ‘Y-m-d H:M:S.f’ format or AccDatetime object.
+Acts as point in time or end time (if <code class="docutils literal notranslate"><span class="pre">start_time</span></code> is given).</p>
 <p>default: <code class="docutils literal notranslate"><span class="pre">None</span></code></p>
 </div></blockquote>
 </li>

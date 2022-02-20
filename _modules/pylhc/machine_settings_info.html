@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pylhc.machine_settings_info &mdash; pylhc 0.4.0 documentation</title>
+  <title>pylhc.machine_settings_info &mdash; pylhc 0.4.1 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
@@ -159,11 +159,12 @@
 
 <span class="kn">import</span> <span class="nn">tfs</span>
 <span class="kn">from</span> <span class="nn">generic_parser</span> <span class="kn">import</span> <span class="n">DotDict</span><span class="p">,</span> <span class="n">EntryPointParameters</span><span class="p">,</span> <span class="n">entrypoint</span>
+<span class="kn">from</span> <span class="nn">generic_parser.entry_datatypes</span> <span class="kn">import</span> <span class="n">get_instance_faker_meta</span>
 <span class="kn">from</span> <span class="nn">omc3.utils</span> <span class="kn">import</span> <span class="n">logging_tools</span>
 <span class="kn">from</span> <span class="nn">omc3.utils.iotools</span> <span class="kn">import</span> <span class="n">PathOrStr</span>
 <span class="kn">from</span> <span class="nn">omc3.utils.time_tools</span> <span class="kn">import</span> <span class="n">AccDatetime</span><span class="p">,</span> <span class="n">AcceleratorDatetime</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Dict</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">from</span> <span class="nn">pylhc.constants</span> <span class="kn">import</span> <span class="n">machine_settings_info</span> <span class="k">as</span> <span class="n">const</span>
 <span class="kn">from</span> <span class="nn">pylhc.data_extract.lsa</span> <span class="kn">import</span> <span class="n">COL_NAME</span> <span class="k">as</span> <span class="n">LSA_COLUMN_NAME</span><span class="p">,</span> <span class="n">LSA</span>
@@ -171,21 +172,30 @@
 <span class="n">LOG</span> <span class="o">=</span> <span class="n">logging_tools</span><span class="o">.</span><span class="n">get_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
+<div class="viewcode-block" id="AccDatetimeOrStr"><a class="viewcode-back" href="../../entrypoints/machine_info.html#pylhc.machine_settings_info.AccDatetimeOrStr">[docs]</a><span class="k">class</span> <span class="nc">AccDatetimeOrStr</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">get_instance_faker_meta</span><span class="p">(</span><span class="n">AccDatetime</span><span class="p">,</span> <span class="nb">str</span><span class="p">)):</span>
+    <span class="sd">&quot;&quot;&quot;A class that accepts AccDateTime and strings.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\&#39;\&quot;</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># behavior like dict-parser, IMPORTANT FOR EVERY STRING-FAKER</span>
+        <span class="k">return</span> <span class="n">value</span></div>
+
+
 <span class="c1"># Main #########################################################################</span>
+
 
 <span class="k">def</span> <span class="nf">_get_params</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Parse Commandline Arguments and return them as options.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">EntryPointParameters</span><span class="p">(</span>
         <span class="n">time</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
             <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-            <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;UTC Time as &#39;Y-m-d H:M:S.f&#39; format.&quot;</span>
+            <span class="nb">type</span><span class="o">=</span><span class="n">AccDatetimeOrStr</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;UTC Time as &#39;Y-m-d H:M:S.f&#39; format or AccDatetime object.&quot;</span>
                   <span class="s2">&quot; Acts as point in time or end time (if ``start_time`` is given).&quot;</span><span class="p">)</span>
             <span class="p">),</span>
         <span class="n">start_time</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
             <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-            <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;UTC Time as &#39;Y-m-d H:M:S.f&#39; format.&quot;</span>
+            <span class="nb">type</span><span class="o">=</span><span class="n">AccDatetimeOrStr</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;UTC Time as &#39;Y-m-d H:M:S.f&#39; format or AccDatetime object.&quot;</span>
                   <span class="s2">&quot; Defines the beginning of the time-range.&quot;</span><span class="p">)</span>
              <span class="p">),</span>
         <span class="n">knobs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
@@ -266,18 +276,18 @@
 <span class="sd">            default: ``nxcals``</span>
 
 
-<span class="sd">        - **start_time** *(str)*:</span>
+<span class="sd">        - **start_time** *(AccDatetime, str)*:</span>
 
-<span class="sd">            UTC Time as &#39;Y-m-d H:M:S.f&#39; format. Defines the beginning of the time-</span>
-<span class="sd">            range.</span>
+<span class="sd">            UTC Time as &#39;Y-m-d H:M:S.f&#39; format or AccDatetime object.</span>
+<span class="sd">            Defines the beginning of the time-range.</span>
 
 <span class="sd">            default: ``None``</span>
 
 
-<span class="sd">        - **time** *(str)*:</span>
+<span class="sd">        - **time** *(AccDatetime, str)*:</span>
 
-<span class="sd">            UTC Time as &#39;Y-m-d H:M:S.f&#39; format. Acts as point in time or end time</span>
-<span class="sd">            (if ``start_time`` is given).</span>
+<span class="sd">            UTC Time as &#39;Y-m-d H:M:S.f&#39; format or AccDatetime object.</span>
+<span class="sd">            Acts as point in time or end time (if ``start_time`` is given).</span>
 
 <span class="sd">            default: ``None``</span>
 
@@ -291,13 +301,10 @@
     <span class="k">if</span> <span class="n">opt</span><span class="o">.</span><span class="n">output_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">opt</span><span class="o">.</span><span class="n">log</span> <span class="o">=</span> <span class="kc">True</span>
 
-    <span class="n">AccDT</span> <span class="o">=</span> <span class="n">AcceleratorDatetime</span><span class="p">[</span><span class="n">opt</span><span class="o">.</span><span class="n">accel</span><span class="p">]</span>
-    <span class="n">acc_time</span> <span class="o">=</span> <span class="n">AccDT</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="k">if</span> <span class="n">opt</span><span class="o">.</span><span class="n">time</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">AccDT</span><span class="o">.</span><span class="n">from_utc_string</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">time</span><span class="p">)</span>
-    <span class="n">acc_start_time</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">opt</span><span class="o">.</span><span class="n">start_time</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">AccDT</span><span class="o">.</span><span class="n">from_utc_string</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">start_time</span><span class="p">)</span>
-
+    <span class="n">acc_time</span><span class="p">,</span> <span class="n">acc_start_time</span> <span class="o">=</span> <span class="n">_get_times</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">start_time</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">accel</span><span class="p">)</span>
     <span class="n">beamprocess_info</span> <span class="o">=</span> <span class="n">_get_beamprocess</span><span class="p">(</span><span class="n">acc_time</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">accel</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">source</span><span class="p">)</span>
 
-    <span class="n">optics_info</span><span class="p">,</span> <span class="n">knob_definitions</span><span class="p">,</span> <span class="n">trim_histories</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+    <span class="n">optics_info</span><span class="p">,</span> <span class="n">knob_definitions</span><span class="p">,</span> <span class="n">trim_histories</span><span class="p">,</span> <span class="n">trims</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">optics_info</span> <span class="o">=</span> <span class="n">_get_optics</span><span class="p">(</span><span class="n">acc_time</span><span class="p">,</span> <span class="n">beamprocess_info</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span> <span class="n">beamprocess_info</span><span class="o">.</span><span class="n">StartTime</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
@@ -541,6 +548,7 @@
             <span class="n">LOG</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
     <span class="k">return</span> <span class="n">defs</span>
 
+
 <span class="k">def</span> <span class="nf">_get_last_trim</span><span class="p">(</span><span class="n">trims</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Returns the last trim in the trim history.</span>
 
@@ -559,6 +567,25 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">LOG</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Trim </span><span class="si">{</span><span class="n">trim</span><span class="si">}</span><span class="s2"> hat multiple data entries </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">, taking only the last one.&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">trim_dict</span>
+
+
+<span class="c1"># Other ########################################################################</span>
+
+
+<span class="k">def</span> <span class="nf">_get_times</span><span class="p">(</span><span class="n">time</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">AccDatetime</span><span class="p">],</span> <span class="n">start_time</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">AccDatetime</span><span class="p">],</span> <span class="n">accel</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Returns acc_time and acc_start_time parameters depending on the user input. &quot;&quot;&quot;</span>
+    <span class="n">acc_dt</span> <span class="o">=</span> <span class="n">AcceleratorDatetime</span><span class="p">[</span><span class="n">accel</span><span class="p">]</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">time</span> <span class="o">=</span> <span class="n">acc_dt</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="k">if</span> <span class="n">time</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">acc_dt</span><span class="o">.</span><span class="n">from_utc_string</span><span class="p">(</span><span class="n">time</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+        <span class="k">pass</span>  <span class="c1"># is already AccDatetime object</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">start_time</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">acc_dt</span><span class="o">.</span><span class="n">from_utc_string</span><span class="p">(</span><span class="n">start_time</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+        <span class="k">pass</span>  <span class="c1"># is already AccDatetime object</span>
+
+    <span class="k">return</span> <span class="n">time</span><span class="p">,</span> <span class="n">start_time</span>
 
 
 <span class="c1"># Script Mode ##################################################################</span>
