@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pylhc.data_extract.lsa &mdash; pylhc 0.4.1 documentation</title>
+  <title>pylhc.data_extract.lsa &mdash; pylhc 0.4.2 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/custom.css" type="text/css" />
@@ -128,6 +128,7 @@
 <span class="n">LOG</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 <span class="n">pytimber</span> <span class="o">=</span> <span class="n">cern_network_import</span><span class="p">(</span><span class="s2">&quot;pytimber&quot;</span><span class="p">)</span>
 <span class="n">pjlsa</span> <span class="o">=</span> <span class="n">cern_network_import</span><span class="p">(</span><span class="s2">&quot;pjlsa&quot;</span><span class="p">)</span>
+
 <span class="k">try</span><span class="p">:</span>
     <span class="n">pjLSAClient</span> <span class="o">=</span> <span class="n">pjlsa</span><span class="o">.</span><span class="n">LSAClient</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
@@ -170,8 +171,8 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            Sorted list of knob names.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">req</span> <span class="o">=</span> <span class="n">pjlsa</span><span class="o">.</span><span class="n">ParametersRequestBuilder</span><span class="p">()</span>
-        <span class="n">req</span><span class="o">.</span><span class="n">setAccelerator</span><span class="p">(</span><span class="n">pjlsa</span><span class="o">.</span><span class="n">Accelerators</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">accelerator</span><span class="p">,</span> <span class="n">accelerator</span><span class="p">))</span>
+        <span class="n">req</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ParametersRequestBuilder</span><span class="p">()</span>
+        <span class="n">req</span><span class="o">.</span><span class="n">setAccelerator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_getAccelerator</span><span class="p">(</span><span class="n">accelerator</span><span class="p">))</span>
         <span class="n">req</span><span class="o">.</span><span class="n">setParameterTypeName</span><span class="p">(</span><span class="s2">&quot;KNOB&quot;</span><span class="p">)</span>
         <span class="n">lst</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameterService</span><span class="o">.</span><span class="n">findParameters</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">build</span><span class="p">())</span>
         <span class="n">reg</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">regexp</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">)</span>
