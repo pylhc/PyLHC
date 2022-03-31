@@ -16,6 +16,7 @@ from typing import Callable, Union, Dict, Tuple, List
 LOG = logging.getLogger(__name__)
 pytimber = cern_network_import("pytimber")
 pjlsa = cern_network_import("pjlsa")
+
 try:
     pjLSAClient = pjlsa.LSAClient
 except ImportError:
@@ -58,8 +59,8 @@ class LSAClient(pjLSAClient):
         Returns:
             Sorted list of knob names.
         """
-        req = pjlsa.ParametersRequestBuilder()
-        req.setAccelerator(pjlsa.Accelerators.get(accelerator, accelerator))
+        req = self._ParametersRequestBuilder()
+        req.setAccelerator(self._getAccelerator(accelerator))
         req.setParameterTypeName("KNOB")
         lst = self._parameterService.findParameters(req.build())
         reg = re.compile(regexp, re.IGNORECASE)
