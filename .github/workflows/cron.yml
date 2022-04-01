@@ -1,4 +1,4 @@
-# Runs all tests on master everyday at 10 am (UTC time)
+# Runs all tests on master monday at 3 am (UTC time)
 name: Cron Testing
 
 defaults:
