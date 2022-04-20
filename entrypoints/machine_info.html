@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Machine Information Tools &mdash; pylhc 0.4.2 documentation</title>
+  <title>Machine Information Tools &mdash; pylhc 0.5.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -20,7 +20,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="BPM Calibration Utilities" href="../modules/calibration.html" />
-    <link rel="prev" title="IRNL RDT Correction" href="irnl_rdt_correction.html" /> 
+    <link rel="prev" title="BPM Calibration" href="bpm_calibration.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -32,7 +32,7 @@
             <img src="../_static/omc_logo.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.4
+                0.5
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -51,10 +51,6 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="bpm_calibration.html">BPM Calibration</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="bpm_calibration.html#id1">BPM Calibration</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="irnl_rdt_correction.html">IRNL RDT Correction</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="irnl_rdt_correction.html#nonlinear-correction-calculation-in-the-irs">Nonlinear Correction calculation in the IRs</a></li>
 </ul>
 </li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Machine Information Tools</a><ul>
@@ -243,8 +239,8 @@ and the <code class="docutils literal notranslate"><span class="pre">knob_defini
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>acc_time</strong> (<em>AccDatetime</em>) -- User given Time</p></li>
-<li><p><strong>bp_info</strong> (<a class="reference internal" href="irnl_rdt_correction.html#pylhc.irnl_rdt_correction.DotDict" title="pylhc.irnl_rdt_correction.DotDict"><em>DotDict</em></a>) -- BeamProcess Info Dictionary</p></li>
-<li><p><strong>optics_info</strong> (<a class="reference internal" href="irnl_rdt_correction.html#pylhc.irnl_rdt_correction.DotDict" title="pylhc.irnl_rdt_correction.DotDict"><em>DotDict</em></a>) -- Optics Info Dictionary</p></li>
+<li><p><strong>bp_info</strong> (<em>DotDict</em>) -- BeamProcess Info Dictionary</p></li>
+<li><p><strong>optics_info</strong> (<em>DotDict</em>) -- Optics Info Dictionary</p></li>
 <li><p><strong>trims</strong> (<em>dict</em>) -- Trims key-value dictionary</p></li>
 </ul>
 </dd>
@@ -267,8 +263,8 @@ and the <code class="docutils literal notranslate"><span class="pre">knob_defini
 <li><p><strong>output_path</strong> (<em>Path</em>) -- Folder to write output file into</p></li>
 <li><p><strong>accel</strong> (<em>str</em>) -- Name of the accelerator</p></li>
 <li><p><strong>acc_time</strong> (<em>AccDatetime</em>) -- User given Time</p></li>
-<li><p><strong>bp_info</strong> (<a class="reference internal" href="irnl_rdt_correction.html#pylhc.irnl_rdt_correction.DotDict" title="pylhc.irnl_rdt_correction.DotDict"><em>DotDict</em></a>) -- BeamProcess Info Dictionary</p></li>
-<li><p><strong>optics_info</strong> (<a class="reference internal" href="irnl_rdt_correction.html#pylhc.irnl_rdt_correction.DotDict" title="pylhc.irnl_rdt_correction.DotDict"><em>DotDict</em></a>) -- Optics Info Dictionary</p></li>
+<li><p><strong>bp_info</strong> (<em>DotDict</em>) -- BeamProcess Info Dictionary</p></li>
+<li><p><strong>optics_info</strong> (<em>DotDict</em>) -- Optics Info Dictionary</p></li>
 <li><p><strong>trims</strong> (<em>dict</em>) -- Trims key-value dictionary</p></li>
 </ul>
 </dd>
@@ -289,8 +285,8 @@ and one with the UTC-string, as they are more human readable.</p>
 <li><p><strong>accel</strong> (<em>str</em>) -- Name of the accelerator</p></li>
 <li><p><strong>acc_time</strong> (<em>AccDatetime</em>) -- User given (End)Time</p></li>
 <li><p><strong>acc_start_time</strong> (<em>AccDatetime</em>) -- User given Start Time</p></li>
-<li><p><strong>bp_info</strong> (<a class="reference internal" href="irnl_rdt_correction.html#pylhc.irnl_rdt_correction.DotDict" title="pylhc.irnl_rdt_correction.DotDict"><em>DotDict</em></a>) -- BeamProcess Info Dictionary</p></li>
-<li><p><strong>optics_info</strong> (<a class="reference internal" href="irnl_rdt_correction.html#pylhc.irnl_rdt_correction.DotDict" title="pylhc.irnl_rdt_correction.DotDict"><em>DotDict</em></a>) -- Optics Info Dictionary</p></li>
+<li><p><strong>bp_info</strong> (<em>DotDict</em>) -- BeamProcess Info Dictionary</p></li>
+<li><p><strong>optics_info</strong> (<em>DotDict</em>) -- Optics Info Dictionary</p></li>
 </ul>
 </dd>
 </dl>
@@ -311,7 +307,7 @@ only from the Technical Network.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="irnl_rdt_correction.html" class="btn btn-neutral float-left" title="IRNL RDT Correction" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="bpm_calibration.html" class="btn btn-neutral float-left" title="BPM Calibration" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="../modules/calibration.html" class="btn btn-neutral float-right" title="BPM Calibration Utilities" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
