@@ -1,5 +1,9 @@
 # pylhc Changelog
 
+## Version 0.5.0
+
+Removed `irnl_rdt_correction`. Is now in https://github.com/pylhc/irnl_rdt_correction
+
 ## Version 0.4.1
 
 Minor bugfixes in `machine_settings_info`.
