@@ -1,5 +1,9 @@
 # pylhc Changelog
 
+## Version 0.5.1
+
+Added KickGroups functionality.
+
 ## Version 0.5.0
 
 Removed `irnl_rdt_correction`. Is now in https://github.com/pylhc/irnl_rdt_correction
