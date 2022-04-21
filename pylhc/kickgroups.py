@@ -64,7 +64,7 @@ from pandas import DataFrame
 from tfs import TfsDataFrame
 
 from pylhc.constants.kickgroups import (
-    KICKGROUPS_ROOT, KICKGROUP, SDDS, TURNS, BUNCH, TIME, TIMESTAMP, LOCALTIME, TUNEX,
+    KICKGROUPS_ROOT, KICKGROUP, SDDS, TURNS, BUNCH, UTCTIME, TIMESTAMP, LOCALTIME, TUNEX,
     TUNEY, DRIVEN_TUNEX, DRIVEN_TUNEY, DRIVEN_TUNEZ, AMPX, AMPY, AMPZ, OPTICS, OPTICS_URI,
     BEAMPROCESS, BEAM, KICK_COLUMNS, COLUMNS_TO_HEADERS, KICK_GROUP_COLUMNS
 )
@@ -88,10 +88,10 @@ def kickgroups(by=TIMESTAMP, root: Union[Path, str] = KICKGROUPS_ROOT) -> DataFr
         data = load_json(kick_group)
         df_info.loc[idx, KICKGROUP] = data['groupName']
         df_info.loc[idx, TIMESTAMP] = data['groupCreationTime']
-        df_info.loc[idx, TIME] = ts_to_datetime(df_info.loc[idx, TIMESTAMP])
-        df_info.loc[idx, LOCALTIME] = utc_to_local(df_info.loc[idx, TIME])
+        df_info.loc[idx, UTCTIME] = ts_to_datetime(df_info.loc[idx, TIMESTAMP])
+        df_info.loc[idx, LOCALTIME] = utc_to_local(df_info.loc[idx, UTCTIME])
     df_info = df_info.sort_values(by=by).set_index(TIMESTAMP)
-    print(df_info.to_string(index=False, formatters={TIME: datetime_to_string, LOCALTIME: datetime_to_string},
+    print(df_info.to_string(index=False, formatters=time_formatters(),
                             justify="center"))
     return df_info
 
@@ -132,7 +132,8 @@ def load_kickfile(kickfile: Union[Path, str]) -> pd.Series:
     """
     kick = load_json(kickfile)
     data = pd.Series(index=KICK_COLUMNS, dtype=object)
-    data[TIME] = jsontime_to_datetime(kick["acquisitionTime"])
+    data[LOCALTIME] = jsontime_to_datetime(kick["acquisitionTime"])
+    data[UTCTIME] = local_to_utc(data[LOCALTIME])
     data[SDDS] = kick["sddsFile"]
     data[BEAM] = kick["measurementEnvironment"]["lhcBeam"]["beamName"]
     data[BEAMPROCESS] = kick["measurementEnvironment"]["environmentContext"]["name"]
@@ -170,7 +171,9 @@ def _print_kickgroup_info(kicks_info: TfsDataFrame):
     for header, value in kicks_info.headers.items():
         print(f"{header}: {value}")
     print()
-    print(kicks_info.drop(columns=COLUMNS_TO_HEADERS).to_string(index=False, na_rep=" - ", justify="center"))
+    print(kicks_info.drop(columns=COLUMNS_TO_HEADERS).to_string(
+        index=False, na_rep=" - ", justify="center", formatters=time_formatters())
+    )
 
 
 # Helper -----------------------------------------------------------------------
@@ -193,6 +196,10 @@ def jsontime_to_datetime(time_str: str) -> datetime:
 
 def datetime_to_string(dt: datetime):
     return dt.strftime("  %Y-%m-%d %H:%M:%S")
+
+
+def time_formatters():
+    return {UTCTIME: datetime_to_string, LOCALTIME: datetime_to_string}
 
 
 def utc_to_local(dt: datetime):
