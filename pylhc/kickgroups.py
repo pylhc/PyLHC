@@ -176,10 +176,16 @@ def kickgroup_info(kick_group: str, root: Union[Path, str] = KICKGROUPS_ROOT, pr
 
 
 def load_kickfile(kickfile: Union[Path, str]) -> pd.Series:
-    """Load the important data from the kickfile-json.
+    """
+    Load the important data from a **json** kickfile into a `~pandas.Series`.
 
     Args:
-        kickfile (Path or str): Path to the kickfile.
+        kickfile (Union[Path, str]): the path to the kickfile to load data from.
+
+    Returns:
+        A `~pandas.Series` with the relevant information loaded from the provided
+        *kickfile*. The various entries in the Series are defined in `pylhc.constants.kickgroups`
+        as ``KICK_COLUMNS``.
     """
     kick = _load_json(kickfile)
     data = pd.Series(index=KICK_COLUMNS, dtype=object)
