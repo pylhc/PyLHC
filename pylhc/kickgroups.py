@@ -172,7 +172,7 @@ def kickgroup_info(kick_group: str, root: Union[Path, str] = KICKGROUPS_ROOT, pr
     df_info = TfsDataFrame(index=range(len(kicks_files)), columns=KICK_COLUMNS, headers={KICKGROUP: kick_group})
 
     for idx, kf in enumerate(kicks_files):
-        df_info.loc[idx, :] = load_kickfile(kf, printout=False)
+        df_info.loc[idx, :] = load_kickfile(kf)
 
     for column in COLUMNS_TO_HEADERS:
         df_info.headers[column] = df_info[column][0]
