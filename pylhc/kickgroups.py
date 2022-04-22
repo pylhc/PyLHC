@@ -97,15 +97,20 @@ from pylhc.constants.kickgroups import (
 # List Kickgroups --------------------------------------------------------------
 
 
-def kickgroups(by=TIMESTAMP, root: Union[Path, str] = KICKGROUPS_ROOT) -> DataFrame:
-    """List all available KickGroups in `root` with optional sorting..
+def list_available_kickgroups(by: str = TIMESTAMP, root: Union[Path, str] = KICKGROUPS_ROOT, printout: bool = True) -> DataFrame:
+    """
+    List all available KickGroups in `root` with optional sorting..
 
     Args:
-        by (str): Column to sort the KickGroups by.
-                  Should be either ``TIMESTAMP`` or ``KICKGROUP``.
-        root (Path): Alternative path to the KickGroup folder.
-                     (Default is set to nfs-path)
+        by (str): Column to sort the KickGroups by. Should be either the
+            ``TIMESTAMP`` or ``KICKGROUP`` variable.
+        root (Path): Alternative `~pathlib.Path` to the KickGroup folder. (Defaults
+            to the ``NFS`` path).
+        printout (bool): whether to print out the dataframe, defaults to `True`.
 
+    Returns:
+        A `~pandas.DataFrame` with the KickGroups loaded, sorted by the provided
+        *by* parameter.
     """
     kickgroup_paths = get_all_json_files(root)
     df_info = DataFrame(index=range(len(kickgroup_paths)), columns=KICK_GROUP_COLUMNS)
@@ -116,7 +121,10 @@ def kickgroups(by=TIMESTAMP, root: Union[Path, str] = KICKGROUPS_ROOT) -> DataFr
         df_info.loc[idx, UTCTIME] = ts_to_datetime(df_info.loc[idx, TIMESTAMP])
         df_info.loc[idx, LOCALTIME] = utc_to_local(df_info.loc[idx, UTCTIME])
     df_info = df_info.sort_values(by=by).set_index(TIMESTAMP)
-    print(df_info.to_string(index=False, formatters=time_formatters(), justify="center"))
+
+    if printout:
+        print(df_info.to_string(index=False, formatters=time_formatters(), justify="center"))
+
     return df_info
 
 
@@ -279,7 +287,7 @@ def get_args():
 if __name__ == "__main__":
     options = get_args()
     if options.function == "kickgroups":
-        kickgroups(by=options.sort, root=options.root)
+        list_available_kickgroups(by=options.sort, root=options.root)
 
     if options.function == "kickgroup_info":
         kickgroup_info(kick_group=options.name, root=options.root)
