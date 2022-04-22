@@ -294,12 +294,24 @@ def _get_args():
     parser = argparse.ArgumentParser(description="KickGroups Functions")
     parent_parser = argparse.ArgumentParser()
     parent_parser.add_argument(
-        "--root", type=str, required=False, default=KICKGROUPS_ROOT, dest="root", help="KickGroups Root-Directory"
+        "--root",
+        type=str,
+        required=False,
+        default=KICKGROUPS_ROOT,
+        dest="root",
+        help="KickGroups Root-Directory",
     )
-    subparsers = parser.add_subparsers(title="Functionality", dest="function")
+    subparsers = parser.add_subparsers(
+        title="Functionality",
+        dest="function",
+    )
     # ----- Full KickGroup Parser ----- #
     parser_kickgroups = subparsers.add_parser(
-        "kickgroups", parents=[parent_parser], add_help=False, description="KickGroups", help="List all KickGroups"
+        "kickgroups",
+        parents=[parent_parser],
+        add_help=False,
+        description="KickGroups",
+        help="List all KickGroups",
     )
     parser_kickgroups.add_argument(
         "--sort",
@@ -317,7 +329,11 @@ def _get_args():
         description="KickGroup Info",
         help="Show the info of a given KickGroup",
     )
-    parser_info.add_argument("name", type=str, help="KickGroup name")
+    parser_info.add_argument(
+        "name",
+        type=str,
+        help="KickGroup name",
+    )
     return parser.parse_args()
 
 
