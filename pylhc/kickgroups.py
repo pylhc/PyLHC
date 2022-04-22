@@ -274,7 +274,7 @@ def _local_to_utc(dt: datetime):
 # Script Mode ------------------------------------------------------------------
 
 
-def get_args():
+def _get_args():
     """Parse Commandline Arguments."""
     # argparse is a bit weird: you need to create the normal parser
     # AND a parent parser if you want to use the same arg in both subparsers.
@@ -286,6 +286,7 @@ def get_args():
         "--root", type=str, required=False, default=KICKGROUPS_ROOT, dest="root", help="KickGroups Root-Directory"
     )
     subparsers = parser.add_subparsers(title="Functionality", dest="function")
+    # ----- Full KickGroup Parser ----- #
     parser_kickgroups = subparsers.add_parser(
         "kickgroups", parents=[parent_parser], add_help=False, description="KickGroups", help="List all KickGroups"
     )
@@ -297,6 +298,7 @@ def get_args():
         choices=[TIMESTAMP, KICKGROUP],
         default=TIMESTAMP,
     )
+    # ---- KickGroup Info Parser ---- #
     parser_info = subparsers.add_parser(
         "kickgroup_info",
         parents=[parent_parser],
@@ -309,7 +311,7 @@ def get_args():
 
 
 if __name__ == "__main__":
-    options = get_args()
+    options = _get_args()
     if options.function == "kickgroups":
         list_available_kickgroups(by=options.sort, root=options.root)
 
