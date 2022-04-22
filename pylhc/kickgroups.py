@@ -115,15 +115,15 @@ def list_available_kickgroups(by: str = TIMESTAMP, root: Union[Path, str] = KICK
     kickgroup_paths = get_folder_json_files(root)
     df_info = DataFrame(index=range(len(kickgroup_paths)), columns=KICK_GROUP_COLUMNS)
     for idx, kick_group in enumerate(kickgroup_paths):
-        data = load_json(kick_group)
+        data = _load_json(kick_group)
         df_info.loc[idx, KICKGROUP] = data["groupName"]
         df_info.loc[idx, TIMESTAMP] = data["groupCreationTime"]
-        df_info.loc[idx, UTCTIME] = ts_to_datetime(df_info.loc[idx, TIMESTAMP])
-        df_info.loc[idx, LOCALTIME] = utc_to_local(df_info.loc[idx, UTCTIME])
+        df_info.loc[idx, UTCTIME] = _ts_to_datetime(df_info.loc[idx, TIMESTAMP])
+        df_info.loc[idx, LOCALTIME] = _utc_to_local(df_info.loc[idx, UTCTIME])
     df_info = df_info.sort_values(by=by).set_index(TIMESTAMP)
 
     if printout:
-        print(df_info.to_string(index=False, formatters=time_formatters(), justify="center"))
+        print(df_info.to_string(index=False, formatters=_time_formatters(), justify="center"))
 
     return df_info
 
@@ -159,7 +159,7 @@ def kickgroup_info(kick_group: str, root: Union[Path, str] = KICKGROUPS_ROOT, pr
     Returns:
         A `~tfs.TfsDataFrame` with the KickGroup information loaded.
     """
-    kick_group_data = load_json(Path(root) / f"{kick_group}.json")
+    kick_group_data = _load_json(Path(root) / f"{kick_group}.json")
     kicks_files = kick_group_data["jsonFiles"]
     df_info = TfsDataFrame(index=range(len(kicks_files)), columns=KICK_COLUMNS, headers={KICKGROUP: kick_group})
 
@@ -181,10 +181,10 @@ def load_kickfile(kickfile: Union[Path, str]) -> pd.Series:
     Args:
         kickfile (Path or str): Path to the kickfile.
     """
-    kick = load_json(kickfile)
+    kick = _load_json(kickfile)
     data = pd.Series(index=KICK_COLUMNS, dtype=object)
-    data[LOCALTIME] = jsontime_to_datetime(kick["acquisitionTime"])
-    data[UTCTIME] = local_to_utc(data[LOCALTIME])
+    data[LOCALTIME] = _jsontime_to_datetime(kick["acquisitionTime"])
+    data[UTCTIME] = _local_to_utc(data[LOCALTIME])
     data[SDDS] = kick["sddsFile"]
     data[BEAM] = kick["measurementEnvironment"]["lhcBeam"]["beamName"]
     data[BEAMPROCESS] = kick["measurementEnvironment"]["environmentContext"]["name"]
@@ -224,7 +224,7 @@ def _print_kickgroup_info(kicks_info: TfsDataFrame):
     print()
     print(
         kicks_info.drop(columns=COLUMNS_TO_HEADERS).to_string(
-            index=False, na_rep=" - ", justify="center", formatters=time_formatters()
+            index=False, na_rep=" - ", justify="center", formatters=_time_formatters()
         )
     )
 
@@ -234,34 +234,34 @@ def _print_kickgroup_info(kicks_info: TfsDataFrame):
 # IO ---
 
 
-def load_json(jsonfile: Union[Path, str]) -> dict:
+def _load_json(jsonfile: Union[Path, str]) -> dict:
     return json.loads(Path(jsonfile).read_text())
 
 
 # Time ---
 
 
-def ts_to_datetime(ts: int) -> datetime:
+def _ts_to_datetime(ts: int) -> datetime:
     return datetime.utcfromtimestamp(ts / 1000)
 
 
-def jsontime_to_datetime(time_str: str) -> datetime:
+def _jsontime_to_datetime(time_str: str) -> datetime:
     return datetime.strptime(time_str, "%d-%m-%y_%H-%M-%S")
 
 
-def datetime_to_string(dt: datetime):
+def _datetime_to_string(dt: datetime):
     return dt.strftime("  %Y-%m-%d %H:%M:%S")
 
 
-def time_formatters():
-    return {UTCTIME: datetime_to_string, LOCALTIME: datetime_to_string}
+def _time_formatters():
+    return {UTCTIME: _datetime_to_string, LOCALTIME: _datetime_to_string}
 
 
-def utc_to_local(dt: datetime):
+def _utc_to_local(dt: datetime):
     return dt.replace(tzinfo=tz.gettz("UTC")).astimezone(tz.gettz("Europe/Paris"))
 
 
-def local_to_utc(dt: datetime):
+def _local_to_utc(dt: datetime):
     return dt.replace(tzinfo=tz.gettz("Europe/Paris")).astimezone(tz.gettz("UTC"))
 
 
