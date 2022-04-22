@@ -6,7 +6,7 @@ Functions to list KickGroups and show their Kicks.
 
 .. code-block:: none
 
-    usage: kickgroups.py [-h] {kickgroups,kickgroup_info} ...
+    usage: kickgroups.py [-h] {list,group} ...
 
     KickGroups Functions
 
@@ -14,19 +14,19 @@ Functions to list KickGroups and show their Kicks.
       -h, --help            show this help message and exit
 
     Functionality:
-      {kickgroups,kickgroup_info}
-        kickgroups          List all KickGroups
-        kickgroup_info      Show the info of a given KickGroup
+      {list,group}
+        list                List all KickGroups
+        group               Show the info of a given KickGroup
 
 
-Function ``kickgroups``:
+Function ``list``:
 
 .. code-block:: none
 
-    usage: kickgroups.py kickgroups [-h] [--root ROOT]
-                                    [--sort {TIMESTAMP,KICKGROUP}]
+    usage: kickgroups.py list [-h] [--root ROOT]
+                              [--sort {TIMESTAMP,KICKGROUP}]
 
-    KickGroups
+    List KickGroups
 
     optional arguments:
       -h, --help            show this help message and exit
@@ -35,11 +35,11 @@ Function ``kickgroups``:
                             Sort KickGroups
 
 
-Function ``kickgroup_info``:
+Function ``group``:
 
 .. code-block:: none
 
-    usage: kickgroups.py kickgroup_info [-h] [--root ROOT] name
+    usage: kickgroups.py group [-h] [--root ROOT] name
 
     KickGroup Info
 
@@ -327,13 +327,14 @@ def _get_args():
     subparsers = parser.add_subparsers(
         title="Functionality",
         dest="function",
+        required=True,
     )
     # ----- Full KickGroup Parser ----- #
     parser_kickgroups = subparsers.add_parser(
-        "kickgroups",
+        "list",
         parents=[parent_parser],
         add_help=False,
-        description="KickGroups",
+        description="List KickGroups",
         help="List all KickGroups",
     )
     parser_kickgroups.add_argument(
@@ -346,7 +347,7 @@ def _get_args():
     )
     # ---- KickGroup Info Parser ---- #
     parser_info = subparsers.add_parser(
-        "kickgroup_info",
+        "group",
         parents=[parent_parser],
         add_help=False,
         description="KickGroup Info",
@@ -362,8 +363,8 @@ def _get_args():
 
 if __name__ == "__main__":
     options = _get_args()
-    if options.function == "kickgroups":
+    if options.function == "list":
         list_available_kickgroups(by=options.sort, root=options.root)
 
-    if options.function == "kickgroup_info":
+    if options.function == "group":
         kickgroup_info(kick_group=options.name, root=options.root)
