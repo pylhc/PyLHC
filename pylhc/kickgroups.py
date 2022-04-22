@@ -6,7 +6,7 @@ Functions to list KickGroups and show their Kicks.
 
 .. code-block:: none
 
-    usage: kickgroups.py [-h] {list,group} ...
+    usage: kickgroups.py [-h] {list,info} ...
 
     KickGroups Functions
 
@@ -14,9 +14,9 @@ Functions to list KickGroups and show their Kicks.
       -h, --help            show this help message and exit
 
     Functionality:
-      {list,group}
+      {list,info}
         list                List all KickGroups
-        group               Show the info of a given KickGroup
+        info               Show the info of a given KickGroup
 
 
 Function ``list``:
@@ -35,16 +35,16 @@ Function ``list``:
                             Sort KickGroups
 
 
-Function ``group``:
+Function ``info``:
 
 .. code-block:: none
 
-    usage: kickgroups.py group [-h] [--root ROOT] name
+    usage: kickgroups.py info [-h] [--root ROOT] group
 
     KickGroup Info
 
     positional arguments:
-      name         KickGroup name
+      group         KickGroup name
 
     optional arguments:
       -h, --help   show this help message and exit
@@ -347,14 +347,14 @@ def _get_args():
     )
     # ---- KickGroup Info Parser ---- #
     parser_info = subparsers.add_parser(
-        "group",
+        "info",
         parents=[parent_parser],
         add_help=False,
         description="KickGroup Info",
         help="Show the info of a given KickGroup",
     )
     parser_info.add_argument(
-        "name",
+        "group",
         type=str,
         help="KickGroup name",
     )
@@ -366,5 +366,5 @@ if __name__ == "__main__":
     if options.function == "list":
         list_available_kickgroups(by=options.sort, root=options.root)
 
-    if options.function == "group":
-        kickgroup_info(kick_group=options.name, root=options.root)
+    if options.function == "info":
+        kickgroup_info(kick_group=options.group, root=options.root)
