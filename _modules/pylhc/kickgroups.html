@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pylhc.kickgroups &mdash; pylhc 0.6.0 documentation</title>
+  <title>pylhc.kickgroups &mdash; pylhc 0.6.1 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
@@ -119,7 +119,7 @@
 
 <span class="sd">.. code-block:: none</span>
 
-<span class="sd">    usage: kickgroups.py [-h] {kickgroups,kickgroup_info} ...</span>
+<span class="sd">    usage: kickgroups.py [-h] {list,info} ...</span>
 
 <span class="sd">    KickGroups Functions</span>
 
@@ -127,19 +127,19 @@
 <span class="sd">      -h, --help            show this help message and exit</span>
 
 <span class="sd">    Functionality:</span>
-<span class="sd">      {kickgroups,kickgroup_info}</span>
-<span class="sd">        kickgroups          List all KickGroups</span>
-<span class="sd">        kickgroup_info      Show the info of a given KickGroup</span>
+<span class="sd">      {list,info}</span>
+<span class="sd">        list                List all KickGroups</span>
+<span class="sd">        info               Show the info of a given KickGroup</span>
 
 
-<span class="sd">Function ``kickgroups``:</span>
+<span class="sd">Function ``list``:</span>
 
 <span class="sd">.. code-block:: none</span>
 
-<span class="sd">    usage: kickgroups.py kickgroups [-h] [--root ROOT]</span>
-<span class="sd">                                    [--sort {TIMESTAMP,KICKGROUP}]</span>
+<span class="sd">    usage: kickgroups.py list [-h] [--root ROOT]</span>
+<span class="sd">                              [--sort {TIMESTAMP,KICKGROUP}]</span>
 
-<span class="sd">    KickGroups</span>
+<span class="sd">    List KickGroups</span>
 
 <span class="sd">    optional arguments:</span>
 <span class="sd">      -h, --help            show this help message and exit</span>
@@ -148,16 +148,16 @@
 <span class="sd">                            Sort KickGroups</span>
 
 
-<span class="sd">Function ``kickgroup_info``:</span>
+<span class="sd">Function ``info``:</span>
 
 <span class="sd">.. code-block:: none</span>
 
-<span class="sd">    usage: kickgroups.py kickgroup_info [-h] [--root ROOT] name</span>
+<span class="sd">    usage: kickgroups.py info [-h] [--root ROOT] group</span>
 
 <span class="sd">    KickGroup Info</span>
 
 <span class="sd">    positional arguments:</span>
-<span class="sd">      name         KickGroup name</span>
+<span class="sd">      group         KickGroup name</span>
 
 <span class="sd">    optional arguments:</span>
 <span class="sd">      -h, --help   show this help message and exit</span>
@@ -284,6 +284,9 @@
     <span class="n">kicks_files</span> <span class="o">=</span> <span class="n">kick_group_data</span><span class="p">[</span><span class="s2">&quot;jsonFiles&quot;</span><span class="p">]</span>
     <span class="n">df_info</span> <span class="o">=</span> <span class="n">TfsDataFrame</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">kicks_files</span><span class="p">)),</span> <span class="n">columns</span><span class="o">=</span><span class="n">KICK_COLUMNS</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="n">KICKGROUP</span><span class="p">:</span> <span class="n">kick_group</span><span class="p">})</span>
 
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">kicks_files</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;KickGroup </span><span class="si">{</span><span class="n">kick_group</span><span class="si">}</span><span class="s2"> contains no kicks.&quot;</span><span class="p">)</span>
+
     <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">kf</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">kicks_files</span><span class="p">):</span>
         <span class="n">df_info</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">load_kickfile</span><span class="p">(</span><span class="n">kf</span><span class="p">)</span>
 
@@ -325,23 +328,29 @@
 
     <span class="k">if</span> <span class="n">three_d</span><span class="p">:</span>
         <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Kick is 3D Excitation, loading longitudinal kick settings&quot;</span><span class="p">)</span>
-        <span class="n">data</span><span class="p">[</span><span class="n">TUNEX</span><span class="p">]</span> <span class="o">=</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;acDipoleSettings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;measuredTune&quot;</span><span class="p">]</span>
-        <span class="n">data</span><span class="p">[</span><span class="n">TUNEY</span><span class="p">]</span> <span class="o">=</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;acDipoleSettings&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;measuredTune&quot;</span><span class="p">]</span>
-        <span class="n">data</span><span class="p">[</span><span class="n">DRIVEN_TUNEX</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">TUNEX</span><span class="p">]</span> <span class="o">+</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;acDipoleSettings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;deltaTuneStart&quot;</span><span class="p">]</span>
-        <span class="n">data</span><span class="p">[</span><span class="n">DRIVEN_TUNEY</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">TUNEY</span><span class="p">]</span> <span class="o">+</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;acDipoleSettings&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;deltaTuneStart&quot;</span><span class="p">]</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">_get_plane_index</span><span class="p">(</span><span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;acDipoleSettings&quot;</span><span class="p">],</span> <span class="s2">&quot;X&quot;</span><span class="p">)</span>
+        <span class="n">idy</span> <span class="o">=</span> <span class="n">_get_plane_index</span><span class="p">(</span><span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;acDipoleSettings&quot;</span><span class="p">],</span> <span class="s2">&quot;Y&quot;</span><span class="p">)</span>
+
+        <span class="n">data</span><span class="p">[</span><span class="n">TUNEX</span><span class="p">]</span> <span class="o">=</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;acDipoleSettings&quot;</span><span class="p">][</span><span class="n">idx</span><span class="p">][</span><span class="s2">&quot;measuredTune&quot;</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">TUNEY</span><span class="p">]</span> <span class="o">=</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;acDipoleSettings&quot;</span><span class="p">][</span><span class="n">idy</span><span class="p">][</span><span class="s2">&quot;measuredTune&quot;</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">DRIVEN_TUNEX</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">TUNEX</span><span class="p">]</span> <span class="o">+</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;acDipoleSettings&quot;</span><span class="p">][</span><span class="n">idx</span><span class="p">][</span><span class="s2">&quot;deltaTuneStart&quot;</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">DRIVEN_TUNEY</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">TUNEY</span><span class="p">]</span> <span class="o">+</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;acDipoleSettings&quot;</span><span class="p">][</span><span class="n">idy</span><span class="p">][</span><span class="s2">&quot;deltaTuneStart&quot;</span><span class="p">]</span>
         <span class="n">data</span><span class="p">[</span><span class="n">DRIVEN_TUNEZ</span><span class="p">]</span> <span class="o">=</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationData&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;rfdata&quot;</span><span class="p">][</span><span class="s2">&quot;excitationFrequency&quot;</span><span class="p">]</span>
-        <span class="n">data</span><span class="p">[</span><span class="n">AMPX</span><span class="p">]</span> <span class="o">=</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;acDipoleSettings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;amplitude&quot;</span><span class="p">]</span>
-        <span class="n">data</span><span class="p">[</span><span class="n">AMPY</span><span class="p">]</span> <span class="o">=</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;acDipoleSettings&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;amplitude&quot;</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">AMPX</span><span class="p">]</span> <span class="o">=</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;acDipoleSettings&quot;</span><span class="p">][</span><span class="n">idx</span><span class="p">][</span><span class="s2">&quot;amplitude&quot;</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">AMPY</span><span class="p">]</span> <span class="o">=</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;acDipoleSettings&quot;</span><span class="p">][</span><span class="n">idy</span><span class="p">][</span><span class="s2">&quot;amplitude&quot;</span><span class="p">]</span>
         <span class="n">data</span><span class="p">[</span><span class="n">AMPZ</span><span class="p">]</span> <span class="o">=</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;longitudinalRfSettings&quot;</span><span class="p">][</span><span class="s2">&quot;excitationAmplitude&quot;</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Kick is 2D Excitation, longitudinal settings will be set as NaNs&quot;</span><span class="p">)</span>
-        <span class="n">data</span><span class="p">[</span><span class="n">TUNEX</span><span class="p">]</span> <span class="o">=</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;measuredTune&quot;</span><span class="p">]</span>
-        <span class="n">data</span><span class="p">[</span><span class="n">TUNEY</span><span class="p">]</span> <span class="o">=</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;measuredTune&quot;</span><span class="p">]</span>
-        <span class="n">data</span><span class="p">[</span><span class="n">DRIVEN_TUNEX</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">TUNEX</span><span class="p">]</span> <span class="o">+</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;deltaTuneStart&quot;</span><span class="p">]</span>
-        <span class="n">data</span><span class="p">[</span><span class="n">DRIVEN_TUNEY</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">TUNEY</span><span class="p">]</span> <span class="o">+</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;deltaTuneStart&quot;</span><span class="p">]</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">_get_plane_index</span><span class="p">(</span><span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">],</span> <span class="s2">&quot;X&quot;</span><span class="p">)</span>
+        <span class="n">idy</span> <span class="o">=</span> <span class="n">_get_plane_index</span><span class="p">(</span><span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">],</span> <span class="s2">&quot;Y&quot;</span><span class="p">)</span>
+
+        <span class="n">data</span><span class="p">[</span><span class="n">TUNEX</span><span class="p">]</span> <span class="o">=</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="n">idx</span><span class="p">][</span><span class="s2">&quot;measuredTune&quot;</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">TUNEY</span><span class="p">]</span> <span class="o">=</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="n">idy</span><span class="p">][</span><span class="s2">&quot;measuredTune&quot;</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">DRIVEN_TUNEX</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">TUNEX</span><span class="p">]</span> <span class="o">+</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="n">idx</span><span class="p">][</span><span class="s2">&quot;deltaTuneStart&quot;</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">DRIVEN_TUNEY</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">TUNEY</span><span class="p">]</span> <span class="o">+</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="n">idy</span><span class="p">][</span><span class="s2">&quot;deltaTuneStart&quot;</span><span class="p">]</span>
         <span class="n">data</span><span class="p">[</span><span class="n">DRIVEN_TUNEZ</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span>
-        <span class="n">data</span><span class="p">[</span><span class="n">AMPX</span><span class="p">]</span> <span class="o">=</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;amplitude&quot;</span><span class="p">]</span>
-        <span class="n">data</span><span class="p">[</span><span class="n">AMPY</span><span class="p">]</span> <span class="o">=</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;amplitude&quot;</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">AMPX</span><span class="p">]</span> <span class="o">=</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="n">idx</span><span class="p">][</span><span class="s2">&quot;amplitude&quot;</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">AMPY</span><span class="p">]</span> <span class="o">=</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="n">idy</span><span class="p">][</span><span class="s2">&quot;amplitude&quot;</span><span class="p">]</span>
         <span class="n">data</span><span class="p">[</span><span class="n">AMPZ</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span>
 
     <span class="k">return</span> <span class="n">data</span></div>
@@ -395,6 +404,20 @@
     <span class="k">return</span> <span class="n">dt</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">tzinfo</span><span class="o">=</span><span class="n">tz</span><span class="o">.</span><span class="n">gettz</span><span class="p">(</span><span class="s2">&quot;Europe/Paris&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">astimezone</span><span class="p">(</span><span class="n">tz</span><span class="o">.</span><span class="n">gettz</span><span class="p">(</span><span class="s2">&quot;UTC&quot;</span><span class="p">))</span>
 
 
+<span class="c1"># Other ---</span>
+
+<span class="k">def</span> <span class="nf">_get_plane_index</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">plane</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Find the index for the given plane in the data list.</span>
+<span class="sd">    This is necessary as they are not always in X,Y order.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;X&#39;</span><span class="p">:</span> <span class="s1">&#39;HORIZONTAL&#39;</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">:</span> <span class="s1">&#39;VERTICAL&#39;</span><span class="p">}[</span><span class="n">plane</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">entry</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">entry</span><span class="p">[</span><span class="s1">&#39;plane&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">name</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">idx</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Plane &#39;</span><span class="si">{</span><span class="n">plane</span><span class="si">}</span><span class="s2">&#39; not found in data.&quot;</span><span class="p">)</span>
+
+
 <span class="c1"># Script Mode ------------------------------------------------------------------</span>
 
 
@@ -417,13 +440,14 @@
     <span class="n">subparsers</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_subparsers</span><span class="p">(</span>
         <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Functionality&quot;</span><span class="p">,</span>
         <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;function&quot;</span><span class="p">,</span>
+        <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="c1"># ----- Full KickGroup Parser ----- #</span>
     <span class="n">parser_kickgroups</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
-        <span class="s2">&quot;kickgroups&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;list&quot;</span><span class="p">,</span>
         <span class="n">parents</span><span class="o">=</span><span class="p">[</span><span class="n">parent_parser</span><span class="p">],</span>
         <span class="n">add_help</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;KickGroups&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;List KickGroups&quot;</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;List all KickGroups&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">parser_kickgroups</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
@@ -436,14 +460,14 @@
     <span class="p">)</span>
     <span class="c1"># ---- KickGroup Info Parser ---- #</span>
     <span class="n">parser_info</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
-        <span class="s2">&quot;kickgroup_info&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;info&quot;</span><span class="p">,</span>
         <span class="n">parents</span><span class="o">=</span><span class="p">[</span><span class="n">parent_parser</span><span class="p">],</span>
         <span class="n">add_help</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;KickGroup Info&quot;</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Show the info of a given KickGroup&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">parser_info</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;name&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;group&quot;</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;KickGroup name&quot;</span><span class="p">,</span>
     <span class="p">)</span>
@@ -452,11 +476,11 @@
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="n">options</span> <span class="o">=</span> <span class="n">_get_args</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">function</span> <span class="o">==</span> <span class="s2">&quot;kickgroups&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">function</span> <span class="o">==</span> <span class="s2">&quot;list&quot;</span><span class="p">:</span>
         <span class="n">list_available_kickgroups</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">sort</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">function</span> <span class="o">==</span> <span class="s2">&quot;kickgroup_info&quot;</span><span class="p">:</span>
-        <span class="n">kickgroup_info</span><span class="p">(</span><span class="n">kick_group</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">function</span> <span class="o">==</span> <span class="s2">&quot;info&quot;</span><span class="p">:</span>
+        <span class="n">kickgroup_info</span><span class="p">(</span><span class="n">kick_group</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">group</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
 </pre></div>
 
            </div>

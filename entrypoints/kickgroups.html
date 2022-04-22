@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>KickGroup Informations &mdash; pylhc 0.6.0 documentation</title>
+  <title>KickGroup Informations &mdash; pylhc 0.6.1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -119,7 +119,7 @@
 <section id="kickgroups">
 <h2>Kickgroups<a class="headerlink" href="#kickgroups" title="Permalink to this headline"></a></h2>
 <p>Functions to list KickGroups and show their Kicks.</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>usage: kickgroups.py [-h] {kickgroups,kickgroup_info} ...
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>usage: kickgroups.py [-h] {list,info} ...
 
 KickGroups Functions
 
@@ -127,16 +127,16 @@ optional arguments:
   -h, --help            show this help message and exit
 
 Functionality:
-  {kickgroups,kickgroup_info}
-    kickgroups          List all KickGroups
-    kickgroup_info      Show the info of a given KickGroup
+  {list,info}
+    list                List all KickGroups
+    info               Show the info of a given KickGroup
 </pre></div>
 </div>
-<p>Function <code class="docutils literal notranslate"><span class="pre">kickgroups</span></code>:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>usage: kickgroups.py kickgroups [-h] [--root ROOT]
-                                [--sort {TIMESTAMP,KICKGROUP}]
+<p>Function <code class="docutils literal notranslate"><span class="pre">list</span></code>:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>usage: kickgroups.py list [-h] [--root ROOT]
+                          [--sort {TIMESTAMP,KICKGROUP}]
 
-KickGroups
+List KickGroups
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -145,13 +145,13 @@ optional arguments:
                         Sort KickGroups
 </pre></div>
 </div>
-<p>Function <code class="docutils literal notranslate"><span class="pre">kickgroup_info</span></code>:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>usage: kickgroups.py kickgroup_info [-h] [--root ROOT] name
+<p>Function <code class="docutils literal notranslate"><span class="pre">info</span></code>:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>usage: kickgroups.py info [-h] [--root ROOT] group
 
 KickGroup Info
 
 positional arguments:
-  name         KickGroup name
+  group         KickGroup name
 
 optional arguments:
   -h, --help   show this help message and exit
