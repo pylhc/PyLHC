@@ -6,7 +6,7 @@ Functions to list KickGroups and show their Kicks.
 
 .. code-block:: none
 
-    usage: kickgroups.py [-h] {kickgroups,kickgroup_info} ...
+    usage: kickgroups.py [-h] {list,info} ...
 
     KickGroups Functions
 
@@ -14,19 +14,19 @@ Functions to list KickGroups and show their Kicks.
       -h, --help            show this help message and exit
 
     Functionality:
-      {kickgroups,kickgroup_info}
-        kickgroups          List all KickGroups
-        kickgroup_info      Show the info of a given KickGroup
+      {list,info}
+        list                List all KickGroups
+        info               Show the info of a given KickGroup
 
 
-Function ``kickgroups``:
+Function ``list``:
 
 .. code-block:: none
 
-    usage: kickgroups.py kickgroups [-h] [--root ROOT]
-                                    [--sort {TIMESTAMP,KICKGROUP}]
+    usage: kickgroups.py list [-h] [--root ROOT]
+                              [--sort {TIMESTAMP,KICKGROUP}]
 
-    KickGroups
+    List KickGroups
 
     optional arguments:
       -h, --help            show this help message and exit
@@ -35,16 +35,16 @@ Function ``kickgroups``:
                             Sort KickGroups
 
 
-Function ``kickgroup_info``:
+Function ``info``:
 
 .. code-block:: none
 
-    usage: kickgroups.py kickgroup_info [-h] [--root ROOT] name
+    usage: kickgroups.py info [-h] [--root ROOT] group
 
     KickGroup Info
 
     positional arguments:
-      name         KickGroup name
+      group         KickGroup name
 
     optional arguments:
       -h, --help   show this help message and exit
@@ -171,6 +171,9 @@ def kickgroup_info(kick_group: str, root: Union[Path, str] = KICKGROUPS_ROOT, pr
     kicks_files = kick_group_data["jsonFiles"]
     df_info = TfsDataFrame(index=range(len(kicks_files)), columns=KICK_COLUMNS, headers={KICKGROUP: kick_group})
 
+    if not len(kicks_files):
+        raise FileNotFoundError(f"KickGroup {kick_group} contains no kicks.")
+
     for idx, kf in enumerate(kicks_files):
         df_info.loc[idx, :] = load_kickfile(kf)
 
@@ -212,23 +215,29 @@ def load_kickfile(kickfile: Union[Path, str]) -> pd.Series:
 
     if three_d:
         LOG.debug("Kick is 3D Excitation, loading longitudinal kick settings")
-        data[TUNEX] = kick["excitationSettings"][0]["acDipoleSettings"][0]["measuredTune"]
-        data[TUNEY] = kick["excitationSettings"][0]["acDipoleSettings"][1]["measuredTune"]
-        data[DRIVEN_TUNEX] = data[TUNEX] + kick["excitationSettings"][0]["acDipoleSettings"][0]["deltaTuneStart"]
-        data[DRIVEN_TUNEY] = data[TUNEY] + kick["excitationSettings"][0]["acDipoleSettings"][1]["deltaTuneStart"]
+        idx = _get_plane_index(kick["excitationSettings"][0]["acDipoleSettings"], "X")
+        idy = _get_plane_index(kick["excitationSettings"][0]["acDipoleSettings"], "Y")
+
+        data[TUNEX] = kick["excitationSettings"][0]["acDipoleSettings"][idx]["measuredTune"]
+        data[TUNEY] = kick["excitationSettings"][0]["acDipoleSettings"][idy]["measuredTune"]
+        data[DRIVEN_TUNEX] = data[TUNEX] + kick["excitationSettings"][0]["acDipoleSettings"][idx]["deltaTuneStart"]
+        data[DRIVEN_TUNEY] = data[TUNEY] + kick["excitationSettings"][0]["acDipoleSettings"][idy]["deltaTuneStart"]
         data[DRIVEN_TUNEZ] = kick["excitationData"][0]["rfdata"]["excitationFrequency"]
-        data[AMPX] = kick["excitationSettings"][0]["acDipoleSettings"][0]["amplitude"]
-        data[AMPY] = kick["excitationSettings"][0]["acDipoleSettings"][1]["amplitude"]
+        data[AMPX] = kick["excitationSettings"][0]["acDipoleSettings"][idx]["amplitude"]
+        data[AMPY] = kick["excitationSettings"][0]["acDipoleSettings"][idy]["amplitude"]
         data[AMPZ] = kick["excitationSettings"][0]["longitudinalRfSettings"]["excitationAmplitude"]
     else:
         LOG.debug(f"Kick is 2D Excitation, longitudinal settings will be set as NaNs")
-        data[TUNEX] = kick["excitationSettings"][0]["measuredTune"]
-        data[TUNEY] = kick["excitationSettings"][1]["measuredTune"]
-        data[DRIVEN_TUNEX] = data[TUNEX] + kick["excitationSettings"][0]["deltaTuneStart"]
-        data[DRIVEN_TUNEY] = data[TUNEY] + kick["excitationSettings"][1]["deltaTuneStart"]
+        idx = _get_plane_index(kick["excitationSettings"], "X")
+        idy = _get_plane_index(kick["excitationSettings"], "Y")
+
+        data[TUNEX] = kick["excitationSettings"][idx]["measuredTune"]
+        data[TUNEY] = kick["excitationSettings"][idy]["measuredTune"]
+        data[DRIVEN_TUNEX] = data[TUNEX] + kick["excitationSettings"][idx]["deltaTuneStart"]
+        data[DRIVEN_TUNEY] = data[TUNEY] + kick["excitationSettings"][idy]["deltaTuneStart"]
         data[DRIVEN_TUNEZ] = np.NaN
-        data[AMPX] = kick["excitationSettings"][0]["amplitude"]
-        data[AMPY] = kick["excitationSettings"][1]["amplitude"]
+        data[AMPX] = kick["excitationSettings"][idx]["amplitude"]
+        data[AMPY] = kick["excitationSettings"][idy]["amplitude"]
         data[AMPZ] = np.NaN
 
     return data
@@ -282,6 +291,20 @@ def _local_to_utc(dt: datetime):
     return dt.replace(tzinfo=tz.gettz("Europe/Paris")).astimezone(tz.gettz("UTC"))
 
 
+# Other ---
+
+def _get_plane_index(data: List[dict], plane: str):
+    """Find the index for the given plane in the data list.
+    This is necessary as they are not always in X,Y order.
+    """
+    name = {'X': 'HORIZONTAL', 'Y': 'VERTICAL'}[plane]
+    for idx, entry in enumerate(data):
+        if entry['plane'] == name:
+            return idx
+    else:
+        raise ValueError(f"Plane '{plane}' not found in data.")
+
+
 # Script Mode ------------------------------------------------------------------
 
 
@@ -304,13 +327,14 @@ def _get_args():
     subparsers = parser.add_subparsers(
         title="Functionality",
         dest="function",
+        required=True,
     )
     # ----- Full KickGroup Parser ----- #
     parser_kickgroups = subparsers.add_parser(
-        "kickgroups",
+        "list",
         parents=[parent_parser],
         add_help=False,
-        description="KickGroups",
+        description="List KickGroups",
         help="List all KickGroups",
     )
     parser_kickgroups.add_argument(
@@ -323,14 +347,14 @@ def _get_args():
     )
     # ---- KickGroup Info Parser ---- #
     parser_info = subparsers.add_parser(
-        "kickgroup_info",
+        "info",
         parents=[parent_parser],
         add_help=False,
         description="KickGroup Info",
         help="Show the info of a given KickGroup",
     )
     parser_info.add_argument(
-        "name",
+        "group",
         type=str,
         help="KickGroup name",
     )
@@ -339,8 +363,8 @@ def _get_args():
 
 if __name__ == "__main__":
     options = _get_args()
-    if options.function == "kickgroups":
+    if options.function == "list":
         list_available_kickgroups(by=options.sort, root=options.root)
 
-    if options.function == "kickgroup_info":
-        kickgroup_info(kick_group=options.name, root=options.root)
+    if options.function == "info":
+        kickgroup_info(kick_group=options.group, root=options.root)
