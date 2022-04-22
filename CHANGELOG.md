@@ -5,6 +5,7 @@
 Bugfixes in KickGroups:
   - Better error message when there are no kicks in group.
   - Find correct planes in lists of data.
+  - Renamed functions to `list` and `group`.
 
 ## Version 0.6.0
 
