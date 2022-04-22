@@ -1,5 +1,11 @@
 # pylhc Changelog
 
+## Version 0.6.1
+
+Bugfixes in KickGroups:
+  - Better error message when there are no kicks in group.
+  - Find correct planes in lists of data.
+
 ## Version 0.6.0
 
 Added KickGroups functionality: load available kick groups in a folder, display their relevant information; and do the same for all kick files in a given kickgroup.
