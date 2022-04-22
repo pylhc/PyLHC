@@ -299,7 +299,11 @@ def _get_args():
     subparsers = parser.add_subparsers(title="Functionality", dest="function")
     # ----- Full KickGroup Parser ----- #
     parser_kickgroups = subparsers.add_parser(
-        "kickgroups", parents=[parent_parser], add_help=False, description="KickGroups", help="List all KickGroups"
+        "kickgroups",
+        parents=[parent_parser],
+        add_help=False,
+        description="KickGroups",
+        help="List all KickGroups",
     )
     parser_kickgroups.add_argument(
         "--sort",
