@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Index &mdash; pylhc 0.5.0 documentation</title>
+  <title>Index &mdash; pylhc 0.6.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
@@ -25,11 +25,11 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html">
+            <a href="index.html" class="icon icon-home"> pylhc
             <img src="_static/omc_logo.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.5
+                0.6
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -50,6 +50,10 @@
 <li class="toctree-l2"><a class="reference internal" href="entrypoints/bpm_calibration.html#id1">BPM Calibration</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="entrypoints/kickgroups.html">KickGroup Informations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="entrypoints/kickgroups.html#kickgroups">Kickgroups</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="entrypoints/machine_info.html">Machine Information Tools</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="entrypoints/machine_info.html#print-machine-settings-overview">Print Machine Settings Overview</a></li>
 <li class="toctree-l2"><a class="reference internal" href="entrypoints/machine_info.html#bsrt-logger">BSRT logger</a></li>
@@ -66,6 +70,7 @@
 <li class="toctree-l1"><a class="reference internal" href="modules/constants.html">Constants Definitions</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="modules/constants.html#constants-general">Constants: General</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/constants.html#constants-forced-da-analysis">Constants: Forced DA Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/constants.html#constants-kickgroups">Constants: KickGroups</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/constants.html#constants-machine-settings-info">Constants: Machine Settings Info</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/constants.html#constants-bpm-calibration">Constants: BPM Calibration</a></li>
 </ul>
@@ -113,6 +118,7 @@
  | <a href="#B"><strong>B</strong></a>
  | <a href="#F"><strong>F</strong></a>
  | <a href="#G"><strong>G</strong></a>
+ | <a href="#K"><strong>K</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
  | <a href="#P"><strong>P</strong></a>
@@ -173,6 +179,8 @@
 </li>
       <li><a href="modules/calibration.html#pylhc.calibration.dispersion.get_calibration_factors_from_dispersion">get_calibration_factors_from_dispersion() (in module pylhc.calibration.dispersion)</a>
 </li>
+      <li><a href="entrypoints/kickgroups.html#pylhc.kickgroups.get_folder_json_files">get_folder_json_files() (in module pylhc.kickgroups)</a>
+</li>
       <li><a href="entrypoints/machine_info.html#pylhc.machine_settings_info.get_info">get_info() (in module pylhc.machine_settings_info)</a>
 </li>
   </ul></td>
@@ -190,15 +198,27 @@
   </ul></td>
 </tr></table>
 
+<h2 id="K">K</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="entrypoints/kickgroups.html#pylhc.kickgroups.kickgroup_info">kickgroup_info() (in module pylhc.kickgroups)</a>
+</li>
+  </ul></td>
+</tr></table>
+
 <h2 id="L">L</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="entrypoints/machine_info.html#pylhc.machine_settings_info.log_summary">log_summary() (in module pylhc.machine_settings_info)</a>
+      <li><a href="entrypoints/kickgroups.html#pylhc.kickgroups.list_available_kickgroups">list_available_kickgroups() (in module pylhc.kickgroups)</a>
 </li>
-      <li><a href="modules/data_extract.html#pylhc.data_extract.lsa.LSA">LSA (class in pylhc.data_extract.lsa)</a>
+      <li><a href="entrypoints/kickgroups.html#pylhc.kickgroups.load_kickfile">load_kickfile() (in module pylhc.kickgroups)</a>
+</li>
+      <li><a href="entrypoints/machine_info.html#pylhc.machine_settings_info.log_summary">log_summary() (in module pylhc.machine_settings_info)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/data_extract.html#pylhc.data_extract.lsa.LSA">LSA (class in pylhc.data_extract.lsa)</a>
+</li>
       <li><a href="modules/data_extract.html#pylhc.data_extract.lsa.LSAClient">LSAClient (class in pylhc.data_extract.lsa)</a>
 </li>
       <li><a href="modules/data_extract.html#pylhc.data_extract.lsa.LSAMeta">LSAMeta (class in pylhc.data_extract.lsa)</a>
@@ -229,6 +249,8 @@
 </li>
         <li><a href="modules/constants.html#module-pylhc.constants.general">pylhc.constants.general</a>
 </li>
+        <li><a href="modules/constants.html#module-pylhc.constants.kickgroups">pylhc.constants.kickgroups</a>
+</li>
         <li><a href="modules/constants.html#module-pylhc.constants.machine_settings_info">pylhc.constants.machine_settings_info</a>
 </li>
         <li><a href="modules/data_extract.html#module-pylhc.data_extract.lsa">pylhc.data_extract.lsa</a>
@@ -236,6 +258,8 @@
         <li><a href="modules/data_extract.html#module-pylhc.data_extract.timber">pylhc.data_extract.timber</a>
 </li>
         <li><a href="entrypoints/analysis.html#module-pylhc.forced_da_analysis">pylhc.forced_da_analysis</a>
+</li>
+        <li><a href="entrypoints/kickgroups.html#module-pylhc.kickgroups">pylhc.kickgroups</a>
 </li>
         <li><a href="entrypoints/machine_info.html#module-pylhc.machine_settings_info">pylhc.machine_settings_info</a>
 </li>
@@ -296,8 +320,6 @@
         <li><a href="modules/constants.html#module-pylhc.constants.calibration">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pylhc.constants.forced_da_analysis
 
@@ -305,11 +327,20 @@
         <li><a href="modules/constants.html#module-pylhc.constants.forced_da_analysis">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pylhc.constants.general
 
       <ul>
         <li><a href="modules/constants.html#module-pylhc.constants.general">module</a>
+</li>
+      </ul></li>
+      <li>
+    pylhc.constants.kickgroups
+
+      <ul>
+        <li><a href="modules/constants.html#module-pylhc.constants.kickgroups">module</a>
 </li>
       </ul></li>
       <li>
@@ -338,6 +369,13 @@
 
       <ul>
         <li><a href="entrypoints/analysis.html#module-pylhc.forced_da_analysis">module</a>
+</li>
+      </ul></li>
+      <li>
+    pylhc.kickgroups
+
+      <ul>
+        <li><a href="entrypoints/kickgroups.html#module-pylhc.kickgroups">module</a>
 </li>
       </ul></li>
       <li>

@@ -2,6 +2,15 @@
   background: rgb(243,244,247);
 }
 
+.wy-side-nav-search > a {
+  color: black;
+}
+
+.wy-side-nav-search> a img.logo {
+  width: 50%;
+}
+
+
 .wy-side-nav-search > div.version {
   color: black;
 }

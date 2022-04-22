@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pylhc.kickgroups &mdash; pylhc 0.6.0 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> pylhc
+            <img src="../../_static/omc_logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.6
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Entrypoints</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../entrypoints/analysis.html">Analysis Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/analysis.html#bsrt-analysis">BSRT Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/analysis.html#forced-da-analysis">Forced DA Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../entrypoints/bpm_calibration.html">BPM Calibration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/bpm_calibration.html#id1">BPM Calibration</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../entrypoints/kickgroups.html">KickGroup Informations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/kickgroups.html#kickgroups">Kickgroups</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../entrypoints/machine_info.html">Machine Information Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/machine_info.html#print-machine-settings-overview">Print Machine Settings Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/machine_info.html#bsrt-logger">BSRT logger</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/calibration.html">BPM Calibration Utilities</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/calibration.html#beta">Beta</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/calibration.html#dispersion">Dispersion</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/constants.html">Constants Definitions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/constants.html#constants-general">Constants: General</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/constants.html#constants-forced-da-analysis">Constants: Forced DA Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/constants.html#constants-kickgroups">Constants: KickGroups</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/constants.html#constants-machine-settings-info">Constants: Machine Settings Info</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/constants.html#constants-bpm-calibration">Constants: BPM Calibration</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/data_extract.html">Data Extraction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/data_extract.html#pylsa">PyLSA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/data_extract.html#timber">Timber</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/utils.html">Utilities</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/utils.html#additional-io-tools">Additional IO-Tools</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pylhc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      <li>pylhc.kickgroups</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pylhc.kickgroups</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Kickgroups</span>
+<span class="sd">----------</span>
+
+<span class="sd">Functions to list KickGroups and show their Kicks.</span>
+
+<span class="sd">.. code-block:: none</span>
+
+<span class="sd">    usage: kickgroups.py [-h] {kickgroups,kickgroup_info} ...</span>
+
+<span class="sd">    KickGroups Functions</span>
+
+<span class="sd">    optional arguments:</span>
+<span class="sd">      -h, --help            show this help message and exit</span>
+
+<span class="sd">    Functionality:</span>
+<span class="sd">      {kickgroups,kickgroup_info}</span>
+<span class="sd">        kickgroups          List all KickGroups</span>
+<span class="sd">        kickgroup_info      Show the info of a given KickGroup</span>
+
+
+<span class="sd">Function ``kickgroups``:</span>
+
+<span class="sd">.. code-block:: none</span>
+
+<span class="sd">    usage: kickgroups.py kickgroups [-h] [--root ROOT]</span>
+<span class="sd">                                    [--sort {TIMESTAMP,KICKGROUP}]</span>
+
+<span class="sd">    KickGroups</span>
+
+<span class="sd">    optional arguments:</span>
+<span class="sd">      -h, --help            show this help message and exit</span>
+<span class="sd">      --root ROOT           KickGroups Root-Directory</span>
+<span class="sd">      --sort {TIMESTAMP,KICKGROUP}</span>
+<span class="sd">                            Sort KickGroups</span>
+
+
+<span class="sd">Function ``kickgroup_info``:</span>
+
+<span class="sd">.. code-block:: none</span>
+
+<span class="sd">    usage: kickgroups.py kickgroup_info [-h] [--root ROOT] name</span>
+
+<span class="sd">    KickGroup Info</span>
+
+<span class="sd">    positional arguments:</span>
+<span class="sd">      name         KickGroup name</span>
+
+<span class="sd">    optional arguments:</span>
+<span class="sd">      -h, --help   show this help message and exit</span>
+<span class="sd">      --root ROOT  KickGroups Root-Directory</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">dateutil</span> <span class="kn">import</span> <span class="n">tz</span>
+<span class="kn">from</span> <span class="nn">omc3.utils</span> <span class="kn">import</span> <span class="n">logging_tools</span>
+<span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">DataFrame</span>
+<span class="kn">from</span> <span class="nn">tfs</span> <span class="kn">import</span> <span class="n">TfsDataFrame</span>
+
+<span class="c1"># fmt: off</span>
+<span class="kn">from</span> <span class="nn">pylhc.constants.kickgroups</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">AMPX</span><span class="p">,</span>
+    <span class="n">AMPY</span><span class="p">,</span>
+    <span class="n">AMPZ</span><span class="p">,</span>
+    <span class="n">BEAM</span><span class="p">,</span>
+    <span class="n">BEAMPROCESS</span><span class="p">,</span>
+    <span class="n">BUNCH</span><span class="p">,</span>
+    <span class="n">COLUMNS_TO_HEADERS</span><span class="p">,</span>
+    <span class="n">DRIVEN_TUNEX</span><span class="p">,</span>
+    <span class="n">DRIVEN_TUNEY</span><span class="p">,</span>
+    <span class="n">DRIVEN_TUNEZ</span><span class="p">,</span>
+    <span class="n">KICK_COLUMNS</span><span class="p">,</span>
+    <span class="n">KICK_GROUP_COLUMNS</span><span class="p">,</span>
+    <span class="n">KICKGROUP</span><span class="p">,</span>
+    <span class="n">KICKGROUPS_ROOT</span><span class="p">,</span>
+    <span class="n">LOCALTIME</span><span class="p">,</span>
+    <span class="n">OPTICS</span><span class="p">,</span>
+    <span class="n">OPTICS_URI</span><span class="p">,</span>
+    <span class="n">SDDS</span><span class="p">,</span>
+    <span class="n">TIMESTAMP</span><span class="p">,</span>
+    <span class="n">TUNEX</span><span class="p">,</span>
+    <span class="n">TUNEY</span><span class="p">,</span>
+    <span class="n">TURNS</span><span class="p">,</span>
+    <span class="n">UTCTIME</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># fmt: on</span>
+
+<span class="n">LOG</span> <span class="o">=</span> <span class="n">logging_tools</span><span class="o">.</span><span class="n">get_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="c1"># List Kickgroups --------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="list_available_kickgroups"><a class="viewcode-back" href="../../entrypoints/kickgroups.html#pylhc.kickgroups.list_available_kickgroups">[docs]</a><span class="k">def</span> <span class="nf">list_available_kickgroups</span><span class="p">(</span><span class="n">by</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">TIMESTAMP</span><span class="p">,</span> <span class="n">root</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">KICKGROUPS_ROOT</span><span class="p">,</span> <span class="n">printout</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    List all available KickGroups in `root` with optional sorting..</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        by (str): Column to sort the KickGroups by. Should be either the</span>
+<span class="sd">            ``TIMESTAMP`` or ``KICKGROUP`` variable.</span>
+<span class="sd">        root (Path): Alternative `~pathlib.Path` to the KickGroup folder. (Defaults</span>
+<span class="sd">            to the ``NFS`` path of our kickgroups).</span>
+<span class="sd">        printout (bool): whether to print out the dataframe, defaults to `True`.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A `~pandas.DataFrame` with the KickGroups loaded, sorted by the provided</span>
+<span class="sd">        *by* parameter.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Listing KickGroups in &#39;</span><span class="si">{</span><span class="n">Path</span><span class="p">(</span><span class="n">root</span><span class="p">)</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+    <span class="n">kickgroup_paths</span> <span class="o">=</span> <span class="n">get_folder_json_files</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+    <span class="n">df_info</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">kickgroup_paths</span><span class="p">)),</span> <span class="n">columns</span><span class="o">=</span><span class="n">KICK_GROUP_COLUMNS</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">kick_group</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">kickgroup_paths</span><span class="p">):</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loading kickgroup info from &#39;</span><span class="si">{</span><span class="n">kick_group</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">_load_json</span><span class="p">(</span><span class="n">kick_group</span><span class="p">)</span>
+        <span class="n">df_info</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="n">KICKGROUP</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;groupName&quot;</span><span class="p">]</span>
+        <span class="n">df_info</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="n">TIMESTAMP</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;groupCreationTime&quot;</span><span class="p">]</span>
+        <span class="n">df_info</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="n">UTCTIME</span><span class="p">]</span> <span class="o">=</span> <span class="n">_ts_to_datetime</span><span class="p">(</span><span class="n">df_info</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="n">TIMESTAMP</span><span class="p">])</span>
+        <span class="n">df_info</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="n">LOCALTIME</span><span class="p">]</span> <span class="o">=</span> <span class="n">_utc_to_local</span><span class="p">(</span><span class="n">df_info</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="n">UTCTIME</span><span class="p">])</span>
+    <span class="n">df_info</span> <span class="o">=</span> <span class="n">df_info</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="n">by</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">TIMESTAMP</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">printout</span><span class="p">:</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Here is information about the loaded KickGroups&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">df_info</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">formatters</span><span class="o">=</span><span class="n">_time_formatters</span><span class="p">(),</span> <span class="n">justify</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">df_info</span></div>
+
+
+<div class="viewcode-block" id="get_folder_json_files"><a class="viewcode-back" href="../../entrypoints/kickgroups.html#pylhc.kickgroups.get_folder_json_files">[docs]</a><span class="k">def</span> <span class="nf">get_folder_json_files</span><span class="p">(</span><span class="n">root</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">KICKGROUPS_ROOT</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Returns a list of all **.json** files in the folder.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        root (Union[Path, str])): the path to the folder. (Defaults</span>
+<span class="sd">            to the ``NFS`` path of our kickgroups).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A `list` of `~pathlib.Path` objects to all **json** files within the provided</span>
+<span class="sd">        *root* parameter.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Globing for JSON files in </span><span class="si">{</span><span class="n">Path</span><span class="p">(</span><span class="n">root</span><span class="p">)</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="si">}</span><span class="s2">&#39;&#39;&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">root</span><span class="p">)</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.json&quot;</span><span class="p">))</span></div>
+
+
+<span class="c1"># Kickgroup Info ---------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="kickgroup_info"><a class="viewcode-back" href="../../entrypoints/kickgroups.html#pylhc.kickgroups.kickgroup_info">[docs]</a><span class="k">def</span> <span class="nf">kickgroup_info</span><span class="p">(</span><span class="n">kick_group</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">root</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">KICKGROUPS_ROOT</span><span class="p">,</span> <span class="n">printout</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TfsDataFrame</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Gather all important info about the KickGroup into a `~tfs.TfsDataFrame` and print it.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        kick_group (str): the KickGroup name, corresponds to the kickgroup file name without</span>
+<span class="sd">            the ``.json`` extension.</span>
+<span class="sd">        root (Path): Alternative `~pathlib.Path` to the KickGroup folder. (Defaults</span>
+<span class="sd">            to the ``NFS`` path of our kickgroups).</span>
+<span class="sd">        printout (bool): whether to print out the dataframe, defaults to `True`.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A `~tfs.TfsDataFrame` with the KickGroup information loaded.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loading info from all KickFiles in KickGroup &#39;</span><span class="si">{</span><span class="n">kick_group</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+    <span class="n">kick_group_data</span> <span class="o">=</span> <span class="n">_load_json</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">root</span><span class="p">)</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">kick_group</span><span class="si">}</span><span class="s2">.json&quot;</span><span class="p">)</span>
+    <span class="n">kicks_files</span> <span class="o">=</span> <span class="n">kick_group_data</span><span class="p">[</span><span class="s2">&quot;jsonFiles&quot;</span><span class="p">]</span>
+    <span class="n">df_info</span> <span class="o">=</span> <span class="n">TfsDataFrame</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">kicks_files</span><span class="p">)),</span> <span class="n">columns</span><span class="o">=</span><span class="n">KICK_COLUMNS</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="n">KICKGROUP</span><span class="p">:</span> <span class="n">kick_group</span><span class="p">})</span>
+
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">kf</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">kicks_files</span><span class="p">):</span>
+        <span class="n">df_info</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">load_kickfile</span><span class="p">(</span><span class="n">kf</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">COLUMNS_TO_HEADERS</span><span class="p">:</span>
+        <span class="n">df_info</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_info</span><span class="p">[</span><span class="n">column</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">printout</span><span class="p">:</span>
+        <span class="n">_print_kickgroup_info</span><span class="p">(</span><span class="n">df_info</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">df_info</span></div>
+
+
+<div class="viewcode-block" id="load_kickfile"><a class="viewcode-back" href="../../entrypoints/kickgroups.html#pylhc.kickgroups.load_kickfile">[docs]</a><span class="k">def</span> <span class="nf">load_kickfile</span><span class="p">(</span><span class="n">kickfile</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load the important data from a **json** kickfile into a `~pandas.Series`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        kickfile (Union[Path, str]): the path to the kickfile to load data from.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A `~pandas.Series` with the relevant information loaded from the provided</span>
+<span class="sd">        *kickfile*. The various entries in the Series are defined in `pylhc.constants.kickgroups`</span>
+<span class="sd">        as ``KICK_COLUMNS``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loading kick information from Kickfile at &#39;</span><span class="si">{</span><span class="n">Path</span><span class="p">(</span><span class="n">kickfile</span><span class="p">)</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+    <span class="n">kick</span> <span class="o">=</span> <span class="n">_load_json</span><span class="p">(</span><span class="n">kickfile</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">KICK_COLUMNS</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
+    <span class="n">data</span><span class="p">[</span><span class="n">LOCALTIME</span><span class="p">]</span> <span class="o">=</span> <span class="n">_jsontime_to_datetime</span><span class="p">(</span><span class="n">kick</span><span class="p">[</span><span class="s2">&quot;acquisitionTime&quot;</span><span class="p">])</span>
+    <span class="n">data</span><span class="p">[</span><span class="n">UTCTIME</span><span class="p">]</span> <span class="o">=</span> <span class="n">_local_to_utc</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">LOCALTIME</span><span class="p">])</span>
+    <span class="n">data</span><span class="p">[</span><span class="n">SDDS</span><span class="p">]</span> <span class="o">=</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;sddsFile&quot;</span><span class="p">]</span>
+    <span class="n">data</span><span class="p">[</span><span class="n">BEAM</span><span class="p">]</span> <span class="o">=</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;measurementEnvironment&quot;</span><span class="p">][</span><span class="s2">&quot;lhcBeam&quot;</span><span class="p">][</span><span class="s2">&quot;beamName&quot;</span><span class="p">]</span>
+    <span class="n">data</span><span class="p">[</span><span class="n">BEAMPROCESS</span><span class="p">]</span> <span class="o">=</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;measurementEnvironment&quot;</span><span class="p">][</span><span class="s2">&quot;environmentContext&quot;</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+    <span class="n">data</span><span class="p">[</span><span class="n">TURNS</span><span class="p">]</span> <span class="o">=</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;acqSettings&quot;</span><span class="p">][</span><span class="s2">&quot;capturedTurns&quot;</span><span class="p">]</span>
+    <span class="n">data</span><span class="p">[</span><span class="n">BUNCH</span><span class="p">]</span> <span class="o">=</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;acqSettings&quot;</span><span class="p">][</span><span class="s2">&quot;bunchSelection&quot;</span><span class="p">]</span>
+    <span class="n">data</span><span class="p">[</span><span class="n">OPTICS</span><span class="p">]</span> <span class="o">=</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;measurementEnvironment&quot;</span><span class="p">][</span><span class="s2">&quot;opticsModel&quot;</span><span class="p">][</span><span class="s2">&quot;opticName&quot;</span><span class="p">]</span>
+    <span class="n">data</span><span class="p">[</span><span class="n">OPTICS_URI</span><span class="p">]</span> <span class="o">=</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;measurementEnvironment&quot;</span><span class="p">][</span><span class="s2">&quot;opticsModel&quot;</span><span class="p">][</span><span class="s2">&quot;opticModelURI&quot;</span><span class="p">]</span>
+
+    <span class="n">three_d</span> <span class="o">=</span> <span class="s2">&quot;3D&quot;</span> <span class="ow">in</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;type&quot;</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">three_d</span><span class="p">:</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Kick is 3D Excitation, loading longitudinal kick settings&quot;</span><span class="p">)</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">TUNEX</span><span class="p">]</span> <span class="o">=</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;acDipoleSettings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;measuredTune&quot;</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">TUNEY</span><span class="p">]</span> <span class="o">=</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;acDipoleSettings&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;measuredTune&quot;</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">DRIVEN_TUNEX</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">TUNEX</span><span class="p">]</span> <span class="o">+</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;acDipoleSettings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;deltaTuneStart&quot;</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">DRIVEN_TUNEY</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">TUNEY</span><span class="p">]</span> <span class="o">+</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;acDipoleSettings&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;deltaTuneStart&quot;</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">DRIVEN_TUNEZ</span><span class="p">]</span> <span class="o">=</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationData&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;rfdata&quot;</span><span class="p">][</span><span class="s2">&quot;excitationFrequency&quot;</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">AMPX</span><span class="p">]</span> <span class="o">=</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;acDipoleSettings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;amplitude&quot;</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">AMPY</span><span class="p">]</span> <span class="o">=</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;acDipoleSettings&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;amplitude&quot;</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">AMPZ</span><span class="p">]</span> <span class="o">=</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;longitudinalRfSettings&quot;</span><span class="p">][</span><span class="s2">&quot;excitationAmplitude&quot;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Kick is 2D Excitation, longitudinal settings will be set as NaNs&quot;</span><span class="p">)</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">TUNEX</span><span class="p">]</span> <span class="o">=</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;measuredTune&quot;</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">TUNEY</span><span class="p">]</span> <span class="o">=</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;measuredTune&quot;</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">DRIVEN_TUNEX</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">TUNEX</span><span class="p">]</span> <span class="o">+</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;deltaTuneStart&quot;</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">DRIVEN_TUNEY</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">TUNEY</span><span class="p">]</span> <span class="o">+</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;deltaTuneStart&quot;</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">DRIVEN_TUNEZ</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">AMPX</span><span class="p">]</span> <span class="o">=</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;amplitude&quot;</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">AMPY</span><span class="p">]</span> <span class="o">=</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;amplitude&quot;</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">AMPZ</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span>
+
+    <span class="k">return</span> <span class="n">data</span></div>
+
+
+<span class="k">def</span> <span class="nf">_print_kickgroup_info</span><span class="p">(</span><span class="n">kicks_info</span><span class="p">:</span> <span class="n">TfsDataFrame</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Actually print the full info about the kickgroup.&quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">header</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">kicks_info</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">header</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="n">kicks_info</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">COLUMNS_TO_HEADERS</span><span class="p">)</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span>
+            <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">na_rep</span><span class="o">=</span><span class="s2">&quot; - &quot;</span><span class="p">,</span> <span class="n">justify</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span> <span class="n">formatters</span><span class="o">=</span><span class="n">_time_formatters</span><span class="p">()</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+
+
+<span class="c1"># Helper -----------------------------------------------------------------------</span>
+
+<span class="c1"># IO ---</span>
+
+
+<span class="k">def</span> <span class="nf">_load_json</span><span class="p">(</span><span class="n">jsonfile</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">jsonfile</span><span class="p">)</span><span class="o">.</span><span class="n">read_text</span><span class="p">())</span>
+
+
+<span class="c1"># Time ---</span>
+
+
+<span class="k">def</span> <span class="nf">_ts_to_datetime</span><span class="p">(</span><span class="n">ts</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">datetime</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcfromtimestamp</span><span class="p">(</span><span class="n">ts</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_jsontime_to_datetime</span><span class="p">(</span><span class="n">time_str</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">datetime</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">time_str</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">-%m-%y_%H-%M-%S&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_datetime_to_string</span><span class="p">(</span><span class="n">dt</span><span class="p">:</span> <span class="n">datetime</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;  %Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_time_formatters</span><span class="p">():</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">UTCTIME</span><span class="p">:</span> <span class="n">_datetime_to_string</span><span class="p">,</span> <span class="n">LOCALTIME</span><span class="p">:</span> <span class="n">_datetime_to_string</span><span class="p">}</span>
+
+
+<span class="k">def</span> <span class="nf">_utc_to_local</span><span class="p">(</span><span class="n">dt</span><span class="p">:</span> <span class="n">datetime</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">dt</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">tzinfo</span><span class="o">=</span><span class="n">tz</span><span class="o">.</span><span class="n">gettz</span><span class="p">(</span><span class="s2">&quot;UTC&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">astimezone</span><span class="p">(</span><span class="n">tz</span><span class="o">.</span><span class="n">gettz</span><span class="p">(</span><span class="s2">&quot;Europe/Paris&quot;</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">_local_to_utc</span><span class="p">(</span><span class="n">dt</span><span class="p">:</span> <span class="n">datetime</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">dt</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">tzinfo</span><span class="o">=</span><span class="n">tz</span><span class="o">.</span><span class="n">gettz</span><span class="p">(</span><span class="s2">&quot;Europe/Paris&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">astimezone</span><span class="p">(</span><span class="n">tz</span><span class="o">.</span><span class="n">gettz</span><span class="p">(</span><span class="s2">&quot;UTC&quot;</span><span class="p">))</span>
+
+
+<span class="c1"># Script Mode ------------------------------------------------------------------</span>
+
+
+<span class="k">def</span> <span class="nf">_get_args</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Parse Commandline Arguments.&quot;&quot;&quot;</span>
+    <span class="c1"># argparse is a bit weird: you need to create the normal parser</span>
+    <span class="c1"># AND a parent parser if you want to use the same arg in both subparsers.</span>
+    <span class="c1"># Using the main parser also as parent will result in `function` being</span>
+    <span class="c1"># always `None`.</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;KickGroups Functions&quot;</span><span class="p">)</span>
+    <span class="n">parent_parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
+    <span class="n">parent_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--root&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">KICKGROUPS_ROOT</span><span class="p">,</span>
+        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;root&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;KickGroups Root-Directory&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subparsers</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_subparsers</span><span class="p">(</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Functionality&quot;</span><span class="p">,</span>
+        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;function&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="c1"># ----- Full KickGroup Parser ----- #</span>
+    <span class="n">parser_kickgroups</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
+        <span class="s2">&quot;kickgroups&quot;</span><span class="p">,</span>
+        <span class="n">parents</span><span class="o">=</span><span class="p">[</span><span class="n">parent_parser</span><span class="p">],</span>
+        <span class="n">add_help</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;KickGroups&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;List all KickGroups&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser_kickgroups</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--sort&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;sort&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Sort KickGroups&quot;</span><span class="p">,</span>
+        <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="n">TIMESTAMP</span><span class="p">,</span> <span class="n">KICKGROUP</span><span class="p">],</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">TIMESTAMP</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="c1"># ---- KickGroup Info Parser ---- #</span>
+    <span class="n">parser_info</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
+        <span class="s2">&quot;kickgroup_info&quot;</span><span class="p">,</span>
+        <span class="n">parents</span><span class="o">=</span><span class="p">[</span><span class="n">parent_parser</span><span class="p">],</span>
+        <span class="n">add_help</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;KickGroup Info&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Show the info of a given KickGroup&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser_info</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;KickGroup name&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">options</span> <span class="o">=</span> <span class="n">_get_args</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">function</span> <span class="o">==</span> <span class="s2">&quot;kickgroups&quot;</span><span class="p">:</span>
+        <span class="n">list_available_kickgroups</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">sort</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">function</span> <span class="o">==</span> <span class="s2">&quot;kickgroup_info&quot;</span><span class="p">:</span>
+        <span class="n">kickgroup_info</span><span class="p">(</span><span class="n">kick_group</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

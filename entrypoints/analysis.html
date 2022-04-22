@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Analysis Tools &mdash; pylhc 0.5.0 documentation</title>
+  <title>Analysis Tools &mdash; pylhc 0.6.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -28,11 +28,11 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../index.html">
+            <a href="../index.html" class="icon icon-home"> pylhc
             <img src="../_static/omc_logo.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.5
+                0.6
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -53,6 +53,10 @@
 <li class="toctree-l2"><a class="reference internal" href="bpm_calibration.html#id1">BPM Calibration</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="kickgroups.html">KickGroup Informations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="kickgroups.html#kickgroups">Kickgroups</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="machine_info.html">Machine Information Tools</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="machine_info.html#print-machine-settings-overview">Print Machine Settings Overview</a></li>
 <li class="toctree-l2"><a class="reference internal" href="machine_info.html#bsrt-logger">BSRT logger</a></li>
@@ -69,6 +73,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../modules/constants.html">Constants Definitions</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../modules/constants.html#constants-general">Constants: General</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modules/constants.html#constants-forced-da-analysis">Constants: Forced DA Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/constants.html#constants-kickgroups">Constants: KickGroups</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modules/constants.html#constants-machine-settings-info">Constants: Machine Settings Info</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modules/constants.html#constants-bpm-calibration">Constants: BPM Calibration</a></li>
 </ul>
@@ -116,10 +121,10 @@
 <p>Top-level script to query BRST data, then perform an analysis and output the generated plots. The
 script runs through the following steps:
 - Processes the output files of <code class="docutils literal notranslate"><span class="pre">BSRT_logger.py</span></code> for a given timeframe, returns them in as a
-<cite>TfsDataFrame</cite> for further processing.
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> for further processing.
 - Additionally, plots for quick checks of fit parameters, auxiliary variables and beam evolution
 are generated.
-- If provided a <cite>TfsDataFrame</cite> file with timestamps, plots of the 2D distribution and comparison
+- If provided a <code class="xref py py-obj docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> file with timestamps, plots of the 2D distribution and comparison
 of fit parameters to cross sections are added.</p>
 </section>
 <span class="target" id="module-pylhc.forced_da_analysis"></span><section id="forced-da-analysis">
@@ -207,8 +212,8 @@ either from omc3 styles or default mpl.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pylhc.forced_da_analysis.BoolOrPathOrDataFrame">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pylhc.forced_da_analysis.</span></span><span class="sig-name descname"><span class="pre">BoolOrPathOrDataFrame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/forced_da_analysis.html#BoolOrPathOrDataFrame"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.forced_da_analysis.BoolOrPathOrDataFrame" title="Permalink to this definition"></a></dt>
-<dd><p>A class that behaves like a <cite>boolean</cite> when possible, otherwise like a <cite>Path</cite>, <cite>string</cite> or
-<cite>Dataframe</cite>.</p>
+<dd><p>A class that behaves like a <code class="xref py py-obj docutils literal notranslate"><span class="pre">boolean</span></code> when possible, otherwise like a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Path</span></code>, <a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">string</span></code></a> or
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">Dataframe</span></code>.</p>
 </dd></dl>
 
 <dl class="py attribute">
