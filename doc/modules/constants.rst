@@ -10,6 +10,10 @@ Constants Definitions
     :members:
 
 
+.. automodule:: pylhc.constants.kickgroups
+    :members:
+
+
 .. automodule:: pylhc.constants.machine_settings_info
     :members:
 

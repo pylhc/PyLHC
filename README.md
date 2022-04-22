@@ -37,6 +37,7 @@ To use those, you should make sure to install the relevant extra dependencies wi
 
 - `Forced DA Analysis` - Script to analyze forced DA. ([**forced_da_analysis.py**](pylhc/forced_da_analysis.py))
 - `Machine Settings Info` - Prints an overview over the machine settings at a given time. ([**machine_settings_info.py**](pylhc/machine_settings_info.py))
+- `KickGroup Information` - Get information about KickGroups. ([**kickgroups.py**](pylhc/kickgroups.py))
 - `BSRT Logger` and `BSRT Analysis` - Saves data coming straight from LHC BSRT FESA class and allows subsequent analysis. ([**bsrt_logger.py**](pylhc/bsrt_logger.py) & [**bsrt_analysis.py**](pylhc/bsrt_analysis.py) )
 - `BPM Calibration Factors` - Compute the BPM calibration factors using ballistic optics. Two methods are available: using the beta function and using the dispersion. ([**bpm_calibration.py**](pylhc/bpm_calibration.py))
 

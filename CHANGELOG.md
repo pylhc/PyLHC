@@ -1,5 +1,9 @@
 # pylhc Changelog
 
+## Version 0.6.0
+
+Added KickGroups functionality: load available kick groups in a folder, display their relevant information; and do the same for all kick files in a given kickgroup.
+
 ## Version 0.5.0
 
 Removed `irnl_rdt_correction`. Is now in https://github.com/pylhc/irnl_rdt_correction

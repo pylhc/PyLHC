@@ -17,6 +17,7 @@
 import pathlib
 import sys
 import warnings
+
 warnings.filterwarnings("ignore", message="numpy.dtype size changed")
 warnings.filterwarnings("ignore", message="numpy.ufunc size changed")
 
@@ -57,15 +58,25 @@ ABOUT_PYLHC = about_package(ABOUT_FILE)
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    "sphinx.ext.autodoc",
-    "sphinx.ext.doctest",
-    "sphinx.ext.todo",
-    "sphinx.ext.coverage",
-    "sphinx.ext.mathjax",
-    "sphinx.ext.viewcode",
-    "sphinx.ext.githubpages",
-    "sphinx.ext.napoleon",
+    "sphinx.ext.autodoc",  # Include documentation from docstrings
+    "sphinx.ext.coverage",  # Collect doc coverage stats
+    "sphinx.ext.doctest",  # Test snippets in the documentation
+    "sphinx.ext.githubpages",  # Publish HTML docs in GitHub Pages
+    "sphinx.ext.intersphinx",  # Link to other projects’ documentation
+    "sphinx.ext.mathjax",  # Render math via JavaScript
+    "sphinx.ext.napoleon",  # Support for NumPy and Google style docstrings
+    "sphinx.ext.todo",  # Support for todo items
+    "sphinx.ext.viewcode",  # Add links to highlighted source code
 ]
+
+# Config for the napoleon extension
+napoleon_numpy_docstring = False
+napoleon_include_init_with_doc = True
+napoleon_use_admonition_for_examples = True
+napoleon_use_admonition_for_notes = True
+napoleon_use_admonition_for_references = True
+napoleon_preprocess_types = True
+napoleon_attr_annotations = True
 
 # Add any paths that contain templates here, relative to this directory.
 # templates_path = ['_templates']
@@ -110,6 +121,10 @@ language = None
 # This patterns also effect to html_static_path and html_extra_path
 exclude_patterns = []
 
+# The reST default role (used for this markup: `text`) to use for all
+# documents.
+default_role = "obj"
+
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = "sphinx"
 
@@ -127,7 +142,7 @@ html_theme = "sphinx_rtd_theme"
 html_theme_options = {
     "collapse_navigation": False,
     "display_version": True,
-    "logo_only": True,
+    "logo_only": False,
     "navigation_depth": 2,
     "style_external_links": True,
 }
@@ -135,11 +150,11 @@ html_theme_options = {
 html_logo = "_static/img/omc_logo.svg"
 html_static_path = ["_static"]
 html_context = {
-    'display_github': True,
+    "display_github": True,
     # the following are only needed if :github_url: is not set
-    'github_user': author,
-    'github_repo': project,
-    'github_version': 'master/doc/',
+    "github_user": author,
+    "github_repo": project,
+    "github_version": "master/doc/",
 }
 html_css_files = ["css/custom.css"]
 
@@ -196,7 +211,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, "pylhc.tex", u"pyLHC Documentation", u"OMC-TEAM", "manual"),
+    (master_doc, "pylhc.tex", "pyLHC Documentation", "OMC-TEAM", "manual"),
 ]
 
 
@@ -204,7 +219,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, "pylhc", u"pyLHC Documentation", [author], 1)]
+man_pages = [(master_doc, "pylhc", "pyLHC Documentation", [author], 1)]
 
 
 # -- Options for Texinfo output -------------------------------------------
@@ -216,10 +231,41 @@ texinfo_documents = [
     (
         master_doc,
         "pylhc",
-        u"pyLHC Documentation",
+        "pyLHC Documentation",
         author,
         "OMC-TEAM",
         "One line description of project.",
         "Miscellaneous",
     ),
 ]
+
+# -- Autodoc Configuration ---------------------------------------------------
+
+# Add here all modules to be mocked up. When the dependencies are not met
+# at building time. Here used to have PyQT mocked.
+autodoc_mock_imports = [
+    "PyQt5",
+    "PyQt5.QtGui",
+    "PyQt5.QtCore",
+    "PyQt5.QtWidgets",
+    "matplotlib.backends.backend_qt5agg",
+    "pjlsa",
+    "pytimber",
+]
+
+# -- Instersphinx Configuration ----------------------------------------------
+
+# Example configuration for intersphinx: refer to the Python standard library.
+# use in refs e.g:
+# :ref:`comparison manual <python:comparisons>`
+intersphinx_mapping = {
+    "python": ("https://docs.python.org/3/", None),
+    "numpy": ("https://numpy.org/doc/stable/", None),
+    "pandas": ("https://pandas.pydata.org/pandas-docs/stable/", None),
+    "matplotlib": ("https://matplotlib.org/stable/", None),
+    "scipy": ("https://docs.scipy.org/doc/scipy/", None),
+    "tfs-pandas": ("https://pylhc.github.io/tfs/", None),
+    "tfs": ("https://pylhc.github.io/tfs/", None),
+    "omc3": ("https://pylhc.github.io/omc3/", None),
+    "cpymad": ("https://hibtc.github.io/cpymad/", None),
+}
