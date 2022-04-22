@@ -105,14 +105,14 @@ def list_available_kickgroups(by: str = TIMESTAMP, root: Union[Path, str] = KICK
         by (str): Column to sort the KickGroups by. Should be either the
             ``TIMESTAMP`` or ``KICKGROUP`` variable.
         root (Path): Alternative `~pathlib.Path` to the KickGroup folder. (Defaults
-            to the ``NFS`` path).
+            to the ``NFS`` path of our kickgroups).
         printout (bool): whether to print out the dataframe, defaults to `True`.
 
     Returns:
         A `~pandas.DataFrame` with the KickGroups loaded, sorted by the provided
         *by* parameter.
     """
-    kickgroup_paths = get_all_json_files(root)
+    kickgroup_paths = get_folder_json_files(root)
     df_info = DataFrame(index=range(len(kickgroup_paths)), columns=KICK_GROUP_COLUMNS)
     for idx, kick_group in enumerate(kickgroup_paths):
         data = load_json(kick_group)
@@ -128,8 +128,17 @@ def list_available_kickgroups(by: str = TIMESTAMP, root: Union[Path, str] = KICK
     return df_info
 
 
-def get_all_json_files(root: Union[Path, str] = KICKGROUPS_ROOT) -> List[Path]:
-    """Returns a list of all json files in the folder."""
+def get_folder_json_files(root: Union[Path, str] = KICKGROUPS_ROOT) -> List[Path]:
+    """Returns a list of all **.json** files in the folder.
+
+    Args:
+        root (Union[Path, str])): the path to the folder. (Defaults
+            to the ``NFS`` path of our kickgroups).
+
+    Returns:
+        A `list` of `~pathlib.Path` objects to all **json** files within the provided
+        *root* parameter.
+    """
     return list(Path(root).glob("*.json"))
 
 
