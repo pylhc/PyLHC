@@ -297,9 +297,9 @@ def _get_plane_index(data: List[dict], plane: str):
     """Find the index for the given plane in the data list.
     This is necessary as they are not always in X,Y order.
     """
-    name_map = {'X': 'HORIZONTAL', 'Y': 'VERTICAL'}
+    name = {'X': 'HORIZONTAL', 'Y': 'VERTICAL'}[plane]
     for idx, entry in enumerate(data):
-        if entry['plane'] == name_map[plane]:
+        if entry['plane'] == name:
             return idx
     else:
         raise ValueError(f"Plane '{plane}' not found in data.")
