@@ -62,6 +62,7 @@ import numpy as np
 import pandas as pd
 
 from dateutil import tz
+from omc3.utils import logging_tools
 from pandas import DataFrame
 from tfs import TfsDataFrame
 
@@ -94,6 +95,8 @@ from pylhc.constants.kickgroups import (
 
 # fmt: on
 
+LOG = logging_tools.get_logger(__name__)
+
 # List Kickgroups --------------------------------------------------------------
 
 
@@ -112,9 +115,11 @@ def list_available_kickgroups(by: str = TIMESTAMP, root: Union[Path, str] = KICK
         A `~pandas.DataFrame` with the KickGroups loaded, sorted by the provided
         *by* parameter.
     """
+    LOG.info(f"Listing KickGroups in '{Path(root).absolute()}'")
     kickgroup_paths = get_folder_json_files(root)
     df_info = DataFrame(index=range(len(kickgroup_paths)), columns=KICK_GROUP_COLUMNS)
     for idx, kick_group in enumerate(kickgroup_paths):
+        LOG.debug(f"Loading kickgroup info from '{kick_group.absolute()}'")
         data = _load_json(kick_group)
         df_info.loc[idx, KICKGROUP] = data["groupName"]
         df_info.loc[idx, TIMESTAMP] = data["groupCreationTime"]
@@ -123,6 +128,7 @@ def list_available_kickgroups(by: str = TIMESTAMP, root: Union[Path, str] = KICK
     df_info = df_info.sort_values(by=by).set_index(TIMESTAMP)
 
     if printout:
+        LOG.info(f"Here is information about the loaded KickGroups")
         print(df_info.to_string(index=False, formatters=_time_formatters(), justify="center"))
 
     return df_info
@@ -139,6 +145,7 @@ def get_folder_json_files(root: Union[Path, str] = KICKGROUPS_ROOT) -> List[Path
         A `list` of `~pathlib.Path` objects to all **json** files within the provided
         *root* parameter.
     """
+    LOG.debug(f"Globing for JSON files in {Path(root).absolute()}''")
     return list(Path(root).glob("*.json"))
 
 
@@ -159,6 +166,7 @@ def kickgroup_info(kick_group: str, root: Union[Path, str] = KICKGROUPS_ROOT, pr
     Returns:
         A `~tfs.TfsDataFrame` with the KickGroup information loaded.
     """
+    LOG.info(f"Loading info from all KickFiles in KickGroup '{kick_group}'")
     kick_group_data = _load_json(Path(root) / f"{kick_group}.json")
     kicks_files = kick_group_data["jsonFiles"]
     df_info = TfsDataFrame(index=range(len(kicks_files)), columns=KICK_COLUMNS, headers={KICKGROUP: kick_group})
@@ -187,6 +195,7 @@ def load_kickfile(kickfile: Union[Path, str]) -> pd.Series:
         *kickfile*. The various entries in the Series are defined in `pylhc.constants.kickgroups`
         as ``KICK_COLUMNS``.
     """
+    LOG.debug(f"Loading kick information from Kickfile at '{Path(kickfile).absolute()}'")
     kick = _load_json(kickfile)
     data = pd.Series(index=KICK_COLUMNS, dtype=object)
     data[LOCALTIME] = _jsontime_to_datetime(kick["acquisitionTime"])
@@ -202,6 +211,7 @@ def load_kickfile(kickfile: Union[Path, str]) -> pd.Series:
     three_d = "3D" in kick["excitationSettings"][0]["type"]
 
     if three_d:
+        LOG.debug("Kick is 3D Excitation, loading longitudinal kick settings")
         data[TUNEX] = kick["excitationSettings"][0]["acDipoleSettings"][0]["measuredTune"]
         data[TUNEY] = kick["excitationSettings"][0]["acDipoleSettings"][1]["measuredTune"]
         data[DRIVEN_TUNEX] = data[TUNEX] + kick["excitationSettings"][0]["acDipoleSettings"][0]["deltaTuneStart"]
@@ -211,6 +221,7 @@ def load_kickfile(kickfile: Union[Path, str]) -> pd.Series:
         data[AMPY] = kick["excitationSettings"][0]["acDipoleSettings"][1]["amplitude"]
         data[AMPZ] = kick["excitationSettings"][0]["longitudinalRfSettings"]["excitationAmplitude"]
     else:
+        LOG.debug(f"Kick is 2D Excitation, longitudinal settings will be set as NaNs")
         data[TUNEX] = kick["excitationSettings"][0]["measuredTune"]
         data[TUNEY] = kick["excitationSettings"][1]["measuredTune"]
         data[DRIVEN_TUNEX] = data[TUNEX] + kick["excitationSettings"][0]["deltaTuneStart"]
