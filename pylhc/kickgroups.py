@@ -171,6 +171,9 @@ def kickgroup_info(kick_group: str, root: Union[Path, str] = KICKGROUPS_ROOT, pr
     kicks_files = kick_group_data["jsonFiles"]
     df_info = TfsDataFrame(index=range(len(kicks_files)), columns=KICK_COLUMNS, headers={KICKGROUP: kick_group})
 
+    if not len(kicks_files):
+        raise FileNotFoundError(f"KickGroup {kick_group} contains no kicks.")
+
     for idx, kf in enumerate(kicks_files):
         df_info.loc[idx, :] = load_kickfile(kf)
 
@@ -212,23 +215,29 @@ def load_kickfile(kickfile: Union[Path, str]) -> pd.Series:
 
     if three_d:
         LOG.debug("Kick is 3D Excitation, loading longitudinal kick settings")
-        data[TUNEX] = kick["excitationSettings"][0]["acDipoleSettings"][0]["measuredTune"]
-        data[TUNEY] = kick["excitationSettings"][0]["acDipoleSettings"][1]["measuredTune"]
-        data[DRIVEN_TUNEX] = data[TUNEX] + kick["excitationSettings"][0]["acDipoleSettings"][0]["deltaTuneStart"]
-        data[DRIVEN_TUNEY] = data[TUNEY] + kick["excitationSettings"][0]["acDipoleSettings"][1]["deltaTuneStart"]
+        idx = _get_plane_index(kick["excitationSettings"][0]["acDipoleSettings"], "X")
+        idy = _get_plane_index(kick["excitationSettings"][0]["acDipoleSettings"], "Y")
+
+        data[TUNEX] = kick["excitationSettings"][0]["acDipoleSettings"][idx]["measuredTune"]
+        data[TUNEY] = kick["excitationSettings"][0]["acDipoleSettings"][idy]["measuredTune"]
+        data[DRIVEN_TUNEX] = data[TUNEX] + kick["excitationSettings"][0]["acDipoleSettings"][idx]["deltaTuneStart"]
+        data[DRIVEN_TUNEY] = data[TUNEY] + kick["excitationSettings"][0]["acDipoleSettings"][idy]["deltaTuneStart"]
         data[DRIVEN_TUNEZ] = kick["excitationData"][0]["rfdata"]["excitationFrequency"]
-        data[AMPX] = kick["excitationSettings"][0]["acDipoleSettings"][0]["amplitude"]
-        data[AMPY] = kick["excitationSettings"][0]["acDipoleSettings"][1]["amplitude"]
+        data[AMPX] = kick["excitationSettings"][0]["acDipoleSettings"][idx]["amplitude"]
+        data[AMPY] = kick["excitationSettings"][0]["acDipoleSettings"][idy]["amplitude"]
         data[AMPZ] = kick["excitationSettings"][0]["longitudinalRfSettings"]["excitationAmplitude"]
     else:
         LOG.debug(f"Kick is 2D Excitation, longitudinal settings will be set as NaNs")
-        data[TUNEX] = kick["excitationSettings"][0]["measuredTune"]
-        data[TUNEY] = kick["excitationSettings"][1]["measuredTune"]
-        data[DRIVEN_TUNEX] = data[TUNEX] + kick["excitationSettings"][0]["deltaTuneStart"]
-        data[DRIVEN_TUNEY] = data[TUNEY] + kick["excitationSettings"][1]["deltaTuneStart"]
+        idx = _get_plane_index(kick["excitationSettings"], "X")
+        idy = _get_plane_index(kick["excitationSettings"], "Y")
+
+        data[TUNEX] = kick["excitationSettings"][idx]["measuredTune"]
+        data[TUNEY] = kick["excitationSettings"][idy]["measuredTune"]
+        data[DRIVEN_TUNEX] = data[TUNEX] + kick["excitationSettings"][idx]["deltaTuneStart"]
+        data[DRIVEN_TUNEY] = data[TUNEY] + kick["excitationSettings"][idy]["deltaTuneStart"]
         data[DRIVEN_TUNEZ] = np.NaN
-        data[AMPX] = kick["excitationSettings"][0]["amplitude"]
-        data[AMPY] = kick["excitationSettings"][1]["amplitude"]
+        data[AMPX] = kick["excitationSettings"][idx]["amplitude"]
+        data[AMPY] = kick["excitationSettings"][idy]["amplitude"]
         data[AMPZ] = np.NaN
 
     return data
@@ -280,6 +289,20 @@ def _utc_to_local(dt: datetime):
 
 def _local_to_utc(dt: datetime):
     return dt.replace(tzinfo=tz.gettz("Europe/Paris")).astimezone(tz.gettz("UTC"))
+
+
+# Other ---
+
+def _get_plane_index(data: List[dict], plane: str):
+    """Find the index for the given plane in the data list.
+    This is necessary as they are not always in X,Y order.
+    """
+    name_map = {'X': 'HORIZONTAL', 'Y': 'VERTICAL'}
+    for idx, entry in enumerate(data):
+        if entry['plane'] == name_map[plane]:
+            return idx
+    else:
+        raise ValueError(f"Plane '{plane}' not found in data.")
 
 
 # Script Mode ------------------------------------------------------------------
