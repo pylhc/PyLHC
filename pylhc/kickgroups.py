@@ -145,24 +145,33 @@ def get_folder_json_files(root: Union[Path, str] = KICKGROUPS_ROOT) -> List[Path
 # Kickgroup Info ---------------------------------------------------------------
 
 
-def kickgroup_info(kick_group: str, root: Union[Path, str] = KICKGROUPS_ROOT) -> TfsDataFrame:
-    """Gather all important info about the KickGroup into a TfsDataFrame and print it.
+def kickgroup_info(kick_group: str, root: Union[Path, str] = KICKGROUPS_ROOT, printout: bool = True) -> TfsDataFrame:
+    """
+    Gather all important info about the KickGroup into a `~tfs.TfsDataFrame` and print it.
 
     Args:
-        kick_group (str): KickGroup name.
-        root (Path): Alternative path to the KickGroup folder.
-                     (Default is set to nfs-path)
+        kick_group (str): the KickGroup name, corresponds to the kickgroup file name without
+            the ``.json`` extension.
+        root (Path): Alternative `~pathlib.Path` to the KickGroup folder. (Defaults
+            to the ``NFS`` path of our kickgroups).
+        printout (bool): whether to print out the dataframe, defaults to `True`.
+
+    Returns:
+        A `~tfs.TfsDataFrame` with the KickGroup information loaded.
     """
     kick_group_data = load_json(Path(root) / f"{kick_group}.json")
     kicks_files = kick_group_data["jsonFiles"]
     df_info = TfsDataFrame(index=range(len(kicks_files)), columns=KICK_COLUMNS, headers={KICKGROUP: kick_group})
+
     for idx, kf in enumerate(kicks_files):
         df_info.loc[idx, :] = load_kickfile(kf)
 
     for column in COLUMNS_TO_HEADERS:
         df_info.headers[column] = df_info[column][0]
 
-    _print_kickgroup_info(df_info)
+    if printout:
+        _print_kickgroup_info(df_info)
+
     return df_info
 
 
