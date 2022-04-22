@@ -115,7 +115,7 @@ def list_available_kickgroups(by: str = TIMESTAMP, root: Union[Path, str] = KICK
         A `~pandas.DataFrame` with the KickGroups loaded, sorted by the provided
         *by* parameter.
     """
-    LOG.info(f"Listing KickGroups in '{Path(root).absolute()}'")
+    LOG.debug(f"Listing KickGroups in '{Path(root).absolute()}'")
     kickgroup_paths = get_folder_json_files(root)
     df_info = DataFrame(index=range(len(kickgroup_paths)), columns=KICK_GROUP_COLUMNS)
     for idx, kick_group in enumerate(kickgroup_paths):
@@ -128,7 +128,7 @@ def list_available_kickgroups(by: str = TIMESTAMP, root: Union[Path, str] = KICK
     df_info = df_info.sort_values(by=by).set_index(TIMESTAMP)
 
     if printout:
-        LOG.info(f"Here is information about the loaded KickGroups")
+        LOG.debug(f"Here is information about the loaded KickGroups")
         print(df_info.to_string(index=False, formatters=_time_formatters(), justify="center"))
 
     return df_info
@@ -166,7 +166,7 @@ def kickgroup_info(kick_group: str, root: Union[Path, str] = KICKGROUPS_ROOT, pr
     Returns:
         A `~tfs.TfsDataFrame` with the KickGroup information loaded.
     """
-    LOG.info(f"Loading info from all KickFiles in KickGroup '{kick_group}'")
+    LOG.debug(f"Loading info from all KickFiles in KickGroup '{kick_group}'")
     kick_group_data = _load_json(Path(root) / f"{kick_group}.json")
     kicks_files = kick_group_data["jsonFiles"]
     df_info = TfsDataFrame(index=range(len(kicks_files)), columns=KICK_COLUMNS, headers={KICKGROUP: kick_group})
@@ -299,11 +299,7 @@ def _get_args():
     subparsers = parser.add_subparsers(title="Functionality", dest="function")
     # ----- Full KickGroup Parser ----- #
     parser_kickgroups = subparsers.add_parser(
-        "kickgroups",
-        parents=[parent_parser],
-        add_help=False,
-        description="KickGroups",
-        help="List all KickGroups"
+        "kickgroups", parents=[parent_parser], add_help=False, description="KickGroups", help="List all KickGroups"
     )
     parser_kickgroups.add_argument(
         "--sort",
