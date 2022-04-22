@@ -53,24 +53,49 @@ Function ``kickgroup_info``:
 """
 import argparse
 import json
+
 from datetime import datetime
 from pathlib import Path
-from typing import Union, List
+from typing import List, Union
 
 import numpy as np
 import pandas as pd
+
 from dateutil import tz
 from pandas import DataFrame
 from tfs import TfsDataFrame
 
+# fmt: off
 from pylhc.constants.kickgroups import (
-    KICKGROUPS_ROOT, KICKGROUP, SDDS, TURNS, BUNCH, UTCTIME, TIMESTAMP, LOCALTIME, TUNEX,
-    TUNEY, DRIVEN_TUNEX, DRIVEN_TUNEY, DRIVEN_TUNEZ, AMPX, AMPY, AMPZ, OPTICS, OPTICS_URI,
-    BEAMPROCESS, BEAM, KICK_COLUMNS, COLUMNS_TO_HEADERS, KICK_GROUP_COLUMNS
+    AMPX,
+    AMPY,
+    AMPZ,
+    BEAM,
+    BEAMPROCESS,
+    BUNCH,
+    COLUMNS_TO_HEADERS,
+    DRIVEN_TUNEX,
+    DRIVEN_TUNEY,
+    DRIVEN_TUNEZ,
+    KICK_COLUMNS,
+    KICK_GROUP_COLUMNS,
+    KICKGROUP,
+    KICKGROUPS_ROOT,
+    LOCALTIME,
+    OPTICS,
+    OPTICS_URI,
+    SDDS,
+    TIMESTAMP,
+    TUNEX,
+    TUNEY,
+    TURNS,
+    UTCTIME,
 )
 
+# fmt: on
 
 # List Kickgroups --------------------------------------------------------------
+
 
 def kickgroups(by=TIMESTAMP, root: Union[Path, str] = KICKGROUPS_ROOT) -> DataFrame:
     """List all available KickGroups in `root` with optional sorting..
@@ -86,13 +111,12 @@ def kickgroups(by=TIMESTAMP, root: Union[Path, str] = KICKGROUPS_ROOT) -> DataFr
     df_info = DataFrame(index=range(len(kickgroup_paths)), columns=KICK_GROUP_COLUMNS)
     for idx, kick_group in enumerate(kickgroup_paths):
         data = load_json(kick_group)
-        df_info.loc[idx, KICKGROUP] = data['groupName']
-        df_info.loc[idx, TIMESTAMP] = data['groupCreationTime']
+        df_info.loc[idx, KICKGROUP] = data["groupName"]
+        df_info.loc[idx, TIMESTAMP] = data["groupCreationTime"]
         df_info.loc[idx, UTCTIME] = ts_to_datetime(df_info.loc[idx, TIMESTAMP])
         df_info.loc[idx, LOCALTIME] = utc_to_local(df_info.loc[idx, UTCTIME])
     df_info = df_info.sort_values(by=by).set_index(TIMESTAMP)
-    print(df_info.to_string(index=False, formatters=time_formatters(),
-                            justify="center"))
+    print(df_info.to_string(index=False, formatters=time_formatters(), justify="center"))
     return df_info
 
 
@@ -103,8 +127,9 @@ def get_all_json_files(root: Union[Path, str] = KICKGROUPS_ROOT) -> List[Path]:
 
 # Kickgroup Info ---------------------------------------------------------------
 
+
 def kickgroup_info(kick_group: str, root: Union[Path, str] = KICKGROUPS_ROOT) -> TfsDataFrame:
-    """ Gather all important info about the KickGroup into a TfsDataFrame and print it.
+    """Gather all important info about the KickGroup into a TfsDataFrame and print it.
 
     Args:
         kick_group (str): KickGroup name.
@@ -171,8 +196,10 @@ def _print_kickgroup_info(kicks_info: TfsDataFrame):
     for header, value in kicks_info.headers.items():
         print(f"{header}: {value}")
     print()
-    print(kicks_info.drop(columns=COLUMNS_TO_HEADERS).to_string(
-        index=False, na_rep=" - ", justify="center", formatters=time_formatters())
+    print(
+        kicks_info.drop(columns=COLUMNS_TO_HEADERS).to_string(
+            index=False, na_rep=" - ", justify="center", formatters=time_formatters()
+        )
     )
 
 
@@ -180,14 +207,16 @@ def _print_kickgroup_info(kicks_info: TfsDataFrame):
 
 # IO ---
 
+
 def load_json(jsonfile: Union[Path, str]) -> dict:
     return json.loads(Path(jsonfile).read_text())
 
 
 # Time ---
 
+
 def ts_to_datetime(ts: int) -> datetime:
-    return datetime.utcfromtimestamp(ts/1000)
+    return datetime.utcfromtimestamp(ts / 1000)
 
 
 def jsontime_to_datetime(time_str: str) -> datetime:
@@ -203,14 +232,15 @@ def time_formatters():
 
 
 def utc_to_local(dt: datetime):
-    return dt.replace(tzinfo=tz.gettz('UTC')).astimezone(tz.gettz("Europe/Paris"))
+    return dt.replace(tzinfo=tz.gettz("UTC")).astimezone(tz.gettz("Europe/Paris"))
 
 
 def local_to_utc(dt: datetime):
-    return dt.replace(tzinfo=tz.gettz('Europe/Paris')).astimezone(tz.gettz("UTC"))
+    return dt.replace(tzinfo=tz.gettz("Europe/Paris")).astimezone(tz.gettz("UTC"))
 
 
 # Script Mode ------------------------------------------------------------------
+
 
 def get_args():
     """Parse Commandline Arguments."""
@@ -220,38 +250,33 @@ def get_args():
     # always `None`.
     parser = argparse.ArgumentParser(description="KickGroups Functions")
     parent_parser = argparse.ArgumentParser()
-    parent_parser.add_argument("--root",
-                               type=str,
-                               required=False,
-                               default=KICKGROUPS_ROOT,
-                               dest="root",
-                               help="KickGroups Root-Directory")
+    parent_parser.add_argument(
+        "--root", type=str, required=False, default=KICKGROUPS_ROOT, dest="root", help="KickGroups Root-Directory"
+    )
     subparsers = parser.add_subparsers(title="Functionality", dest="function")
-    parser_kickgroups = subparsers.add_parser("kickgroups",
-                                              parents=[parent_parser],
-                                              add_help=False,
-                                              description="KickGroups",
-                                              help="List all KickGroups")
-    parser_kickgroups.add_argument("--sort",
-                                   type=str,
-                                   dest="sort",
-                                   help="Sort KickGroups",
-                                   choices=[TIMESTAMP, KICKGROUP],
-                                   default=TIMESTAMP,
-                                   )
-    parser_info = subparsers.add_parser("kickgroup_info",
-                                        parents=[parent_parser],
-                                        add_help=False,
-                                        description="KickGroup Info",
-                                        help="Show the info of a given KickGroup")
-    parser_info.add_argument("name",
-                             type=str,
-                             help="KickGroup name"
-                             )
+    parser_kickgroups = subparsers.add_parser(
+        "kickgroups", parents=[parent_parser], add_help=False, description="KickGroups", help="List all KickGroups"
+    )
+    parser_kickgroups.add_argument(
+        "--sort",
+        type=str,
+        dest="sort",
+        help="Sort KickGroups",
+        choices=[TIMESTAMP, KICKGROUP],
+        default=TIMESTAMP,
+    )
+    parser_info = subparsers.add_parser(
+        "kickgroup_info",
+        parents=[parent_parser],
+        add_help=False,
+        description="KickGroup Info",
+        help="Show the info of a given KickGroup",
+    )
+    parser_info.add_argument("name", type=str, help="KickGroup name")
     return parser.parse_args()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     options = get_args()
     if options.function == "kickgroups":
         kickgroups(by=options.sort, root=options.root)
