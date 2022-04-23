@@ -39,16 +39,19 @@ Function ``info``:
 
 .. code-block:: none
 
-    usage: kickgroups.py info [-h] [--root ROOT] group
+    usage: kickgroups.py info [-h] [--root ROOT] [--files FILES] group
 
     KickGroup Info
 
     positional arguments:
-      group         KickGroup name
+      group                 KickGroup name
 
     optional arguments:
-      -h, --help   show this help message and exit
-      --root ROOT  KickGroups Root-Directory
+      -h, --help            show this help message and exit
+      --root ROOT           KickGroups Root-Directory
+      --files FILES, -f FILES
+                            Show the path to the sdds files only.
+
 
 """
 import argparse
