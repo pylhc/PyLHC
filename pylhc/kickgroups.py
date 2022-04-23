@@ -152,16 +152,15 @@ def get_folder_json_files(root: Union[Path, str] = KICKGROUPS_ROOT) -> List[Path
 # Kickgroup Info ---------------------------------------------------------------
 
 
-def kickgroup_info(kick_group: str, root: Union[Path, str] = KICKGROUPS_ROOT, printout: bool = True) -> TfsDataFrame:
+def get_kickgroup_info(kick_group: str, root: Union[Path, str] = KICKGROUPS_ROOT) -> TfsDataFrame:
     """
-    Gather all important info about the KickGroup into a `~tfs.TfsDataFrame` and print it.
+    Gather all important info about the KickGroup into a `~tfs.TfsDataFrame`.
 
     Args:
         kick_group (str): the KickGroup name, corresponds to the kickgroup file name without
             the ``.json`` extension.
         root (Path): Alternative `~pathlib.Path` to the KickGroup folder. (Defaults
             to the ``NFS`` path of our kickgroups).
-        printout (bool): whether to print out the dataframe, defaults to `True`.
 
     Returns:
         A `~tfs.TfsDataFrame` with the KickGroup information loaded.
@@ -179,9 +178,6 @@ def kickgroup_info(kick_group: str, root: Union[Path, str] = KICKGROUPS_ROOT, pr
 
     for column in COLUMNS_TO_HEADERS:
         df_info.headers[column] = df_info[column][0]
-
-    if printout:
-        _print_kickgroup_info(df_info)
 
     return df_info
 
@@ -243,8 +239,31 @@ def load_kickfile(kickfile: Union[Path, str]) -> pd.Series:
     return data
 
 
-def _print_kickgroup_info(kicks_info: TfsDataFrame):
-    """Actually print the full info about the kickgroup."""
+# Functions with console output ---
+
+# Full Info -
+
+def show_kickgroup_info(kick_group: str, root: Union[Path, str] = KICKGROUPS_ROOT):
+    """ Wrapper around :func:`pylhc.kickgroups.get_kickgroup_info`,
+    gathering the info and printing it to console.
+
+    Args:
+        kick_group (str): the KickGroup name, corresponds to the kickgroup file name without
+            the ``.json`` extension.
+        root (Path): Alternative `~pathlib.Path` to the KickGroup folder. (Defaults
+            to the ``NFS`` path of our kickgroups).
+    """
+    kicks_info = get_kickgroup_info(kick_group, root)
+    print_kickgroup_info(kicks_info)
+
+
+def print_kickgroup_info(kicks_info: TfsDataFrame):
+    """Print the full info about the kickgroup.
+
+    Args:
+        kicks_info (TfsDataFrame): Gathered Kickgroup data.
+
+    """
     for header, value in kicks_info.headers.items():
         print(f"{header}: {value}")
     print()
@@ -255,17 +274,60 @@ def _print_kickgroup_info(kicks_info: TfsDataFrame):
     )
 
 
+# Files only -
+
+def show_kickgroup_files(kick_group: str, nfiles: int = None, root: Union[Path, str] = KICKGROUPS_ROOT):
+    """ Wrapper around :func:`pylhc.kickgroups.get_kickgroup_info`,
+    gathering the info and printing only the sdds-filepaths to console.
+
+    Args:
+        kick_group (str): the KickGroup name, corresponds to the kickgroup file name without
+            the ``.json`` extension.
+        nfiles (int): Number of files to show. Use negative values for the last nfiles.
+                      A value of zero or None means all files in the group.
+        root (Path): Alternative `~pathlib.Path` to the KickGroup folder. (Defaults
+            to the ``NFS`` path of our kickgroups).
+    """
+    kicks_info = get_kickgroup_info(kick_group, root)
+    print_kickgroup_files(kicks_info, nfiles=nfiles)
+
+
+def print_kickgroup_files(kicks_info: TfsDataFrame, nfiles: int = None):
+    """Print the files in the kickgroup as space-separated quoted strings.
+
+    Args:
+        kicks_info (TfsDataFrame): Gathered Kickgroup data.
+        nfiles (int): Number of files to show. Use negative values for the last nfiles.
+                      A value of zero or None means all files in the group.
+
+    """
+    kickgroup = kicks_info.headers[KICKGROUP]
+    nfiles_total = len(kicks_info.index)
+
+    nfiles_str = "all files"
+    if nfiles is None or nfiles == 0:
+        element_slice = slice(None, None)
+    else:
+        nfiles_str = f"{'last ' if nfiles < 0 else ''}{abs(nfiles)} file(s)"
+        if abs(nfiles) > nfiles_total:
+            LOG.warning(f"You requested a total of {abs(nfiles)} files to print"
+                        f" but there are only {nfiles_total} kicks in {kickgroup}.")
+            nfiles = nfiles_total
+        element_slice = slice(nfiles) if nfiles > 0 else slice(nfiles, None)
+
+    print(f"Kickgroup {kicks_info.headers[KICKGROUP]}, {nfiles_str}:")
+    print(" ".join([f'"{s}"' for s in kicks_info[SDDS][element_slice]]))
+
+
 # Helper -----------------------------------------------------------------------
 
 # IO ---
-
 
 def _load_json(jsonfile: Union[Path, str]) -> dict:
     return json.loads(Path(jsonfile).read_text())
 
 
 # Time ---
-
 
 def _ts_to_datetime(ts: int) -> datetime:
     return datetime.utcfromtimestamp(ts / 1000)
@@ -358,6 +420,12 @@ def _get_args():
         type=str,
         help="KickGroup name",
     )
+    parser_info.add_argument(
+        "--files", "-f",
+        dest="files",
+        type=int,
+        help="Show the path to the sdds files only.",
+    )
     return parser.parse_args()
 
 
@@ -367,4 +435,7 @@ if __name__ == "__main__":
         list_available_kickgroups(by=options.sort, root=options.root)
 
     if options.function == "info":
-        kickgroup_info(kick_group=options.group, root=options.root)
+        if options.files is None:
+            show_kickgroup_info(kick_group=options.group, root=options.root)
+        else:
+            show_kickgroup_files(kick_group=options.group, root=options.root, nfiles=options.files)
