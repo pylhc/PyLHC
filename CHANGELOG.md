@@ -1,6 +1,6 @@
 # pylhc Changelog
 
-## Version 0.6.1
+## Version 0.6.2
 
 Added a flag to the `info` functionality of `pylhc.kickgroups` to display a copy-pastable list of kick files for the GUI to load at once.
 
