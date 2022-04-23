@@ -50,9 +50,11 @@ Function ``info``:
       -h, --help            show this help message and exit
       --root ROOT           KickGroups Root-Directory
       --files FILES, -f FILES
-                            Show the path to the sdds files only.
-
-
+                            Optional integer. If a value is given, only show the path
+                            to *files* SDDS files from the group. Use negative values
+                            to show the last files (most recent kicks), positive
+                            values for the first ones. A value of zero means showing
+                            all files in the group.
 """
 import argparse
 import json
@@ -438,7 +440,10 @@ def _get_args():
         "-f",
         dest="files",
         type=int,
-        help="Show the path to the sdds files only.",
+        nargs="?",
+        help="Optional integer. If a value is given, only show the path to *files* SDDS files from the group. "
+        "Use negative values to show the last files (most recent kicks), positive values for the first ones. "
+        "A value of zero means showing all files in the group.",
     )
     return parser.parse_args()
 
