@@ -110,7 +110,7 @@ def list_available_kickgroups(by: str = TIMESTAMP, root: Union[Path, str] = KICK
     Args:
         by (str): Column to sort the KickGroups by. Should be either the
             ``TIMESTAMP`` or ``KICKGROUP`` variable.
-        root (Path): Alternative `~pathlib.Path` to the KickGroup folder. (Defaults
+        root (pathlib.Path): Alternative `~pathlib.Path` to the KickGroup folder. (Defaults
             to the ``NFS`` path of our kickgroups).
         printout (bool): whether to print out the dataframe, defaults to `True`.
 
@@ -162,7 +162,7 @@ def get_kickgroup_info(kick_group: str, root: Union[Path, str] = KICKGROUPS_ROOT
     Args:
         kick_group (str): the KickGroup name, corresponds to the kickgroup file name without
             the ``.json`` extension.
-        root (Path): Alternative `~pathlib.Path` to the KickGroup folder. (Defaults
+        root (pathlib.Path): Alternative `~pathlib.Path` to the KickGroup folder. (Defaults
             to the ``NFS`` path of our kickgroups).
 
     Returns:
@@ -246,26 +246,28 @@ def load_kickfile(kickfile: Union[Path, str]) -> pd.Series:
 
 # Full Info -
 
-def show_kickgroup_info(kick_group: str, root: Union[Path, str] = KICKGROUPS_ROOT):
-    """ Wrapper around :func:`pylhc.kickgroups.get_kickgroup_info`,
-    gathering the info and printing it to console.
+
+def show_kickgroup_info(kick_group: str, root: Union[Path, str] = KICKGROUPS_ROOT) -> None:
+    """
+    Wrapper around `~pylhc.kickgroups.get_kickgroup_info`, gathering the relevant
+    information from the kick files in the group and printing it to console.
 
     Args:
         kick_group (str): the KickGroup name, corresponds to the kickgroup file name without
             the ``.json`` extension.
-        root (Path): Alternative `~pathlib.Path` to the KickGroup folder. (Defaults
+        root (pathlib.Path): Alternative `~pathlib.Path` to the KickGroup folder. (Defaults
             to the ``NFS`` path of our kickgroups).
     """
     kicks_info = get_kickgroup_info(kick_group, root)
-    print_kickgroup_info(kicks_info)
+    _print_kickgroup_info(kicks_info)
 
 
-def print_kickgroup_info(kicks_info: TfsDataFrame):
-    """Print the full info about the kickgroup.
+def _print_kickgroup_info(kicks_info: TfsDataFrame) -> None:
+    """
+    Print the full info about the kickgroup.
 
     Args:
         kicks_info (TfsDataFrame): Gathered Kickgroup data.
-
     """
     for header, value in kicks_info.headers.items():
         print(f"{header}: {value}")
@@ -279,8 +281,9 @@ def print_kickgroup_info(kicks_info: TfsDataFrame):
 
 # Files only -
 
-def show_kickgroup_files(kick_group: str, nfiles: int = None, root: Union[Path, str] = KICKGROUPS_ROOT):
-    """ Wrapper around :func:`pylhc.kickgroups.get_kickgroup_info`,
+
+def show_kickgroup_files(kick_group: str, nfiles: int = None, root: Union[Path, str] = KICKGROUPS_ROOT) -> None:
+    """Wrapper around :func:`pylhc.kickgroups.get_kickgroup_info`,
     gathering the info and printing only the sdds-filepaths to console.
 
     Args:
@@ -288,21 +291,22 @@ def show_kickgroup_files(kick_group: str, nfiles: int = None, root: Union[Path, 
             the ``.json`` extension.
         nfiles (int): Number of files to show. Use negative values for the last nfiles.
                       A value of zero or None means all files in the group.
-        root (Path): Alternative `~pathlib.Path` to the KickGroup folder. (Defaults
+        root (pathlib.Path): Alternative `~pathlib.Path` to the KickGroup folder. (Defaults
             to the ``NFS`` path of our kickgroups).
     """
     kicks_info = get_kickgroup_info(kick_group, root)
-    print_kickgroup_files(kicks_info, nfiles=nfiles)
+    _print_kickgroup_files(kicks_info, nfiles=nfiles)
 
 
-def print_kickgroup_files(kicks_info: TfsDataFrame, nfiles: int = None):
-    """Print the files in the kickgroup as space-separated quoted strings.
+def _print_kickgroup_files(kicks_info: TfsDataFrame, nfiles: int = None) -> None:
+    """
+    Print *nfiles* from the KickGroup as space-separated quoted strings, which can
+    then be directly copy-pasted into the GUI to load them at once.
 
     Args:
-        kicks_info (TfsDataFrame): Gathered Kickgroup data.
+        kicks_info (TfsDataFrame): A `~tfs.TfsDataFrame` with the gathered KickGroup data.
         nfiles (int): Number of files to show. Use negative values for the last nfiles.
-                      A value of zero or None means all files in the group.
-
+            A value of zero or `None` means all files in the group.
     """
     kickgroup = kicks_info.headers[KICKGROUP]
     nfiles_total = len(kicks_info.index)
@@ -313,8 +317,10 @@ def print_kickgroup_files(kicks_info: TfsDataFrame, nfiles: int = None):
     else:
         nfiles_str = f"{'last ' if nfiles < 0 else ''}{abs(nfiles)} file(s)"
         if abs(nfiles) > nfiles_total:
-            LOG.warning(f"You requested a total of {abs(nfiles)} files to print"
-                        f" but there are only {nfiles_total} kicks in {kickgroup}.")
+            LOG.warning(
+                f"You requested a total of {abs(nfiles)} files to print"
+                f" but there are only {nfiles_total} kicks in {kickgroup}."
+            )
             nfiles = nfiles_total
         element_slice = slice(nfiles) if nfiles > 0 else slice(nfiles, None)
 
@@ -326,11 +332,13 @@ def print_kickgroup_files(kicks_info: TfsDataFrame, nfiles: int = None):
 
 # IO ---
 
+
 def _load_json(jsonfile: Union[Path, str]) -> dict:
     return json.loads(Path(jsonfile).read_text())
 
 
 # Time ---
+
 
 def _ts_to_datetime(ts: int) -> datetime:
     return datetime.utcfromtimestamp(ts / 1000)
@@ -358,13 +366,15 @@ def _local_to_utc(dt: datetime):
 
 # Other ---
 
-def _get_plane_index(data: List[dict], plane: str):
-    """Find the index for the given plane in the data list.
+
+def _get_plane_index(data: List[dict], plane: str) -> str:
+    """
+    Find the index for the given plane in the data list.
     This is necessary as they are not always in X,Y order.
     """
-    name = {'X': 'HORIZONTAL', 'Y': 'VERTICAL'}[plane]
+    name = {"X": "HORIZONTAL", "Y": "VERTICAL"}[plane]
     for idx, entry in enumerate(data):
-        if entry['plane'] == name:
+        if entry["plane"] == name:
             return idx
     else:
         raise ValueError(f"Plane '{plane}' not found in data.")
@@ -424,7 +434,8 @@ def _get_args():
         help="KickGroup name",
     )
     parser_info.add_argument(
-        "--files", "-f",
+        "--files",
+        "-f",
         dest="files",
         type=int,
         help="Show the path to the sdds files only.",
