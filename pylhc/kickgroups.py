@@ -285,8 +285,10 @@ def _print_kickgroup_info(kicks_info: TfsDataFrame) -> None:
 
 
 def show_kickgroup_files(kick_group: str, nfiles: int = None, root: Union[Path, str] = KICKGROUPS_ROOT) -> None:
-    """Wrapper around :func:`pylhc.kickgroups.get_kickgroup_info`,
-    gathering the info and printing only the sdds-filepaths to console.
+    """
+    Wrapper around `pylhc.kickgroups.get_kickgroup_info`, gathering the relevant
+    information from all kickfiles in the KickGroup and printing only the sdds-filepaths
+    to console.
 
     Args:
         kick_group (str): the KickGroup name, corresponds to the kickgroup file name without
