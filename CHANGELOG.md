@@ -2,6 +2,10 @@
 
 ## Version 0.6.1
 
+Added a flag to the `info` functionality of `pylhc.kickgroups` to display a copy-pastable list of kick files for the GUI to load at once.
+
+## Version 0.6.1
+
 Bugfixes in KickGroups:
   - Better error message when there are no kicks in group.
   - Find correct planes in lists of data.
