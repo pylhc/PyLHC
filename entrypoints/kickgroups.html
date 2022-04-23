@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>KickGroup Informations &mdash; pylhc 0.6.1 documentation</title>
+  <title>KickGroup Informations &mdash; pylhc 0.6.2 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -146,16 +146,22 @@ optional arguments:
 </pre></div>
 </div>
 <p>Function <code class="docutils literal notranslate"><span class="pre">info</span></code>:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>usage: kickgroups.py info [-h] [--root ROOT] group
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>usage: kickgroups.py info [-h] [--root ROOT] [--files FILES] group
 
 KickGroup Info
 
 positional arguments:
-  group         KickGroup name
+  group                 KickGroup name
 
 optional arguments:
-  -h, --help   show this help message and exit
-  --root ROOT  KickGroups Root-Directory
+  -h, --help            show this help message and exit
+  --root ROOT           KickGroups Root-Directory
+  --files FILES, -f FILES
+                        Optional integer. If a value is given, only show the path
+                        to *files* SDDS files from the group. Use negative values
+                        to show the last files (most recent kicks), positive
+                        values for the first ones. A value of zero means showing
+                        all files in the group.
 </pre></div>
 </div>
 <dl class="py function">
@@ -175,17 +181,16 @@ to the <code class="docutils literal notranslate"><span class="pre">NFS</span></
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="pylhc.kickgroups.kickgroup_info">
-<span class="sig-prename descclassname"><span class="pre">pylhc.kickgroups.</span></span><span class="sig-name descname"><span class="pre">kickgroup_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kick_group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">root</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.10)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.10)"><span class="pre">pathlib.Path</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PosixPath('/user/slops/data/LHC_DATA/OP_DATA/Betabeat/KickGroups/MULTITURN_ACQ_GROUPS')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">printout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://pylhc.github.io/tfs/modules/index.html#tfs.frame.TfsDataFrame" title="(in tfs-pandas v3.1)"><span class="pre">tfs.frame.TfsDataFrame</span></a></span></span><a class="reference internal" href="../_modules/pylhc/kickgroups.html#kickgroup_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.kickgroups.kickgroup_info" title="Permalink to this definition"></a></dt>
-<dd><p>Gather all important info about the KickGroup into a <code class="xref py py-obj docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> and print it.</p>
+<dt class="sig sig-object py" id="pylhc.kickgroups.get_kickgroup_info">
+<span class="sig-prename descclassname"><span class="pre">pylhc.kickgroups.</span></span><span class="sig-name descname"><span class="pre">get_kickgroup_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kick_group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">root</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.10)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.10)"><span class="pre">pathlib.Path</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PosixPath('/user/slops/data/LHC_DATA/OP_DATA/Betabeat/KickGroups/MULTITURN_ACQ_GROUPS')</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://pylhc.github.io/tfs/modules/index.html#tfs.frame.TfsDataFrame" title="(in tfs-pandas v3.1)"><span class="pre">tfs.frame.TfsDataFrame</span></a></span></span><a class="reference internal" href="../_modules/pylhc/kickgroups.html#get_kickgroup_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.kickgroups.get_kickgroup_info" title="Permalink to this definition"></a></dt>
+<dd><p>Gather all important info about the KickGroup into a <code class="xref py py-obj docutils literal notranslate"><span class="pre">TfsDataFrame</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>kick_group</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) -- the KickGroup name, corresponds to the kickgroup file name without
 the <code class="docutils literal notranslate"><span class="pre">.json</span></code> extension.</p></li>
-<li><p><strong>root</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>) -- Alternative <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Path</span></code></a> to the KickGroup folder. (Defaults
+<li><p><strong>root</strong> (<a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pathlib.Path</span></code></a>) -- Alternative <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Path</span></code></a> to the KickGroup folder. (Defaults
 to the <code class="docutils literal notranslate"><span class="pre">NFS</span></code> path of our kickgroups).</p></li>
-<li><p><strong>printout</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) -- whether to print out the dataframe, defaults to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -203,7 +208,7 @@ to the <code class="docutils literal notranslate"><span class="pre">NFS</span></
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>by</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) -- Column to sort the KickGroups by. Should be either the
 <code class="docutils literal notranslate"><span class="pre">TIMESTAMP</span></code> or <code class="docutils literal notranslate"><span class="pre">KICKGROUP</span></code> variable.</p></li>
-<li><p><strong>root</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>) -- Alternative <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Path</span></code></a> to the KickGroup folder. (Defaults
+<li><p><strong>root</strong> (<a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pathlib.Path</span></code></a>) -- Alternative <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Path</span></code></a> to the KickGroup folder. (Defaults
 to the <code class="docutils literal notranslate"><span class="pre">NFS</span></code> path of our kickgroups).</p></li>
 <li><p><strong>printout</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) -- whether to print out the dataframe, defaults to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>.</p></li>
 </ul>
@@ -227,6 +232,43 @@ to the <code class="docutils literal notranslate"><span class="pre">NFS</span></
 <dd class="field-even"><p>A <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v1.4.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Series</span></code></a> with the relevant information loaded from the provided
 <em>kickfile</em>. The various entries in the Series are defined in <a class="reference internal" href="../modules/constants.html#module-pylhc.constants.kickgroups" title="pylhc.constants.kickgroups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pylhc.constants.kickgroups</span></code></a>
 as <code class="docutils literal notranslate"><span class="pre">KICK_COLUMNS</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pylhc.kickgroups.show_kickgroup_files">
+<span class="sig-prename descclassname"><span class="pre">pylhc.kickgroups.</span></span><span class="sig-name descname"><span class="pre">show_kickgroup_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kick_group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">nfiles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.10)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.10)"><span class="pre">pathlib.Path</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PosixPath('/user/slops/data/LHC_DATA/OP_DATA/Betabeat/KickGroups/MULTITURN_ACQ_GROUPS')</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/pylhc/kickgroups.html#show_kickgroup_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.kickgroups.show_kickgroup_files" title="Permalink to this definition"></a></dt>
+<dd><p>Wrapper around <a class="reference internal" href="#pylhc.kickgroups.get_kickgroup_info" title="pylhc.kickgroups.get_kickgroup_info"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pylhc.kickgroups.get_kickgroup_info</span></code></a>, gathering the relevant
+information from all kickfiles in the KickGroup and printing only the sdds-filepaths
+to console.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>kick_group</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) -- the KickGroup name, corresponds to the kickgroup file name without
+the <code class="docutils literal notranslate"><span class="pre">.json</span></code> extension.</p></li>
+<li><p><strong>nfiles</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) -- Number of files to show. Use negative values for the last nfiles.
+A value of zero or None means all files in the group.</p></li>
+<li><p><strong>root</strong> (<a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pathlib.Path</span></code></a>) -- Alternative <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Path</span></code></a> to the KickGroup folder. (Defaults
+to the <code class="docutils literal notranslate"><span class="pre">NFS</span></code> path of our kickgroups).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pylhc.kickgroups.show_kickgroup_info">
+<span class="sig-prename descclassname"><span class="pre">pylhc.kickgroups.</span></span><span class="sig-name descname"><span class="pre">show_kickgroup_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kick_group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">root</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.10)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.10)"><span class="pre">pathlib.Path</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PosixPath('/user/slops/data/LHC_DATA/OP_DATA/Betabeat/KickGroups/MULTITURN_ACQ_GROUPS')</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/pylhc/kickgroups.html#show_kickgroup_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.kickgroups.show_kickgroup_info" title="Permalink to this definition"></a></dt>
+<dd><p>Wrapper around <a class="reference internal" href="#pylhc.kickgroups.get_kickgroup_info" title="pylhc.kickgroups.get_kickgroup_info"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_kickgroup_info</span></code></a>, gathering the relevant
+information from the kick files in the group and printing it to console.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>kick_group</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) -- the KickGroup name, corresponds to the kickgroup file name without
+the <code class="docutils literal notranslate"><span class="pre">.json</span></code> extension.</p></li>
+<li><p><strong>root</strong> (<a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pathlib.Path</span></code></a>) -- Alternative <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Path</span></code></a> to the KickGroup folder. (Defaults
+to the <code class="docutils literal notranslate"><span class="pre">NFS</span></code> path of our kickgroups).</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>

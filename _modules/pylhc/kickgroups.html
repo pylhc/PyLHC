@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pylhc.kickgroups &mdash; pylhc 0.6.1 documentation</title>
+  <title>pylhc.kickgroups &mdash; pylhc 0.6.2 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
@@ -152,17 +152,22 @@
 
 <span class="sd">.. code-block:: none</span>
 
-<span class="sd">    usage: kickgroups.py info [-h] [--root ROOT] group</span>
+<span class="sd">    usage: kickgroups.py info [-h] [--root ROOT] [--files FILES] group</span>
 
 <span class="sd">    KickGroup Info</span>
 
 <span class="sd">    positional arguments:</span>
-<span class="sd">      group         KickGroup name</span>
+<span class="sd">      group                 KickGroup name</span>
 
 <span class="sd">    optional arguments:</span>
-<span class="sd">      -h, --help   show this help message and exit</span>
-<span class="sd">      --root ROOT  KickGroups Root-Directory</span>
-
+<span class="sd">      -h, --help            show this help message and exit</span>
+<span class="sd">      --root ROOT           KickGroups Root-Directory</span>
+<span class="sd">      --files FILES, -f FILES</span>
+<span class="sd">                            Optional integer. If a value is given, only show the path</span>
+<span class="sd">                            to *files* SDDS files from the group. Use negative values</span>
+<span class="sd">                            to show the last files (most recent kicks), positive</span>
+<span class="sd">                            values for the first ones. A value of zero means showing</span>
+<span class="sd">                            all files in the group.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">argparse</span>
 <span class="kn">import</span> <span class="nn">json</span>
@@ -220,7 +225,7 @@
 <span class="sd">    Args:</span>
 <span class="sd">        by (str): Column to sort the KickGroups by. Should be either the</span>
 <span class="sd">            ``TIMESTAMP`` or ``KICKGROUP`` variable.</span>
-<span class="sd">        root (Path): Alternative `~pathlib.Path` to the KickGroup folder. (Defaults</span>
+<span class="sd">        root (pathlib.Path): Alternative `~pathlib.Path` to the KickGroup folder. (Defaults</span>
 <span class="sd">            to the ``NFS`` path of our kickgroups).</span>
 <span class="sd">        printout (bool): whether to print out the dataframe, defaults to `True`.</span>
 
@@ -265,16 +270,15 @@
 <span class="c1"># Kickgroup Info ---------------------------------------------------------------</span>
 
 
-<div class="viewcode-block" id="kickgroup_info"><a class="viewcode-back" href="../../entrypoints/kickgroups.html#pylhc.kickgroups.kickgroup_info">[docs]</a><span class="k">def</span> <span class="nf">kickgroup_info</span><span class="p">(</span><span class="n">kick_group</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">root</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">KICKGROUPS_ROOT</span><span class="p">,</span> <span class="n">printout</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TfsDataFrame</span><span class="p">:</span>
+<div class="viewcode-block" id="get_kickgroup_info"><a class="viewcode-back" href="../../entrypoints/kickgroups.html#pylhc.kickgroups.get_kickgroup_info">[docs]</a><span class="k">def</span> <span class="nf">get_kickgroup_info</span><span class="p">(</span><span class="n">kick_group</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">root</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">KICKGROUPS_ROOT</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TfsDataFrame</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Gather all important info about the KickGroup into a `~tfs.TfsDataFrame` and print it.</span>
+<span class="sd">    Gather all important info about the KickGroup into a `~tfs.TfsDataFrame`.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        kick_group (str): the KickGroup name, corresponds to the kickgroup file name without</span>
 <span class="sd">            the ``.json`` extension.</span>
-<span class="sd">        root (Path): Alternative `~pathlib.Path` to the KickGroup folder. (Defaults</span>
+<span class="sd">        root (pathlib.Path): Alternative `~pathlib.Path` to the KickGroup folder. (Defaults</span>
 <span class="sd">            to the ``NFS`` path of our kickgroups).</span>
-<span class="sd">        printout (bool): whether to print out the dataframe, defaults to `True`.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A `~tfs.TfsDataFrame` with the KickGroup information loaded.</span>
@@ -292,9 +296,6 @@
 
     <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">COLUMNS_TO_HEADERS</span><span class="p">:</span>
         <span class="n">df_info</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_info</span><span class="p">[</span><span class="n">column</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-
-    <span class="k">if</span> <span class="n">printout</span><span class="p">:</span>
-        <span class="n">_print_kickgroup_info</span><span class="p">(</span><span class="n">df_info</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">df_info</span></div>
 
@@ -356,8 +357,33 @@
     <span class="k">return</span> <span class="n">data</span></div>
 
 
-<span class="k">def</span> <span class="nf">_print_kickgroup_info</span><span class="p">(</span><span class="n">kicks_info</span><span class="p">:</span> <span class="n">TfsDataFrame</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Actually print the full info about the kickgroup.&quot;&quot;&quot;</span>
+<span class="c1"># Functions with console output ---</span>
+
+<span class="c1"># Full Info -</span>
+
+
+<div class="viewcode-block" id="show_kickgroup_info"><a class="viewcode-back" href="../../entrypoints/kickgroups.html#pylhc.kickgroups.show_kickgroup_info">[docs]</a><span class="k">def</span> <span class="nf">show_kickgroup_info</span><span class="p">(</span><span class="n">kick_group</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">root</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">KICKGROUPS_ROOT</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrapper around `~pylhc.kickgroups.get_kickgroup_info`, gathering the relevant</span>
+<span class="sd">    information from the kick files in the group and printing it to console.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        kick_group (str): the KickGroup name, corresponds to the kickgroup file name without</span>
+<span class="sd">            the ``.json`` extension.</span>
+<span class="sd">        root (pathlib.Path): Alternative `~pathlib.Path` to the KickGroup folder. (Defaults</span>
+<span class="sd">            to the ``NFS`` path of our kickgroups).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">kicks_info</span> <span class="o">=</span> <span class="n">get_kickgroup_info</span><span class="p">(</span><span class="n">kick_group</span><span class="p">,</span> <span class="n">root</span><span class="p">)</span>
+    <span class="n">_print_kickgroup_info</span><span class="p">(</span><span class="n">kicks_info</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_print_kickgroup_info</span><span class="p">(</span><span class="n">kicks_info</span><span class="p">:</span> <span class="n">TfsDataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Print the full info about the kickgroup.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        kicks_info (TfsDataFrame): Gathered Kickgroup data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">header</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">kicks_info</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">header</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">()</span>
@@ -366,6 +392,57 @@
             <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">na_rep</span><span class="o">=</span><span class="s2">&quot; - &quot;</span><span class="p">,</span> <span class="n">justify</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span> <span class="n">formatters</span><span class="o">=</span><span class="n">_time_formatters</span><span class="p">()</span>
         <span class="p">)</span>
     <span class="p">)</span>
+
+
+<span class="c1"># Files only -</span>
+
+
+<div class="viewcode-block" id="show_kickgroup_files"><a class="viewcode-back" href="../../entrypoints/kickgroups.html#pylhc.kickgroups.show_kickgroup_files">[docs]</a><span class="k">def</span> <span class="nf">show_kickgroup_files</span><span class="p">(</span><span class="n">kick_group</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">nfiles</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">root</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">KICKGROUPS_ROOT</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrapper around `pylhc.kickgroups.get_kickgroup_info`, gathering the relevant</span>
+<span class="sd">    information from all kickfiles in the KickGroup and printing only the sdds-filepaths</span>
+<span class="sd">    to console.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        kick_group (str): the KickGroup name, corresponds to the kickgroup file name without</span>
+<span class="sd">            the ``.json`` extension.</span>
+<span class="sd">        nfiles (int): Number of files to show. Use negative values for the last nfiles.</span>
+<span class="sd">                      A value of zero or None means all files in the group.</span>
+<span class="sd">        root (pathlib.Path): Alternative `~pathlib.Path` to the KickGroup folder. (Defaults</span>
+<span class="sd">            to the ``NFS`` path of our kickgroups).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">kicks_info</span> <span class="o">=</span> <span class="n">get_kickgroup_info</span><span class="p">(</span><span class="n">kick_group</span><span class="p">,</span> <span class="n">root</span><span class="p">)</span>
+    <span class="n">_print_kickgroup_files</span><span class="p">(</span><span class="n">kicks_info</span><span class="p">,</span> <span class="n">nfiles</span><span class="o">=</span><span class="n">nfiles</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_print_kickgroup_files</span><span class="p">(</span><span class="n">kicks_info</span><span class="p">:</span> <span class="n">TfsDataFrame</span><span class="p">,</span> <span class="n">nfiles</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Print *nfiles* from the KickGroup as space-separated quoted strings, which can</span>
+<span class="sd">    then be directly copy-pasted into the GUI to load them at once.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        kicks_info (TfsDataFrame): A `~tfs.TfsDataFrame` with the gathered KickGroup data.</span>
+<span class="sd">        nfiles (int): Number of files to show. Use negative values for the last nfiles.</span>
+<span class="sd">            A value of zero or `None` means all files in the group.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">kickgroup</span> <span class="o">=</span> <span class="n">kicks_info</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="n">KICKGROUP</span><span class="p">]</span>
+    <span class="n">nfiles_total</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">kicks_info</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+
+    <span class="n">nfiles_str</span> <span class="o">=</span> <span class="s2">&quot;all files&quot;</span>
+    <span class="k">if</span> <span class="n">nfiles</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">nfiles</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">element_slice</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">nfiles_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;last &#39;</span> <span class="k">if</span> <span class="n">nfiles</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="si">}{</span><span class="nb">abs</span><span class="p">(</span><span class="n">nfiles</span><span class="p">)</span><span class="si">}</span><span class="s2"> file(s)&quot;</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">nfiles</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">nfiles_total</span><span class="p">:</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;You requested a total of </span><span class="si">{</span><span class="nb">abs</span><span class="p">(</span><span class="n">nfiles</span><span class="p">)</span><span class="si">}</span><span class="s2"> files to print&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; but there are only </span><span class="si">{</span><span class="n">nfiles_total</span><span class="si">}</span><span class="s2"> kicks in </span><span class="si">{</span><span class="n">kickgroup</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+            <span class="n">nfiles</span> <span class="o">=</span> <span class="n">nfiles_total</span>
+        <span class="n">element_slice</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="n">nfiles</span><span class="p">)</span> <span class="k">if</span> <span class="n">nfiles</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">slice</span><span class="p">(</span><span class="n">nfiles</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Kickgroup </span><span class="si">{</span><span class="n">kicks_info</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="n">KICKGROUP</span><span class="p">]</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">nfiles_str</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s1">&quot;&#39;</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">kicks_info</span><span class="p">[</span><span class="n">SDDS</span><span class="p">][</span><span class="n">element_slice</span><span class="p">]]))</span>
 
 
 <span class="c1"># Helper -----------------------------------------------------------------------</span>
@@ -406,13 +483,15 @@
 
 <span class="c1"># Other ---</span>
 
-<span class="k">def</span> <span class="nf">_get_plane_index</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">plane</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Find the index for the given plane in the data list.</span>
+
+<span class="k">def</span> <span class="nf">_get_plane_index</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">plane</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Find the index for the given plane in the data list.</span>
 <span class="sd">    This is necessary as they are not always in X,Y order.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;X&#39;</span><span class="p">:</span> <span class="s1">&#39;HORIZONTAL&#39;</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">:</span> <span class="s1">&#39;VERTICAL&#39;</span><span class="p">}[</span><span class="n">plane</span><span class="p">]</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;X&quot;</span><span class="p">:</span> <span class="s2">&quot;HORIZONTAL&quot;</span><span class="p">,</span> <span class="s2">&quot;Y&quot;</span><span class="p">:</span> <span class="s2">&quot;VERTICAL&quot;</span><span class="p">}[</span><span class="n">plane</span><span class="p">]</span>
     <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">entry</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">entry</span><span class="p">[</span><span class="s1">&#39;plane&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">name</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">entry</span><span class="p">[</span><span class="s2">&quot;plane&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">name</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">idx</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Plane &#39;</span><span class="si">{</span><span class="n">plane</span><span class="si">}</span><span class="s2">&#39; not found in data.&quot;</span><span class="p">)</span>
@@ -471,6 +550,16 @@
         <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;KickGroup name&quot;</span><span class="p">,</span>
     <span class="p">)</span>
+    <span class="n">parser_info</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--files&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;-f&quot;</span><span class="p">,</span>
+        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;files&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+        <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;?&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Optional integer. If a value is given, only show the path to *files* SDDS files from the group. &quot;</span>
+        <span class="s2">&quot;Use negative values to show the last files (most recent kicks), positive values for the first ones. &quot;</span>
+        <span class="s2">&quot;A value of zero means showing all files in the group.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
     <span class="k">return</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
 
 
@@ -480,7 +569,10 @@
         <span class="n">list_available_kickgroups</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">sort</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">function</span> <span class="o">==</span> <span class="s2">&quot;info&quot;</span><span class="p">:</span>
-        <span class="n">kickgroup_info</span><span class="p">(</span><span class="n">kick_group</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">group</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">files</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">show_kickgroup_info</span><span class="p">(</span><span class="n">kick_group</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">group</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">show_kickgroup_files</span><span class="p">(</span><span class="n">kick_group</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">group</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="n">nfiles</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">files</span><span class="p">)</span>
 </pre></div>
 
            </div>
