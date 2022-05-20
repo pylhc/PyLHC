@@ -75,8 +75,9 @@ def _get_args():
     parser = argparse.ArgumentParser(
         description="LSA Knob to MAD-X Converter."
         "This script can be given an LSA LHC optics, a list of LSA knobs or a file with LSA knobs "
-        "and will, for each knob, determine the affected LHC power circuits and the corresponding "
-        "MAD-X variables; then output files with the corresponding ``add2expr`` commands."
+        "and will, for each knob, retrieve the affected LHC power circuits and determine the "
+        "corresponding MAD-X variables changes. It will then output both definition files and MAD-X "
+        "scripts reproducing the provided knobs."
     )
     parser.add_argument(
         "--optics", dest="optics", type=str, required=True, help="The LSA name of the optics for which the knobs are defined."
