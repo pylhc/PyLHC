@@ -24,16 +24,15 @@ This script is meant to convert various LSA knobs to their MAD-X equivalent.
 import argparse
 
 from pathlib import Path
-from typing import Dict
 
 import tfs
 
 from omc3.utils import logging_tools
 from omc3.utils.contexts import timeit
-from omc3.utils.mock import cern_network_import
+
+from pylhc.data_extract.lsa import LSA
 
 LOG = logging_tools.get_logger(__name__)
-pjlsa = cern_network_import("pjlsa")
 
 # ----- Helper functions ----- #
 
