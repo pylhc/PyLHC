@@ -2,24 +2,24 @@
 LSA to MAD-X
 ------------
 
-This script is meant to convert various LSA knobs to their MAD-X equivalent.
+This script is meant to convert various LSA knobs to their MAD-X equivalent scripts.
 
 .. code-block:: none
 
-    usage: python -m pylhc.lsa_to_madx [-h] --optics OPTICS [--knobs [KNOBS ...]] [--file FILE]
+    usage: lsa_to_madx.py [-h] --optics OPTICS [--knobs [KNOBS ...]] [--file FILE]
 
-    LSA Knob to MAD-X Converter.This script can be given an LSA LHC optics,
-    a list of LSA knobs or a file with LSA knobs and will, for each knob,
-    determine  the affected LHC power circuits and the corresponding ``MAD-X``
-    variables; then output files with the corresponding ``add2expr`` commands.
+    LSA Knob to MAD-X Converter.This script can be given an LSA LHC optics, a list of
+    LSA knobs or a file with LSA knobs and will, for each knob, retrieve the affected
+    LHC power circuits and determine the corresponding MAD-X variables changes. It will
+    then output both definition files and MAD-X scripts reproducing the provided knobs.
 
-    optional arguments:
+    options:
     -h, --help           show this help message and exit
     --optics OPTICS      The LSA name of the optics for which the knobs are defined.
-    --knobs [KNOBS ...]  The various knob names to convert to their MAD-X equivalent.
-    --file FILE          Name of a file with knob names and strength factors to use. A single 
-                        knob should be written per line, and lines starting with a ``#`` character 
-                        will be ignored.
+    --knobs [KNOBS ...]  The full LSA names of any knob to convert to their MAD-X equivalent.
+    --file FILE          Name of a file with knob names and strength factors to use. A single
+                         knob should be written per line, and lines starting with a # character
+                         will be ignored.
 """
 import argparse
 
