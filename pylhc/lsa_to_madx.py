@@ -22,9 +22,11 @@ This script is meant to convert various LSA knobs to their MAD-X equivalent scri
                          will be ignored.
 """
 import argparse
+
 from pathlib import Path
 
 import tfs
+
 from omc3.utils import logging_tools
 from omc3.utils.contexts import timeit
 
@@ -121,12 +123,17 @@ if __name__ == "__main__":
 
     LOG.info("Instantiating LSA client")
     lsa_client = LSAClient()
+    unfound_knobs = []
 
     with timeit(lambda elapsed: LOG.info(f"Processed all given knobs in {elapsed:.2f}s")):
         for lsa_knob in knobs:
             LOG.info(f"Processing LSA knob '{lsa_knob}'")
-            knob_definition = lsa_client.get_knob_circuits(knob_name=lsa_knob, optics=lsa_optics)
-            madx_commands_string = get_madx_script_from_definition_dataframe(deltas_df=knob_definition, lsa_knob=lsa_knob)
+            try:  # next line might raise if knob not defined for the given optics
+                knob_definition = lsa_client.get_knob_circuits(knob_name=lsa_knob, optics=lsa_optics)
+                madx_commands_string = get_madx_script_from_definition_dataframe(deltas_df=knob_definition, lsa_knob=lsa_knob)
+            except (OSError, IOError):
+                LOG.warning(f"Could not find knob '{lsa_knob}' in the given optics '{lsa_optics}' - skipping")
+                unfound_knobs.append(lsa_knob)
 
             definition_file = f"{lsa_knob.replace('/', '_')}_definition.tfs"
             LOG.debug(f"Writing knob definition TFS file at '{definition_file}'")
@@ -135,3 +142,6 @@ if __name__ == "__main__":
             madx_file = f"{lsa_knob.replace('/', '_')}_knob.madx"
             LOG.debug(f"Writing MAD-X commands to file '{madx_file}'")
             Path(madx_file).write_text(madx_commands_string)
+
+    if unfound_knobs:
+        LOG.info(f"The following knobs could not be found in the '{lsa_optics}' optics: \n\t\t" + "\n\t\t".join(unfound_knobs))
