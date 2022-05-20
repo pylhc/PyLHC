@@ -22,11 +22,9 @@ This script is meant to convert various LSA knobs to their MAD-X equivalent scri
                          will be ignored.
 """
 import argparse
-
 from pathlib import Path
 
 import tfs
-
 from omc3.utils import logging_tools
 from omc3.utils.contexts import timeit
 
@@ -60,9 +58,10 @@ def get_madx_script_from_definition_dataframe(deltas_df: tfs.TfsDataFrame, lsa_k
     change_commands.append("! Change this value to reproduce a different trim")
     change_commands.append(f"! Beware some knobs are not so linear in their trims")
     change_commands.append(f"{trim_variable} = 1;")
+    change_commands.append("! Impacted variables")
 
     for variable, delta_k in deltas_df.DELTA_K.items():
-        change_commands.append(f"{variable} = {variable} + {delta_k} * {trim_variable};")
+        change_commands.append(f"{variable:<12} = {variable:^15} + {delta_k:^25} * {trim_variable};")
     change_commands.append(f"! End of change commands for knob: {lsa_knob}\n")
     return "\n".join(change_commands)
 
@@ -126,12 +125,12 @@ if __name__ == "__main__":
     with timeit(lambda elapsed: LOG.info(f"Processed all given knobs in {elapsed:.2f}s")):
         for lsa_knob in knobs:
             LOG.info(f"Processing LSA knob '{lsa_knob}'")
-            knob_definition = lsa_client.get_knob_circuits(knob_name=lsa_knob, optics_name=lsa_optics)
+            knob_definition = lsa_client.get_knob_circuits(knob_name=lsa_knob, optics=lsa_optics)
             madx_commands_string = get_madx_script_from_definition_dataframe(deltas_df=knob_definition, lsa_knob=lsa_knob)
 
             definition_file = f"{lsa_knob.replace('/', '_')}_definition.tfs"
             LOG.debug(f"Writing knob definition TFS file at '{definition_file}'")
-            tfs.write(definition_file, knob_definition)
+            tfs.write(definition_file, knob_definition, save_index=True)
 
             madx_file = f"{lsa_knob.replace('/', '_')}_knob.madx"
             LOG.debug(f"Writing MAD-X commands to file '{madx_file}'")
