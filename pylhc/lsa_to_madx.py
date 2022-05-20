@@ -78,6 +78,8 @@ The call would be:
     python -m pylhc.lsa_to_madx \\
         --optics R2017aT_A30C30A10mL300_CTPPS2 \\
         --file knobs.txt
+
+Hint: the knobs active at a given time can be retrieved with the `~pylhc.machine_settings_info` script. 
 """
 import argparse
 
@@ -103,7 +105,7 @@ def parse_knobs_and_trim_values_from_file(knobs_file: Path) -> Dict[str, float]:
     to ``1.0``. Lines starting with a ``#`` are ignored.
 
     Args:
-        knobs_file (pathlib.Path): Path to the file with definitions.
+        knobs_file (~pathlib.Path): Path to the file with definitions.
 
     Returns:
         A `dict` with as keys the parsed knob names and as values their associated trims.
@@ -129,7 +131,7 @@ def get_madx_script_from_definition_dataframe(deltas_df: tfs.TfsDataFrame, lsa_k
     corresponding ``MAD-X`` text commands that would reproduce this knob in a script.
 
     Args:
-        deltas_df (tfs.TfsDataFrame): The extracted definition dataframe of an ``LSA`` knob. This
+        deltas_df (~tfs.frame.TfsDataFrame): The extracted definition dataframe of an ``LSA`` knob. This
             can be obtained with `~pylhc.data_extract.lsa.LSAClient.get_knob_circuits`.
         lsa_knob (str): The complete ``LSA`` name of the knob, including any ``LHCBEAM/`` etc.
         trim (float): The trim value to write for the knob. Defaults to 1.

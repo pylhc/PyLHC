@@ -266,6 +266,7 @@ intersphinx_mapping = {
     "scipy": ("https://docs.scipy.org/doc/scipy/", None),
     "tfs-pandas": ("https://pylhc.github.io/tfs/", None),
     "tfs": ("https://pylhc.github.io/tfs/", None),
+    "generic_parser": ("https://pylhc.github.io/generic_parser/", None),
     "omc3": ("https://pylhc.github.io/omc3/", None),
     "cpymad": ("https://hibtc.github.io/cpymad/", None),
 }
