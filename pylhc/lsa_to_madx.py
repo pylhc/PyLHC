@@ -26,6 +26,8 @@ import argparse
 from pathlib import Path
 from typing import Dict
 
+import tfs
+
 from omc3.utils import logging_tools
 from omc3.utils.contexts import timeit
 from omc3.utils.mock import cern_network_import
@@ -36,65 +38,22 @@ pjlsa = cern_network_import("pjlsa")
 # ----- Helper functions ----- #
 
 
-def get_power_circuits_and_factors_from_lsa_knob(lsa_client: pjlsa.LSAClient, optics: str, lsa_knob: str) -> Dict[str, float]:
-    """
-    Given the name of a knob defined in ``LSA`` (see for instance **LSA Application Management App**),
-    will find all the various power circuits present in the knob and the factor corresponding to each.
+def get_madx_script_from_deltas_dataframe(df: tfs.TfsDataFrame, knob: str) -> str:
+    """"""
+    LOG.debug(f"Determining MAD-X commands to reproduce knob '{knob}'")
+    change_commands = [f"! Start of change commands for knob: {knob}"]
 
-    Args:
-        lsa_client (pjlsa.LSAClient): an instantiated ``LSAClient`` to use to connect to ``LSA``.
-        optics (str): the name of the optics for which the knob is defined.
-        lsa_knob (str): the name of the knob as defined in the ``LSA`` database.
+    # Set this to 1 by default but can be changed by the user to reproduce a given trim
+    knob_itself = knob.split("/")[1]  # without the LHCBEAM/ part
+    trim_variable = f"{knob_itself}_trim"
+    change_commands.append("! Change this value to reproduce a different trim")
+    change_commands.append(f"! Beware some knobs are not so linear in their trims")
+    change_commands.append(f"{trim_variable} = 1;")
 
-    Returns:
-        A dictionary with the power circuits as keys and the corresponding factors as values.
-    """
-    LOG.debug(f"Getting LSA power circuits and factors defined in LSA knob '{lsa_knob}'")
-    return lsa_client.getKnobFactors(lsa_knob, optics)
-
-
-def lsa_power_circuit_to_madx_variable(lsa_client: pjlsa.LSAClient, lsa_power_circuit: str) -> str:
-    """
-    Given the name of a power circuit defined in ``LSA``, will find the corresponding ``MAD-X`` variable
-    in the LHC sequence or opticsfile.
-
-    Args:
-        lsa_client (pjlsa.LSAClient): an instantiated ``LSAClient`` to use to connect to ``LSA``.
-        lsa_power_circuit (str): the name of the power circuit in ``LSA``.
-
-    Returns:
-        The ``MAD-X`` variable corresponding to the given ``LSA`` power circuit.
-    """
-    LOG.debug(f"Finding MAD-X name for LSA circuit '{lsa_power_circuit}'")
-    power_circuit = lsa_power_circuit.split("/")[0]  # this is the knob name without the /K[1-9][SL] part
-    return lsa_client.findMadStrengthNameByPCName(power_circuit)
-
-
-def process_lsa_knob_to_madx_commands(lsa_client: pjlsa.LSAClient, optics: str, lsa_knob: str, madx_knob: str) -> str:
-    """
-    Given an LSA knob and the optics in which it's applied, finds the corresponding MAD-X variables
-    to change and returns the exact ``add2expr`` command to do so.
-
-    Args:
-        lsa_client (pjlsa.LSAClient): an instantiated ``LSAClient`` to use to connect to ``LSA``.
-        optics (str): the ``LSA`` name of the optics for which the knob is defined.
-        lsa_knob (str): the name of the knob as defined in the ``LSA`` database.
-        madx_knob (str): the name of the``MAD-X`` knob corresponding to the LSA knob.
-
-    Returns:
-        A full string with all of the ``add2expr`` commands to be executed in ``MAD-X``.
-    """
-    LOG.debug(f"Determining MAD-X expressions for LSA knob '{lsa_knob}'")
-    change_commands = [f"! Start of change commands for knob: {lsa_knob}"]
-    try:
-        power_circuit_factors = get_power_circuits_and_factors_from_lsa_knob(lsa_client, optics, lsa_knob)
-        for power_circuit, factor in power_circuit_factors.items():  # determine madx variable and expression change
-            madx_variable = lsa_power_circuit_to_madx_variable(lsa_client, power_circuit)
-            change_commands.append(f"add2expr,var={madx_variable},expr={factor}*{madx_knob};")
-        change_commands.append(f"! End of change commands for knob: {lsa_knob}\n")
-        return "\n".join(change_commands)
-    except:  # In case it's not possible to find the MAD-X variable?
-        return ""
+    for variable, delta_k in df.DELTA_K.items():
+        change_commands.append(f"{variable} = {variable} + {delta_k} * {trim_variable};")
+    change_commands.append(f"! End of change commands for knob: {knob}\n")
+    return "\n".join(change_commands)
 
 
 # ----- Script Part ----- #
