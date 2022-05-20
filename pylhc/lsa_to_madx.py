@@ -145,20 +145,22 @@ if __name__ == "__main__":
 
     if options.file and Path(options.file).is_file():
         LOG.info(f"Loading knob names from file '{options.file}'")
-        knobs = [line for line in Path(options.file).read_text().splitlines() if not line.startswith("#")]
-    else:
-        knobs = options.knobs
+        knobs_dict = parse_knobs_and_trim_values_from_file(Path(options.file))
+    else:  # given at the command line with --knobs, we initialise trim values to 1
+        knobs_dict = {knob: 1.0 for knob in options.knobs}
 
     LOG.info("Instantiating LSA client")
     lsa_client = LSAClient()
     unfound_knobs = []
 
     with timeit(lambda elapsed: LOG.info(f"Processed all given knobs in {elapsed:.2f}s")):
-        for lsa_knob in knobs:
+        for lsa_knob, trim_value in knobs_dict.items():
             LOG.info(f"Processing LSA knob '{lsa_knob}'")
             try:  # next line might raise if knob not defined for the given optics
                 knob_definition = lsa_client.get_knob_circuits(knob_name=lsa_knob, optics=lsa_optics)
-                madx_commands_string = get_madx_script_from_definition_dataframe(deltas_df=knob_definition, lsa_knob=lsa_knob)
+                madx_commands_string = get_madx_script_from_definition_dataframe(
+                    deltas_df=knob_definition, lsa_knob=lsa_knob, trim=trim_value
+                )
             except (OSError, IOError):
                 LOG.warning(f"Could not find knob '{lsa_knob}' in the given optics '{lsa_optics}' - skipping")
                 unfound_knobs.append(lsa_knob)
