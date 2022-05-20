@@ -2,24 +2,82 @@
 LSA to MAD-X
 ------------
 
-This script is meant to convert various LSA knobs to their MAD-X equivalent scripts.
+This script is meant to convert various ``LSA`` knobs to their ``MAD-X`` equivalent scripts.
 
 .. code-block:: none
 
     usage: lsa_to_madx.py [-h] --optics OPTICS [--knobs [KNOBS ...]] [--file FILE]
 
-    LSA Knob to MAD-X Converter.This script can be given an LSA LHC optics, a list of
-    LSA knobs or a file with LSA knobs and will, for each knob, retrieve the affected
-    LHC power circuits and determine the corresponding MAD-X variables changes. It will
-    then output both definition files and MAD-X scripts reproducing the provided knobs.
+    LSA Knob to MAD-X Converter.This script can be given an LSA LHC optics, a list
+    of LSA knobs or a file with LSA knobs and will, for each knob, retrieve the
+    affected LHC power circuits and determine the corresponding MAD-X variables
+    changes. It will then output both definition files and MAD-X scripts reproducing
+    the provided knobs.
 
     options:
     -h, --help           show this help message and exit
     --optics OPTICS      The LSA name of the optics for which the knobs are defined.
     --knobs [KNOBS ...]  The full LSA names of any knob to convert to their MAD-X equivalent.
-    --file FILE          Name of a file with knob names and strength factors to use. A single
-                         knob should be written per line, and lines starting with a # character
-                         will be ignored.
+    --file FILE          Name of a file with knob names and strength factors to use. A
+                         single knob should be written per line, and lines starting with a
+                         '#' character will be ignored.
+
+One can simply want to find out the ``MAD-X`` way to reproduce a given knob.
+For instance, to find reproduce ``LHCBEAM/MD_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos``, which is defined in the ``R2022a_A30cmC30cmA10mL200cm`` optics one would run:
+
+.. code-block:: none
+
+    python -m pylhc.lsa_to_madx \\
+        --optics R2022a_A30cmC30cmA10mL200cm \\
+        --knobs LHCBEAM/MD_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos
+
+Two files, **LHCBEAM_MD_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos_definition.tfs** and **LHCBEAM_MD_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos_knob.madx** will be written to disk.
+
+In order to reproduce a specific machine configuration at a given time, one can gather all knobs and their trim values for this configuration in a text file and feed this file to the script.
+In this file, each line should hold a knob name as it appears in LSA and its trim value.
+Lines starting with a ``#`` character will be ignored.
+
+For instance the following **knobs.txt** file gathers a 2017 LHC configuration:
+
+.. code-block:: none
+
+    # Nonlinear Corrections
+    LHCBEAM/2017_IRNL_IR1a4	0.5
+    LHCBEAM/2017_IRNL_IR1b3_couplFD	1.0
+    LHCBEAM/2017_IRNL_a3b3_tuneFD 1.0
+    LHCBEAM/2017_IRNL_b4 1.0
+    LHCBEAM/2017_NL_IR1_30cm_kcssxr1 1.0
+    LHCBEAM/2018_IRNL_IR1a3 1.0
+    LHCBEAM/2018_IRNL_IR1b3 1.0
+    LHCBEAM/2018_IRNL_IR5a3 1.0
+    LHCBEAM/IR5_a4_2018 1.0
+    # Local correctors close to IP
+    LHCBEAM/2017_ATS_Inj_LocalCoupling 1.0
+    LHCBEAM/2017_ATS_LocalCorrection 1.0
+    # Chromatic Coupling
+    LHCBEAM/chromatic_coupling_b1_40cm_ctpps2_2017_v2 -1.0
+    LHCBEAM/chromatic_coupling_b2_40cm_ctpps2_2017 -1.0
+    # Beta-beat
+    LHCBEAM/b1_global_beta_beating_40cm_ctpps_2017_v2 1.0
+    LHCBEAM/b2_global_beta_beating_40cm_ctpps_2017 1.0
+    LHCBEAM/2017_beam1_beta_CrossingAngleCompensation 1.0
+    LHCBEAM/2017_30cm_GlobalCorr_wXing_Beam2_v2 1.0
+    LHCBEAM/B2_2017_global_correction_Xing 1.0
+    # Total Phase advance
+    LHCBEAM/2017_B2_MQT_total_phase_correction 1.0
+    LHCBEAM/B1_2017_MQT_total_phase_correction 1.0
+    # Arc-by-arc coupling
+    LHCBEAM/global_coup_knob_all_correctors	-1.0
+
+One can provide this file with the corresponding optics and get a ``MAD-X`` file for each defined knob with the appropriate trim value.
+In this case many files will be created.
+The call would be:
+
+.. code-block:: bash
+
+    python -m pylhc.lsa_to_madx \\
+        --optics R2017aT_A30C30A10mL300_CTPPS2 \\
+        --file knobs.txt
 """
 import argparse
 
