@@ -191,7 +191,7 @@ def _get_args():
     return parser.parse_args()
 
 
-if __name__ == "__main__":
+def main():
     options = _get_args()
     lsa_optics = options.optics
 
@@ -235,3 +235,7 @@ if __name__ == "__main__":
 
     if unfound_knobs:
         LOG.info(f"The following knobs could not be found in the '{lsa_optics}' optics: \n\t\t" + "\n\t\t".join(unfound_knobs))
+
+
+if __name__ == "__main__":
+    main()
