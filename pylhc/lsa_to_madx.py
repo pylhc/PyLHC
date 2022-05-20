@@ -64,7 +64,7 @@ def parse_knobs_and_trim_values_from_file(knobs_file: Path) -> Dict[str, float]:
     return results
 
 
-def get_madx_script_from_definition_dataframe(deltas_df: tfs.TfsDataFrame, lsa_knob: str) -> str:
+def get_madx_script_from_definition_dataframe(deltas_df: tfs.TfsDataFrame, lsa_knob: str, trim: float = 1.0) -> str:
     """
     Given the extracted definition dataframe of an LSA knob - as returned by
     `~pylhc.data_extract.lsa.LSAClient.get_knob_circuits` - this function will generate the
@@ -74,6 +74,7 @@ def get_madx_script_from_definition_dataframe(deltas_df: tfs.TfsDataFrame, lsa_k
         deltas_df (tfs.TfsDataFrame): The extracted definition dataframe of an ``LSA`` knob. This
             can be obtained with `~pylhc.data_extract.lsa.LSAClient.get_knob_circuits`.
         lsa_knob (str): The complete ``LSA`` name of the knob, including any ``LHCBEAM/`` etc.
+        trim (float): The trim value to write for the knob. Defaults to 1.
 
     Returns:
         The complete ``MAD-X`` script to reproduce the knob, as a string.
@@ -86,7 +87,7 @@ def get_madx_script_from_definition_dataframe(deltas_df: tfs.TfsDataFrame, lsa_k
     trim_variable = f"{knob_itself}_trim"
     change_commands.append("! Change this value to reproduce a different trim")
     change_commands.append(f"! Beware some knobs are not so linear in their trims")
-    change_commands.append(f"{trim_variable} = 1;")
+    change_commands.append(f"{trim_variable} = {trim};")
     change_commands.append("! Impacted variables")
 
     for variable, delta_k in deltas_df.DELTA_K.items():
