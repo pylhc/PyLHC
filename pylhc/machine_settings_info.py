@@ -1,21 +1,27 @@
 """
 Print Machine Settings Overview
 -------------------------------
+
 Prints an overview over the machine settings at a provided given time, or the current settings if
 no time is given.
 If an output path is given, all info will be written into tfs files,
 otherwise a summary is logged into console.
+
 Knob values can be extracted and the knob definition gathered. 
 For brevity reasons, this data is not logged into the summary in the console.
 If a start time is given, the trim history for the given knobs can be written out as well. 
 This data is also not logged.
+
 Can be run from command line, parameters as given in :meth:`pylhc.machine_settings_info.get_info`.
 All gathered data is returned, if this function is called from python.
+
 .. code-block:: none
+
     usage: machine_settings_info.py [-h] [--time TIME] [--start_time START_TIME]
                                     [--knobs KNOBS [KNOBS ...]] [--accel ACCEL]
                                     [--output_dir OUTPUT_DIR] [--knob_definitions]
                                     [--source SOURCE] [--log]
+
     optional arguments:
     -h, --help            show this help message and exit
     --time TIME           UTC Time as 'Y-m-d H:M:S.f' format.
@@ -33,6 +39,8 @@ All gathered data is returned, if this function is called from python.
     --source SOURCE       Source to extract data from.
     --log                 Write summary into log
                           (automatically done if no output path is given).
+
+
 :author: jdilly
 """
 from collections import OrderedDict, namedtuple
@@ -108,40 +116,75 @@ def _get_params() -> dict:
 def get_info(opt) -> Dict[str, object]:
     """
     Get info about **Beamprocess**, **Optics** and **Knobs** at given time.
+
     Keyword Args:
+
        *--Optional--*
+
         - **accel** *(str)*:
+
             Accelerator name.
+
             default: ``lhc``
+
+
         - **knob_definitions**:
+
             Set to extract knob definitions.
+
             action: ``store_true``
+
+
         - **knobs** *(str)*:
+
             List of knobnames.
+
             default: ``None``
+
+
         - **log**:
+
             Write summary into log (automatically done if no output path is
             given).
+
             action: ``store_true``
+
+
         - **output_dir** *(PathOrStr)*:
+
             Output directory.
+
             default: ``None``
+
+
         - **source** *(str)*:
+
             Source to extract data from.
+
             default: ``nxcals``
+
+
         - **start_time** *(AccDatetime, str)*:
+
             UTC Time as 'Y-m-d H:M:S.f' format or AccDatetime object.
             Defines the beginning of the time-range.
+
             default: ``None``
+
+
         - **time** *(AccDatetime, str)*:
+
             UTC Time as 'Y-m-d H:M:S.f' format or AccDatetime object.
             Acts as point in time or end time (if ``start_time`` is given).
+
             default: ``None``
+
     Returns:
         dict: Dictionary containing the given ``time`` and ``start_time``,
         the extracted ``beamprocess``-info and ``optics``-info, the
         ``trim_histories`` and current (i.e. at given ``time``) ``trims``
         and the ``knob_definitions``, if extracted.
+
     """
     if opt.output_dir is None:
         opt.log = True
@@ -194,6 +237,7 @@ def get_info(opt) -> Dict[str, object]:
 def log_summary(acc_time: AccDatetime, bp_info: DotDict,
                 optics_info: DotDict = None, trims: Dict[str, float] = None):
     """Log the summary.
+
     Args:
         acc_time (AccDatetime): User given Time
         bp_info (DotDict): BeamProcess Info Dictionary
@@ -229,6 +273,7 @@ def write_summary(
     optics_info: DotDict = None, trims: Dict[str, float] = None
 ):
     """Write summary into a ``tfs`` file.
+
     Args:
         output_path (Path): Folder to write output file into
         accel (str): Name of the accelerator
@@ -274,6 +319,7 @@ def write_trim_histories(
     """ Write the trim histories into tfs files.
     There are two time columns, one with timestamps as they are usually easier to handle
     and one with the UTC-string, as they are more human readable.
+
     Args:
         output_path (Path): Folder to write output file into
         trim_hisotries (dict): trims histories as extracted via LSA.get_trim_history()
@@ -396,8 +442,10 @@ def _get_knob_definitions(knobs: list, optics: str):
 
 def _get_last_trim(trims: dict) -> dict:
     """Returns the last trim in the trim history.
+
     Args:
         trims (dict): trim history as extracted via LSA.get_trim_history()
+
     Returns:
         Dictionary of knob names and their values.
     """
