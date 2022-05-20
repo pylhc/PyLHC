@@ -30,28 +30,40 @@ import tfs
 from omc3.utils import logging_tools
 from omc3.utils.contexts import timeit
 
-from pylhc.data_extract.lsa import LSA
+from pylhc.data_extract.lsa import LSAClient
 
 LOG = logging_tools.get_logger(__name__)
 
 # ----- Helper functions ----- #
 
 
-def get_madx_script_from_deltas_dataframe(df: tfs.TfsDataFrame, knob: str) -> str:
-    """"""
-    LOG.debug(f"Determining MAD-X commands to reproduce knob '{knob}'")
-    change_commands = [f"! Start of change commands for knob: {knob}"]
+def get_madx_script_from_definition_dataframe(deltas_df: tfs.TfsDataFrame, lsa_knob: str) -> str:
+    """
+    Given the extracted definition dataframe of an LSA knob - as returned by
+    `~pylhc.data_extract.lsa.LSAClient.get_knob_circuits` - this function will generate the
+    corresponding ``MAD-X`` text commands that would reproduce this knob in a script.
+
+    Args:
+        deltas_df (tfs.TfsDataFrame): The extracted definition dataframe of an ``LSA`` knob. This
+            can be obtained with `~pylhc.data_extract.lsa.LSAClient.get_knob_circuits`.
+        lsa_knob (str): The complete ``LSA`` name of the knob, including any ``LHCBEAM/`` etc.
+
+    Returns:
+        The complete ``MAD-X`` script to reproduce the knob, as a string.
+    """
+    LOG.debug(f"Determining MAD-X commands to reproduce knob '{lsa_knob}'")
+    change_commands = [f"! Start of change commands for knob: {lsa_knob}"]
 
     # Set this to 1 by default but can be changed by the user to reproduce a given trim
-    knob_itself = knob.split("/")[1]  # without the LHCBEAM/ part
+    knob_itself = lsa_knob.split("/")[1]  # without the LHCBEAM/ part
     trim_variable = f"{knob_itself}_trim"
     change_commands.append("! Change this value to reproduce a different trim")
     change_commands.append(f"! Beware some knobs are not so linear in their trims")
     change_commands.append(f"{trim_variable} = 1;")
 
-    for variable, delta_k in df.DELTA_K.items():
+    for variable, delta_k in deltas_df.DELTA_K.items():
         change_commands.append(f"{variable} = {variable} + {delta_k} * {trim_variable};")
-    change_commands.append(f"! End of change commands for knob: {knob}\n")
+    change_commands.append(f"! End of change commands for knob: {lsa_knob}\n")
     return "\n".join(change_commands)
 
 
@@ -75,7 +87,7 @@ def _get_args():
         type=str,
         nargs="*",
         required=False,
-        help="The various knob names to convert to their MAD-X equivalent.",
+        help="The full LSA names of any knob to convert to their MAD-X equivalent.",
     )
     parser.add_argument(
         "--file",
@@ -108,14 +120,18 @@ if __name__ == "__main__":
         knobs = options.knobs
 
     LOG.info("Instantiating LSA client")
-    lsa_client = pjlsa.LSAClient()
+    lsa_client = LSAClient()
 
-    with timeit(lambda elapsed: LOG.info(f"Processed all knobs in {elapsed:.2f}s")):
+    with timeit(lambda elapsed: LOG.info(f"Processed all given knobs in {elapsed:.2f}s")):
         for lsa_knob in knobs:
             LOG.info(f"Processing LSA knob '{lsa_knob}'")
-            mad_name = lsa_knob.split("/")[1]
-            madx_commands_string = process_lsa_knob_to_madx_commands(
-                lsa_client=lsa_client, optics=lsa_optics, lsa_knob=lsa_knob, madx_knob=mad_name
-            )
-            LOG.debug(f"Writing MAD-X commands to file '{mad_name}_knob.madx'")
-            Path(f"{mad_name}_knob.madx").write_text(madx_commands_string)
+            knob_definition = lsa_client.get_knob_circuits(knob_name=lsa_knob, optics_name=lsa_optics)
+            madx_commands_string = get_madx_script_from_definition_dataframe(deltas_df=knob_definition, lsa_knob=lsa_knob)
+
+            definition_file = f"{lsa_knob.replace('/', '_')}_definition.tfs"
+            LOG.debug(f"Writing knob definition TFS file at '{definition_file}'")
+            tfs.write(definition_file, knob_definition)
+
+            madx_file = f"{lsa_knob.replace('/', '_')}_knob.madx"
+            LOG.debug(f"Writing MAD-X commands to file '{madx_file}'")
+            Path(madx_file).write_text(madx_commands_string)
