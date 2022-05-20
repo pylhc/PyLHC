@@ -24,6 +24,7 @@ This script is meant to convert various LSA knobs to their MAD-X equivalent scri
 import argparse
 
 from pathlib import Path
+from typing import Dict
 
 import tfs
 
@@ -35,6 +36,32 @@ from pylhc.data_extract.lsa import LSAClient
 LOG = logging_tools.get_logger(__name__)
 
 # ----- Helper functions ----- #
+
+
+def parse_knobs_and_trim_values_from_file(knobs_file: Path) -> Dict[str, float]:
+    """
+    Parses a file for LSA knobs and their trim values. Each line should be a knob name
+    following by a number of the trim value. If no value is written, it will be defaulted
+    to ``1.0``. Lines starting with a ``#`` are ignored.
+
+    Args:
+        knobs_file (pathlib.Path): Path to the file with definitions.
+
+    Returns:
+        A `dict` with as keys the parsed knob names and as values their associated trims.
+    """
+    knob_lines = [line for line in Path(knobs_file).read_text().splitlines() if not line.startswith("#")]
+    results = {}
+
+    for line in knob_lines:
+        knob = line.split()[0]  # this is the knob name
+        try:  # catch the trim value, which is a number after the knob name
+            trim = float(line.split()[1])
+            results[knob] = trim
+        except IndexError:  # the is no number, we default the trim value to 1.0
+            LOG.debug(f"No trim value was specified for knob '{knob}' - defaulting to 1.0")
+            results[knob] = 1.0
+    return results
 
 
 def get_madx_script_from_definition_dataframe(deltas_df: tfs.TfsDataFrame, lsa_knob: str) -> str:
