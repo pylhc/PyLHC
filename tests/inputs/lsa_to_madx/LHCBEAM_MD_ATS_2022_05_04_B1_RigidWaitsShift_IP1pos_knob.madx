@@ -1,0 +1,20 @@
+! Start of change commands for knob: LHCBEAM/MD_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos
+! Change this value to reproduce a different trim
+! Beware some knobs are not so linear in their trims
+MD_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos_trim = 1.0;
+! Impacted variables
+kq9.r1b1     =    kq9.r1b1     + (    0.000139519135701    ) * MD_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos_trim;
+kq5.r1b1     =    kq5.r1b1     + (   -0.000208665238461    ) * MD_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos_trim;
+kq7.l1b1     =    kq7.l1b1     + (   -1.65434776136e-05    ) * MD_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos_trim;
+kq8.r1b1     =    kq8.r1b1     + (   -5.16630898346e-05    ) * MD_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos_trim;
+kq8.l1b1     =    kq8.l1b1     + (    4.70197155664e-05    ) * MD_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos_trim;
+kq10.r1b1    =    kq10.r1b1    + (   -1.96085402422e-05    ) * MD_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos_trim;
+kq4.l1b1     =    kq4.l1b1     + (    7.35134890419e-05    ) * MD_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos_trim;
+kq4.r1b1     =    kq4.r1b1     + (    4.70408231195e-05    ) * MD_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos_trim;
+kq10.l1b1    =    kq10.l1b1    + (   -2.47050375037e-05    ) * MD_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos_trim;
+kq7.r1b1     =    kq7.r1b1     + (    -2.3806014724e-05    ) * MD_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos_trim;
+kq9.l1b1     =    kq9.l1b1     + (    0.000118330906844    ) * MD_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos_trim;
+kq5.l1b1     =    kq5.l1b1     + (   -0.000214221465285    ) * MD_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos_trim;
+kq6.r1b1     =    kq6.r1b1     + (    0.000218127839616    ) * MD_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos_trim;
+kq6.l1b1     =    kq6.l1b1     + (    0.000125226986711    ) * MD_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos_trim;
+! End of change commands for knob: LHCBEAM/MD_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos

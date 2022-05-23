@@ -201,7 +201,10 @@ def get_info(opt) -> Dict[str, object]:
         trim_histories = LSA.get_trim_history(beamprocess_info.Object, opt.knobs, start_time=acc_start_time, end_time=acc_time, accelerator=opt.accel)
         trims = _get_last_trim(trim_histories)
         if opt.knob_definitions:
-            knob_definitions = _get_knob_definitions(opt.knobs, optics_info.Name)
+            if opt.knobs:
+                knob_definitions = _get_knob_definitions(opt.knobs, optics_info.Name)
+            else:
+                LOG.error("Writing out knob definitions requires providing a list of knobs.")
 
     if opt.log:
         log_summary(acc_time, beamprocess_info, optics_info, trims)

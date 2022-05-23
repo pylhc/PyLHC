@@ -1,0 +1,27 @@
+#Nonlinear
+LHCBEAM/2017_IRNL_IR1a4	0.5
+LHCBEAM/2017_IRNL_IR1b3_couplFD	1.0
+LHCBEAM/2017_IRNL_a3b3_tuneFD 1.0
+LHCBEAM/2017_IRNL_b4 1.0
+LHCBEAM/2017_NL_IR1_30cm_kcssxr1 1.0
+LHCBEAM/2018_IRNL_IR1a3 1.0
+LHCBEAM/2018_IRNL_IR1b3 1.0
+LHCBEAM/2018_IRNL_IR5a3 1.0
+LHCBEAM/IR5_a4_2018 1.0
+#Local correctors close to IP
+LHCBEAM/2017_ATS_Inj_LocalCoupling 1.0
+LHCBEAM/2017_ATS_LocalCorrection 1.0
+#Chromatic Coupling
+LHCBEAM/chromatic_coupling_b1_40cm_ctpps2_2017_v2 -1.0
+LHCBEAM/chromatic_coupling_b2_40cm_ctpps2_2017 -1.0
+#Beta-beat
+LHCBEAM/b1_global_beta_beating_40cm_ctpps_2017_v2 1.0
+LHCBEAM/b2_global_beta_beating_40cm_ctpps_2017 1.0
+LHCBEAM/2017_beam1_beta_CrossingAngleCompensation 1.0
+LHCBEAM/2017_30cm_GlobalCorr_wXing_Beam2_v2 1.0
+LHCBEAM/B2_2017_global_correction_Xing 1.0
+#Total Phase advance
+LHCBEAM/2017_B2_MQT_total_phase_correction 1.0
+LHCBEAM/B1_2017_MQT_total_phase_correction 1.0
+#arc-by-arc coupling
+LHCBEAM/global_coup_knob_all_correctors	-1.0
