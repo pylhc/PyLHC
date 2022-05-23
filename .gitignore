@@ -166,35 +166,14 @@ dmypy.json
 # CMake
 cmake-build-*/
 
-# Mongo Explorer plugin
-.idea/**/mongoSettings.xml
-
 # File-based project format
 *.iws
-
-# IntelliJ
-out/
-
-# mpeltonen/sbt-idea plugin
-.idea_modules/
-
-# JIRA plugin
-atlassian-ide-plugin.xml
-
-# Cursive Clojure plugin
-.idea/replstate.xml
 
 # Crashlytics plugin (for Android Studio and IntelliJ)
 com_crashlytics_export_strings.xml
 crashlytics.properties
 crashlytics-build.properties
 fabric.properties
-
-# Editor-based Rest Client
-.idea/httpRequests
-
-# Android studio 3.1+ serialized cache file
-.idea/caches/build_file_checksums.ser
 
 ### macOS template
 # General
@@ -228,12 +207,11 @@ Temporary Items
 # gitignore template for Jupyter Notebooks
 # website: http://jupyter.org/
 
-.ipynb_checkpoints
-*/.ipynb_checkpoints/*
-
 # Remove previous ipynb_checkpoints
 #   git rm -r .ipynb_checkpoints/
 #
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
 
 # VSCode
 .vscode
@@ -241,13 +219,6 @@ Temporary Items
 
 # Neovim
 .nvimlog
-
-/.idea/codeStyles/codeStyleConfig.xml
-/.idea/misc.xml
-/.idea/modules.xml
-/.idea/inspectionProfiles/profiles_settings.xml
-/.idea/vcs.xml
-/.idea/PyhDToolkit.iml
 
 # Sphinx build directory and sphinx-gallery generated documents
 .doc_build
