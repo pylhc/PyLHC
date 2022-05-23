@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pylhc.lsa_to_madx &mdash; pylhc 0.7.0 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> pylhc
+            <img src="../../_static/omc_logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.7
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Entrypoints</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../entrypoints/analysis.html">Analysis Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/analysis.html#bsrt-analysis">BSRT Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/analysis.html#forced-da-analysis">Forced DA Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../entrypoints/bpm_calibration.html">BPM Calibration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/bpm_calibration.html#id1">BPM Calibration</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../entrypoints/kickgroups.html">KickGroup Informations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/kickgroups.html#kickgroups">Kickgroups</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../entrypoints/lsa_to_madx.html">LSA Knobs to MAD-X Expressions Converter</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/lsa_to_madx.html#lsa-to-mad-x">LSA to MAD-X</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../entrypoints/machine_info.html">Machine Information Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/machine_info.html#print-machine-settings-overview">Print Machine Settings Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/machine_info.html#bsrt-logger">BSRT logger</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/calibration.html">BPM Calibration Utilities</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/calibration.html#beta">Beta</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/calibration.html#dispersion">Dispersion</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/constants.html">Constants Definitions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/constants.html#constants-general">Constants: General</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/constants.html#constants-forced-da-analysis">Constants: Forced DA Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/constants.html#constants-kickgroups">Constants: KickGroups</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/constants.html#constants-machine-settings-info">Constants: Machine Settings Info</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/constants.html#constants-bpm-calibration">Constants: BPM Calibration</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/data_extract.html">Data Extraction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/data_extract.html#pylsa">PyLSA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/data_extract.html#timber">Timber</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/utils.html">Utilities</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/utils.html#additional-io-tools">Additional IO-Tools</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pylhc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      <li>pylhc.lsa_to_madx</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pylhc.lsa_to_madx</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">LSA to MAD-X</span>
+<span class="sd">------------</span>
+
+<span class="sd">This script is meant to convert various ``LSA`` knobs to their ``MAD-X`` equivalent scripts.</span>
+
+<span class="sd">.. code-block:: none</span>
+
+<span class="sd">    usage: lsa_to_madx.py [-h] --optics OPTICS [--knobs [KNOBS ...]] [--file FILE]</span>
+
+<span class="sd">    LSA Knob to MAD-X Converter.This script can be given an LSA LHC optics, a list</span>
+<span class="sd">    of LSA knobs or a file with LSA knobs and will, for each knob, retrieve the</span>
+<span class="sd">    affected LHC power circuits and determine the corresponding MAD-X variables</span>
+<span class="sd">    changes. It will then output both definition files and MAD-X scripts reproducing</span>
+<span class="sd">    the provided knobs.</span>
+
+<span class="sd">    options:</span>
+<span class="sd">    -h, --help           show this help message and exit</span>
+<span class="sd">    --optics OPTICS      The LSA name of the optics for which the knobs are defined.</span>
+<span class="sd">    --knobs [KNOBS ...]  The full LSA names of any knob to convert to their MAD-X equivalent.</span>
+<span class="sd">    --file FILE          Name of a file with knob names and strength factors to use. A</span>
+<span class="sd">                         single knob should be written per line, and lines starting with a</span>
+<span class="sd">                         &#39;#&#39; character will be ignored.</span>
+
+<span class="sd">One can simply want to find out the ``MAD-X`` way to reproduce a given knob.</span>
+<span class="sd">For instance, to find reproduce ``LHCBEAM/MD_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos``, which is defined in the ``R2022a_A30cmC30cmA10mL200cm`` optics one would run:</span>
+
+<span class="sd">.. code-block:: none</span>
+
+<span class="sd">    python -m pylhc.lsa_to_madx \\</span>
+<span class="sd">        --optics R2022a_A30cmC30cmA10mL200cm \\</span>
+<span class="sd">        --knobs LHCBEAM/MD_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos</span>
+
+<span class="sd">Two files, **LHCBEAM_MD_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos_definition.tfs** and **LHCBEAM_MD_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos_knob.madx** will be written to disk.</span>
+
+<span class="sd">In order to reproduce a specific machine configuration at a given time, one can gather all knobs and their trim values for this configuration in a text file and feed this file to the script.</span>
+<span class="sd">In this file, each line should hold a knob name as it appears in LSA and its trim value.</span>
+<span class="sd">Lines starting with a ``#`` character will be ignored.</span>
+
+<span class="sd">For instance the following **knobs.txt** file gathers a 2017 LHC configuration:</span>
+
+<span class="sd">.. code-block:: none</span>
+
+<span class="sd">    # Nonlinear Corrections</span>
+<span class="sd">    LHCBEAM/2017_IRNL_IR1a4	0.5</span>
+<span class="sd">    LHCBEAM/2017_IRNL_IR1b3_couplFD	1.0</span>
+<span class="sd">    LHCBEAM/2017_IRNL_a3b3_tuneFD 1.0</span>
+<span class="sd">    LHCBEAM/2017_IRNL_b4 1.0</span>
+<span class="sd">    LHCBEAM/2017_NL_IR1_30cm_kcssxr1 1.0</span>
+<span class="sd">    LHCBEAM/2018_IRNL_IR1a3 1.0</span>
+<span class="sd">    LHCBEAM/2018_IRNL_IR1b3 1.0</span>
+<span class="sd">    LHCBEAM/2018_IRNL_IR5a3 1.0</span>
+<span class="sd">    LHCBEAM/IR5_a4_2018 1.0</span>
+<span class="sd">    # Local correctors close to IP</span>
+<span class="sd">    LHCBEAM/2017_ATS_Inj_LocalCoupling 1.0</span>
+<span class="sd">    LHCBEAM/2017_ATS_LocalCorrection 1.0</span>
+<span class="sd">    # Chromatic Coupling</span>
+<span class="sd">    LHCBEAM/chromatic_coupling_b1_40cm_ctpps2_2017_v2 -1.0</span>
+<span class="sd">    LHCBEAM/chromatic_coupling_b2_40cm_ctpps2_2017 -1.0</span>
+<span class="sd">    # Beta-beat</span>
+<span class="sd">    LHCBEAM/b1_global_beta_beating_40cm_ctpps_2017_v2 1.0</span>
+<span class="sd">    LHCBEAM/b2_global_beta_beating_40cm_ctpps_2017 1.0</span>
+<span class="sd">    LHCBEAM/2017_beam1_beta_CrossingAngleCompensation 1.0</span>
+<span class="sd">    LHCBEAM/2017_30cm_GlobalCorr_wXing_Beam2_v2 1.0</span>
+<span class="sd">    LHCBEAM/B2_2017_global_correction_Xing 1.0</span>
+<span class="sd">    # Total Phase advance</span>
+<span class="sd">    LHCBEAM/2017_B2_MQT_total_phase_correction 1.0</span>
+<span class="sd">    LHCBEAM/B1_2017_MQT_total_phase_correction 1.0</span>
+<span class="sd">    # Arc-by-arc coupling</span>
+<span class="sd">    LHCBEAM/global_coup_knob_all_correctors	-1.0</span>
+
+<span class="sd">One can provide this file with the corresponding optics and get a ``MAD-X`` file for each defined knob with the appropriate trim value.</span>
+<span class="sd">In this case many files will be created.</span>
+<span class="sd">The call would be:</span>
+
+<span class="sd">.. code-block:: bash</span>
+
+<span class="sd">    python -m pylhc.lsa_to_madx \\</span>
+<span class="sd">        --optics R2017aT_A30C30A10mL300_CTPPS2 \\</span>
+<span class="sd">        --file knobs.txt</span>
+
+<span class="sd">Hint: the knobs active at a given time can be retrieved with the `~pylhc.machine_settings_info` script. </span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span>
+
+<span class="kn">import</span> <span class="nn">tfs</span>
+
+<span class="kn">from</span> <span class="nn">omc3.utils</span> <span class="kn">import</span> <span class="n">logging_tools</span>
+<span class="kn">from</span> <span class="nn">omc3.utils.contexts</span> <span class="kn">import</span> <span class="n">timeit</span>
+
+<span class="kn">from</span> <span class="nn">pylhc.data_extract.lsa</span> <span class="kn">import</span> <span class="n">LSAClient</span>
+
+<span class="n">LOG</span> <span class="o">=</span> <span class="n">logging_tools</span><span class="o">.</span><span class="n">get_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="c1"># ----- Helper functions ----- #</span>
+
+
+<div class="viewcode-block" id="parse_knobs_and_trim_values_from_file"><a class="viewcode-back" href="../../entrypoints/lsa_to_madx.html#pylhc.lsa_to_madx.parse_knobs_and_trim_values_from_file">[docs]</a><span class="k">def</span> <span class="nf">parse_knobs_and_trim_values_from_file</span><span class="p">(</span><span class="n">knobs_file</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parses a file for LSA knobs and their trim values. Each line should be a knob name</span>
+<span class="sd">    following by a number of the trim value. If no value is written, it will be defaulted</span>
+<span class="sd">    to ``1.0``. Lines starting with a ``#`` are ignored.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        knobs_file (~pathlib.Path): Path to the file with definitions.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A `dict` with as keys the parsed knob names and as values their associated trims.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">knob_lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">Path</span><span class="p">(</span><span class="n">knobs_file</span><span class="p">)</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">)]</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">knob_lines</span><span class="p">:</span>
+        <span class="n">knob</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># this is the knob name</span>
+        <span class="k">try</span><span class="p">:</span>  <span class="c1"># catch the trim value, which is a number after the knob name</span>
+            <span class="n">trim</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">results</span><span class="p">[</span><span class="n">knob</span><span class="p">]</span> <span class="o">=</span> <span class="n">trim</span>
+        <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>  <span class="c1"># there is no number, we default the trim value to 1.0</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No trim value was specified for knob &#39;</span><span class="si">{</span><span class="n">knob</span><span class="si">}</span><span class="s2">&#39; - defaulting to 1.0&quot;</span><span class="p">)</span>
+            <span class="n">results</span><span class="p">[</span><span class="n">knob</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="k">return</span> <span class="n">results</span></div>
+
+
+<div class="viewcode-block" id="get_madx_script_from_definition_dataframe"><a class="viewcode-back" href="../../entrypoints/lsa_to_madx.html#pylhc.lsa_to_madx.get_madx_script_from_definition_dataframe">[docs]</a><span class="k">def</span> <span class="nf">get_madx_script_from_definition_dataframe</span><span class="p">(</span><span class="n">deltas_df</span><span class="p">:</span> <span class="n">tfs</span><span class="o">.</span><span class="n">TfsDataFrame</span><span class="p">,</span> <span class="n">lsa_knob</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">trim</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given the extracted definition dataframe of an LSA knob - as returned by</span>
+<span class="sd">    `~pylhc.data_extract.lsa.LSAClient.get_knob_circuits` - this function will generate the</span>
+<span class="sd">    corresponding ``MAD-X`` text commands that would reproduce this knob in a script.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        deltas_df (~tfs.frame.TfsDataFrame): The extracted definition dataframe of an ``LSA`` knob. This</span>
+<span class="sd">            can be obtained with `~pylhc.data_extract.lsa.LSAClient.get_knob_circuits`.</span>
+<span class="sd">        lsa_knob (str): The complete ``LSA`` name of the knob, including any ``LHCBEAM[12]?/`` part.</span>
+<span class="sd">        trim (float): The trim value to write for the knob. Defaults to 1.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The complete ``MAD-X`` script to reproduce the knob, as a string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Determining MAD-X commands to reproduce knob &#39;</span><span class="si">{</span><span class="n">lsa_knob</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+    <span class="n">change_commands</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;! Start of change commands for knob: </span><span class="si">{</span><span class="n">lsa_knob</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
+
+    <span class="c1"># Set this to 1 by default but can be changed by the user to reproduce a given trim</span>
+    <span class="n">knob_itself</span> <span class="o">=</span> <span class="n">lsa_knob</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># without the LHCBEAM[12]?/ part</span>
+    <span class="n">trim_variable</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">knob_itself</span><span class="si">}</span><span class="s2">_trim&quot;</span>
+    <span class="n">change_commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;! Change this value to reproduce a different trim&quot;</span><span class="p">)</span>
+    <span class="n">change_commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;! Beware some knobs are not so linear in their trims&quot;</span><span class="p">)</span>
+    <span class="n">change_commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">trim_variable</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">trim</span><span class="si">}</span><span class="s2">;&quot;</span><span class="p">)</span>
+    <span class="n">change_commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;! Impacted variables&quot;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">variable</span><span class="p">,</span> <span class="n">delta_k</span> <span class="ow">in</span> <span class="n">deltas_df</span><span class="o">.</span><span class="n">DELTA_K</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="c1"># Parhenthesis below are important for MAD-X to not mess up parsing of &quot;var = var + -value&quot; if delta_k is negative</span>
+        <span class="n">change_commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">variable</span><span class="si">:</span><span class="s2">&lt;12</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">variable</span><span class="si">:</span><span class="s2">^15</span><span class="si">}</span><span class="s2"> + (</span><span class="si">{</span><span class="n">delta_k</span><span class="si">:</span><span class="s2">^25</span><span class="si">}</span><span class="s2">) * </span><span class="si">{</span><span class="n">trim_variable</span><span class="si">}</span><span class="s2">;&quot;</span><span class="p">)</span>
+    <span class="n">change_commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;! End of change commands for knob: </span><span class="si">{</span><span class="n">lsa_knob</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">change_commands</span><span class="p">)</span></div>
+
+
+<span class="c1"># ----- Script Part ----- #</span>
+
+
+<span class="k">def</span> <span class="nf">_get_args</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Parse Commandline Arguments.&quot;&quot;&quot;</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;LSA Knob to MAD-X Converter.&quot;</span>
+        <span class="s2">&quot;This script can be given an LSA LHC optics, a list of LSA knobs or a file with LSA knobs &quot;</span>
+        <span class="s2">&quot;and will, for each knob, retrieve the affected LHC power circuits and determine the &quot;</span>
+        <span class="s2">&quot;corresponding MAD-X variables changes. It will then output both definition files and MAD-X &quot;</span>
+        <span class="s2">&quot;scripts reproducing the provided knobs.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--optics&quot;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;optics&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The LSA name of the optics for which the knobs are defined.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--knobs&quot;</span><span class="p">,</span>
+        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;knobs&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;*&quot;</span><span class="p">,</span>
+        <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The full LSA names of any knob to convert to their MAD-X equivalent.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--file&quot;</span><span class="p">,</span>
+        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;file&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Name of a file with knob names and strength factors to use. &quot;</span>
+        <span class="s2">&quot;A single knob should be written per line, and lines starting with a # &quot;</span>
+        <span class="s2">&quot;character will be ignored.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">options</span> <span class="o">=</span> <span class="n">_get_args</span><span class="p">()</span>
+    <span class="n">lsa_optics</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">optics</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">options</span><span class="o">.</span><span class="n">knobs</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">options</span><span class="o">.</span><span class="n">file</span><span class="p">:</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Need to provide either a list of knob names or a file with 1 knob name per line&quot;</span><span class="p">)</span>
+        <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">knobs</span> <span class="ow">and</span> <span class="n">options</span><span class="o">.</span><span class="n">file</span><span class="p">:</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Either provide knobs at the command line or from a text file, but not both&quot;</span><span class="p">)</span>
+        <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">file</span> <span class="ow">and</span> <span class="n">Path</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">file</span><span class="p">)</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loading knob names from file &#39;</span><span class="si">{</span><span class="n">options</span><span class="o">.</span><span class="n">file</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+        <span class="n">knobs_dict</span> <span class="o">=</span> <span class="n">parse_knobs_and_trim_values_from_file</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">file</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># given at the command line with --knobs, we initialise trim values to 1</span>
+        <span class="n">knobs_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">knob</span><span class="p">:</span> <span class="mf">1.0</span> <span class="k">for</span> <span class="n">knob</span> <span class="ow">in</span> <span class="n">options</span><span class="o">.</span><span class="n">knobs</span><span class="p">}</span>
+
+    <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Instantiating LSA client&quot;</span><span class="p">)</span>
+    <span class="n">lsa_client</span> <span class="o">=</span> <span class="n">LSAClient</span><span class="p">()</span>
+    <span class="n">unfound_knobs</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">with</span> <span class="n">timeit</span><span class="p">(</span><span class="k">lambda</span> <span class="n">elapsed</span><span class="p">:</span> <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Processed all given knobs in </span><span class="si">{</span><span class="n">elapsed</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)):</span>
+        <span class="k">for</span> <span class="n">lsa_knob</span><span class="p">,</span> <span class="n">trim_value</span> <span class="ow">in</span> <span class="n">knobs_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Processing LSA knob &#39;</span><span class="si">{</span><span class="n">lsa_knob</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>  <span class="c1"># next line might raise if knob not defined for the given optics</span>
+                <span class="n">knob_definition</span> <span class="o">=</span> <span class="n">lsa_client</span><span class="o">.</span><span class="n">get_knob_circuits</span><span class="p">(</span><span class="n">knob_name</span><span class="o">=</span><span class="n">lsa_knob</span><span class="p">,</span> <span class="n">optics</span><span class="o">=</span><span class="n">lsa_optics</span><span class="p">)</span>
+                <span class="n">madx_commands_string</span> <span class="o">=</span> <span class="n">get_madx_script_from_definition_dataframe</span><span class="p">(</span>
+                    <span class="n">deltas_df</span><span class="o">=</span><span class="n">knob_definition</span><span class="p">,</span> <span class="n">lsa_knob</span><span class="o">=</span><span class="n">lsa_knob</span><span class="p">,</span> <span class="n">trim</span><span class="o">=</span><span class="n">trim_value</span>
+                <span class="p">)</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">OSError</span><span class="p">,</span> <span class="ne">IOError</span><span class="p">):</span>
+                <span class="n">LOG</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not find knob &#39;</span><span class="si">{</span><span class="n">lsa_knob</span><span class="si">}</span><span class="s2">&#39; in the given optics &#39;</span><span class="si">{</span><span class="n">lsa_optics</span><span class="si">}</span><span class="s2">&#39; - skipping&quot;</span><span class="p">)</span>
+                <span class="n">unfound_knobs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lsa_knob</span><span class="p">)</span>
+
+            <span class="n">definition_file</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">lsa_knob</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">_definition.tfs&quot;</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Writing knob definition TFS file at &#39;</span><span class="si">{</span><span class="n">definition_file</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+            <span class="n">tfs</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">definition_file</span><span class="p">,</span> <span class="n">knob_definition</span><span class="p">,</span> <span class="n">save_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="n">madx_file</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">lsa_knob</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">_knob.madx&quot;</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Writing MAD-X commands to file &#39;</span><span class="si">{</span><span class="n">madx_file</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+            <span class="n">Path</span><span class="p">(</span><span class="n">madx_file</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">madx_commands_string</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">unfound_knobs</span><span class="p">:</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The following knobs could not be found in the &#39;</span><span class="si">{</span><span class="n">lsa_optics</span><span class="si">}</span><span class="s2">&#39; optics: </span><span class="se">\n\t\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n\t\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">unfound_knobs</span><span class="p">))</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

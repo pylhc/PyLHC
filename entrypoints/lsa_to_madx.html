@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LSA Knobs to MAD-X Expressions Converter &mdash; pylhc 0.7.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Machine Information Tools" href="machine_info.html" />
+    <link rel="prev" title="KickGroup Informations" href="kickgroups.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> pylhc
+            <img src="../_static/omc_logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.7
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Entrypoints</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="analysis.html">Analysis Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="analysis.html#bsrt-analysis">BSRT Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="analysis.html#forced-da-analysis">Forced DA Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="bpm_calibration.html">BPM Calibration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="bpm_calibration.html#id1">BPM Calibration</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="kickgroups.html">KickGroup Informations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="kickgroups.html#kickgroups">Kickgroups</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">LSA Knobs to MAD-X Expressions Converter</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#lsa-to-mad-x">LSA to MAD-X</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="machine_info.html">Machine Information Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="machine_info.html#print-machine-settings-overview">Print Machine Settings Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="machine_info.html#bsrt-logger">BSRT logger</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules/calibration.html">BPM Calibration Utilities</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../modules/calibration.html#beta">Beta</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/calibration.html#dispersion">Dispersion</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/constants.html">Constants Definitions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../modules/constants.html#constants-general">Constants: General</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/constants.html#constants-forced-da-analysis">Constants: Forced DA Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/constants.html#constants-kickgroups">Constants: KickGroups</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/constants.html#constants-machine-settings-info">Constants: Machine Settings Info</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/constants.html#constants-bpm-calibration">Constants: BPM Calibration</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/data_extract.html">Data Extraction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../modules/data_extract.html#pylsa">PyLSA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/data_extract.html#timber">Timber</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/utils.html">Utilities</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../modules/utils.html#additional-io-tools">Additional IO-Tools</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pylhc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>LSA Knobs to MAD-X Expressions Converter</li>
+      <li class="wy-breadcrumbs-aside">
+              <!-- User defined GitHub URL -->
+              <a href="https://github.com/pylhc/pylhc" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-pylhc.lsa_to_madx">
+<span id="lsa-knobs-to-mad-x-expressions-converter"></span><h1>LSA Knobs to MAD-X Expressions Converter<a class="headerlink" href="#module-pylhc.lsa_to_madx" title="Permalink to this headline"></a></h1>
+<section id="lsa-to-mad-x">
+<h2>LSA to MAD-X<a class="headerlink" href="#lsa-to-mad-x" title="Permalink to this headline"></a></h2>
+<p>This script is meant to convert various <code class="docutils literal notranslate"><span class="pre">LSA</span></code> knobs to their <code class="docutils literal notranslate"><span class="pre">MAD-X</span></code> equivalent scripts.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>usage: lsa_to_madx.py [-h] --optics OPTICS [--knobs [KNOBS ...]] [--file FILE]
+
+LSA Knob to MAD-X Converter.This script can be given an LSA LHC optics, a list
+of LSA knobs or a file with LSA knobs and will, for each knob, retrieve the
+affected LHC power circuits and determine the corresponding MAD-X variables
+changes. It will then output both definition files and MAD-X scripts reproducing
+the provided knobs.
+
+options:
+-h, --help           show this help message and exit
+--optics OPTICS      The LSA name of the optics for which the knobs are defined.
+--knobs [KNOBS ...]  The full LSA names of any knob to convert to their MAD-X equivalent.
+--file FILE          Name of a file with knob names and strength factors to use. A
+                     single knob should be written per line, and lines starting with a
+                     &#39;#&#39; character will be ignored.
+</pre></div>
+</div>
+<p>One can simply want to find out the <code class="docutils literal notranslate"><span class="pre">MAD-X</span></code> way to reproduce a given knob.
+For instance, to find reproduce <code class="docutils literal notranslate"><span class="pre">LHCBEAM/MD_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos</span></code>, which is defined in the <code class="docutils literal notranslate"><span class="pre">R2022a_A30cmC30cmA10mL200cm</span></code> optics one would run:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>python -m pylhc.lsa_to_madx \
+    --optics R2022a_A30cmC30cmA10mL200cm \
+    --knobs LHCBEAM/MD_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos
+</pre></div>
+</div>
+<p>Two files, <strong>LHCBEAM_MD_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos_definition.tfs</strong> and <strong>LHCBEAM_MD_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos_knob.madx</strong> will be written to disk.</p>
+<p>In order to reproduce a specific machine configuration at a given time, one can gather all knobs and their trim values for this configuration in a text file and feed this file to the script.
+In this file, each line should hold a knob name as it appears in LSA and its trim value.
+Lines starting with a <code class="docutils literal notranslate"><span class="pre">#</span></code> character will be ignored.</p>
+<p>For instance the following <strong>knobs.txt</strong> file gathers a 2017 LHC configuration:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span># Nonlinear Corrections
+LHCBEAM/2017_IRNL_IR1a4     0.5
+LHCBEAM/2017_IRNL_IR1b3_couplFD     1.0
+LHCBEAM/2017_IRNL_a3b3_tuneFD 1.0
+LHCBEAM/2017_IRNL_b4 1.0
+LHCBEAM/2017_NL_IR1_30cm_kcssxr1 1.0
+LHCBEAM/2018_IRNL_IR1a3 1.0
+LHCBEAM/2018_IRNL_IR1b3 1.0
+LHCBEAM/2018_IRNL_IR5a3 1.0
+LHCBEAM/IR5_a4_2018 1.0
+# Local correctors close to IP
+LHCBEAM/2017_ATS_Inj_LocalCoupling 1.0
+LHCBEAM/2017_ATS_LocalCorrection 1.0
+# Chromatic Coupling
+LHCBEAM/chromatic_coupling_b1_40cm_ctpps2_2017_v2 -1.0
+LHCBEAM/chromatic_coupling_b2_40cm_ctpps2_2017 -1.0
+# Beta-beat
+LHCBEAM/b1_global_beta_beating_40cm_ctpps_2017_v2 1.0
+LHCBEAM/b2_global_beta_beating_40cm_ctpps_2017 1.0
+LHCBEAM/2017_beam1_beta_CrossingAngleCompensation 1.0
+LHCBEAM/2017_30cm_GlobalCorr_wXing_Beam2_v2 1.0
+LHCBEAM/B2_2017_global_correction_Xing 1.0
+# Total Phase advance
+LHCBEAM/2017_B2_MQT_total_phase_correction 1.0
+LHCBEAM/B1_2017_MQT_total_phase_correction 1.0
+# Arc-by-arc coupling
+LHCBEAM/global_coup_knob_all_correctors     -1.0
+</pre></div>
+</div>
+<p>One can provide this file with the corresponding optics and get a <code class="docutils literal notranslate"><span class="pre">MAD-X</span></code> file for each defined knob with the appropriate trim value.
+In this case many files will be created.
+The call would be:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python -m pylhc.lsa_to_madx <span class="se">\</span>
+    --optics R2017aT_A30C30A10mL300_CTPPS2 <span class="se">\</span>
+    --file knobs.txt
+</pre></div>
+</div>
+<p>Hint: the knobs active at a given time can be retrieved with the <a class="reference internal" href="machine_info.html#module-pylhc.machine_settings_info" title="pylhc.machine_settings_info"><code class="xref py py-obj docutils literal notranslate"><span class="pre">machine_settings_info</span></code></a> script.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="pylhc.lsa_to_madx.get_madx_script_from_definition_dataframe">
+<span class="sig-prename descclassname"><span class="pre">pylhc.lsa_to_madx.</span></span><span class="sig-name descname"><span class="pre">get_madx_script_from_definition_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">deltas_df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pylhc.github.io/tfs/modules/index.html#tfs.frame.TfsDataFrame" title="(in tfs-pandas v3.1)"><span class="pre">tfs.frame.TfsDataFrame</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">lsa_knob</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">trim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/pylhc/lsa_to_madx.html#get_madx_script_from_definition_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.lsa_to_madx.get_madx_script_from_definition_dataframe" title="Permalink to this definition"></a></dt>
+<dd><p>Given the extracted definition dataframe of an LSA knob - as returned by
+<a class="reference internal" href="../modules/data_extract.html#pylhc.data_extract.lsa.LSAClient.get_knob_circuits" title="pylhc.data_extract.lsa.LSAClient.get_knob_circuits"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_knob_circuits</span></code></a> - this function will generate the
+corresponding <code class="docutils literal notranslate"><span class="pre">MAD-X</span></code> text commands that would reproduce this knob in a script.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>deltas_df</strong> (<a class="reference external" href="https://pylhc.github.io/tfs/modules/index.html#tfs.frame.TfsDataFrame" title="(in tfs-pandas v3.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">TfsDataFrame</span></code></a>) -- The extracted definition dataframe of an <code class="docutils literal notranslate"><span class="pre">LSA</span></code> knob. This
+can be obtained with <a class="reference internal" href="../modules/data_extract.html#pylhc.data_extract.lsa.LSAClient.get_knob_circuits" title="pylhc.data_extract.lsa.LSAClient.get_knob_circuits"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_knob_circuits</span></code></a>.</p></li>
+<li><p><strong>lsa_knob</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) -- The complete <code class="docutils literal notranslate"><span class="pre">LSA</span></code> name of the knob, including any <code class="docutils literal notranslate"><span class="pre">LHCBEAM[12]?/</span></code> part.</p></li>
+<li><p><strong>trim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) -- The trim value to write for the knob. Defaults to 1.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The complete <code class="docutils literal notranslate"><span class="pre">MAD-X</span></code> script to reproduce the knob, as a string.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pylhc.lsa_to_madx.parse_knobs_and_trim_values_from_file">
+<span class="sig-prename descclassname"><span class="pre">pylhc.lsa_to_madx.</span></span><span class="sig-name descname"><span class="pre">parse_knobs_and_trim_values_from_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">knobs_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.10)"><span class="pre">pathlib.Path</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.10)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/pylhc/lsa_to_madx.html#parse_knobs_and_trim_values_from_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.lsa_to_madx.parse_knobs_and_trim_values_from_file" title="Permalink to this definition"></a></dt>
+<dd><p>Parses a file for LSA knobs and their trim values. Each line should be a knob name
+following by a number of the trim value. If no value is written, it will be defaulted
+to <code class="docutils literal notranslate"><span class="pre">1.0</span></code>. Lines starting with a <code class="docutils literal notranslate"><span class="pre">#</span></code> are ignored.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>knobs_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></a>) -- Path to the file with definitions.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> with as keys the parsed knob names and as values their associated trims.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="kickgroups.html" class="btn btn-neutral float-left" title="KickGroup Informations" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="machine_info.html" class="btn btn-neutral float-right" title="Machine Information Tools" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

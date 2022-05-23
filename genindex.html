@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Index &mdash; pylhc 0.6.2 documentation</title>
+  <title>Index &mdash; pylhc 0.7.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
@@ -29,7 +29,7 @@
             <img src="_static/omc_logo.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.6
+                0.7
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -52,6 +52,10 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="entrypoints/kickgroups.html">KickGroup Informations</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="entrypoints/kickgroups.html#kickgroups">Kickgroups</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="entrypoints/lsa_to_madx.html">LSA Knobs to MAD-X Expressions Converter</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="entrypoints/lsa_to_madx.html#lsa-to-mad-x">LSA to MAD-X</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="entrypoints/machine_info.html">Machine Information Tools</a><ul>
@@ -182,13 +186,15 @@
 </li>
       <li><a href="entrypoints/machine_info.html#pylhc.machine_settings_info.get_info">get_info() (in module pylhc.machine_settings_info)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="entrypoints/kickgroups.html#pylhc.kickgroups.get_kickgroup_info">get_kickgroup_info() (in module pylhc.kickgroups)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/data_extract.html#pylhc.data_extract.lsa.LSAClient.get_knob_circuits">get_knob_circuits() (pylhc.data_extract.lsa.LSAClient method)</a>
 </li>
       <li><a href="modules/data_extract.html#pylhc.data_extract.lsa.LSAClient.get_madx_name_from_circuit">get_madx_name_from_circuit() (pylhc.data_extract.lsa.LSAClient method)</a>
+</li>
+      <li><a href="entrypoints/lsa_to_madx.html#pylhc.lsa_to_madx.get_madx_script_from_definition_dataframe">get_madx_script_from_definition_dataframe() (in module pylhc.lsa_to_madx)</a>
 </li>
       <li><a href="modules/constants.html#pylhc.constants.general.get_proton_beta">get_proton_beta() (in module pylhc.constants.general)</a>
 </li>
@@ -254,6 +260,8 @@
 </li>
         <li><a href="entrypoints/kickgroups.html#module-pylhc.kickgroups">pylhc.kickgroups</a>
 </li>
+        <li><a href="entrypoints/lsa_to_madx.html#module-pylhc.lsa_to_madx">pylhc.lsa_to_madx</a>
+</li>
         <li><a href="entrypoints/machine_info.html#module-pylhc.machine_settings_info">pylhc.machine_settings_info</a>
 </li>
         <li><a href="modules/utils.html#module-pylhc.utils.tfs_tools">pylhc.utils.tfs_tools</a>
@@ -265,6 +273,8 @@
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="entrypoints/lsa_to_madx.html#pylhc.lsa_to_madx.parse_knobs_and_trim_values_from_file">parse_knobs_and_trim_values_from_file() (in module pylhc.lsa_to_madx)</a>
+</li>
       <li><a href="entrypoints/analysis.html#pylhc.forced_da_analysis.PathOrDataframe">PathOrDataframe (in module pylhc.forced_da_analysis)</a>
 </li>
       <li><a href="entrypoints/analysis.html#pylhc.forced_da_analysis.PathOrPagestore">PathOrPagestore (in module pylhc.forced_da_analysis)</a>
@@ -320,8 +330,6 @@
         <li><a href="modules/constants.html#module-pylhc.constants.forced_da_analysis">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pylhc.constants.general
 
@@ -329,6 +337,8 @@
         <li><a href="modules/constants.html#module-pylhc.constants.general">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pylhc.constants.kickgroups
 
@@ -369,6 +379,13 @@
 
       <ul>
         <li><a href="entrypoints/kickgroups.html#module-pylhc.kickgroups">module</a>
+</li>
+      </ul></li>
+      <li>
+    pylhc.lsa_to_madx
+
+      <ul>
+        <li><a href="entrypoints/lsa_to_madx.html#module-pylhc.lsa_to_madx">module</a>
 </li>
       </ul></li>
       <li>

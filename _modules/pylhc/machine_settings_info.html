@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pylhc.machine_settings_info &mdash; pylhc 0.6.2 documentation</title>
+  <title>pylhc.machine_settings_info &mdash; pylhc 0.7.0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
@@ -29,7 +29,7 @@
             <img src="../../_static/omc_logo.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.6
+                0.7
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -52,6 +52,10 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../entrypoints/kickgroups.html">KickGroup Informations</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../entrypoints/kickgroups.html#kickgroups">Kickgroups</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../entrypoints/lsa_to_madx.html">LSA Knobs to MAD-X Expressions Converter</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/lsa_to_madx.html#lsa-to-mad-x">LSA to MAD-X</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../entrypoints/machine_info.html">Machine Information Tools</a><ul>
@@ -314,7 +318,10 @@
         <span class="n">trim_histories</span> <span class="o">=</span> <span class="n">LSA</span><span class="o">.</span><span class="n">get_trim_history</span><span class="p">(</span><span class="n">beamprocess_info</span><span class="o">.</span><span class="n">Object</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">knobs</span><span class="p">,</span> <span class="n">start_time</span><span class="o">=</span><span class="n">acc_start_time</span><span class="p">,</span> <span class="n">end_time</span><span class="o">=</span><span class="n">acc_time</span><span class="p">,</span> <span class="n">accelerator</span><span class="o">=</span><span class="n">opt</span><span class="o">.</span><span class="n">accel</span><span class="p">)</span>
         <span class="n">trims</span> <span class="o">=</span> <span class="n">_get_last_trim</span><span class="p">(</span><span class="n">trim_histories</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">opt</span><span class="o">.</span><span class="n">knob_definitions</span><span class="p">:</span>
-            <span class="n">knob_definitions</span> <span class="o">=</span> <span class="n">_get_knob_definitions</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">knobs</span><span class="p">,</span> <span class="n">optics_info</span><span class="o">.</span><span class="n">Name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">opt</span><span class="o">.</span><span class="n">knobs</span><span class="p">:</span>
+                <span class="n">knob_definitions</span> <span class="o">=</span> <span class="n">_get_knob_definitions</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">knobs</span><span class="p">,</span> <span class="n">optics_info</span><span class="o">.</span><span class="n">Name</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">LOG</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Writing out knob definitions requires providing a list of knobs.&quot;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">opt</span><span class="o">.</span><span class="n">log</span><span class="p">:</span>
         <span class="n">log_summary</span><span class="p">(</span><span class="n">acc_time</span><span class="p">,</span> <span class="n">beamprocess_info</span><span class="p">,</span> <span class="n">optics_info</span><span class="p">,</span> <span class="n">trims</span><span class="p">)</span>
