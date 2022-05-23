@@ -223,6 +223,12 @@ def main():
                     deltas_df=knob_definition, lsa_knob=lsa_knob, trim=trim_value
                 )
 
+            except (OSError, IOError):  # raised by pjlsa if knob not found
+                LOG.warning(f"Could not find knob '{lsa_knob}' in the given optics '{lsa_optics}' - skipping")
+                unfound_knobs.append(lsa_knob)
+
+            else:  # we've managed to find knobs
+                # Don't write this in the try block, as it could raise IOError when failing
                 definition_file = f"{lsa_knob.replace('/', '_')}_definition.tfs"
                 LOG.debug(f"Writing knob definition TFS file at '{definition_file}'")
                 tfs.write(definition_file, knob_definition, save_index=True)
@@ -230,10 +236,6 @@ def main():
                 madx_file = f"{lsa_knob.replace('/', '_')}_knob.madx"
                 LOG.debug(f"Writing MAD-X commands to file '{madx_file}'")
                 Path(madx_file).write_text(madx_commands_string)
-
-            except (OSError, IOError):
-                LOG.warning(f"Could not find knob '{lsa_knob}' in the given optics '{lsa_optics}' - skipping")
-                unfound_knobs.append(lsa_knob)
 
     if unfound_knobs:
         LOG.info(f"The following knobs could not be found in the '{lsa_optics}' optics: \n\t\t" + "\n\t\t".join(unfound_knobs))
