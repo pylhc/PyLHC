@@ -118,7 +118,7 @@ def parse_knobs_and_trim_values_from_file(knobs_file: Path) -> Dict[str, float]:
         try:  # catch the trim value, which is a number after the knob name
             trim = float(line.split()[1])
             results[knob] = trim
-        except IndexError:  # the is no number, we default the trim value to 1.0
+        except IndexError:  # there is no number, we default the trim value to 1.0
             LOG.debug(f"No trim value was specified for knob '{knob}' - defaulting to 1.0")
             results[knob] = 1.0
     return results
@@ -151,7 +151,8 @@ def get_madx_script_from_definition_dataframe(deltas_df: tfs.TfsDataFrame, lsa_k
     change_commands.append("! Impacted variables")
 
     for variable, delta_k in deltas_df.DELTA_K.items():
-        change_commands.append(f"{variable:<12} = {variable:^15} + {delta_k:^25} * {trim_variable};")
+        # Parhenthesis below are important for MAD-X to not mess up parsing of "var = var + -value" if delta_k is negative
+        change_commands.append(f"{variable:<12} = {variable:^15} + ({delta_k:^25}) * {trim_variable};")
     change_commands.append(f"! End of change commands for knob: {lsa_knob}\n")
     return "\n".join(change_commands)
 
