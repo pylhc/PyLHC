@@ -133,7 +133,7 @@ def get_madx_script_from_definition_dataframe(deltas_df: tfs.TfsDataFrame, lsa_k
     Args:
         deltas_df (~tfs.frame.TfsDataFrame): The extracted definition dataframe of an ``LSA`` knob. This
             can be obtained with `~pylhc.data_extract.lsa.LSAClient.get_knob_circuits`.
-        lsa_knob (str): The complete ``LSA`` name of the knob, including any ``LHCBEAM/`` etc.
+        lsa_knob (str): The complete ``LSA`` name of the knob, including any ``LHCBEAM[12]?/`` part.
         trim (float): The trim value to write for the knob. Defaults to 1.
 
     Returns:
@@ -143,7 +143,7 @@ def get_madx_script_from_definition_dataframe(deltas_df: tfs.TfsDataFrame, lsa_k
     change_commands = [f"! Start of change commands for knob: {lsa_knob}"]
 
     # Set this to 1 by default but can be changed by the user to reproduce a given trim
-    knob_itself = lsa_knob.split("/")[1]  # without the LHCBEAM/ part
+    knob_itself = lsa_knob.split("/")[-1]  # without the LHCBEAM[12]?/ part
     trim_variable = f"{knob_itself}_trim"
     change_commands.append("! Change this value to reproduce a different trim")
     change_commands.append(f"! Beware some knobs are not so linear in their trims")
