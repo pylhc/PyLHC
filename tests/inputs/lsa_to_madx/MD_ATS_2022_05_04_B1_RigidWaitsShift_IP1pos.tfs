@@ -1,4 +1,4 @@
-@ Knob                 %s "LHCBEAM/MD_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos"
+@ Knob                 %s "LHCBEAM/ATS_Test_Knob"
 @ Optics               %s "R2022a_A30cmC30cmA10mL200cm"
 @ Info                 %s "In MAD-X it should be 'name = name + DELTA * knobValue'"
 * INDEX&&&                          CIRCUIT              DELTA_K

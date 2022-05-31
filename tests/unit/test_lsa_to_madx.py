@@ -27,9 +27,7 @@ class TestParsing:
 
 class TestMADXWriting:
     def test_madx_script_writing_from_definition_df(self, knob_definition_df, correct_madx_script):
-        script = get_madx_script_from_definition_dataframe(
-            knob_definition_df, lsa_knob="LHCBEAM/MD_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos"
-        )
+        script = get_madx_script_from_definition_dataframe(knob_definition_df, lsa_knob="LHCBEAM/ATS_Test_Knob")
         assert script == correct_madx_script
 
     def test_trim_variable_from_long_variable(self):
