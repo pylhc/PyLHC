@@ -10,6 +10,7 @@ import tfs
 from pandas._testing import assert_dict_equal
 
 from pylhc.lsa_to_madx import (
+    _get_trim_variable,
     get_madx_script_from_definition_dataframe,
     parse_knobs_and_trim_values_from_file,
 )
@@ -29,7 +30,14 @@ class TestMADXWriting:
         script = get_madx_script_from_definition_dataframe(
             knob_definition_df, lsa_knob="LHCBEAM/MD_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos"
         )
-        assert script == correct_madx_script  # TODO: figure why this doesn't work?
+        assert script == correct_madx_script
+
+    def test_trim_variable_from_long_variable(self):
+        """Testing that the trim variable is correctly truncated if too long."""
+        assert (
+            _get_trim_variable("ATS_2022_05_08_B1_arc_by_arc_coupling_133cm_30cm")
+            == "22_05_08_B1_arc_by_arc_coupling_133cm_30cm_trim"
+        )
 
 
 # ----- Fixtures ----- #
