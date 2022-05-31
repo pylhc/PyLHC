@@ -179,7 +179,7 @@ def _get_trim_variable(lsa_knob: str) -> str:
     # the latter two, and we make sure to truncate the knob so that the result is <=47 characters
     if len(knob_itself) > 42:
         LOG.info(f"Knob '{knob_itself}' is too long to be a MAD-X variable and will be truncated.")
-        knob_itself = knob_itself[-42]
+        knob_itself = knob_itself[-42:]
         LOG.debug(f"Truncated knob name to '{knob_itself}'.")
 
     trim_variable = f"trim_{knob_itself.lstrip('_')}"
