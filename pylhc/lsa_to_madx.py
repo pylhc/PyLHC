@@ -143,8 +143,7 @@ def get_madx_script_from_definition_dataframe(deltas_df: tfs.TfsDataFrame, lsa_k
     change_commands = [f"! Start of change commands for knob: {lsa_knob}"]
 
     # Set this to 1 by default but can be changed by the user to reproduce a given trim
-    knob_itself = lsa_knob.split("/")[-1]  # without the LHCBEAM[12]?/ part
-    trim_variable = f"{knob_itself}_trim"
+    trim_variable = _get_trim_variable(lsa_knob)
     change_commands.append("! Change this value to reproduce a different trim")
     change_commands.append(f"! Beware some knobs are not so linear in their trims")
     change_commands.append(f"{trim_variable} = {trim};")
@@ -155,6 +154,26 @@ def get_madx_script_from_definition_dataframe(deltas_df: tfs.TfsDataFrame, lsa_k
         change_commands.append(f"{variable:<12} = {variable:^15} + ({delta_k:^25}) * {trim_variable};")
     change_commands.append(f"! End of change commands for knob: {lsa_knob}\n")
     return "\n".join(change_commands)
+
+
+def _get_trim_variable(lsa_knob: str) -> str:
+    """
+    Generates the ``MAD-X`` trim variable name from an ``LSA`` knob.
+    Handles the variable name character limit of ``MAD-X``.
+    """
+    knob_itself = lsa_knob.split("/")[-1]  # without the LHCBEAM[12]?/ part
+    trim_variable = f"{knob_itself}_trim"
+
+    # MAD-X will crash if the variable name is 48 characters or longer!
+    if len(trim_variable) > 47:
+        trim_variable = trim_variable[-47:]
+
+    # MAD-X will crash if the variable name starts with an underscore
+    if trim_variable.startswith("_"):
+        while trim_variable.startswith("_"):
+            trim_variable = trim_variable[1:]
+
+    return trim_variable
 
 
 # ----- Script Part ----- #
