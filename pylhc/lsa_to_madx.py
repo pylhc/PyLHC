@@ -182,7 +182,6 @@ def _get_trim_variable(lsa_knob: str) -> str:
         knob_itself = knob_itself[-42]
         LOG.debug(f"Truncated knob name to '{knob_itself}'.")
 
-
     trim_variable = f"trim_{knob_itself.lstrip('_')}"
 
     return trim_variable
