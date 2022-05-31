@@ -33,6 +33,17 @@ For instance, to find reproduce ``LHCBEAM/MD_ATS_2022_05_04_B1_RigidWaitsShift_I
 
 Two files, **LHCBEAM_MD_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos_definition.tfs** and **LHCBEAM_MD_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos_knob.madx** will be written to disk.
 
+.. warning::
+    In ``MAD-X``, variable names with 48 or more characters will cause an issue.
+    As a consequence, this script will automatically truncate the knob name if needed when created the trim variable name.
+    One should not be surprised if long ``LSA`` knob names appear slightly differently in the created ``MAD-X`` files, then functionality stays intact.
+
+    For instance, the knob ``LHCBEAM/MD_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos`` will lead to the following trim variable definition:
+    
+    .. code-block:: fortran
+
+        trim_D_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos = 1.0;
+
 In order to reproduce a specific machine configuration at a given time, one can gather all knobs and their trim values for this configuration in a text file and feed this file to the script.
 In this file, each line should hold a knob name as it appears in LSA and its trim value.
 Lines starting with a ``#`` character will be ignored.
@@ -143,8 +154,7 @@ def get_madx_script_from_definition_dataframe(deltas_df: tfs.TfsDataFrame, lsa_k
     change_commands = [f"! Start of change commands for knob: {lsa_knob}"]
 
     # Set this to 1 by default but can be changed by the user to reproduce a given trim
-    knob_itself = lsa_knob.split("/")[-1]  # without the LHCBEAM[12]?/ part
-    trim_variable = f"{knob_itself}_trim"
+    trim_variable = _get_trim_variable(lsa_knob)
     change_commands.append("! Change this value to reproduce a different trim")
     change_commands.append(f"! Beware some knobs are not so linear in their trims")
     change_commands.append(f"{trim_variable} = {trim};")
@@ -155,6 +165,26 @@ def get_madx_script_from_definition_dataframe(deltas_df: tfs.TfsDataFrame, lsa_k
         change_commands.append(f"{variable:<12} = {variable:^15} + ({delta_k:^25}) * {trim_variable};")
     change_commands.append(f"! End of change commands for knob: {lsa_knob}\n")
     return "\n".join(change_commands)
+
+
+def _get_trim_variable(lsa_knob: str) -> str:
+    """
+    Generates the ``MAD-X`` trim variable name from an ``LSA`` knob.
+    Handles the variable name character limit of ``MAD-X``.
+    """
+    knob_itself = lsa_knob.split("/")[-1]  # without the LHCBEAM[12]?/ part
+
+    # MAD-X will crash if the variable name is >48 characters or longer! It will also silently fail
+    # if the variable name starts with an underscore or a digit. Adding "trim_" at the start circumvents
+    # the latter two, and we make sure to truncate the knob so that the result is <=47 characters
+    if len(knob_itself) > 42:
+        LOG.info(f"Knob '{knob_itself}' is too long to be a MAD-X variable and will be truncated.")
+        knob_itself = knob_itself[-42:]
+        LOG.debug(f"Truncated knob name to '{knob_itself}'.")
+
+    trim_variable = f"trim_{knob_itself.lstrip('_')}"
+
+    return trim_variable
 
 
 # ----- Script Part ----- #

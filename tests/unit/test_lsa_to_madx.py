@@ -10,6 +10,7 @@ import tfs
 from pandas._testing import assert_dict_equal
 
 from pylhc.lsa_to_madx import (
+    _get_trim_variable,
     get_madx_script_from_definition_dataframe,
     parse_knobs_and_trim_values_from_file,
 )
@@ -26,10 +27,18 @@ class TestParsing:
 
 class TestMADXWriting:
     def test_madx_script_writing_from_definition_df(self, knob_definition_df, correct_madx_script):
-        script = get_madx_script_from_definition_dataframe(
-            knob_definition_df, lsa_knob="LHCBEAM/MD_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos"
+        script = get_madx_script_from_definition_dataframe(knob_definition_df, lsa_knob="LHCBEAM/ATS_Test_Knob")
+        assert script == correct_madx_script
+
+    @pytest.mark.parametrize("lsa_knob", ["LHCBEAM/Super_Duper_Long_Name_For_A_Knob_Will_Be_Truncated_For_Sure", "ATS_Test_Knob"])
+    def test_trim_variable_from_long_knob_name(self, lsa_knob):
+        """Testing that the generated trim variable is correctly truncated if too long."""
+        assert (
+            _get_trim_variable("ATS_2022_05_08_B1_arc_by_arc_coupling_133cm_30cm")
+            == "trim_22_05_08_B1_arc_by_arc_coupling_133cm_30cm"
         )
-        assert script == correct_madx_script  # TODO: figure why this doesn't work?
+        assert _get_trim_variable("___knob") == "trim_knob"  # make sure we handle several underscores
+        assert len(_get_trim_variable(lsa_knob)) < 48
 
 
 # ----- Fixtures ----- #
