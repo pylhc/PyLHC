@@ -33,6 +33,17 @@ For instance, to find reproduce ``LHCBEAM/MD_ATS_2022_05_04_B1_RigidWaitsShift_I
 
 Two files, **LHCBEAM_MD_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos_definition.tfs** and **LHCBEAM_MD_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos_knob.madx** will be written to disk.
 
+.. warning::
+    In ``MAD-X``, variable names with 48 or more characters will cause an issue.
+    As a consequence, this script will automatically truncate the knob name if needed when created the trim variable name.
+    One should not be surprised if long ``LSA`` knob names appear slightly differently in the created ``MAD-X`` files, then functionality stays intact.
+
+    For instance, the knob ``LHCBEAM/MD_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos`` will lead to the following trim variable definition:
+    
+    .. code-block:: fortran
+
+        D_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos_trim = 1.0;
+
 In order to reproduce a specific machine configuration at a given time, one can gather all knobs and their trim values for this configuration in a text file and feed this file to the script.
 In this file, each line should hold a knob name as it appears in LSA and its trim value.
 Lines starting with a ``#`` character will be ignored.
