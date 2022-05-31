@@ -30,12 +30,15 @@ class TestMADXWriting:
         script = get_madx_script_from_definition_dataframe(knob_definition_df, lsa_knob="LHCBEAM/ATS_Test_Knob")
         assert script == correct_madx_script
 
-    def test_trim_variable_from_long_variable(self):
-        """Testing that the trim variable is correctly truncated if too long."""
+    @pytest.mark.parametrize("lsa_knob", ["LHCBEAM/Super_Duper_Long_Name_For_A_Knob_Will_Be_Truncated_For_Sure", "ATS_Test_Knob"])
+    def test_trim_variable_from_long_knob_name(self, lsa_knob):
+        """Testing that the generated trim variable is correctly truncated if too long."""
         assert (
             _get_trim_variable("ATS_2022_05_08_B1_arc_by_arc_coupling_133cm_30cm")
-            == "22_05_08_B1_arc_by_arc_coupling_133cm_30cm_trim"
+            == "trim_22_05_08_B1_arc_by_arc_coupling_133cm_30cm"
         )
+        assert _get_trim_variable("___knob") == "trim_knob"  # make sure we handle several underscores
+        assert len(_get_trim_variable(lsa_knob)) < 48
 
 
 # ----- Fixtures ----- #

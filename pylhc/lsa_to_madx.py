@@ -173,16 +173,19 @@ def _get_trim_variable(lsa_knob: str) -> str:
     Handles the variable name character limit of ``MAD-X``.
     """
     knob_itself = lsa_knob.split("/")[-1]  # without the LHCBEAM[12]?/ part
-    trim_variable = f"{knob_itself}_trim"
 
-    # MAD-X will crash if the variable name is 48 characters or longer!
-    if len(trim_variable) > 47:
-        trim_variable = trim_variable[-47:]
+    # MAD-X will crash if the variable name is >48 characters or longer! It will also silently fail
+    # if the variable name starts with an underscore or a digit. Adding "trim_" at the start circumvents
+    # the latter two, and we make sure to truncate the knob so that the result is <=47 characters
+    if len(knob_itself) > 42:
+        LOG.warning(f"Knob '{knob_itself}' is too long to be a MAD-X variable and will be truncated.")
+        knob_itself = knob_itself[-42:]
 
-    # MAD-X will crash if the variable name starts with an underscore
-    if trim_variable.startswith("_"):
-        while trim_variable.startswith("_"):
-            trim_variable = trim_variable[1:]
+    # This is to make sure the truncation doesn't lead to trim______something
+    while knob_itself.startswith("_"):
+        knob_itself = knob_itself[1:]
+
+    trim_variable = f"trim_{knob_itself}"
 
     return trim_variable
 
