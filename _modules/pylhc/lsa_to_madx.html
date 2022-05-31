@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pylhc.lsa_to_madx &mdash; pylhc 0.7.1 documentation</title>
+  <title>pylhc.lsa_to_madx &mdash; pylhc 0.7.2 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
@@ -14,6 +14,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -150,6 +151,17 @@
 
 <span class="sd">Two files, **LHCBEAM_MD_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos_definition.tfs** and **LHCBEAM_MD_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos_knob.madx** will be written to disk.</span>
 
+<span class="sd">.. warning::</span>
+<span class="sd">    In ``MAD-X``, variable names with 48 or more characters will cause an issue.</span>
+<span class="sd">    As a consequence, this script will automatically truncate the knob name if needed when created the trim variable name.</span>
+<span class="sd">    One should not be surprised if long ``LSA`` knob names appear slightly differently in the created ``MAD-X`` files, then functionality stays intact.</span>
+
+<span class="sd">    For instance, the knob ``LHCBEAM/MD_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos`` will lead to the following trim variable definition:</span>
+<span class="sd">    </span>
+<span class="sd">    .. code-block:: fortran</span>
+
+<span class="sd">        trim_D_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos = 1.0;</span>
+
 <span class="sd">In order to reproduce a specific machine configuration at a given time, one can gather all knobs and their trim values for this configuration in a text file and feed this file to the script.</span>
 <span class="sd">In this file, each line should hold a knob name as it appears in LSA and its trim value.</span>
 <span class="sd">Lines starting with a ``#`` character will be ignored.</span>
@@ -260,8 +272,7 @@
     <span class="n">change_commands</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;! Start of change commands for knob: </span><span class="si">{</span><span class="n">lsa_knob</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
 
     <span class="c1"># Set this to 1 by default but can be changed by the user to reproduce a given trim</span>
-    <span class="n">knob_itself</span> <span class="o">=</span> <span class="n">lsa_knob</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># without the LHCBEAM[12]?/ part</span>
-    <span class="n">trim_variable</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">knob_itself</span><span class="si">}</span><span class="s2">_trim&quot;</span>
+    <span class="n">trim_variable</span> <span class="o">=</span> <span class="n">_get_trim_variable</span><span class="p">(</span><span class="n">lsa_knob</span><span class="p">)</span>
     <span class="n">change_commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;! Change this value to reproduce a different trim&quot;</span><span class="p">)</span>
     <span class="n">change_commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;! Beware some knobs are not so linear in their trims&quot;</span><span class="p">)</span>
     <span class="n">change_commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">trim_variable</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">trim</span><span class="si">}</span><span class="s2">;&quot;</span><span class="p">)</span>
@@ -272,6 +283,26 @@
         <span class="n">change_commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">variable</span><span class="si">:</span><span class="s2">&lt;12</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">variable</span><span class="si">:</span><span class="s2">^15</span><span class="si">}</span><span class="s2"> + (</span><span class="si">{</span><span class="n">delta_k</span><span class="si">:</span><span class="s2">^25</span><span class="si">}</span><span class="s2">) * </span><span class="si">{</span><span class="n">trim_variable</span><span class="si">}</span><span class="s2">;&quot;</span><span class="p">)</span>
     <span class="n">change_commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;! End of change commands for knob: </span><span class="si">{</span><span class="n">lsa_knob</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">change_commands</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_get_trim_variable</span><span class="p">(</span><span class="n">lsa_knob</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generates the ``MAD-X`` trim variable name from an ``LSA`` knob.</span>
+<span class="sd">    Handles the variable name character limit of ``MAD-X``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">knob_itself</span> <span class="o">=</span> <span class="n">lsa_knob</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># without the LHCBEAM[12]?/ part</span>
+
+    <span class="c1"># MAD-X will crash if the variable name is &gt;48 characters or longer! It will also silently fail</span>
+    <span class="c1"># if the variable name starts with an underscore or a digit. Adding &quot;trim_&quot; at the start circumvents</span>
+    <span class="c1"># the latter two, and we make sure to truncate the knob so that the result is &lt;=47 characters</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">knob_itself</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">42</span><span class="p">:</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Knob &#39;</span><span class="si">{</span><span class="n">knob_itself</span><span class="si">}</span><span class="s2">&#39; is too long to be a MAD-X variable and will be truncated.&quot;</span><span class="p">)</span>
+        <span class="n">knob_itself</span> <span class="o">=</span> <span class="n">knob_itself</span><span class="p">[</span><span class="o">-</span><span class="mi">42</span><span class="p">:]</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Truncated knob name to &#39;</span><span class="si">{</span><span class="n">knob_itself</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+
+    <span class="n">trim_variable</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;trim_</span><span class="si">{</span><span class="n">knob_itself</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="k">return</span> <span class="n">trim_variable</span>
 
 
 <span class="c1"># ----- Script Part ----- #</span>
