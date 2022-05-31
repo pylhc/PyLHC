@@ -42,7 +42,7 @@ Two files, **LHCBEAM_MD_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos_definition.tfs*
     
     .. code-block:: fortran
 
-        D_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos_trim = 1.0;
+        trim_D_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos = 1.0;
 
 In order to reproduce a specific machine configuration at a given time, one can gather all knobs and their trim values for this configuration in a text file and feed this file to the script.
 In this file, each line should hold a knob name as it appears in LSA and its trim value.
@@ -178,14 +178,12 @@ def _get_trim_variable(lsa_knob: str) -> str:
     # if the variable name starts with an underscore or a digit. Adding "trim_" at the start circumvents
     # the latter two, and we make sure to truncate the knob so that the result is <=47 characters
     if len(knob_itself) > 42:
-        LOG.warning(f"Knob '{knob_itself}' is too long to be a MAD-X variable and will be truncated.")
-        knob_itself = knob_itself[-42:]
+        LOG.info(f"Knob '{knob_itself}' is too long to be a MAD-X variable and will be truncated.")
+        knob_itself = knob_itself[-42]
+        LOG.debug(f"Truncated knob name to '{knob_itself}'.")
 
-    # This is to make sure the truncation doesn't lead to trim______something
-    while knob_itself.startswith("_"):
-        knob_itself = knob_itself[1:]
 
-    trim_variable = f"trim_{knob_itself}"
+    trim_variable = f"trim_{knob_itself.lstrip('_')}"
 
     return trim_variable
 
