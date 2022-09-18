@@ -139,7 +139,9 @@ def parse_knobs_and_trim_values_from_file(knobs_file: Path) -> Dict[str, float]:
     return results
 
 
-def get_madx_script_from_definition_dataframe(deltas_df: tfs.TfsDataFrame, lsa_knob: str, trim: float = 1.0) -> str:
+def get_madx_script_from_definition_dataframe(deltas_df: tfs.TfsDataFrame, lsa_knob: str, trim: float = 1.0,
+                                              by_reference: bool = True, verbose: bool = False
+                                              ) -> str:
     """
     Given the extracted definition dataframe of an LSA knob - as returned by
     `~pylhc.data_extract.lsa.LSAClient.get_knob_circuits` - this function will generate the
@@ -150,6 +152,12 @@ def get_madx_script_from_definition_dataframe(deltas_df: tfs.TfsDataFrame, lsa_k
             can be obtained with `~pylhc.data_extract.lsa.LSAClient.get_knob_circuits`.
         lsa_knob (str): The complete ``LSA`` name of the knob, including any ``LHCBEAM[12]?/`` part.
         trim (float): The trim value to write for the knob. Defaults to 1.
+        by_reference (bool): If true, creates an _init variable and uses the `:=` operator
+                            so that changing the trim later in the script changes all
+                            variables as well. Might be problematic if a variable depends on
+                            multiple trim-knobs.
+                            Otherwise `variable = variable + delta*trim` is used.
+        verbose (bool): Adds some extra comments into the madx code.
 
     Returns:
         The complete ``MAD-X`` script to reproduce the knob, as a string.
@@ -159,16 +167,24 @@ def get_madx_script_from_definition_dataframe(deltas_df: tfs.TfsDataFrame, lsa_k
 
     # Set this to 1 by default but can be changed by the user to reproduce a given trim
     trim_variable = _get_trim_variable(lsa_knob)
-    change_commands.append("! Change this value to reproduce a different trim")
-    change_commands.append(f"! Beware some knobs are not so linear in their trims")
+    if verbose:
+        change_commands.append("! Change this value to reproduce a different trim")
+        change_commands.append("! Beware some knobs are not so linear in their trims")
     change_commands.append(f"{trim_variable} = {trim};")
-    change_commands.append("! Impacted variables")
+    change_commands.append("! Impacted variables:")
 
     deltas = _get_delta(deltas_df)
 
     for variable, delta in deltas.items():
-        # Parenthesis below are important for MAD-X to not mess up parsing of "var = var + -value" if delta_k is negative
-        change_commands.append(f"{variable:<12} = {variable:^15} + ({delta:^25}) * {trim_variable};")
+        # Parenthesis around the detla below are important for MAD-X to not
+        # mess up parsing of "var = var + -value" if delta_k is negative
+        if by_reference:
+            variable_init = f"{variable}_init"
+            change_commands.append(f"{variable_init:<12} = {variable:<15};")
+            change_commands.append(f"{variable:<12} := {variable_init:^15} + ({delta:^25}) * {trim_variable};")
+        else:
+            change_commands.append(f"{variable:<12} = {variable:^15} + ({delta:^25}) * {trim_variable};")
+
     change_commands.append(f"! End of change commands for knob: {lsa_knob}\n")
     return "\n".join(change_commands)
 
