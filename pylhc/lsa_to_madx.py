@@ -209,7 +209,7 @@ def get_madx_script_from_definition_dataframe(deltas_df: tfs.TfsDataFrame, lsa_k
     if by_reference:
         for variable in deltas.keys():
             variable_init = f"{variable}_init"
-            change_commands.append(f"{variable_init:<12} = {variable:<15};")
+            change_commands.append(f"{variable_init:<12} = {variable};")
 
     # write knob-definition
     for variable, delta in deltas.items():
