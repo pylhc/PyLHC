@@ -93,6 +93,7 @@ The call would be:
 Hint: the knobs active at a given time can be retrieved with the `~pylhc.machine_settings_info` script. 
 """
 import argparse
+import re
 import string
 
 from pathlib import Path
@@ -139,6 +140,35 @@ def parse_knobs_and_trim_values_from_file(knobs_file: Path) -> Dict[str, float]:
     return results
 
 
+def get_sign_madx_vs_lsa(madx_name: str) -> int:
+    """
+    Return the sign convention between madx and lsa for the given variable.
+
+    Args:
+        madx_name (str): Name of the variable as used in MAD-X.
+
+    Returns:
+        int: 1 or -1.
+
+    """
+    # Test for skewness:
+    match = re.match(r"^.c?[qsodt]s", madx_name)  # k, then maybe a "c", then type, then skew
+    if match is not None:
+        LOG.debug(f"{madx_name} belongs to a skew magnet: Sign is inverted betwen LSA and MAD-X")
+        return -1
+
+    # Test for Q2
+    if madx_name.startswith("ktqx2"):
+        LOG.debug(f"{madx_name} belongs to Q2: Sign convention is unknown")
+        raise NotImplementedError(
+            "Q2 is not implemented yet, as the sign convention LSA-MADX is not known. "
+            "Please check and implement."
+        )
+
+    LOG.debug(f"Sign of {madx_name} is the same in LSA and MAD-X.")
+    return 1
+
+
 def get_madx_script_from_definition_dataframe(deltas_df: tfs.TfsDataFrame, lsa_knob: str, trim: float = 1.0,
                                               by_reference: bool = True, verbose: bool = False
                                               ) -> str:
@@ -183,7 +213,8 @@ def get_madx_script_from_definition_dataframe(deltas_df: tfs.TfsDataFrame, lsa_k
 
     # write knob-definition
     for variable, delta in deltas.items():
-        # Parenthesis around the detla below are important for MAD-X to not
+        delta = get_sign_madx_vs_lsa(variable) * delta
+        # Parenthesis around the delta below are important for MAD-X to not
         # mess up parsing of "var = var + -value" if delta_k is negative
         if by_reference:
             variable_init = f"{variable}_init"

@@ -194,7 +194,6 @@ class LSAClient(pjLSAClient):
             LOG.warning(f"The following knobs were not found in '{beamprocess}': {trims_not_found}")
         return trims
 
-
     def get_beamprocess_info(self, beamprocess: Union[str, object]) -> Dict:
         """
         Get context info of the given beamprocess.
