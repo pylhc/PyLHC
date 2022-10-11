@@ -93,10 +93,14 @@ The call would be:
 Hint: the knobs active at a given time can be retrieved with the `~pylhc.machine_settings_info` script. 
 """
 import argparse
+import re
+import string
 
 from pathlib import Path
 from typing import Dict
 
+import numpy as np
+import pandas as pd
 import tfs
 
 from omc3.utils import logging_tools
@@ -105,6 +109,7 @@ from omc3.utils.contexts import timeit
 from pylhc.data_extract.lsa import LSAClient
 
 LOG = logging_tools.get_logger(__name__)
+ALLOWED_IN_MADX_NAMES = "_" + string.ascii_letters + string.digits
 
 # ----- Helper functions ----- #
 
@@ -112,7 +117,7 @@ LOG = logging_tools.get_logger(__name__)
 def parse_knobs_and_trim_values_from_file(knobs_file: Path) -> Dict[str, float]:
     """
     Parses a file for LSA knobs and their trim values. Each line should be a knob name
-    following by a number of the trim value. If no value is written, it will be defaulted
+    following by a number of the trim value. If no value is written, it defaults
     to ``1.0``. Lines starting with a ``#`` are ignored.
 
     Args:
@@ -135,7 +140,38 @@ def parse_knobs_and_trim_values_from_file(knobs_file: Path) -> Dict[str, float]:
     return results
 
 
-def get_madx_script_from_definition_dataframe(deltas_df: tfs.TfsDataFrame, lsa_knob: str, trim: float = 1.0) -> str:
+def get_sign_madx_vs_lsa(madx_name: str) -> int:
+    """
+    Return the sign convention between madx and lsa for the given variable.
+
+    Args:
+        madx_name (str): Name of the variable as used in MAD-X.
+
+    Returns:
+        int: 1 or -1.
+
+    """
+    # Test for skewness:
+    match = re.match(r"^.c?[qsodt]s", madx_name)  # k, then maybe a "c", then type, then skew
+    if match is not None:
+        LOG.debug(f"{madx_name} belongs to a skew magnet: Sign is inverted betwen LSA and MAD-X")
+        return -1
+
+    # Test for Q2
+    if madx_name.lower().startswith("ktqx2"):
+        LOG.debug(f"{madx_name} belongs to Q2: Sign convention is unknown")
+        raise NotImplementedError(
+            "Q2 is not implemented yet, as the sign convention LSA-MADX is not known. "
+            "Please check and implement."
+        )
+
+    LOG.debug(f"Sign of {madx_name} is the same in LSA and MAD-X.")
+    return 1
+
+
+def get_madx_script_from_definition_dataframe(deltas_df: tfs.TfsDataFrame, lsa_knob: str, trim: float = 1.0,
+                                              by_reference: bool = True, verbose: bool = False
+                                              ) -> str:
     """
     Given the extracted definition dataframe of an LSA knob - as returned by
     `~pylhc.data_extract.lsa.LSAClient.get_knob_circuits` - this function will generate the
@@ -146,6 +182,12 @@ def get_madx_script_from_definition_dataframe(deltas_df: tfs.TfsDataFrame, lsa_k
             can be obtained with `~pylhc.data_extract.lsa.LSAClient.get_knob_circuits`.
         lsa_knob (str): The complete ``LSA`` name of the knob, including any ``LHCBEAM[12]?/`` part.
         trim (float): The trim value to write for the knob. Defaults to 1.
+        by_reference (bool): If true, creates an _init variable and uses deferred expressions (`:=`)
+                            so that changing the trim later in the script changes all
+                            variables as well. Might be problematic if a variable depends on
+                            multiple trim-knobs.
+                            Otherwise `variable = variable + delta*trim` is used.
+        verbose (bool): Adds some extra comments into the madx code.
 
     Returns:
         The complete ``MAD-X`` script to reproduce the knob, as a string.
@@ -155,14 +197,31 @@ def get_madx_script_from_definition_dataframe(deltas_df: tfs.TfsDataFrame, lsa_k
 
     # Set this to 1 by default but can be changed by the user to reproduce a given trim
     trim_variable = _get_trim_variable(lsa_knob)
-    change_commands.append("! Change this value to reproduce a different trim")
-    change_commands.append(f"! Beware some knobs are not so linear in their trims")
+    if verbose:
+        change_commands.append("! Change this value to reproduce a different trim")
+        change_commands.append("! Beware some knobs are not so linear in their trims")
     change_commands.append(f"{trim_variable} = {trim};")
-    change_commands.append("! Impacted variables")
+    change_commands.append("! Impacted variables:")
 
-    for variable, delta_k in deltas_df.DELTA_K.items():
-        # Parhenthesis below are important for MAD-X to not mess up parsing of "var = var + -value" if delta_k is negative
-        change_commands.append(f"{variable:<12} = {variable:^15} + ({delta_k:^25}) * {trim_variable};")
+    deltas = _get_delta(deltas_df)
+
+    # write all inits first (looks nicer in madx)
+    if by_reference:
+        for variable in deltas.keys():
+            variable_init = f"{variable}_init"
+            change_commands.append(f"{variable_init:<17} = {variable};")
+
+    # write knob-definition
+    for variable, delta in deltas.items():
+        delta = get_sign_madx_vs_lsa(variable) * delta
+        # Parenthesis around the delta below are important for MAD-X to not
+        # mess up parsing of "var = var + -value" if delta_k is negative
+        if by_reference:
+            variable_init = f"{variable}_init"
+            change_commands.append(f"{variable:<12} := {variable_init:^19} + ({delta:^25}) * {trim_variable};")
+        else:
+            change_commands.append(f"{variable:<12} = {variable:^15} + ({delta:^25}) * {trim_variable};")
+
     change_commands.append(f"! End of change commands for knob: {lsa_knob}\n")
     return "\n".join(change_commands)
 
@@ -172,19 +231,52 @@ def _get_trim_variable(lsa_knob: str) -> str:
     Generates the ``MAD-X`` trim variable name from an ``LSA`` knob.
     Handles the variable name character limit of ``MAD-X``.
     """
-    knob_itself = lsa_knob.split("/")[-1]  # without the LHCBEAM[12]?/ part
+    # Handle the LHCBEAM-Part:
+    lhcbeam = re.match(r"^LHCBEAM(\d?)", lsa_knob.upper())
+    if lhcbeam is not None:
+        madx_knob = lsa_knob.split("/")[-1]  # without the LHCBEAM[12]?/ part
+        if lhcbeam.group(1):
+            # beam has a number: there might be two knobs with this name
+            madx_knob = f"B{lhcbeam.group(1)}_{madx_knob}"
+    else:
+        madx_knob = lsa_knob
+
+    # Clean up the name
+    madx_knob = madx_knob.replace("-", "_").replace("/", "_")
+    for c in set(madx_knob):
+        if c not in ALLOWED_IN_MADX_NAMES:
+            LOG.debug(f"Knob contains the character '{c}', which is not allowed in madx. Removing.")
+            madx_knob = madx_knob.replace(c, "")
 
     # MAD-X will crash if the variable name is >48 characters or longer! It will also silently fail
     # if the variable name starts with an underscore or a digit. Adding "trim_" at the start circumvents
     # the latter two, and we make sure to truncate the knob so that the result is <=47 characters
-    if len(knob_itself) > 42:
-        LOG.info(f"Knob '{knob_itself}' is too long to be a MAD-X variable and will be truncated.")
-        knob_itself = knob_itself[-42:]
-        LOG.debug(f"Truncated knob name to '{knob_itself}'.")
+    if len(madx_knob) > 42:
+        madx_knob = madx_knob[-42:]
+        LOG.debug(f"Truncated knob name to '{madx_knob}'.")
 
-    trim_variable = f"trim_{knob_itself.lstrip('_')}"
-
+    trim_variable = f"trim_{madx_knob.lstrip('_')}"
+    LOG.debug(f"Converted knob-name '{lsa_knob}' to trim variable '{trim_variable}'.")
     return trim_variable
+
+
+def _get_delta(deltas_df: tfs.TfsDataFrame) -> pd.Series:
+    """ Get the correct delta-column """
+    if "DELTA_K" not in deltas_df.columns:
+        LOG.debug("Using DELTA_KL column.")
+        return deltas_df.DELTA_KL
+
+    if "DELTA_KL" not in deltas_df.columns:
+        LOG.debug("Using DELTA_K column.")
+        return deltas_df.DELTA_K
+
+    if (deltas_df.DELTA_K.astype(bool) & deltas_df.DELTA_KL.astype(bool)).any():
+        raise ValueError("Some entries of DELTA_KL and DELTA_K seem to both be given. "
+                         "This looks like a bug. Please investigate.")
+
+    LOG.debug("Both DELTA_K and DELTA_KL columns present, merging columns.")
+    return pd.Series(np.where(deltas_df.DELTA_K.astype(bool), deltas_df.DELTA_K, deltas_df.DELTA_KL),
+                     index=deltas_df.index)
 
 
 # ----- Script Part ----- #

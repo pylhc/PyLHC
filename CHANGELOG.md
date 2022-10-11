@@ -1,5 +1,22 @@
 # pylhc Changelog
 
+## Version 0.7.3 
+
+Fixes:
+ - LSA to MADX sign convention
+ - Better trim naming
+ - check madx names for allowed characters
+ - option to init all variables
+ - machine settings info takes ISO time
+
+## Version 0.7.2
+
+Fix: Trim variables generated in the MAD-X script will make sure not to be longer than 47 characters (hard MAD-X limit), nor start with an underscore or a digit.
+
+## Version 0.7.1
+
+Fix: Will not attempt to write to disk knobs that were not found by LSA in the provided optics.
+
 ## Version 0.7.0
 
 Added `LSA` knobs to `MAD-X` conversion capability: given LSA knobs and the optics they apply to, creates `.madx` files that will reproduce the knobs in simulation.
