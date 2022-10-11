@@ -158,7 +158,7 @@ def get_sign_madx_vs_lsa(madx_name: str) -> int:
         return -1
 
     # Test for Q2
-    if madx_name.startswith("ktqx2"):
+    if madx_name.lower().startswith("ktqx2"):
         LOG.debug(f"{madx_name} belongs to Q2: Sign convention is unknown")
         raise NotImplementedError(
             "Q2 is not implemented yet, as the sign convention LSA-MADX is not known. "
@@ -182,7 +182,7 @@ def get_madx_script_from_definition_dataframe(deltas_df: tfs.TfsDataFrame, lsa_k
             can be obtained with `~pylhc.data_extract.lsa.LSAClient.get_knob_circuits`.
         lsa_knob (str): The complete ``LSA`` name of the knob, including any ``LHCBEAM[12]?/`` part.
         trim (float): The trim value to write for the knob. Defaults to 1.
-        by_reference (bool): If true, creates an _init variable and uses the `:=` operator
+        by_reference (bool): If true, creates an _init variable and uses deferred expressions (`:=`)
                             so that changing the trim later in the script changes all
                             variables as well. Might be problematic if a variable depends on
                             multiple trim-knobs.
