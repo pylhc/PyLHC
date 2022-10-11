@@ -24,7 +24,7 @@ All gathered data is returned, if this function is called from python.
 
     optional arguments:
     -h, --help            show this help message and exit
-    --time TIME           UTC Time as 'Y-m-d H:M:S.f' format.
+    --time TIME           UTC Time as 'Y-m-d H:M:S.f' format or ISO.
                           Acts as point in time or end time
                          (if ``start_time`` is given).
     --start_time START_TIME
@@ -77,13 +77,13 @@ def _get_params() -> dict:
         time=dict(
             default=None,
             type=AccDatetimeOrStr,
-            help=("UTC Time as 'Y-m-d H:M:S.f' format or AccDatetime object."
+            help=("UTC Time as 'Y-m-d H:M:S.f' or ISO format or AccDatetime object."
                   " Acts as point in time or end time (if ``start_time`` is given).")
             ),
         start_time=dict(
             default=None,
             type=AccDatetimeOrStr,
-            help=("UTC Time as 'Y-m-d H:M:S.f' format or AccDatetime object."
+            help=("UTC Time as 'Y-m-d H:M:S.f' or ISO format or AccDatetime object."
                   " Defines the beginning of the time-range.")
              ),
         knobs=dict(
@@ -466,16 +466,21 @@ def _get_last_trim(trims: dict) -> dict:
 def _get_times(time: Union[str, AccDatetime], start_time: Union[str, AccDatetime], accel: str):
     """ Returns acc_time and acc_start_time parameters depending on the user input. """
     acc_dt = AcceleratorDatetime[accel]
-    try:
-        time = acc_dt.now() if time is None else acc_dt.from_utc_string(time)
-    except TypeError:
-        pass  # is already AccDatetime object
 
-    try:
-        start_time = None if start_time is None else acc_dt.from_utc_string(start_time)
-    except TypeError:
-        pass  # is already AccDatetime object
+    def get_time(t, default=None):
+        if t is None:
+            return default
 
+        try:
+            return acc_dt.from_utc_string(t)
+        except TypeError:
+            return t  # is already AccDatetime object
+        except ValueError:
+            # time was in wrong format
+            return acc_dt.fromisoformat(t)
+
+    time = get_time(time, default=acc_dt.now())
+    start_time = get_time(start_time, default=None)
     return time, start_time
 
 
