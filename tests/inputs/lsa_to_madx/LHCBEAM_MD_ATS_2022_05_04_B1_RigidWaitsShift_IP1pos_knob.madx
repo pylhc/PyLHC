@@ -1,20 +1,32 @@
 ! Start of change commands for knob: LHCBEAM/ATS_Test_Knob
-! Change this value to reproduce a different trim
-! Beware some knobs are not so linear in their trims
 trim_ATS_Test_Knob = 1.0;
-! Impacted variables
-kq9.r1b1     =    kq9.r1b1     + (    0.000139519135701    ) * trim_ATS_Test_Knob;
-kq5.r1b1     =    kq5.r1b1     + (   -0.000208665238461    ) * trim_ATS_Test_Knob;
-kq7.l1b1     =    kq7.l1b1     + (   -1.65434776136e-05    ) * trim_ATS_Test_Knob;
-kq8.r1b1     =    kq8.r1b1     + (   -5.16630898346e-05    ) * trim_ATS_Test_Knob;
-kq8.l1b1     =    kq8.l1b1     + (    4.70197155664e-05    ) * trim_ATS_Test_Knob;
-kq10.r1b1    =    kq10.r1b1    + (   -1.96085402422e-05    ) * trim_ATS_Test_Knob;
-kq4.l1b1     =    kq4.l1b1     + (    7.35134890419e-05    ) * trim_ATS_Test_Knob;
-kq4.r1b1     =    kq4.r1b1     + (    4.70408231195e-05    ) * trim_ATS_Test_Knob;
-kq10.l1b1    =    kq10.l1b1    + (   -2.47050375037e-05    ) * trim_ATS_Test_Knob;
-kq7.r1b1     =    kq7.r1b1     + (    -2.3806014724e-05    ) * trim_ATS_Test_Knob;
-kq9.l1b1     =    kq9.l1b1     + (    0.000118330906844    ) * trim_ATS_Test_Knob;
-kq5.l1b1     =    kq5.l1b1     + (   -0.000214221465285    ) * trim_ATS_Test_Knob;
-kq6.r1b1     =    kq6.r1b1     + (    0.000218127839616    ) * trim_ATS_Test_Knob;
-kq6.l1b1     =    kq6.l1b1     + (    0.000125226986711    ) * trim_ATS_Test_Knob;
+! Impacted variables:
+kq9.r1b1_init     = kq9.r1b1;
+kq5.r1b1_init     = kq5.r1b1;
+kq7.l1b1_init     = kq7.l1b1;
+kq8.r1b1_init     = kq8.r1b1;
+kq8.l1b1_init     = kq8.l1b1;
+kq10.r1b1_init    = kq10.r1b1;
+kq4.l1b1_init     = kq4.l1b1;
+kq4.r1b1_init     = kq4.r1b1;
+kq10.l1b1_init    = kq10.l1b1;
+kq7.r1b1_init     = kq7.r1b1;
+kq9.l1b1_init     = kq9.l1b1;
+kq5.l1b1_init     = kq5.l1b1;
+kq6.r1b1_init     = kq6.r1b1;
+kq6.l1b1_init     = kq6.l1b1;
+kq9.r1b1     :=    kq9.r1b1_init    + (    0.000139519135701    ) * trim_ATS_Test_Knob;
+kq5.r1b1     :=    kq5.r1b1_init    + (   -0.000208665238461    ) * trim_ATS_Test_Knob;
+kq7.l1b1     :=    kq7.l1b1_init    + (   -1.65434776136e-05    ) * trim_ATS_Test_Knob;
+kq8.r1b1     :=    kq8.r1b1_init    + (   -5.16630898346e-05    ) * trim_ATS_Test_Knob;
+kq8.l1b1     :=    kq8.l1b1_init    + (    4.70197155664e-05    ) * trim_ATS_Test_Knob;
+kq10.r1b1    :=   kq10.r1b1_init    + (   -1.96085402422e-05    ) * trim_ATS_Test_Knob;
+kq4.l1b1     :=    kq4.l1b1_init    + (    7.35134890419e-05    ) * trim_ATS_Test_Knob;
+kq4.r1b1     :=    kq4.r1b1_init    + (    4.70408231195e-05    ) * trim_ATS_Test_Knob;
+kq10.l1b1    :=   kq10.l1b1_init    + (   -2.47050375037e-05    ) * trim_ATS_Test_Knob;
+kq7.r1b1     :=    kq7.r1b1_init    + (    -2.3806014724e-05    ) * trim_ATS_Test_Knob;
+kq9.l1b1     :=    kq9.l1b1_init    + (    0.000118330906844    ) * trim_ATS_Test_Knob;
+kq5.l1b1     :=    kq5.l1b1_init    + (   -0.000214221465285    ) * trim_ATS_Test_Knob;
+kq6.r1b1     :=    kq6.r1b1_init    + (    0.000218127839616    ) * trim_ATS_Test_Knob;
+kq6.l1b1     :=    kq6.l1b1_init    + (    0.000125226986711    ) * trim_ATS_Test_Knob;
 ! End of change commands for knob: LHCBEAM/ATS_Test_Knob
