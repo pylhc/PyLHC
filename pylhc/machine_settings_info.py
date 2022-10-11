@@ -473,11 +473,12 @@ def _get_times(time: Union[str, AccDatetime], start_time: Union[str, AccDatetime
 
         try:
             return acc_dt.from_utc_string(t)
-        except TypeError:
-            return t  # is already AccDatetime object
         except ValueError:
             # time was in wrong format
             return acc_dt.fromisoformat(t)
+        except TypeError:
+            # is already AccDatetime object
+            return t
 
     time = get_time(time, default=acc_dt.now())
     start_time = get_time(start_time, default=None)
