@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Index &mdash; pylhc 0.7.2 documentation</title>
+  <title>Index &mdash; pylhc 0.7.3 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
@@ -16,6 +16,7 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="#" />
     <link rel="search" title="Search" href="search.html" /> 
@@ -45,6 +46,14 @@
 <li class="toctree-l1"><a class="reference internal" href="entrypoints/analysis.html">Analysis Tools</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="entrypoints/analysis.html#bsrt-analysis">BSRT Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="entrypoints/analysis.html#forced-da-analysis">Forced DA Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="entrypoints/analysis.html#pylhc.forced_da_analysis.BoolOrPathOrDataFrame"><code class="docutils literal notranslate"><span class="pre">BoolOrPathOrDataFrame</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="entrypoints/analysis.html#pylhc.forced_da_analysis.PathOrDataframe"><code class="docutils literal notranslate"><span class="pre">PathOrDataframe</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="entrypoints/analysis.html#pylhc.forced_da_analysis.PathOrPagestore"><code class="docutils literal notranslate"><span class="pre">PathOrPagestore</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="entrypoints/analysis.html#pylhc.forced_da_analysis.PathOrString"><code class="docutils literal notranslate"><span class="pre">PathOrString</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="entrypoints/analysis.html#pylhc.forced_da_analysis.fun_exp_decay"><code class="docutils literal notranslate"><span class="pre">fun_exp_decay()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="entrypoints/analysis.html#pylhc.forced_da_analysis.fun_exp_sigma"><code class="docutils literal notranslate"><span class="pre">fun_exp_sigma()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="entrypoints/analysis.html#pylhc.forced_da_analysis.fun_linear"><code class="docutils literal notranslate"><span class="pre">fun_linear()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="entrypoints/analysis.html#pylhc.forced_da_analysis.swap_fun_parameters"><code class="docutils literal notranslate"><span class="pre">swap_fun_parameters()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="entrypoints/bpm_calibration.html">BPM Calibration</a><ul>
@@ -53,14 +62,29 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="entrypoints/kickgroups.html">KickGroup Informations</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="entrypoints/kickgroups.html#kickgroups">Kickgroups</a></li>
+<li class="toctree-l2"><a class="reference internal" href="entrypoints/kickgroups.html#pylhc.kickgroups.get_folder_json_files"><code class="docutils literal notranslate"><span class="pre">get_folder_json_files()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="entrypoints/kickgroups.html#pylhc.kickgroups.get_kickgroup_info"><code class="docutils literal notranslate"><span class="pre">get_kickgroup_info()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="entrypoints/kickgroups.html#pylhc.kickgroups.list_available_kickgroups"><code class="docutils literal notranslate"><span class="pre">list_available_kickgroups()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="entrypoints/kickgroups.html#pylhc.kickgroups.load_kickfile"><code class="docutils literal notranslate"><span class="pre">load_kickfile()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="entrypoints/kickgroups.html#pylhc.kickgroups.show_kickgroup_files"><code class="docutils literal notranslate"><span class="pre">show_kickgroup_files()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="entrypoints/kickgroups.html#pylhc.kickgroups.show_kickgroup_info"><code class="docutils literal notranslate"><span class="pre">show_kickgroup_info()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="entrypoints/lsa_to_madx.html">LSA Knobs to MAD-X Expressions Converter</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="entrypoints/lsa_to_madx.html#lsa-to-mad-x">LSA to MAD-X</a></li>
+<li class="toctree-l2"><a class="reference internal" href="entrypoints/lsa_to_madx.html#pylhc.lsa_to_madx.get_madx_script_from_definition_dataframe"><code class="docutils literal notranslate"><span class="pre">get_madx_script_from_definition_dataframe()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="entrypoints/lsa_to_madx.html#pylhc.lsa_to_madx.get_sign_madx_vs_lsa"><code class="docutils literal notranslate"><span class="pre">get_sign_madx_vs_lsa()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="entrypoints/lsa_to_madx.html#pylhc.lsa_to_madx.parse_knobs_and_trim_values_from_file"><code class="docutils literal notranslate"><span class="pre">parse_knobs_and_trim_values_from_file()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="entrypoints/machine_info.html">Machine Information Tools</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="entrypoints/machine_info.html#print-machine-settings-overview">Print Machine Settings Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="entrypoints/machine_info.html#pylhc.machine_settings_info.AccDatetimeOrStr"><code class="docutils literal notranslate"><span class="pre">AccDatetimeOrStr</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="entrypoints/machine_info.html#pylhc.machine_settings_info.get_info"><code class="docutils literal notranslate"><span class="pre">get_info()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="entrypoints/machine_info.html#pylhc.machine_settings_info.log_summary"><code class="docutils literal notranslate"><span class="pre">log_summary()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="entrypoints/machine_info.html#pylhc.machine_settings_info.write_knob_defitions"><code class="docutils literal notranslate"><span class="pre">write_knob_defitions()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="entrypoints/machine_info.html#pylhc.machine_settings_info.write_summary"><code class="docutils literal notranslate"><span class="pre">write_summary()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="entrypoints/machine_info.html#pylhc.machine_settings_info.write_trim_histories"><code class="docutils literal notranslate"><span class="pre">write_trim_histories()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="entrypoints/machine_info.html#bsrt-logger">BSRT logger</a></li>
 </ul>
 </li>
@@ -69,11 +93,15 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="modules/calibration.html">BPM Calibration Utilities</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="modules/calibration.html#beta">Beta</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/calibration.html#pylhc.calibration.beta.get_calibration_factors_from_beta"><code class="docutils literal notranslate"><span class="pre">get_calibration_factors_from_beta()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/calibration.html#dispersion">Dispersion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/calibration.html#pylhc.calibration.dispersion.get_calibration_factors_from_dispersion"><code class="docutils literal notranslate"><span class="pre">get_calibration_factors_from_dispersion()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="modules/constants.html">Constants Definitions</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="modules/constants.html#constants-general">Constants: General</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/constants.html#pylhc.constants.general.get_proton_beta"><code class="docutils literal notranslate"><span class="pre">get_proton_beta()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/constants.html#pylhc.constants.general.get_proton_gamma"><code class="docutils literal notranslate"><span class="pre">get_proton_gamma()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/constants.html#constants-forced-da-analysis">Constants: Forced DA Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/constants.html#constants-kickgroups">Constants: KickGroups</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/constants.html#constants-machine-settings-info">Constants: Machine Settings Info</a></li>
@@ -82,11 +110,18 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="modules/data_extract.html">Data Extraction</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="modules/data_extract.html#pylsa">PyLSA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/data_extract.html#pylhc.data_extract.lsa.LSA"><code class="docutils literal notranslate"><span class="pre">LSA</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/data_extract.html#pylhc.data_extract.lsa.LSAClient"><code class="docutils literal notranslate"><span class="pre">LSAClient</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/data_extract.html#pylhc.data_extract.lsa.LSAMeta"><code class="docutils literal notranslate"><span class="pre">LSAMeta</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/data_extract.html#pylhc.data_extract.lsa.try_to_acquire_data"><code class="docutils literal notranslate"><span class="pre">try_to_acquire_data()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/data_extract.html#timber">Timber</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/data_extract.html#pylhc.data_extract.timber.find_exact_time_for_beamprocess"><code class="docutils literal notranslate"><span class="pre">find_exact_time_for_beamprocess()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="modules/utils.html">Utilities</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="modules/utils.html#additional-io-tools">Additional IO-Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/utils.html#pylhc.utils.tfs_tools.read_hdf"><code class="docutils literal notranslate"><span class="pre">read_hdf()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/utils.html#pylhc.utils.tfs_tools.write_hdf"><code class="docutils literal notranslate"><span class="pre">write_hdf()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -200,6 +235,8 @@
       <li><a href="modules/constants.html#pylhc.constants.general.get_proton_beta">get_proton_beta() (in module pylhc.constants.general)</a>
 </li>
       <li><a href="modules/constants.html#pylhc.constants.general.get_proton_gamma">get_proton_gamma() (in module pylhc.constants.general)</a>
+</li>
+      <li><a href="entrypoints/lsa_to_madx.html#pylhc.lsa_to_madx.get_sign_madx_vs_lsa">get_sign_madx_vs_lsa() (in module pylhc.lsa_to_madx)</a>
 </li>
       <li><a href="modules/data_extract.html#pylhc.data_extract.lsa.LSAClient.get_trim_history">get_trim_history() (pylhc.data_extract.lsa.LSAClient method)</a>
 </li>

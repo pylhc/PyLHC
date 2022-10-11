@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LSA Knobs to MAD-X Expressions Converter &mdash; pylhc 0.7.2 documentation</title>
+  <title>LSA Knobs to MAD-X Expressions Converter &mdash; pylhc 0.7.3 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -17,6 +17,7 @@
         <script src="../_static/underscore.js"></script>
         <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -48,6 +49,14 @@
 <li class="toctree-l1"><a class="reference internal" href="analysis.html">Analysis Tools</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="analysis.html#bsrt-analysis">BSRT Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="analysis.html#forced-da-analysis">Forced DA Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="analysis.html#pylhc.forced_da_analysis.BoolOrPathOrDataFrame"><code class="docutils literal notranslate"><span class="pre">BoolOrPathOrDataFrame</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="analysis.html#pylhc.forced_da_analysis.PathOrDataframe"><code class="docutils literal notranslate"><span class="pre">PathOrDataframe</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="analysis.html#pylhc.forced_da_analysis.PathOrPagestore"><code class="docutils literal notranslate"><span class="pre">PathOrPagestore</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="analysis.html#pylhc.forced_da_analysis.PathOrString"><code class="docutils literal notranslate"><span class="pre">PathOrString</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="analysis.html#pylhc.forced_da_analysis.fun_exp_decay"><code class="docutils literal notranslate"><span class="pre">fun_exp_decay()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="analysis.html#pylhc.forced_da_analysis.fun_exp_sigma"><code class="docutils literal notranslate"><span class="pre">fun_exp_sigma()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="analysis.html#pylhc.forced_da_analysis.fun_linear"><code class="docutils literal notranslate"><span class="pre">fun_linear()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="analysis.html#pylhc.forced_da_analysis.swap_fun_parameters"><code class="docutils literal notranslate"><span class="pre">swap_fun_parameters()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="bpm_calibration.html">BPM Calibration</a><ul>
@@ -56,14 +65,29 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="kickgroups.html">KickGroup Informations</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="kickgroups.html#kickgroups">Kickgroups</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kickgroups.html#pylhc.kickgroups.get_folder_json_files"><code class="docutils literal notranslate"><span class="pre">get_folder_json_files()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="kickgroups.html#pylhc.kickgroups.get_kickgroup_info"><code class="docutils literal notranslate"><span class="pre">get_kickgroup_info()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="kickgroups.html#pylhc.kickgroups.list_available_kickgroups"><code class="docutils literal notranslate"><span class="pre">list_available_kickgroups()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="kickgroups.html#pylhc.kickgroups.load_kickfile"><code class="docutils literal notranslate"><span class="pre">load_kickfile()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="kickgroups.html#pylhc.kickgroups.show_kickgroup_files"><code class="docutils literal notranslate"><span class="pre">show_kickgroup_files()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="kickgroups.html#pylhc.kickgroups.show_kickgroup_info"><code class="docutils literal notranslate"><span class="pre">show_kickgroup_info()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">LSA Knobs to MAD-X Expressions Converter</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#lsa-to-mad-x">LSA to MAD-X</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pylhc.lsa_to_madx.get_madx_script_from_definition_dataframe"><code class="docutils literal notranslate"><span class="pre">get_madx_script_from_definition_dataframe()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pylhc.lsa_to_madx.get_sign_madx_vs_lsa"><code class="docutils literal notranslate"><span class="pre">get_sign_madx_vs_lsa()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pylhc.lsa_to_madx.parse_knobs_and_trim_values_from_file"><code class="docutils literal notranslate"><span class="pre">parse_knobs_and_trim_values_from_file()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="machine_info.html">Machine Information Tools</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="machine_info.html#print-machine-settings-overview">Print Machine Settings Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="machine_info.html#pylhc.machine_settings_info.AccDatetimeOrStr"><code class="docutils literal notranslate"><span class="pre">AccDatetimeOrStr</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="machine_info.html#pylhc.machine_settings_info.get_info"><code class="docutils literal notranslate"><span class="pre">get_info()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="machine_info.html#pylhc.machine_settings_info.log_summary"><code class="docutils literal notranslate"><span class="pre">log_summary()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="machine_info.html#pylhc.machine_settings_info.write_knob_defitions"><code class="docutils literal notranslate"><span class="pre">write_knob_defitions()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="machine_info.html#pylhc.machine_settings_info.write_summary"><code class="docutils literal notranslate"><span class="pre">write_summary()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="machine_info.html#pylhc.machine_settings_info.write_trim_histories"><code class="docutils literal notranslate"><span class="pre">write_trim_histories()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="machine_info.html#bsrt-logger">BSRT logger</a></li>
 </ul>
 </li>
@@ -72,11 +96,15 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../modules/calibration.html">BPM Calibration Utilities</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../modules/calibration.html#beta">Beta</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/calibration.html#pylhc.calibration.beta.get_calibration_factors_from_beta"><code class="docutils literal notranslate"><span class="pre">get_calibration_factors_from_beta()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modules/calibration.html#dispersion">Dispersion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/calibration.html#pylhc.calibration.dispersion.get_calibration_factors_from_dispersion"><code class="docutils literal notranslate"><span class="pre">get_calibration_factors_from_dispersion()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../modules/constants.html">Constants Definitions</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../modules/constants.html#constants-general">Constants: General</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/constants.html#pylhc.constants.general.get_proton_beta"><code class="docutils literal notranslate"><span class="pre">get_proton_beta()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/constants.html#pylhc.constants.general.get_proton_gamma"><code class="docutils literal notranslate"><span class="pre">get_proton_gamma()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modules/constants.html#constants-forced-da-analysis">Constants: Forced DA Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modules/constants.html#constants-kickgroups">Constants: KickGroups</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modules/constants.html#constants-machine-settings-info">Constants: Machine Settings Info</a></li>
@@ -85,11 +113,18 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../modules/data_extract.html">Data Extraction</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../modules/data_extract.html#pylsa">PyLSA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/data_extract.html#pylhc.data_extract.lsa.LSA"><code class="docutils literal notranslate"><span class="pre">LSA</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/data_extract.html#pylhc.data_extract.lsa.LSAClient"><code class="docutils literal notranslate"><span class="pre">LSAClient</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/data_extract.html#pylhc.data_extract.lsa.LSAMeta"><code class="docutils literal notranslate"><span class="pre">LSAMeta</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/data_extract.html#pylhc.data_extract.lsa.try_to_acquire_data"><code class="docutils literal notranslate"><span class="pre">try_to_acquire_data()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modules/data_extract.html#timber">Timber</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/data_extract.html#pylhc.data_extract.timber.find_exact_time_for_beamprocess"><code class="docutils literal notranslate"><span class="pre">find_exact_time_for_beamprocess()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../modules/utils.html">Utilities</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../modules/utils.html#additional-io-tools">Additional IO-Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/utils.html#pylhc.utils.tfs_tools.read_hdf"><code class="docutils literal notranslate"><span class="pre">read_hdf()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/utils.html#pylhc.utils.tfs_tools.write_hdf"><code class="docutils literal notranslate"><span class="pre">write_hdf()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -201,9 +236,10 @@ The call would be:</p>
 </pre></div>
 </div>
 <p>Hint: the knobs active at a given time can be retrieved with the <a class="reference internal" href="machine_info.html#module-pylhc.machine_settings_info" title="pylhc.machine_settings_info"><code class="xref py py-obj docutils literal notranslate"><span class="pre">machine_settings_info</span></code></a> script.</p>
+</section>
 <dl class="py function">
 <dt class="sig sig-object py" id="pylhc.lsa_to_madx.get_madx_script_from_definition_dataframe">
-<span class="sig-prename descclassname"><span class="pre">pylhc.lsa_to_madx.</span></span><span class="sig-name descname"><span class="pre">get_madx_script_from_definition_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">deltas_df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pylhc.github.io/tfs/modules/index.html#tfs.frame.TfsDataFrame" title="(in tfs-pandas v3.2)"><span class="pre">TfsDataFrame</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">lsa_knob</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">trim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/pylhc/lsa_to_madx.html#get_madx_script_from_definition_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.lsa_to_madx.get_madx_script_from_definition_dataframe" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pylhc.lsa_to_madx.</span></span><span class="sig-name descname"><span class="pre">get_madx_script_from_definition_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">deltas_df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pylhc.github.io/tfs/modules/index.html#tfs.frame.TfsDataFrame" title="(in tfs-pandas v3.2)"><span class="pre">TfsDataFrame</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">lsa_knob</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">trim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">by_reference</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/pylhc/lsa_to_madx.html#get_madx_script_from_definition_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.lsa_to_madx.get_madx_script_from_definition_dataframe" title="Permalink to this definition"></a></dt>
 <dd><p>Given the extracted definition dataframe of an LSA knob - as returned by
 <a class="reference internal" href="../modules/data_extract.html#pylhc.data_extract.lsa.LSAClient.get_knob_circuits" title="pylhc.data_extract.lsa.LSAClient.get_knob_circuits"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_knob_circuits</span></code></a> - this function will generate the
 corresponding <code class="docutils literal notranslate"><span class="pre">MAD-X</span></code> text commands that would reproduce this knob in a script.</p>
@@ -214,6 +250,12 @@ corresponding <code class="docutils literal notranslate"><span class="pre">MAD-X
 can be obtained with <a class="reference internal" href="../modules/data_extract.html#pylhc.data_extract.lsa.LSAClient.get_knob_circuits" title="pylhc.data_extract.lsa.LSAClient.get_knob_circuits"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_knob_circuits</span></code></a>.</p></li>
 <li><p><strong>lsa_knob</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) -- The complete <code class="docutils literal notranslate"><span class="pre">LSA</span></code> name of the knob, including any <code class="docutils literal notranslate"><span class="pre">LHCBEAM[12]?/</span></code> part.</p></li>
 <li><p><strong>trim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) -- The trim value to write for the knob. Defaults to 1.</p></li>
+<li><p><strong>by_reference</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) -- If true, creates an _init variable and uses deferred expressions (<code class="xref py py-obj docutils literal notranslate"><span class="pre">:=</span></code>)
+so that changing the trim later in the script changes all
+variables as well. Might be problematic if a variable depends on
+multiple trim-knobs.
+Otherwise <code class="xref py py-obj docutils literal notranslate"><span class="pre">variable</span> <span class="pre">=</span> <span class="pre">variable</span> <span class="pre">+</span> <span class="pre">delta*trim</span></code> is used.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) -- Adds some extra comments into the madx code.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -223,10 +265,27 @@ can be obtained with <a class="reference internal" href="../modules/data_extract
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="pylhc.lsa_to_madx.get_sign_madx_vs_lsa">
+<span class="sig-prename descclassname"><span class="pre">pylhc.lsa_to_madx.</span></span><span class="sig-name descname"><span class="pre">get_sign_madx_vs_lsa</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">madx_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><span class="pre">int</span></a></span></span><a class="reference internal" href="../_modules/pylhc/lsa_to_madx.html#get_sign_madx_vs_lsa"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.lsa_to_madx.get_sign_madx_vs_lsa" title="Permalink to this definition"></a></dt>
+<dd><p>Return the sign convention between madx and lsa for the given variable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>madx_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) -- Name of the variable as used in MAD-X.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>1 or -1.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="pylhc.lsa_to_madx.parse_knobs_and_trim_values_from_file">
 <span class="sig-prename descclassname"><span class="pre">pylhc.lsa_to_madx.</span></span><span class="sig-name descname"><span class="pre">parse_knobs_and_trim_values_from_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">knobs_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.10)"><span class="pre">Path</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.10)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/pylhc/lsa_to_madx.html#parse_knobs_and_trim_values_from_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.lsa_to_madx.parse_knobs_and_trim_values_from_file" title="Permalink to this definition"></a></dt>
 <dd><p>Parses a file for LSA knobs and their trim values. Each line should be a knob name
-following by a number of the trim value. If no value is written, it will be defaulted
+following by a number of the trim value. If no value is written, it defaults
 to <code class="docutils literal notranslate"><span class="pre">1.0</span></code>. Lines starting with a <code class="docutils literal notranslate"><span class="pre">#</span></code> are ignored.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -238,7 +297,6 @@ to <code class="docutils literal notranslate"><span class="pre">1.0</span></code
 </dl>
 </dd></dl>
 
-</section>
 </section>
 
 

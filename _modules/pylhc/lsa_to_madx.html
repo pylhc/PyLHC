@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pylhc.lsa_to_madx &mdash; pylhc 0.7.2 documentation</title>
+  <title>pylhc.lsa_to_madx &mdash; pylhc 0.7.3 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
@@ -16,6 +16,7 @@
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -45,6 +46,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../../entrypoints/analysis.html">Analysis Tools</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../entrypoints/analysis.html#bsrt-analysis">BSRT Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../entrypoints/analysis.html#forced-da-analysis">Forced DA Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/analysis.html#pylhc.forced_da_analysis.BoolOrPathOrDataFrame"><code class="docutils literal notranslate"><span class="pre">BoolOrPathOrDataFrame</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/analysis.html#pylhc.forced_da_analysis.PathOrDataframe"><code class="docutils literal notranslate"><span class="pre">PathOrDataframe</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/analysis.html#pylhc.forced_da_analysis.PathOrPagestore"><code class="docutils literal notranslate"><span class="pre">PathOrPagestore</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/analysis.html#pylhc.forced_da_analysis.PathOrString"><code class="docutils literal notranslate"><span class="pre">PathOrString</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/analysis.html#pylhc.forced_da_analysis.fun_exp_decay"><code class="docutils literal notranslate"><span class="pre">fun_exp_decay()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/analysis.html#pylhc.forced_da_analysis.fun_exp_sigma"><code class="docutils literal notranslate"><span class="pre">fun_exp_sigma()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/analysis.html#pylhc.forced_da_analysis.fun_linear"><code class="docutils literal notranslate"><span class="pre">fun_linear()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/analysis.html#pylhc.forced_da_analysis.swap_fun_parameters"><code class="docutils literal notranslate"><span class="pre">swap_fun_parameters()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../entrypoints/bpm_calibration.html">BPM Calibration</a><ul>
@@ -53,14 +62,29 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../entrypoints/kickgroups.html">KickGroup Informations</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../entrypoints/kickgroups.html#kickgroups">Kickgroups</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/kickgroups.html#pylhc.kickgroups.get_folder_json_files"><code class="docutils literal notranslate"><span class="pre">get_folder_json_files()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/kickgroups.html#pylhc.kickgroups.get_kickgroup_info"><code class="docutils literal notranslate"><span class="pre">get_kickgroup_info()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/kickgroups.html#pylhc.kickgroups.list_available_kickgroups"><code class="docutils literal notranslate"><span class="pre">list_available_kickgroups()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/kickgroups.html#pylhc.kickgroups.load_kickfile"><code class="docutils literal notranslate"><span class="pre">load_kickfile()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/kickgroups.html#pylhc.kickgroups.show_kickgroup_files"><code class="docutils literal notranslate"><span class="pre">show_kickgroup_files()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/kickgroups.html#pylhc.kickgroups.show_kickgroup_info"><code class="docutils literal notranslate"><span class="pre">show_kickgroup_info()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../entrypoints/lsa_to_madx.html">LSA Knobs to MAD-X Expressions Converter</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../entrypoints/lsa_to_madx.html#lsa-to-mad-x">LSA to MAD-X</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/lsa_to_madx.html#pylhc.lsa_to_madx.get_madx_script_from_definition_dataframe"><code class="docutils literal notranslate"><span class="pre">get_madx_script_from_definition_dataframe()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/lsa_to_madx.html#pylhc.lsa_to_madx.get_sign_madx_vs_lsa"><code class="docutils literal notranslate"><span class="pre">get_sign_madx_vs_lsa()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/lsa_to_madx.html#pylhc.lsa_to_madx.parse_knobs_and_trim_values_from_file"><code class="docutils literal notranslate"><span class="pre">parse_knobs_and_trim_values_from_file()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../entrypoints/machine_info.html">Machine Information Tools</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../entrypoints/machine_info.html#print-machine-settings-overview">Print Machine Settings Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/machine_info.html#pylhc.machine_settings_info.AccDatetimeOrStr"><code class="docutils literal notranslate"><span class="pre">AccDatetimeOrStr</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/machine_info.html#pylhc.machine_settings_info.get_info"><code class="docutils literal notranslate"><span class="pre">get_info()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/machine_info.html#pylhc.machine_settings_info.log_summary"><code class="docutils literal notranslate"><span class="pre">log_summary()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/machine_info.html#pylhc.machine_settings_info.write_knob_defitions"><code class="docutils literal notranslate"><span class="pre">write_knob_defitions()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/machine_info.html#pylhc.machine_settings_info.write_summary"><code class="docutils literal notranslate"><span class="pre">write_summary()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/machine_info.html#pylhc.machine_settings_info.write_trim_histories"><code class="docutils literal notranslate"><span class="pre">write_trim_histories()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../entrypoints/machine_info.html#bsrt-logger">BSRT logger</a></li>
 </ul>
 </li>
@@ -69,11 +93,15 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../modules/calibration.html">BPM Calibration Utilities</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/calibration.html#beta">Beta</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/calibration.html#pylhc.calibration.beta.get_calibration_factors_from_beta"><code class="docutils literal notranslate"><span class="pre">get_calibration_factors_from_beta()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/calibration.html#dispersion">Dispersion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/calibration.html#pylhc.calibration.dispersion.get_calibration_factors_from_dispersion"><code class="docutils literal notranslate"><span class="pre">get_calibration_factors_from_dispersion()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules/constants.html">Constants Definitions</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/constants.html#constants-general">Constants: General</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/constants.html#pylhc.constants.general.get_proton_beta"><code class="docutils literal notranslate"><span class="pre">get_proton_beta()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/constants.html#pylhc.constants.general.get_proton_gamma"><code class="docutils literal notranslate"><span class="pre">get_proton_gamma()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/constants.html#constants-forced-da-analysis">Constants: Forced DA Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/constants.html#constants-kickgroups">Constants: KickGroups</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/constants.html#constants-machine-settings-info">Constants: Machine Settings Info</a></li>
@@ -82,11 +110,18 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules/data_extract.html">Data Extraction</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/data_extract.html#pylsa">PyLSA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/data_extract.html#pylhc.data_extract.lsa.LSA"><code class="docutils literal notranslate"><span class="pre">LSA</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/data_extract.html#pylhc.data_extract.lsa.LSAClient"><code class="docutils literal notranslate"><span class="pre">LSAClient</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/data_extract.html#pylhc.data_extract.lsa.LSAMeta"><code class="docutils literal notranslate"><span class="pre">LSAMeta</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/data_extract.html#pylhc.data_extract.lsa.try_to_acquire_data"><code class="docutils literal notranslate"><span class="pre">try_to_acquire_data()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/data_extract.html#timber">Timber</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/data_extract.html#pylhc.data_extract.timber.find_exact_time_for_beamprocess"><code class="docutils literal notranslate"><span class="pre">find_exact_time_for_beamprocess()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules/utils.html">Utilities</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/utils.html#additional-io-tools">Additional IO-Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/utils.html#pylhc.utils.tfs_tools.read_hdf"><code class="docutils literal notranslate"><span class="pre">read_hdf()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/utils.html#pylhc.utils.tfs_tools.write_hdf"><code class="docutils literal notranslate"><span class="pre">write_hdf()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -211,10 +246,14 @@
 <span class="sd">Hint: the knobs active at a given time can be retrieved with the `~pylhc.machine_settings_info` script. </span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">string</span>
 
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span>
 
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">tfs</span>
 
 <span class="kn">from</span> <span class="nn">omc3.utils</span> <span class="kn">import</span> <span class="n">logging_tools</span>
@@ -223,6 +262,7 @@
 <span class="kn">from</span> <span class="nn">pylhc.data_extract.lsa</span> <span class="kn">import</span> <span class="n">LSAClient</span>
 
 <span class="n">LOG</span> <span class="o">=</span> <span class="n">logging_tools</span><span class="o">.</span><span class="n">get_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">ALLOWED_IN_MADX_NAMES</span> <span class="o">=</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">string</span><span class="o">.</span><span class="n">ascii_letters</span> <span class="o">+</span> <span class="n">string</span><span class="o">.</span><span class="n">digits</span>
 
 <span class="c1"># ----- Helper functions ----- #</span>
 
@@ -230,7 +270,7 @@
 <div class="viewcode-block" id="parse_knobs_and_trim_values_from_file"><a class="viewcode-back" href="../../entrypoints/lsa_to_madx.html#pylhc.lsa_to_madx.parse_knobs_and_trim_values_from_file">[docs]</a><span class="k">def</span> <span class="nf">parse_knobs_and_trim_values_from_file</span><span class="p">(</span><span class="n">knobs_file</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Parses a file for LSA knobs and their trim values. Each line should be a knob name</span>
-<span class="sd">    following by a number of the trim value. If no value is written, it will be defaulted</span>
+<span class="sd">    following by a number of the trim value. If no value is written, it defaults</span>
 <span class="sd">    to ``1.0``. Lines starting with a ``#`` are ignored.</span>
 
 <span class="sd">    Args:</span>
@@ -253,7 +293,38 @@
     <span class="k">return</span> <span class="n">results</span></div>
 
 
-<div class="viewcode-block" id="get_madx_script_from_definition_dataframe"><a class="viewcode-back" href="../../entrypoints/lsa_to_madx.html#pylhc.lsa_to_madx.get_madx_script_from_definition_dataframe">[docs]</a><span class="k">def</span> <span class="nf">get_madx_script_from_definition_dataframe</span><span class="p">(</span><span class="n">deltas_df</span><span class="p">:</span> <span class="n">tfs</span><span class="o">.</span><span class="n">TfsDataFrame</span><span class="p">,</span> <span class="n">lsa_knob</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">trim</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<div class="viewcode-block" id="get_sign_madx_vs_lsa"><a class="viewcode-back" href="../../entrypoints/lsa_to_madx.html#pylhc.lsa_to_madx.get_sign_madx_vs_lsa">[docs]</a><span class="k">def</span> <span class="nf">get_sign_madx_vs_lsa</span><span class="p">(</span><span class="n">madx_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the sign convention between madx and lsa for the given variable.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        madx_name (str): Name of the variable as used in MAD-X.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        int: 1 or -1.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Test for skewness:</span>
+    <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^.c?[qsodt]s&quot;</span><span class="p">,</span> <span class="n">madx_name</span><span class="p">)</span>  <span class="c1"># k, then maybe a &quot;c&quot;, then type, then skew</span>
+    <span class="k">if</span> <span class="n">match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">madx_name</span><span class="si">}</span><span class="s2"> belongs to a skew magnet: Sign is inverted betwen LSA and MAD-X&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+
+    <span class="c1"># Test for Q2</span>
+    <span class="k">if</span> <span class="n">madx_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;ktqx2&quot;</span><span class="p">):</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">madx_name</span><span class="si">}</span><span class="s2"> belongs to Q2: Sign convention is unknown&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+            <span class="s2">&quot;Q2 is not implemented yet, as the sign convention LSA-MADX is not known. &quot;</span>
+            <span class="s2">&quot;Please check and implement.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sign of </span><span class="si">{</span><span class="n">madx_name</span><span class="si">}</span><span class="s2"> is the same in LSA and MAD-X.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="get_madx_script_from_definition_dataframe"><a class="viewcode-back" href="../../entrypoints/lsa_to_madx.html#pylhc.lsa_to_madx.get_madx_script_from_definition_dataframe">[docs]</a><span class="k">def</span> <span class="nf">get_madx_script_from_definition_dataframe</span><span class="p">(</span><span class="n">deltas_df</span><span class="p">:</span> <span class="n">tfs</span><span class="o">.</span><span class="n">TfsDataFrame</span><span class="p">,</span> <span class="n">lsa_knob</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">trim</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+                                              <span class="n">by_reference</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+                                              <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Given the extracted definition dataframe of an LSA knob - as returned by</span>
 <span class="sd">    `~pylhc.data_extract.lsa.LSAClient.get_knob_circuits` - this function will generate the</span>
@@ -264,6 +335,12 @@
 <span class="sd">            can be obtained with `~pylhc.data_extract.lsa.LSAClient.get_knob_circuits`.</span>
 <span class="sd">        lsa_knob (str): The complete ``LSA`` name of the knob, including any ``LHCBEAM[12]?/`` part.</span>
 <span class="sd">        trim (float): The trim value to write for the knob. Defaults to 1.</span>
+<span class="sd">        by_reference (bool): If true, creates an _init variable and uses deferred expressions (`:=`)</span>
+<span class="sd">                            so that changing the trim later in the script changes all</span>
+<span class="sd">                            variables as well. Might be problematic if a variable depends on</span>
+<span class="sd">                            multiple trim-knobs.</span>
+<span class="sd">                            Otherwise `variable = variable + delta*trim` is used.</span>
+<span class="sd">        verbose (bool): Adds some extra comments into the madx code.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The complete ``MAD-X`` script to reproduce the knob, as a string.</span>
@@ -273,14 +350,31 @@
 
     <span class="c1"># Set this to 1 by default but can be changed by the user to reproduce a given trim</span>
     <span class="n">trim_variable</span> <span class="o">=</span> <span class="n">_get_trim_variable</span><span class="p">(</span><span class="n">lsa_knob</span><span class="p">)</span>
-    <span class="n">change_commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;! Change this value to reproduce a different trim&quot;</span><span class="p">)</span>
-    <span class="n">change_commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;! Beware some knobs are not so linear in their trims&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="n">change_commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;! Change this value to reproduce a different trim&quot;</span><span class="p">)</span>
+        <span class="n">change_commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;! Beware some knobs are not so linear in their trims&quot;</span><span class="p">)</span>
     <span class="n">change_commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">trim_variable</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">trim</span><span class="si">}</span><span class="s2">;&quot;</span><span class="p">)</span>
-    <span class="n">change_commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;! Impacted variables&quot;</span><span class="p">)</span>
+    <span class="n">change_commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;! Impacted variables:&quot;</span><span class="p">)</span>
 
-    <span class="k">for</span> <span class="n">variable</span><span class="p">,</span> <span class="n">delta_k</span> <span class="ow">in</span> <span class="n">deltas_df</span><span class="o">.</span><span class="n">DELTA_K</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="c1"># Parhenthesis below are important for MAD-X to not mess up parsing of &quot;var = var + -value&quot; if delta_k is negative</span>
-        <span class="n">change_commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">variable</span><span class="si">:</span><span class="s2">&lt;12</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">variable</span><span class="si">:</span><span class="s2">^15</span><span class="si">}</span><span class="s2"> + (</span><span class="si">{</span><span class="n">delta_k</span><span class="si">:</span><span class="s2">^25</span><span class="si">}</span><span class="s2">) * </span><span class="si">{</span><span class="n">trim_variable</span><span class="si">}</span><span class="s2">;&quot;</span><span class="p">)</span>
+    <span class="n">deltas</span> <span class="o">=</span> <span class="n">_get_delta</span><span class="p">(</span><span class="n">deltas_df</span><span class="p">)</span>
+
+    <span class="c1"># write all inits first (looks nicer in madx)</span>
+    <span class="k">if</span> <span class="n">by_reference</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="n">deltas</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">variable_init</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">variable</span><span class="si">}</span><span class="s2">_init&quot;</span>
+            <span class="n">change_commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">variable_init</span><span class="si">:</span><span class="s2">&lt;17</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">variable</span><span class="si">}</span><span class="s2">;&quot;</span><span class="p">)</span>
+
+    <span class="c1"># write knob-definition</span>
+    <span class="k">for</span> <span class="n">variable</span><span class="p">,</span> <span class="n">delta</span> <span class="ow">in</span> <span class="n">deltas</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">delta</span> <span class="o">=</span> <span class="n">get_sign_madx_vs_lsa</span><span class="p">(</span><span class="n">variable</span><span class="p">)</span> <span class="o">*</span> <span class="n">delta</span>
+        <span class="c1"># Parenthesis around the delta below are important for MAD-X to not</span>
+        <span class="c1"># mess up parsing of &quot;var = var + -value&quot; if delta_k is negative</span>
+        <span class="k">if</span> <span class="n">by_reference</span><span class="p">:</span>
+            <span class="n">variable_init</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">variable</span><span class="si">}</span><span class="s2">_init&quot;</span>
+            <span class="n">change_commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">variable</span><span class="si">:</span><span class="s2">&lt;12</span><span class="si">}</span><span class="s2"> := </span><span class="si">{</span><span class="n">variable_init</span><span class="si">:</span><span class="s2">^19</span><span class="si">}</span><span class="s2"> + (</span><span class="si">{</span><span class="n">delta</span><span class="si">:</span><span class="s2">^25</span><span class="si">}</span><span class="s2">) * </span><span class="si">{</span><span class="n">trim_variable</span><span class="si">}</span><span class="s2">;&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">change_commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">variable</span><span class="si">:</span><span class="s2">&lt;12</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">variable</span><span class="si">:</span><span class="s2">^15</span><span class="si">}</span><span class="s2"> + (</span><span class="si">{</span><span class="n">delta</span><span class="si">:</span><span class="s2">^25</span><span class="si">}</span><span class="s2">) * </span><span class="si">{</span><span class="n">trim_variable</span><span class="si">}</span><span class="s2">;&quot;</span><span class="p">)</span>
+
     <span class="n">change_commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;! End of change commands for knob: </span><span class="si">{</span><span class="n">lsa_knob</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">change_commands</span><span class="p">)</span></div>
 
@@ -290,19 +384,52 @@
 <span class="sd">    Generates the ``MAD-X`` trim variable name from an ``LSA`` knob.</span>
 <span class="sd">    Handles the variable name character limit of ``MAD-X``.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">knob_itself</span> <span class="o">=</span> <span class="n">lsa_knob</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># without the LHCBEAM[12]?/ part</span>
+    <span class="c1"># Handle the LHCBEAM-Part:</span>
+    <span class="n">lhcbeam</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^LHCBEAM(\d?)&quot;</span><span class="p">,</span> <span class="n">lsa_knob</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span>
+    <span class="k">if</span> <span class="n">lhcbeam</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">madx_knob</span> <span class="o">=</span> <span class="n">lsa_knob</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># without the LHCBEAM[12]?/ part</span>
+        <span class="k">if</span> <span class="n">lhcbeam</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">):</span>
+            <span class="c1"># beam has a number: there might be two knobs with this name</span>
+            <span class="n">madx_knob</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;B</span><span class="si">{</span><span class="n">lhcbeam</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">madx_knob</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">madx_knob</span> <span class="o">=</span> <span class="n">lsa_knob</span>
+
+    <span class="c1"># Clean up the name</span>
+    <span class="n">madx_knob</span> <span class="o">=</span> <span class="n">madx_knob</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">madx_knob</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ALLOWED_IN_MADX_NAMES</span><span class="p">:</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Knob contains the character &#39;</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">&#39;, which is not allowed in madx. Removing.&quot;</span><span class="p">)</span>
+            <span class="n">madx_knob</span> <span class="o">=</span> <span class="n">madx_knob</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
 
     <span class="c1"># MAD-X will crash if the variable name is &gt;48 characters or longer! It will also silently fail</span>
     <span class="c1"># if the variable name starts with an underscore or a digit. Adding &quot;trim_&quot; at the start circumvents</span>
     <span class="c1"># the latter two, and we make sure to truncate the knob so that the result is &lt;=47 characters</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">knob_itself</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">42</span><span class="p">:</span>
-        <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Knob &#39;</span><span class="si">{</span><span class="n">knob_itself</span><span class="si">}</span><span class="s2">&#39; is too long to be a MAD-X variable and will be truncated.&quot;</span><span class="p">)</span>
-        <span class="n">knob_itself</span> <span class="o">=</span> <span class="n">knob_itself</span><span class="p">[</span><span class="o">-</span><span class="mi">42</span><span class="p">:]</span>
-        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Truncated knob name to &#39;</span><span class="si">{</span><span class="n">knob_itself</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">madx_knob</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">42</span><span class="p">:</span>
+        <span class="n">madx_knob</span> <span class="o">=</span> <span class="n">madx_knob</span><span class="p">[</span><span class="o">-</span><span class="mi">42</span><span class="p">:]</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Truncated knob name to &#39;</span><span class="si">{</span><span class="n">madx_knob</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
 
-    <span class="n">trim_variable</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;trim_</span><span class="si">{</span><span class="n">knob_itself</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-
+    <span class="n">trim_variable</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;trim_</span><span class="si">{</span><span class="n">madx_knob</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Converted knob-name &#39;</span><span class="si">{</span><span class="n">lsa_knob</span><span class="si">}</span><span class="s2">&#39; to trim variable &#39;</span><span class="si">{</span><span class="n">trim_variable</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">trim_variable</span>
+
+
+<span class="k">def</span> <span class="nf">_get_delta</span><span class="p">(</span><span class="n">deltas_df</span><span class="p">:</span> <span class="n">tfs</span><span class="o">.</span><span class="n">TfsDataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Get the correct delta-column &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="s2">&quot;DELTA_K&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">deltas_df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Using DELTA_KL column.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">deltas_df</span><span class="o">.</span><span class="n">DELTA_KL</span>
+
+    <span class="k">if</span> <span class="s2">&quot;DELTA_KL&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">deltas_df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Using DELTA_K column.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">deltas_df</span><span class="o">.</span><span class="n">DELTA_K</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">deltas_df</span><span class="o">.</span><span class="n">DELTA_K</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">deltas_df</span><span class="o">.</span><span class="n">DELTA_KL</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">))</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Some entries of DELTA_KL and DELTA_K seem to both be given. &quot;</span>
+                         <span class="s2">&quot;This looks like a bug. Please investigate.&quot;</span><span class="p">)</span>
+
+    <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Both DELTA_K and DELTA_KL columns present, merging columns.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">deltas_df</span><span class="o">.</span><span class="n">DELTA_K</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">),</span> <span class="n">deltas_df</span><span class="o">.</span><span class="n">DELTA_K</span><span class="p">,</span> <span class="n">deltas_df</span><span class="o">.</span><span class="n">DELTA_KL</span><span class="p">),</span>
+                     <span class="n">index</span><span class="o">=</span><span class="n">deltas_df</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
 
 
 <span class="c1"># ----- Script Part ----- #</span>
