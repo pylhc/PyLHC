@@ -90,7 +90,11 @@ def _get_params() -> dict:
             default=None,
             nargs="+",
             type=str,
-            help="List of knobnames."),
+            help="List of knobnames. "
+                 "If `None` (or omitted) no knobs will be extracted. "
+                 "If it is just the string ``'all'``, "
+                 "all knobs will be extracted (can be slow)."
+        ),
         accel=dict(
             default='lhc',
             type=str,
@@ -138,6 +142,9 @@ def get_info(opt) -> Dict[str, object]:
         - **knobs** *(str)*:
 
             List of knobnames.
+            If `None` (or omitted) no knobs will be extracted.
+            If it is just the string ``'all'``,
+            all knobs will be extracted (can be slow).
 
             default: ``None``
 
@@ -198,13 +205,17 @@ def get_info(opt) -> Dict[str, object]:
     except ValueError as e:
         LOG.error(str(e))
     else:
-        trim_histories = LSA.get_trim_history(beamprocess_info.Object, opt.knobs, start_time=acc_start_time, end_time=acc_time, accelerator=opt.accel)
-        trims = _get_last_trim(trim_histories)
+        if opt.knobs is not None:
+            if len(opt.knobs) == 1 and opt.knobs[0].lower() == 'all':
+                opt.knobs = []  # will extract all knobs in get_trim_history
+            trim_histories = LSA.get_trim_history(beamprocess_info.Object, opt.knobs, start_time=acc_start_time, end_time=acc_time, accelerator=opt.accel)
+            trims = _get_last_trim(trim_histories)
+
         if opt.knob_definitions:
-            if opt.knobs:
-                knob_definitions = _get_knob_definitions(opt.knobs, optics_info.Name)
+            if trim_histories:  # this now works with 'all'. Might create a lot of files
+                knob_definitions = _get_knob_definitions(trim_histories.keys(), optics_info.Name)
             else:
-                LOG.error("Writing out knob definitions requires providing a list of knobs.")
+                LOG.error("Writing out knob definitions requested, but no knobs extracted.")
 
     if opt.log:
         log_summary(acc_time, beamprocess_info, optics_info, trims)
