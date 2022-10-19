@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pylhc.machine_settings_info &mdash; pylhc 0.7.3 documentation</title>
+  <title>pylhc.machine_settings_info &mdash; pylhc 0.7.4 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
@@ -206,6 +206,7 @@
 <span class="kn">from</span> <span class="nn">omc3.utils.time_tools</span> <span class="kn">import</span> <span class="n">AccDatetime</span><span class="p">,</span> <span class="n">AcceleratorDatetime</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">omc3.knob_extractor</span> <span class="kn">import</span> <span class="n">name2lsa</span><span class="p">,</span> <span class="n">KNOB_CATEGORIES</span>
 
 <span class="kn">from</span> <span class="nn">pylhc.constants</span> <span class="kn">import</span> <span class="n">machine_settings_info</span> <span class="k">as</span> <span class="n">const</span>
 <span class="kn">from</span> <span class="nn">pylhc.data_extract.lsa</span> <span class="kn">import</span> <span class="n">COL_NAME</span> <span class="k">as</span> <span class="n">LSA_COLUMN_NAME</span><span class="p">,</span> <span class="n">LSA</span>
@@ -243,7 +244,12 @@
             <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span>
             <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;List of knobnames.&quot;</span><span class="p">),</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;List of knobnames. &quot;</span>
+                 <span class="s2">&quot;If `None` (or omitted) no knobs will be extracted. &quot;</span>
+                 <span class="s2">&quot;If it is just the string ``&#39;all&#39;``, &quot;</span>
+                 <span class="s2">&quot;all knobs will be extracted (can be slow).&quot;</span>
+                 <span class="s2">&quot;Use the string ``&#39;default&#39;`` the main knobs of interest.&quot;</span>
+        <span class="p">),</span>
         <span class="n">accel</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
             <span class="n">default</span><span class="o">=</span><span class="s1">&#39;lhc&#39;</span><span class="p">,</span>
             <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
@@ -291,6 +297,12 @@
 <span class="sd">        - **knobs** *(str)*:</span>
 
 <span class="sd">            List of knobnames.</span>
+<span class="sd">            If `None` (or omitted) no knobs will be extracted.</span>
+<span class="sd">            If it is just the string ``&#39;all&#39;``,</span>
+<span class="sd">            all knobs will be extracted (can be slow).</span>
+<span class="sd">            Use the string ``&#39;default&#39;`` the main knobs of interest.</span>
+<span class="sd">            If this is called from python, the strings need</span>
+<span class="sd">            to be put as single items into a list.</span>
 
 <span class="sd">            default: ``None``</span>
 
@@ -351,13 +363,21 @@
     <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="n">LOG</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">trim_histories</span> <span class="o">=</span> <span class="n">LSA</span><span class="o">.</span><span class="n">get_trim_history</span><span class="p">(</span><span class="n">beamprocess_info</span><span class="o">.</span><span class="n">Object</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">knobs</span><span class="p">,</span> <span class="n">start_time</span><span class="o">=</span><span class="n">acc_start_time</span><span class="p">,</span> <span class="n">end_time</span><span class="o">=</span><span class="n">acc_time</span><span class="p">,</span> <span class="n">accelerator</span><span class="o">=</span><span class="n">opt</span><span class="o">.</span><span class="n">accel</span><span class="p">)</span>
-        <span class="n">trims</span> <span class="o">=</span> <span class="n">_get_last_trim</span><span class="p">(</span><span class="n">trim_histories</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">opt</span><span class="o">.</span><span class="n">knobs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">knobs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">opt</span><span class="o">.</span><span class="n">knobs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
+                <span class="n">opt</span><span class="o">.</span><span class="n">knobs</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># will extract all knobs in get_trim_history</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">knobs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">opt</span><span class="o">.</span><span class="n">knobs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;default&#39;</span><span class="p">:</span>
+                <span class="n">opt</span><span class="o">.</span><span class="n">knobs</span> <span class="o">=</span> <span class="p">[</span><span class="n">name2lsa</span><span class="p">(</span><span class="n">knob</span><span class="p">)</span> <span class="k">for</span> <span class="n">category</span> <span class="ow">in</span> <span class="n">KNOB_CATEGORIES</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+                             <span class="k">for</span> <span class="n">knob</span> <span class="ow">in</span> <span class="n">category</span><span class="p">]</span>
+
+            <span class="n">trim_histories</span> <span class="o">=</span> <span class="n">LSA</span><span class="o">.</span><span class="n">get_trim_history</span><span class="p">(</span><span class="n">beamprocess_info</span><span class="o">.</span><span class="n">Object</span><span class="p">,</span> <span class="n">opt</span><span class="o">.</span><span class="n">knobs</span><span class="p">,</span> <span class="n">start_time</span><span class="o">=</span><span class="n">acc_start_time</span><span class="p">,</span> <span class="n">end_time</span><span class="o">=</span><span class="n">acc_time</span><span class="p">,</span> <span class="n">accelerator</span><span class="o">=</span><span class="n">opt</span><span class="o">.</span><span class="n">accel</span><span class="p">)</span>
+            <span class="n">trims</span> <span class="o">=</span> <span class="n">_get_last_trim</span><span class="p">(</span><span class="n">trim_histories</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="n">opt</span><span class="o">.</span><span class="n">knob_definitions</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">opt</span><span class="o">.</span><span class="n">knobs</span><span class="p">:</span>
-                <span class="n">knob_definitions</span> <span class="o">=</span> <span class="n">_get_knob_definitions</span><span class="p">(</span><span class="n">opt</span><span class="o">.</span><span class="n">knobs</span><span class="p">,</span> <span class="n">optics_info</span><span class="o">.</span><span class="n">Name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">trim_histories</span><span class="p">:</span>  <span class="c1"># this now works with &#39;all&#39;/`default`. Might create a lot of files</span>
+                <span class="n">knob_definitions</span> <span class="o">=</span> <span class="n">_get_knob_definitions</span><span class="p">(</span><span class="n">trim_histories</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">optics_info</span><span class="o">.</span><span class="n">Name</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">LOG</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Writing out knob definitions requires providing a list of knobs.&quot;</span><span class="p">)</span>
+                <span class="n">LOG</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Writing out knob definitions requested, but no knobs extracted.&quot;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">opt</span><span class="o">.</span><span class="n">log</span><span class="p">:</span>
         <span class="n">log_summary</span><span class="p">(</span><span class="n">acc_time</span><span class="p">,</span> <span class="n">beamprocess_info</span><span class="p">,</span> <span class="n">optics_info</span><span class="p">,</span> <span class="n">trims</span><span class="p">)</span>
@@ -537,6 +557,10 @@
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;In fill </span><span class="si">{</span><span class="n">fill_no</span><span class="si">}</span><span class="s2"> the </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
     <span class="n">bp_info</span> <span class="o">=</span> <span class="n">LSA</span><span class="o">.</span><span class="n">get_beamprocess_info</span><span class="p">(</span><span class="n">beamprocess</span><span class="p">)</span>
     <span class="n">bp_info</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;Fill&quot;</span><span class="p">:</span> <span class="n">fill_no</span><span class="p">,</span> <span class="s2">&quot;StartTime&quot;</span><span class="p">:</span> <span class="n">start_time</span><span class="p">})</span>
+    <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Beamprocess </span><span class="si">{</span><span class="n">bp_info</span><span class="p">[</span><span class="s1">&#39;Name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> in fill </span><span class="si">{</span><span class="n">fill_no</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot; extracted at time </span><span class="si">{</span><span class="n">start_time</span><span class="si">}</span><span class="s2">.&quot;</span>
+    <span class="p">)</span>
     <span class="k">return</span> <span class="n">DotDict</span><span class="p">(</span><span class="n">bp_info</span><span class="p">)</span>
 
 
@@ -549,6 +573,7 @@
     <span class="n">ts</span> <span class="o">=</span> <span class="n">acc_time</span><span class="o">.</span><span class="n">timestamp</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">time</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">beamprocesses</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">time</span> <span class="o">&lt;=</span> <span class="n">ts</span> <span class="ow">and</span> <span class="n">name</span> <span class="o">==</span> <span class="n">bp_name</span><span class="p">:</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found start for beamprocess &#39;</span><span class="si">{</span><span class="n">bp_name</span><span class="si">}</span><span class="s2">&#39; at timestamp </span><span class="si">{</span><span class="n">time</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">acc_time</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">from_timestamp</span><span class="p">(</span><span class="n">time</span><span class="p">)</span>
     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
         <span class="sa">f</span><span class="s2">&quot;Beamprocess &#39;</span><span class="si">{</span><span class="n">bp_name</span><span class="si">}</span><span class="s2">&#39; was not found.&quot;</span>
@@ -560,8 +585,10 @@
 
 <span class="k">def</span> <span class="nf">_get_optics</span><span class="p">(</span><span class="n">acc_time</span><span class="p">:</span> <span class="n">AccDatetime</span><span class="p">,</span> <span class="n">beamprocess</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">bp_start</span><span class="p">:</span> <span class="n">AccDatetime</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DotDict</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Get the info about the active optics at ``acc_time``.&quot;&quot;&quot;</span>
+    <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Getting optics for </span><span class="si">{</span><span class="n">beamprocess</span><span class="si">}</span><span class="s2"> at time </span><span class="si">{</span><span class="n">acc_time</span><span class="o">.</span><span class="n">utc_string</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="n">optics_table</span> <span class="o">=</span> <span class="n">LSA</span><span class="o">.</span><span class="n">getOpticTable</span><span class="p">(</span><span class="n">beamprocess</span><span class="p">)</span>
     <span class="n">optics</span><span class="p">,</span> <span class="n">start_time</span> <span class="o">=</span> <span class="n">_get_last_optics</span><span class="p">(</span><span class="n">optics_table</span><span class="p">,</span> <span class="n">beamprocess</span><span class="p">,</span> <span class="n">bp_start</span><span class="p">,</span> <span class="n">acc_time</span><span class="p">)</span>
+    <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Optics </span><span class="si">{</span><span class="n">optics</span><span class="si">}</span><span class="s2"> extracted at time </span><span class="si">{</span><span class="n">start_time</span><span class="o">.</span><span class="n">utc_string</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">DotDict</span><span class="p">({</span><span class="s2">&quot;Name&quot;</span><span class="p">:</span> <span class="n">optics</span><span class="p">,</span> <span class="s2">&quot;StartTime&quot;</span><span class="p">:</span> <span class="n">start_time</span><span class="p">})</span>
 
 
@@ -584,6 +611,7 @@
 
 <span class="k">def</span> <span class="nf">_get_knob_definitions</span><span class="p">(</span><span class="n">knobs</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">optics</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get knob definitions.&quot;&quot;&quot;</span>
+    <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Extracting knob definitions for </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">knobs</span><span class="p">)</span><span class="si">}</span><span class="s2"> in optics &#39;</span><span class="si">{</span><span class="n">optics</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
     <span class="n">defs</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">knob</span> <span class="ow">in</span> <span class="n">knobs</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
@@ -602,6 +630,7 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        Dictionary of knob names and their values.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Extracting last trim from found trim histories.&quot;</span><span class="p">)</span>
     <span class="n">trim_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">trim</span><span class="p">:</span> <span class="n">trims</span><span class="p">[</span><span class="n">trim</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">trim</span> <span class="ow">in</span> <span class="n">trims</span><span class="o">.</span><span class="n">keys</span><span class="p">()}</span>  <span class="c1"># return last set value</span>
     <span class="k">for</span> <span class="n">trim</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">trim_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="k">try</span><span class="p">:</span>

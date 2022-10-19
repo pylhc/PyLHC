@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Machine Information Tools &mdash; pylhc 0.7.3 documentation</title>
+  <title>Machine Information Tools &mdash; pylhc 0.7.4 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -225,7 +225,13 @@ optional arguments:
 </li>
 <li><p><strong>knobs</strong> <em>(str)</em>:</p>
 <blockquote>
-<div><p>List of knobnames.</p>
+<div><p>List of knobnames.
+If <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (or omitted) no knobs will be extracted.
+If it is just the string <code class="docutils literal notranslate"><span class="pre">'all'</span></code>,
+all knobs will be extracted (can be slow).
+Use the string <code class="docutils literal notranslate"><span class="pre">'default'</span></code> the main knobs of interest.
+If this is called from python, the strings need
+to be put as single items into a list.</p>
 <p>default: <code class="docutils literal notranslate"><span class="pre">None</span></code></p>
 </div></blockquote>
 </li>
