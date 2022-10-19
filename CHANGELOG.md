@@ -1,5 +1,13 @@
 # pylhc Changelog
 
+## Version 0.7.4
+
+Changes in Machine Settings Info
+ - Default behaviour for no knobs given: extract None.
+ - Old behaviour of extracting all restored by giving `knobs = ["all"]`
+ - Option `["default"]` available for default knobs.
+ - Additional debug logging
+
 ## Version 0.7.3 
 
 Fixes:

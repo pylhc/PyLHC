@@ -53,6 +53,7 @@ from omc3.utils.iotools import PathOrStr
 from omc3.utils.time_tools import AccDatetime, AcceleratorDatetime
 from pathlib import Path
 from typing import Tuple, Iterable, Dict, Union
+from omc3.knob_extractor import name2lsa, KNOB_CATEGORIES
 
 from pylhc.constants import machine_settings_info as const
 from pylhc.data_extract.lsa import COL_NAME as LSA_COLUMN_NAME, LSA
@@ -90,7 +91,12 @@ def _get_params() -> dict:
             default=None,
             nargs="+",
             type=str,
-            help="List of knobnames."),
+            help="List of knobnames. "
+                 "If `None` (or omitted) no knobs will be extracted. "
+                 "If it is just the string ``'all'``, "
+                 "all knobs will be extracted (can be slow)."
+                 "Use the string ``'default'`` the main knobs of interest."
+        ),
         accel=dict(
             default='lhc',
             type=str,
@@ -138,6 +144,12 @@ def get_info(opt) -> Dict[str, object]:
         - **knobs** *(str)*:
 
             List of knobnames.
+            If `None` (or omitted) no knobs will be extracted.
+            If it is just the string ``'all'``,
+            all knobs will be extracted (can be slow).
+            Use the string ``'default'`` the main knobs of interest.
+            If this is called from python, the strings need
+            to be put as single items into a list.
 
             default: ``None``
 
@@ -198,13 +210,21 @@ def get_info(opt) -> Dict[str, object]:
     except ValueError as e:
         LOG.error(str(e))
     else:
-        trim_histories = LSA.get_trim_history(beamprocess_info.Object, opt.knobs, start_time=acc_start_time, end_time=acc_time, accelerator=opt.accel)
-        trims = _get_last_trim(trim_histories)
+        if opt.knobs is not None:
+            if len(opt.knobs) == 1 and opt.knobs[0].lower() == 'all':
+                opt.knobs = []  # will extract all knobs in get_trim_history
+            if len(opt.knobs) == 1 and opt.knobs[0].lower() == 'default':
+                opt.knobs = [name2lsa(knob) for category in KNOB_CATEGORIES.values()
+                             for knob in category]
+
+            trim_histories = LSA.get_trim_history(beamprocess_info.Object, opt.knobs, start_time=acc_start_time, end_time=acc_time, accelerator=opt.accel)
+            trims = _get_last_trim(trim_histories)
+
         if opt.knob_definitions:
-            if opt.knobs:
-                knob_definitions = _get_knob_definitions(opt.knobs, optics_info.Name)
+            if trim_histories:  # this now works with 'all'/`default`. Might create a lot of files
+                knob_definitions = _get_knob_definitions(trim_histories.keys(), optics_info.Name)
             else:
-                LOG.error("Writing out knob definitions requires providing a list of knobs.")
+                LOG.error("Writing out knob definitions requested, but no knobs extracted.")
 
     if opt.log:
         log_summary(acc_time, beamprocess_info, optics_info, trims)
@@ -384,6 +404,10 @@ def _get_beamprocess(acc_time: AccDatetime, accel: str, source: str) -> DotDict:
         raise ValueError(f"In fill {fill_no} the {str(e)}") from e
     bp_info = LSA.get_beamprocess_info(beamprocess)
     bp_info.update({"Fill": fill_no, "StartTime": start_time})
+    LOG.debug(
+        f"Beamprocess {bp_info['Name']} in fill {fill_no}"
+        f" extracted at time {start_time}."
+    )
     return DotDict(bp_info)
 
 
@@ -396,6 +420,7 @@ def _get_beamprocess_start(beamprocesses: Iterable[Tuple[float, str]], acc_time:
     ts = acc_time.timestamp()
     for time, name in sorted(beamprocesses, key=lambda x: x[0], reverse=True):
         if time <= ts and name == bp_name:
+            LOG.debug(f"Found start for beamprocess '{bp_name}' at timestamp {time}.")
             return acc_time.__class__.from_timestamp(time)
     raise ValueError(
         f"Beamprocess '{bp_name}' was not found."
@@ -407,8 +432,10 @@ def _get_beamprocess_start(beamprocesses: Iterable[Tuple[float, str]], acc_time:
 
 def _get_optics(acc_time: AccDatetime, beamprocess: str, bp_start: AccDatetime) -> DotDict:
     """Get the info about the active optics at ``acc_time``."""
+    LOG.debug(f"Getting optics for {beamprocess} at time {acc_time.utc_string}")
     optics_table = LSA.getOpticTable(beamprocess)
     optics, start_time = _get_last_optics(optics_table, beamprocess, bp_start, acc_time)
+    LOG.debug(f"Optics {optics} extracted at time {start_time.utc_string}.")
     return DotDict({"Name": optics, "StartTime": start_time})
 
 
@@ -431,6 +458,7 @@ def _get_last_optics(
 
 def _get_knob_definitions(knobs: list, optics: str):
     """Get knob definitions."""
+    LOG.debug(f"Extracting knob definitions for {len(knobs)} in optics '{optics}'.")
     defs = {}
     for knob in knobs:
         try:
@@ -449,6 +477,7 @@ def _get_last_trim(trims: dict) -> dict:
     Returns:
         Dictionary of knob names and their values.
     """
+    LOG.debug("Extracting last trim from found trim histories.")
     trim_dict = {trim: trims[trim].data[-1] for trim in trims.keys()}  # return last set value
     for trim, value in trim_dict.items():
         try:
