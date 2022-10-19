@@ -53,6 +53,7 @@ from omc3.utils.iotools import PathOrStr
 from omc3.utils.time_tools import AccDatetime, AcceleratorDatetime
 from pathlib import Path
 from typing import Tuple, Iterable, Dict, Union
+from omc3.knob_extractor import name2lsa, KNOB_CATEGORIES
 
 from pylhc.constants import machine_settings_info as const
 from pylhc.data_extract.lsa import COL_NAME as LSA_COLUMN_NAME, LSA
@@ -94,6 +95,7 @@ def _get_params() -> dict:
                  "If `None` (or omitted) no knobs will be extracted. "
                  "If it is just the string ``'all'``, "
                  "all knobs will be extracted (can be slow)."
+                 "Use the string ``'default'`` the main knobs of interest."
         ),
         accel=dict(
             default='lhc',
@@ -145,6 +147,9 @@ def get_info(opt) -> Dict[str, object]:
             If `None` (or omitted) no knobs will be extracted.
             If it is just the string ``'all'``,
             all knobs will be extracted (can be slow).
+            Use the string ``'default'`` the main knobs of interest.
+            If this is called from python, the strings need
+            to be put as single items into a list.
 
             default: ``None``
 
@@ -208,6 +213,10 @@ def get_info(opt) -> Dict[str, object]:
         if opt.knobs is not None:
             if len(opt.knobs) == 1 and opt.knobs[0].lower() == 'all':
                 opt.knobs = []  # will extract all knobs in get_trim_history
+            if len(opt.knobs) == 1 and opt.knobs[0].lower() == 'default':
+                opt.knobs = [name2lsa(knob) for category in KNOB_CATEGORIES.values()
+                             for knob in category]
+
             trim_histories = LSA.get_trim_history(beamprocess_info.Object, opt.knobs, start_time=acc_start_time, end_time=acc_time, accelerator=opt.accel)
             trims = _get_last_trim(trim_histories)
 
