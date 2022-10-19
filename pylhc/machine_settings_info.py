@@ -221,7 +221,7 @@ def get_info(opt) -> Dict[str, object]:
             trims = _get_last_trim(trim_histories)
 
         if opt.knob_definitions:
-            if trim_histories:  # this now works with 'all'. Might create a lot of files
+            if trim_histories:  # this now works with 'all'/`default`. Might create a lot of files
                 knob_definitions = _get_knob_definitions(trim_histories.keys(), optics_info.Name)
             else:
                 LOG.error("Writing out knob definitions requested, but no knobs extracted.")

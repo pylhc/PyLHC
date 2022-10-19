@@ -140,7 +140,7 @@ class LSAClient(pjLSAClient):
         """
         cts = self.findUserContextMappingHistory(t_start.timestamp(), t_end.timestamp(), accelerator=accelerator)
 
-        db = pytimber.LoggingDB(source=source, loglevel=logging.ERROR)
+        db = pytimber.LoggingDB(source=source, loglevel=logging.WARNING)
         fillnts, fillnv = try_to_acquire_data(
             db.get, "HX:FILLN", t_start.timestamp(), t_end.timestamp()
         )["HX:FILLN"]
