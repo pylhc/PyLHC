@@ -59,12 +59,17 @@ class LSAClient(pjLSAClient):
         Returns:
             Sorted list of knob names.
         """
+        LOG.debug(f"Getting knobs for {accelerator}.")
         req = self._ParametersRequestBuilder()
         req.setAccelerator(self._getAccelerator(accelerator))
         req.setParameterTypeName("KNOB")
         lst = self._parameterService.findParameters(req.build())
-        reg = re.compile(regexp, re.IGNORECASE)
-        return sorted(filter(reg.search, [pp.getName() for pp in lst]))
+        LOG.debug(f"{len(lst)} Knobs extracted for {accelerator}.")
+        if regexp:
+            LOG.debug(f"Selecting Knobs containing expression: {regexp}")
+            reg = re.compile(regexp, re.IGNORECASE)
+            return sorted(filter(reg.search, [pp.getName() for pp in lst]))
+        return sorted(pp.getName() for pp in lst)
 
     def find_existing_knobs(self, knobs: List[str]) -> List[str]:
         """
@@ -80,6 +85,7 @@ class LSAClient(pjLSAClient):
         Returns:
             A list of the knob names that actually exist.
         """
+        LOG.debug(f"Checking if the following knobs exist: {knobs}")
         dont_exist = [k for k in knobs if self._getParameter(k) is None]
         if len(dont_exist):
             LOG.warning(f"The following knobs do not exist and will be filtered: {dont_exist}.")
@@ -134,7 +140,7 @@ class LSAClient(pjLSAClient):
         """
         cts = self.findUserContextMappingHistory(t_start.timestamp(), t_end.timestamp(), accelerator=accelerator)
 
-        db = pytimber.LoggingDB(source=source)
+        db = pytimber.LoggingDB(source=source, loglevel=logging.ERROR)
         fillnts, fillnv = try_to_acquire_data(
             db.get, "HX:FILLN", t_start.timestamp(), t_end.timestamp()
         )["HX:FILLN"]
@@ -142,11 +148,14 @@ class LSAClient(pjLSAClient):
         if not len(fillnv):
             raise ValueError(f"No beamprocesses for {accelerator} ({source}) found between {t_start} - {t_end}.")
 
+        LOG.debug(f"{len(fillnts)} fills aqcuired.")
+        # map beam-processes to fills
         fills = {}
         for ts, name in zip(cts.timestamp, cts.name):
             idx = fillnts.searchsorted(ts) - 1
             filln = int(fillnv[idx])
             fills.setdefault(filln, []).insert(0, (ts, name))
+        LOG.debug(f"Beamprocess History extracted.")
         return fills
 
     def get_trim_history(
@@ -169,6 +178,7 @@ class LSAClient(pjLSAClient):
         Returns:
             Dictionary of trims and their data (as TrimTuples, i.e. NamedTuple of lists of time and data).
         """
+        LOG.debug("Extracting Trim history.")
         if knobs is None or len(knobs) == 0:
             knobs = self.find_knob_names(accelerator)
         else:
@@ -182,6 +192,7 @@ class LSAClient(pjLSAClient):
         if end_time is not None:
             end_time = end_time.timestamp() 
 
+        LOG.debug(f"Getting trims for {len(knobs)} knobs.")
         try:
             trims = self.getTrims(parameter=knobs, beamprocess=beamprocess, start=start_time, end=end_time)
         except jpype.java.lang.NullPointerException as e:
@@ -189,6 +200,7 @@ class LSAClient(pjLSAClient):
             # this should have been caught by the filter_existing_knobs above
             raise ValueError(f"Something went wrong when extracting trims for the knobs: {knobs}") from e
 
+        LOG.debug(f"{len(trims)} trims extracted.")
         trims_not_found = [k for k in knobs if k not in trims.keys()]
         if len(trims_not_found):
             LOG.warning(f"The following knobs were not found in '{beamprocess}': {trims_not_found}")
@@ -205,9 +217,10 @@ class LSAClient(pjLSAClient):
             Dictionary with context info.
         """
         if isinstance(beamprocess, str):
+            LOG.debug(f"Extracting Beamprocess {beamprocess} from ContextService")
             beamprocess = self._contextService.findStandAloneBeamProcess(beamprocess)
         bp_dict = _beamprocess_to_dict(beamprocess)
-        LOG.debug(str(bp_dict))
+        LOG.debug(f"Beamprocess details: {str(bp_dict)}")
         return bp_dict
 
     def find_active_beamprocess_at_time(
@@ -285,11 +298,13 @@ class LSAClient(pjLSAClient):
     def get_madx_name_from_circuit(self, circuit: str):
         """Returns the ``MAD-X`` Strength Name (Circuit/Knob) from the given circuit name."""
         logical_name = circuit.split("/")[0]
-        slist = jpype.java.util.Collections.singletonList(
+        slist = jpype.java.util.Collections.singletonList(  # python lists did not work (jdilly)
             logical_name
-        )  # python lists did not work (jdilly)
-        madx_name = self._deviceService.findMadStrengthNamesByLogicalNames(slist)  # returns a map
-        return madx_name[logical_name]
+        )
+        madx_name_map = self._deviceService.findMadStrengthNamesByLogicalNames(slist)  # returns a map
+        madx_name = madx_name_map[logical_name]
+        LOG.debug(f"Name conversion: {circuit} -> {logical_name} -> {madx_name}")
+        return madx_name
 
 
 # Single Instance LSAClient ####################################################

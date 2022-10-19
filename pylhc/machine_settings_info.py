@@ -384,6 +384,10 @@ def _get_beamprocess(acc_time: AccDatetime, accel: str, source: str) -> DotDict:
         raise ValueError(f"In fill {fill_no} the {str(e)}") from e
     bp_info = LSA.get_beamprocess_info(beamprocess)
     bp_info.update({"Fill": fill_no, "StartTime": start_time})
+    LOG.debug(
+        f"Beamprocess {bp_info['Name']} in fill {fill_no}"
+        f" extracted at time {start_time}."
+    )
     return DotDict(bp_info)
 
 
@@ -396,6 +400,7 @@ def _get_beamprocess_start(beamprocesses: Iterable[Tuple[float, str]], acc_time:
     ts = acc_time.timestamp()
     for time, name in sorted(beamprocesses, key=lambda x: x[0], reverse=True):
         if time <= ts and name == bp_name:
+            LOG.debug(f"Found start for beamprocess '{bp_name}' at timestamp {time}.")
             return acc_time.__class__.from_timestamp(time)
     raise ValueError(
         f"Beamprocess '{bp_name}' was not found."
@@ -407,8 +412,10 @@ def _get_beamprocess_start(beamprocesses: Iterable[Tuple[float, str]], acc_time:
 
 def _get_optics(acc_time: AccDatetime, beamprocess: str, bp_start: AccDatetime) -> DotDict:
     """Get the info about the active optics at ``acc_time``."""
+    LOG.debug(f"Getting optics for {beamprocess} at time {acc_time.utc_string}")
     optics_table = LSA.getOpticTable(beamprocess)
     optics, start_time = _get_last_optics(optics_table, beamprocess, bp_start, acc_time)
+    LOG.debug(f"Optics {optics} extracted at time {start_time.utc_string}.")
     return DotDict({"Name": optics, "StartTime": start_time})
 
 
@@ -431,6 +438,7 @@ def _get_last_optics(
 
 def _get_knob_definitions(knobs: list, optics: str):
     """Get knob definitions."""
+    LOG.debug(f"Extracting knob definitions for {len(knobs)} in optics '{optics}'.")
     defs = {}
     for knob in knobs:
         try:
@@ -449,6 +457,7 @@ def _get_last_trim(trims: dict) -> dict:
     Returns:
         Dictionary of knob names and their values.
     """
+    LOG.debug("Extracting last trim from found trim histories.")
     trim_dict = {trim: trims[trim].data[-1] for trim in trims.keys()}  # return last set value
     for trim, value in trim_dict.items():
         try:
