@@ -420,13 +420,13 @@ def _get_beamprocess(acc_time: AccDatetime, accel: str, source: str, beamprocess
     DotDict(bp_info)
 
     fill_no, fill_bps = LSA.find_last_fill(acc_time, accelerator=accel, source=source)
-    bp_info.Fill = fill_no
+    bp_info["Fill"] = fill_no
 
     try:
         start_time = _get_beamprocess_start(fill_bps, acc_time, bp_info.Name)
     except ValueError as e:
         raise ValueError(f"In fill {fill_no} the {str(e)}") from e
-    bp_info.StartTime = start_time
+    bp_info["StartTime"] = start_time
 
     LOG.debug(
         f"Beamprocess {bp_info.Name} in fill {bp_info.Fill} started at time {bp_info.StartTime}."
