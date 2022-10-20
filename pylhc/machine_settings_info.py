@@ -101,6 +101,11 @@ def _get_params() -> dict:
             default='lhc',
             type=str,
             help="Accelerator name."),
+        beamprocess=dict(
+            type=str,
+            help=("Manual override for the Beamprocess "
+                 "(otherwise taken at the given ``time``)")
+        ),
         output_dir=dict(
             default=None,
             type=PathOrStr,
@@ -132,6 +137,14 @@ def get_info(opt) -> Dict[str, object]:
             Accelerator name.
 
             default: ``lhc``
+
+        
+        - **beamprocess** *(str)*:
+
+            Manual override for the Beamprocess
+            (otherwise taken at the given ``time``)
+
+            default: ``None``
 
 
         - **knob_definitions**:
@@ -202,7 +215,7 @@ def get_info(opt) -> Dict[str, object]:
         opt.log = True
 
     acc_time, acc_start_time = _get_times(opt.time, opt.start_time, opt.accel)
-    beamprocess_info = _get_beamprocess(acc_time, opt.accel, opt.source)
+    beamprocess_info = _get_beamprocess(acc_time, opt.accel, opt.source, opt.beamprocess)
 
     optics_info, knob_definitions, trim_histories, trims = None, None, None, None
     try:
@@ -394,10 +407,11 @@ def write_trim_histories(
 # Beamprocess ##################################################################
 
 
-def _get_beamprocess(acc_time: AccDatetime, accel: str, source: str) -> DotDict:
+def _get_beamprocess(acc_time: AccDatetime, accel: str, source: str, beamprocess: str = None) -> DotDict:
     """Get the info about the active beamprocess at ``acc_time``."""
+    if beamprocess is None:
+        beamprocess = LSA.find_active_beamprocess_at_time(acc_time)
     fill_no, fill_bps = LSA.find_last_fill(acc_time, accel, source)
-    beamprocess = LSA.find_active_beamprocess_at_time(acc_time)
     try:
         start_time = _get_beamprocess_start(fill_bps, acc_time, str(beamprocess))
     except ValueError as e:
