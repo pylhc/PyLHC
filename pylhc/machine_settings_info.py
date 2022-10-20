@@ -230,7 +230,12 @@ def get_info(opt) -> Dict[str, object]:
                 opt.knobs = [name2lsa(knob) for category in KNOB_CATEGORIES.values()
                              for knob in category]
 
-            trim_histories = LSA.get_trim_history(beamprocess_info.Object, opt.knobs, start_time=acc_start_time, end_time=acc_time, accelerator=opt.accel)
+            trim_histories = LSA.get_trim_history(
+                beamprocess_info.Object, opt.knobs,
+                start_time=acc_start_time,
+                end_time=acc_time,
+                accelerator=opt.accel
+            )
             trims = _get_last_trim(trim_histories)
 
         if opt.knob_definitions:
@@ -345,17 +350,17 @@ def write_knob_defitions(output_path: Path, definitions: dict):
 
 
 def write_trim_histories(
-    output_path: Path, trim_hisotries: Dict[str, namedtuple], accel: str,
+    output_path: Path, trim_histories: Dict[str, namedtuple], accel: str,
     acc_time: AccDatetime = None, acc_start_time: AccDatetime = None, 
     bp_info: DotDict = None, optics_info: DotDict = None
 ):
     """ Write the trim histories into tfs files.
     There are two time columns, one with timestamps as they are usually easier to handle
-    and one with the UTC-string, as they are more human readable.
+    and one with the UTC-string, as they are more human-readable.
 
     Args:
         output_path (Path): Folder to write output file into
-        trim_hisotries (dict): trims histories as extracted via LSA.get_trim_history()
+        trim_histories (dict): trims histories as extracted via LSA.get_trim_history()
         accel (str): Name of the accelerator
         acc_time (AccDatetime): User given (End)Time
         acc_start_time (AccDatetime): User given Start Time
@@ -385,7 +390,7 @@ def write_trim_histories(
         headers.update({const.head_optics: optics_info.Name})
 
     # Write trim history per knob ----
-    for knob, trim_history in trim_hisotries.items():
+    for knob, trim_history in trim_histories.items():
         trims_tfs = tfs.TfsDataFrame(headers=headers, columns=[const.column_time, const.column_timestamp, const.column_value])
         for timestamp, value in zip(trim_history.time, trim_history.data):
             time = AccDT.from_timestamp(timestamp).cern_utc_string()
@@ -408,19 +413,23 @@ def write_trim_histories(
 
 
 def _get_beamprocess(acc_time: AccDatetime, accel: str, source: str, beamprocess: str = None) -> DotDict:
-    """Get the info about the active beamprocess at ``acc_time``."""
+    """Get the info about the active beamprocess at ``acc_time`` or the given one."""
     if beamprocess is None:
-        beamprocess = LSA.find_active_beamprocess_at_time(acc_time)
-    fill_no, fill_bps = LSA.find_last_fill(acc_time, accel, source)
+        beamprocess = LSA.find_active_beamprocess_at_time(acc_time, accelerator=accel)
+    bp_info = LSA.get_beamprocess_info(beamprocess)
+    DotDict(bp_info)
+
+    fill_no, fill_bps = LSA.find_last_fill(acc_time, accelerator=accel, source=source)
+    bp_info.Fill = fill_no
+
     try:
-        start_time = _get_beamprocess_start(fill_bps, acc_time, str(beamprocess))
+        start_time = _get_beamprocess_start(fill_bps, acc_time, bp_info.Name)
     except ValueError as e:
         raise ValueError(f"In fill {fill_no} the {str(e)}") from e
-    bp_info = LSA.get_beamprocess_info(beamprocess)
-    bp_info.update({"Fill": fill_no, "StartTime": start_time})
+    bp_info.StartTime = start_time
+
     LOG.debug(
-        f"Beamprocess {bp_info['Name']} in fill {fill_no}"
-        f" extracted at time {start_time}."
+        f"Beamprocess {bp_info.Name} in fill {bp_info.Fill} started at time {bp_info.StartTime}."
     )
     return DotDict(bp_info)
 
