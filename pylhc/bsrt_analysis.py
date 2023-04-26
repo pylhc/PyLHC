@@ -23,6 +23,7 @@ import pandas as pd
 import parse
 import pytz
 import tfs
+from forced_da_analysis import get_approximate_index
 from generic_parser import EntryPointParameters, entrypoint
 from omc3.utils import logging_tools, time_tools
 
@@ -150,7 +151,7 @@ def _select_files(opt, files_df):
         [opt["starttime"], opt["endtime"]], ["first_valid_index", "last_valid_index"]
     ):
         indices.append(
-            _get_closest_index(files_df, time if time is not None else getattr(files_df, fct)())
+            get_approximate_index(files_df, time if time is not None else getattr(files_df, fct)())
         )
 
     return files_df.iloc[indices[0] : indices[1] + 1]
@@ -176,10 +177,6 @@ def _load_files_in_df(opt):
 
     files_df = files_df.sort_values(by=["TIME"]).reset_index(drop=True).set_index("TIME")
     return files_df
-
-
-def _get_closest_index(df, time):
-    return df.index.get_loc(time, method="nearest")
 
 
 def _get_timestamp_from_name(name, formatstring):
@@ -363,7 +360,7 @@ def plot_crosssection_for_timesteps(opt, bsrt_df):
     for idx, _ in kick_df.iterrows():
         timestamp = pd.to_datetime(time_tools.cern_utc_string_to_utc(idx))
 
-        data_row = bsrt_df.iloc[_get_closest_index(bsrt_df, timestamp)]
+        data_row = bsrt_df.iloc[get_approximate_index(bsrt_df, timestamp)]
         fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(18, 9), constrained_layout=True)
 
         fig.suptitle(f"Timestamp: {timestamp}")
