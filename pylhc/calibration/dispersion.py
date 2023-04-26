@@ -222,6 +222,6 @@ def get_calibration_factors_from_dispersion(
         if "X" not in calibration_factors.keys():
             calibration_factors = {"X": factors_for_ip}
         else:
-            calibration_factors["X"] = calibration_factors["X"].append(factors_for_ip)
+            calibration_factors["X"] = pd.concat([calibration_factors["X"], factors_for_ip], axis="index")
 
     return calibration_factors
