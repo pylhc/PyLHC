@@ -16,7 +16,7 @@ It runs on a matrix of all supported operating systems (ubuntu-20.04, ubuntu-22.
 ### Test Coverage
 
 Test coverage is calculated in the `coverage` wokflow, which triggers on pushes to `master` and any push to a `pull request`.
-It runs on `ubuntu-latest` & the Python version (`Python 3.9`), and reports the coverage results of the test suite to `CodeClimate`,
+It runs on `ubuntu-latest` & the Python version (`Python 3.9`), and reports the coverage results of the test suite to `CodeClimate`.
 
 ### Regular Testing
 
