@@ -22,12 +22,12 @@ import numpy as np
 import pandas as pd
 import parse
 import pytz
+
 import tfs
-from forced_da_analysis import get_approximate_index
 from generic_parser import EntryPointParameters, entrypoint
 from omc3.utils import logging_tools, time_tools
-
 from pylhc.constants.general import TFS_SUFFIX, TIME_COLUMN
+from pylhc.forced_da_analysis import get_approximate_index
 
 LOG = logging_tools.get_logger(__name__)
 PLOT_FILE_SUFFIX = ".pdf"

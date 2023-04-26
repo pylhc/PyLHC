@@ -1,9 +1,15 @@
 # pylhc Changelog
 
-## Version 0.7.5
+## Version 0.8.0
+
+Fixed:
+ - replaced `get_loc` with `get_indexer` to be compatible with `pandas` > 2.0
 
 Added:
  - `beamprocess` option to Machine Settings Info, to allow manual override.
+
+Removed:
+ - `hdf5` reader/writer for `tfs` as this is already in `tfs-pandas`
 
 ## Version 0.7.4
 
