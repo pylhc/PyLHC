@@ -17,28 +17,32 @@ All gathered data is returned, if this function is called from python.
 
 .. code-block:: none
 
-    usage: machine_settings_info.py [-h] [--time TIME] [--start_time START_TIME]
-                                    [--knobs KNOBS [KNOBS ...]] [--accel ACCEL]
-                                    [--output_dir OUTPUT_DIR] [--knob_definitions]
-                                    [--source SOURCE] [--log]
+   usage: machine_settings_info.py [-h] [--time TIME] [--start_time START_TIME]
+                                   [--knobs KNOBS [KNOBS ...]] [--accel ACCEL]
+                                   [--beamprocess BEAMPROCESS] [--output_dir OUTPUT_DIR]
+                                   [--knob_definitions] [--source SOURCE] [--log]
 
-    optional arguments:
-    -h, --help            show this help message and exit
-    --time TIME           UTC Time as 'Y-m-d H:M:S.f' format or ISO.
-                          Acts as point in time or end time
-                         (if ``start_time`` is given).
-    --start_time START_TIME
-                            UTC Time as 'Y-m-d H:M:S.f' format.
-                            Defines the beginning of the time-range.
-    --knobs KNOBS [KNOBS ...]
-                            List of knobnames.
-    --accel ACCEL         Accelerator name.
-    --output_dir OUTPUT_DIR
-                            Output directory.
-    --knob_definitions    Set to extract knob definitions.
-    --source SOURCE       Source to extract data from.
-    --log                 Write summary into log
-                          (automatically done if no output path is given).
+  optional arguments:
+  -h, --help            show this help message and exit
+  --time TIME           UTC Time as 'Y-m-d H:M:S.f' or ISO format or AccDatetime object.
+                        Acts as point in time or end time (if ``start_time`` is given).
+  --start_time START_TIME
+                        UTC Time as 'Y-m-d H:M:S.f' or ISO format or AccDatetime object.
+                        Defines the beginning of the time-range.
+  --knobs KNOBS [KNOBS ...]
+                        List of knobnames. If `None` (or omitted) no knobs will be extracted.
+                        If it is just the string ``'all'``, all knobs will be extracted
+                        (can be slow). Use the string ``'default'`` the main knobs
+                        of interest.
+  --accel ACCEL         Accelerator name.
+  --beamprocess BEAMPROCESS
+                        Manual override for the Beamprocess
+                        (otherwise taken at the given ``time``)
+  --output_dir OUTPUT_DIR
+                        Output directory.
+  --knob_definitions    Set to extract knob definitions.
+  --source SOURCE       Source to extract data from.
+  --log                 Write summary into log (automatically done if no output path is given).
 
 
 :author: jdilly
@@ -94,7 +98,7 @@ def _get_params() -> dict:
             help="List of knobnames. "
                  "If `None` (or omitted) no knobs will be extracted. "
                  "If it is just the string ``'all'``, "
-                 "all knobs will be extracted (can be slow)."
+                 "all knobs will be extracted (can be slow). "
                  "Use the string ``'default'`` the main knobs of interest."
         ),
         accel=dict(
@@ -130,79 +134,79 @@ def get_info(opt) -> Dict[str, object]:
 
     Keyword Args:
 
-       *--Optional--*
+   *--Optional--*
 
-        - **accel** *(str)*:
+    - **accel** *(str)*:
 
-            Accelerator name.
+        Accelerator name.
 
-            default: ``lhc``
-
-        
-        - **beamprocess** *(str)*:
-
-            Manual override for the Beamprocess
-            (otherwise taken at the given ``time``)
-
-            default: ``None``
+        default: ``lhc``
 
 
-        - **knob_definitions**:
+    - **beamprocess** *(str)*:
 
-            Set to extract knob definitions.
+        Manual override for the Beamprocess
+        (otherwise taken at the given ``time``)
 
-            action: ``store_true``
-
-
-        - **knobs** *(str)*:
-
-            List of knobnames.
-            If `None` (or omitted) no knobs will be extracted.
-            If it is just the string ``'all'``,
-            all knobs will be extracted (can be slow).
-            Use the string ``'default'`` the main knobs of interest.
-            If this is called from python, the strings need
-            to be put as single items into a list.
-
-            default: ``None``
+        default: ``None``
 
 
-        - **log**:
+    - **knob_definitions**:
 
-            Write summary into log (automatically done if no output path is
-            given).
+        Set to extract knob definitions.
 
-            action: ``store_true``
-
-
-        - **output_dir** *(PathOrStr)*:
-
-            Output directory.
-
-            default: ``None``
+        action: ``store_true``
 
 
-        - **source** *(str)*:
+    - **knobs** *(str)*:
 
-            Source to extract data from.
+        List of knobnames.
+        If `None` (or omitted) no knobs will be extracted.
+        If it is just the string ``'all'``,
+        all knobs will be extracted (can be slow).
+        Use the string ``'default'`` the main knobs of interest.
+        If this is called from python, the strings need
+        to be put as single items into a list.
 
-            default: ``nxcals``
-
-
-        - **start_time** *(AccDatetime, str)*:
-
-            UTC Time as 'Y-m-d H:M:S.f' format or AccDatetime object.
-            Defines the beginning of the time-range.
-
-            default: ``None``
+        default: ``None``
 
 
-        - **time** *(AccDatetime, str)*:
+    - **log**:
 
-            UTC Time as 'Y-m-d H:M:S.f' format or AccDatetime object.
-            Acts as point in time or end time (if ``start_time`` is given).
+        Write summary into log (automatically done if no output path is
+        given).
 
-            default: ``None``
+        action: ``store_true``
+
+
+    - **output_dir** *(PathOrStr)*:
+
+        Output directory.
+
+        default: ``None``
+
+
+    - **source** *(str)*:
+
+        Source to extract data from.
+
+        default: ``nxcals``
+
+
+    - **start_time** *(AccDatetime, str)*:
+
+        UTC Time as 'Y-m-d H:M:S.f' format or AccDatetime object.
+        Defines the beginning of the time-range.
+
+        default: ``None``
+
+
+    - **time** *(AccDatetime, str)*:
+
+        UTC Time as 'Y-m-d H:M:S.f' format or AccDatetime object.
+        Acts as point in time or end time (if ``start_time`` is given).
+
+        default: ``None``
 
     Returns:
         dict: Dictionary containing the given ``time`` and ``start_time``,
