@@ -1,5 +1,10 @@
 # pylhc Changelog
 
+## Version 0.7.5
+
+Added:
+ - `beamprocess` option to Machine Settings Info, to allow manual override.
+
 ## Version 0.7.4
 
 Changes in Machine Settings Info
