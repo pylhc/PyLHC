@@ -20,7 +20,7 @@ def test_bsrt_df(_bsrt_df):
     results = bsrt_analysis.main(directory=str(BSRT_INPUTS), beam="B1")
     assert_frame_equal(
         results["bsrt_df"].sort_index(axis=1),
-        _bsrt_df.sort_index(axis=1),
+        _bsrt_df.copy().sort_index(axis=1),
         check_dtype=False, check_index_type=False
     )
 
@@ -44,43 +44,43 @@ class TestPlotting:
     @pytest.mark.mpl_image_compare
     def test_fitvarplot(self, _bsrt_df):
         return bsrt_analysis.plot_fit_variables(
-            {"show_plots": False, "outputdir": None, "kick_df": None}, _bsrt_df
+            {"show_plots": False, "outputdir": None, "kick_df": None}, _bsrt_df.copy()
         )
 
     @pytest.mark.mpl_image_compare
     def test_fitvarplot_with_kick_df(self, _bsrt_df, _kick_df):
         return bsrt_analysis.plot_fit_variables(
-            {"show_plots": False, "outputdir": None, "kick_df": _kick_df}, _bsrt_df
+            {"show_plots": False, "outputdir": None, "kick_df": _kick_df}, _bsrt_df.copy()
         )
 
     @pytest.mark.mpl_image_compare
     def test_fullcrossection(self, _bsrt_df):
         return bsrt_analysis.plot_full_crosssection(
-            {"show_plots": False, "outputdir": None, "kick_df": None}, _bsrt_df
+            {"show_plots": False, "outputdir": None, "kick_df": None}, _bsrt_df.copy()
         )
 
     @pytest.mark.mpl_image_compare
     def test_fullcrossection_with_kick_df(self, _bsrt_df, _kick_df):
         return bsrt_analysis.plot_full_crosssection(
-            {"show_plots": False, "outputdir": None, "kick_df": _kick_df}, _bsrt_df
+            {"show_plots": False, "outputdir": None, "kick_df": _kick_df}, _bsrt_df.copy()
         )
 
     @pytest.mark.mpl_image_compare
     def test_auxiliary_variables(self, _bsrt_df):
         return bsrt_analysis.plot_auxiliary_variables(
-            {"show_plots": False, "outputdir": None, "kick_df": None}, _bsrt_df
+            {"show_plots": False, "outputdir": None, "kick_df": None}, _bsrt_df.copy()
         )
 
     @pytest.mark.mpl_image_compare
     def test_auxiliary_variables_with_kick_df(self, _bsrt_df, _kick_df):
         return bsrt_analysis.plot_auxiliary_variables(
-            {"show_plots": False, "outputdir": None, "kick_df": _kick_df}, _bsrt_df
+            {"show_plots": False, "outputdir": None, "kick_df": _kick_df}, _bsrt_df.copy()
         )
 
     @pytest.mark.mpl_image_compare
     def test_crossection_for_timesteps(self, _bsrt_df, _kick_df):
         results = bsrt_analysis.plot_crosssection_for_timesteps(
-            {"show_plots": False, "outputdir": None, "kick_df": _kick_df}, _bsrt_df
+            {"show_plots": False, "outputdir": None, "kick_df": _kick_df}, _bsrt_df.copy()
         )
         assert len(results) == len(_kick_df)
         return results[0]
