@@ -99,7 +99,7 @@ def _get_params() -> dict:
                  "If `None` (or omitted) no knobs will be extracted. "
                  "If it is just the string ``'all'``, "
                  "all knobs will be extracted (can be slow). "
-                 "Use the string ``'default'`` the main knobs of interest."
+                 "Use the string ``'default'`` for pre-defined knobs of interest."
         ),
         accel=dict(
             default='lhc',
@@ -164,7 +164,7 @@ def get_info(opt) -> Dict[str, object]:
         If `None` (or omitted) no knobs will be extracted.
         If it is just the string ``'all'``,
         all knobs will be extracted (can be slow).
-        Use the string ``'default'`` the main knobs of interest.
+        Use the string ``'default'`` for pre-defined knobs of interest.
         If this is called from python, the strings need
         to be put as single items into a list.
 
