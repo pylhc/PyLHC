@@ -32,7 +32,7 @@ All gathered data is returned, if this function is called from python.
   --knobs KNOBS [KNOBS ...]
                         List of knobnames. If `None` (or omitted) no knobs will be extracted.
                         If it is just the string ``'all'``, all knobs will be extracted
-                        (can be slow). Use the string ``'default'`` the main knobs
+                        (can be slow). Use the string ``'default'`` for pre-defined knobs
                         of interest.
   --accel ACCEL         Accelerator name.
   --beamprocess BEAMPROCESS
