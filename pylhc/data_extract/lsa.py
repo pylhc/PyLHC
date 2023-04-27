@@ -203,7 +203,9 @@ class LSAClient(pjLSAClient):
         LOG.debug(f"{len(trims)} trims extracted.")
         trims_not_found = [k for k in knobs if k not in trims.keys()]
         if len(trims_not_found):
-            LOG.warning(f"The following knobs were not found in '{beamprocess}': {trims_not_found}")
+            LOG.warning(
+                f"The following knobs were not found in '{beamprocess}' "
+                f"or had no trims during the given time: {trims_not_found}")
         return trims
 
     def get_beamprocess_info(self, beamprocess: Union[str, object]) -> Dict:

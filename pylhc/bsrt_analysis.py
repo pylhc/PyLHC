@@ -22,11 +22,12 @@ import numpy as np
 import pandas as pd
 import parse
 import pytz
+
 import tfs
 from generic_parser import EntryPointParameters, entrypoint
 from omc3.utils import logging_tools, time_tools
-
 from pylhc.constants.general import TFS_SUFFIX, TIME_COLUMN
+from pylhc.forced_da_analysis import get_approximate_index
 
 LOG = logging_tools.get_logger(__name__)
 PLOT_FILE_SUFFIX = ".pdf"
@@ -150,7 +151,7 @@ def _select_files(opt, files_df):
         [opt["starttime"], opt["endtime"]], ["first_valid_index", "last_valid_index"]
     ):
         indices.append(
-            _get_closest_index(files_df, time if time is not None else getattr(files_df, fct)())
+            get_approximate_index(files_df, time if time is not None else getattr(files_df, fct)())
         )
 
     return files_df.iloc[indices[0] : indices[1] + 1]
@@ -178,10 +179,6 @@ def _load_files_in_df(opt):
     return files_df
 
 
-def _get_closest_index(df, time):
-    return df.index.get_loc(time, method="nearest")
-
-
 def _get_timestamp_from_name(name, formatstring):
     year, month, day, hour, minute, second, microsecond = map(int, parse.parse(formatstring, name))
     return datetime.datetime(
@@ -203,12 +200,11 @@ def _load_pickled_data(opt, files_df):
     merged_df = pd.DataFrame()
     for bsrtfile in files_df["FILES"]:
         data = pickle.load(gzip.open(bsrtfile, "rb"))
-        for entry in data:
-            entry = _check_and_fix_entries(entry)
-            merged_df = merged_df.append(entry, ignore_index=True)
+        new_df = pd.DataFrame.from_records([_check_and_fix_entries(entry) for entry in data])
+        merged_df = pd.concat([merged_df, new_df], axis="index", ignore_index=True)
 
     merged_df = merged_df.set_index(
-        pd.to_datetime(merged_df["acqTime"], format=BSRT_FESA_TIME_FORMAT)
+        pd.to_datetime(merged_df["acqTime"], format=BSRT_FESA_TIME_FORMAT, utc=True)
     )
     merged_df.index.name = "TimeIndex"
     merged_df = merged_df.drop_duplicates(subset=["acqCounter", "acqTime"])
@@ -363,7 +359,7 @@ def plot_crosssection_for_timesteps(opt, bsrt_df):
     for idx, _ in kick_df.iterrows():
         timestamp = pd.to_datetime(time_tools.cern_utc_string_to_utc(idx))
 
-        data_row = bsrt_df.iloc[_get_closest_index(bsrt_df, timestamp)]
+        data_row = bsrt_df.iloc[get_approximate_index(bsrt_df, timestamp)]
         fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(18, 9), constrained_layout=True)
 
         fig.suptitle(f"Timestamp: {timestamp}")

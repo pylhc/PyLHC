@@ -1,5 +1,6 @@
 from ast import literal_eval
 from pathlib import Path
+import sys
 
 import matplotlib
 import numpy as np
@@ -14,11 +15,15 @@ matplotlib.use("Agg")
 
 INPUTS_DIR = Path(__file__).parent.parent / "inputs"
 BSRT_INPUTS = INPUTS_DIR / "bsrt_analysis"
-
+BASELINE_DIR = str(INPUTS_DIR / "mpl_bsrt_baseline")
 
 def test_bsrt_df(_bsrt_df):
     results = bsrt_analysis.main(directory=str(BSRT_INPUTS), beam="B1")
-    assert_frame_equal(results["bsrt_df"].sort_index(axis=1), _bsrt_df.sort_index(axis=1), check_dtype=False)
+    assert_frame_equal(
+        results["bsrt_df"].sort_index(axis=1),
+        _bsrt_df.copy().sort_index(axis=1),
+        check_dtype=False, check_index_type=False
+    )
 
 
 def test_select_by_time():
@@ -37,55 +42,56 @@ def test_select_by_time():
 
 
 class TestPlotting:
-    @pytest.mark.mpl_image_compare
+    @pytest.mark.mpl_image_compare(baseline_dir=BASELINE_DIR)
     def test_fitvarplot(self, _bsrt_df):
         return bsrt_analysis.plot_fit_variables(
-            {"show_plots": False, "outputdir": None, "kick_df": None}, _bsrt_df
+            {"show_plots": False, "outputdir": None, "kick_df": None}, _bsrt_df.copy()
         )
 
-    @pytest.mark.mpl_image_compare
+    @pytest.mark.mpl_image_compare(baseline_dir=BASELINE_DIR)
     def test_fitvarplot_with_kick_df(self, _bsrt_df, _kick_df):
         return bsrt_analysis.plot_fit_variables(
-            {"show_plots": False, "outputdir": None, "kick_df": _kick_df}, _bsrt_df
+            {"show_plots": False, "outputdir": None, "kick_df": _kick_df}, _bsrt_df.copy()
         )
 
-    @pytest.mark.mpl_image_compare
+    @pytest.mark.mpl_image_compare(baseline_dir=BASELINE_DIR)
     def test_fullcrossection(self, _bsrt_df):
         return bsrt_analysis.plot_full_crosssection(
-            {"show_plots": False, "outputdir": None, "kick_df": None}, _bsrt_df
+            {"show_plots": False, "outputdir": None, "kick_df": None}, _bsrt_df.copy()
         )
 
-    @pytest.mark.mpl_image_compare
+    @pytest.mark.mpl_image_compare(baseline_dir=BASELINE_DIR)
     def test_fullcrossection_with_kick_df(self, _bsrt_df, _kick_df):
         return bsrt_analysis.plot_full_crosssection(
-            {"show_plots": False, "outputdir": None, "kick_df": _kick_df}, _bsrt_df
+            {"show_plots": False, "outputdir": None, "kick_df": _kick_df}, _bsrt_df.copy()
         )
 
-    @pytest.mark.mpl_image_compare
+    @pytest.mark.mpl_image_compare(baseline_dir=BASELINE_DIR)
     def test_auxiliary_variables(self, _bsrt_df):
         return bsrt_analysis.plot_auxiliary_variables(
-            {"show_plots": False, "outputdir": None, "kick_df": None}, _bsrt_df
+            {"show_plots": False, "outputdir": None, "kick_df": None}, _bsrt_df.copy()
         )
 
-    @pytest.mark.mpl_image_compare
+    @pytest.mark.mpl_image_compare(baseline_dir=BASELINE_DIR)
     def test_auxiliary_variables_with_kick_df(self, _bsrt_df, _kick_df):
         return bsrt_analysis.plot_auxiliary_variables(
-            {"show_plots": False, "outputdir": None, "kick_df": _kick_df}, _bsrt_df
+            {"show_plots": False, "outputdir": None, "kick_df": _kick_df}, _bsrt_df.copy()
         )
 
-    @pytest.mark.mpl_image_compare
+    @pytest.mark.mpl_image_compare(baseline_dir=BASELINE_DIR)
     def test_crossection_for_timesteps(self, _bsrt_df, _kick_df):
         results = bsrt_analysis.plot_crosssection_for_timesteps(
-            {"show_plots": False, "outputdir": None, "kick_df": _kick_df}, _bsrt_df
+            {"show_plots": False, "outputdir": None, "kick_df": _kick_df}, _bsrt_df.copy()
         )
         assert len(results) == len(_kick_df)
         return results[0]
 
 
-@pytest.fixture()
+@pytest.fixture(scope="module")
 def _bsrt_df() -> pd.DataFrame:
-    return pd.read_csv(
+    df = pd.read_csv(
         BSRT_INPUTS / bsrt_analysis._get_bsrt_tfs_fname("B1"),
+        engine="c",
         parse_dates=True,
         index_col="TimeIndex",
         quotechar='"',
@@ -101,6 +107,8 @@ def _bsrt_df() -> pd.DataFrame:
             "projPositionSet2": literal_eval,
         },
     )
+    df.index = df.index.tz_localize("UTC")
+    return df
 
 
 @pytest.fixture()

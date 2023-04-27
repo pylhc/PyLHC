@@ -175,7 +175,7 @@ def _get_factors_from_phase_fit(
         if calibration_phase_fit is None:
             calibration_phase_fit = c_fit
         else:
-            calibration_phase_fit = calibration_phase_fit.append(c_fit)
+            calibration_phase_fit = pd.concat([calibration_phase_fit, c_fit], axis="index")
 
     # Change the colum names for _fit
     calibration_phase_fit.columns = (LABELS[3], LABELS[4])

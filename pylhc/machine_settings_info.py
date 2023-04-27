@@ -17,28 +17,32 @@ All gathered data is returned, if this function is called from python.
 
 .. code-block:: none
 
-    usage: machine_settings_info.py [-h] [--time TIME] [--start_time START_TIME]
-                                    [--knobs KNOBS [KNOBS ...]] [--accel ACCEL]
-                                    [--output_dir OUTPUT_DIR] [--knob_definitions]
-                                    [--source SOURCE] [--log]
+   usage: machine_settings_info.py [-h] [--time TIME] [--start_time START_TIME]
+                                   [--knobs KNOBS [KNOBS ...]] [--accel ACCEL]
+                                   [--beamprocess BEAMPROCESS] [--output_dir OUTPUT_DIR]
+                                   [--knob_definitions] [--source SOURCE] [--log]
 
-    optional arguments:
-    -h, --help            show this help message and exit
-    --time TIME           UTC Time as 'Y-m-d H:M:S.f' format or ISO.
-                          Acts as point in time or end time
-                         (if ``start_time`` is given).
-    --start_time START_TIME
-                            UTC Time as 'Y-m-d H:M:S.f' format.
-                            Defines the beginning of the time-range.
-    --knobs KNOBS [KNOBS ...]
-                            List of knobnames.
-    --accel ACCEL         Accelerator name.
-    --output_dir OUTPUT_DIR
-                            Output directory.
-    --knob_definitions    Set to extract knob definitions.
-    --source SOURCE       Source to extract data from.
-    --log                 Write summary into log
-                          (automatically done if no output path is given).
+  optional arguments:
+  -h, --help            show this help message and exit
+  --time TIME           UTC Time as 'Y-m-d H:M:S.f' or ISO format or AccDatetime object.
+                        Acts as point in time or end time (if ``start_time`` is given).
+  --start_time START_TIME
+                        UTC Time as 'Y-m-d H:M:S.f' or ISO format or AccDatetime object.
+                        Defines the beginning of the time-range.
+  --knobs KNOBS [KNOBS ...]
+                        List of knobnames. If `None` (or omitted) no knobs will be extracted.
+                        If it is just the string ``'all'``, all knobs will be extracted
+                        (can be slow). Use the string ``'default'`` for pre-defined knobs
+                        of interest.
+  --accel ACCEL         Accelerator name.
+  --beamprocess BEAMPROCESS
+                        Manual override for the Beamprocess
+                        (otherwise taken at the given ``time``)
+  --output_dir OUTPUT_DIR
+                        Output directory.
+  --knob_definitions    Set to extract knob definitions.
+  --source SOURCE       Source to extract data from.
+  --log                 Write summary into log (automatically done if no output path is given).
 
 
 :author: jdilly
@@ -94,13 +98,18 @@ def _get_params() -> dict:
             help="List of knobnames. "
                  "If `None` (or omitted) no knobs will be extracted. "
                  "If it is just the string ``'all'``, "
-                 "all knobs will be extracted (can be slow)."
-                 "Use the string ``'default'`` the main knobs of interest."
+                 "all knobs will be extracted (can be slow). "
+                 "Use the string ``'default'`` for pre-defined knobs of interest."
         ),
         accel=dict(
             default='lhc',
             type=str,
             help="Accelerator name."),
+        beamprocess=dict(
+            type=str,
+            help=("Manual override for the Beamprocess "
+                 "(otherwise taken at the given ``time``)")
+        ),
         output_dir=dict(
             default=None,
             type=PathOrStr,
@@ -125,71 +134,79 @@ def get_info(opt) -> Dict[str, object]:
 
     Keyword Args:
 
-       *--Optional--*
+   *--Optional--*
 
-        - **accel** *(str)*:
+    - **accel** *(str)*:
 
-            Accelerator name.
+        Accelerator name.
 
-            default: ``lhc``
-
-
-        - **knob_definitions**:
-
-            Set to extract knob definitions.
-
-            action: ``store_true``
+        default: ``lhc``
 
 
-        - **knobs** *(str)*:
+    - **beamprocess** *(str)*:
 
-            List of knobnames.
-            If `None` (or omitted) no knobs will be extracted.
-            If it is just the string ``'all'``,
-            all knobs will be extracted (can be slow).
-            Use the string ``'default'`` the main knobs of interest.
-            If this is called from python, the strings need
-            to be put as single items into a list.
+        Manual override for the Beamprocess
+        (otherwise taken at the given ``time``)
 
-            default: ``None``
+        default: ``None``
 
 
-        - **log**:
+    - **knob_definitions**:
 
-            Write summary into log (automatically done if no output path is
-            given).
+        Set to extract knob definitions.
 
-            action: ``store_true``
-
-
-        - **output_dir** *(PathOrStr)*:
-
-            Output directory.
-
-            default: ``None``
+        action: ``store_true``
 
 
-        - **source** *(str)*:
+    - **knobs** *(str)*:
 
-            Source to extract data from.
+        List of knobnames.
+        If `None` (or omitted) no knobs will be extracted.
+        If it is just the string ``'all'``,
+        all knobs will be extracted (can be slow).
+        Use the string ``'default'`` for pre-defined knobs of interest.
+        If this is called from python, the strings need
+        to be put as single items into a list.
 
-            default: ``nxcals``
-
-
-        - **start_time** *(AccDatetime, str)*:
-
-            UTC Time as 'Y-m-d H:M:S.f' format or AccDatetime object.
-            Defines the beginning of the time-range.
-
-            default: ``None``
+        default: ``None``
 
 
-        - **time** *(AccDatetime, str)*:
+    - **log**:
 
-            UTC Time as 'Y-m-d H:M:S.f' format or AccDatetime object.
-            Acts as point in time or end time (if ``start_time`` is given).
+        Write summary into log (automatically done if no output path is
+        given).
 
-            default: ``None``
+        action: ``store_true``
+
+
+    - **output_dir** *(PathOrStr)*:
+
+        Output directory.
+
+        default: ``None``
+
+
+    - **source** *(str)*:
+
+        Source to extract data from.
+
+        default: ``nxcals``
+
+
+    - **start_time** *(AccDatetime, str)*:
+
+        UTC Time as 'Y-m-d H:M:S.f' format or AccDatetime object.
+        Defines the beginning of the time-range.
+
+        default: ``None``
+
+
+    - **time** *(AccDatetime, str)*:
+
+        UTC Time as 'Y-m-d H:M:S.f' format or AccDatetime object.
+        Acts as point in time or end time (if ``start_time`` is given).
+
+        default: ``None``
 
     Returns:
         dict: Dictionary containing the given ``time`` and ``start_time``,
@@ -202,7 +219,7 @@ def get_info(opt) -> Dict[str, object]:
         opt.log = True
 
     acc_time, acc_start_time = _get_times(opt.time, opt.start_time, opt.accel)
-    beamprocess_info = _get_beamprocess(acc_time, opt.accel, opt.source)
+    beamprocess_info = _get_beamprocess(acc_time, opt.accel, opt.source, opt.beamprocess)
 
     optics_info, knob_definitions, trim_histories, trims = None, None, None, None
     try:
@@ -217,7 +234,12 @@ def get_info(opt) -> Dict[str, object]:
                 opt.knobs = [name2lsa(knob) for category in KNOB_CATEGORIES.values()
                              for knob in category]
 
-            trim_histories = LSA.get_trim_history(beamprocess_info.Object, opt.knobs, start_time=acc_start_time, end_time=acc_time, accelerator=opt.accel)
+            trim_histories = LSA.get_trim_history(
+                beamprocess_info.Object, opt.knobs,
+                start_time=acc_start_time,
+                end_time=acc_time,
+                accelerator=opt.accel
+            )
             trims = _get_last_trim(trim_histories)
 
         if opt.knob_definitions:
@@ -332,17 +354,17 @@ def write_knob_defitions(output_path: Path, definitions: dict):
 
 
 def write_trim_histories(
-    output_path: Path, trim_hisotries: Dict[str, namedtuple], accel: str,
+    output_path: Path, trim_histories: Dict[str, namedtuple], accel: str,
     acc_time: AccDatetime = None, acc_start_time: AccDatetime = None, 
     bp_info: DotDict = None, optics_info: DotDict = None
 ):
     """ Write the trim histories into tfs files.
     There are two time columns, one with timestamps as they are usually easier to handle
-    and one with the UTC-string, as they are more human readable.
+    and one with the UTC-string, as they are more human-readable.
 
     Args:
         output_path (Path): Folder to write output file into
-        trim_hisotries (dict): trims histories as extracted via LSA.get_trim_history()
+        trim_histories (dict): trims histories as extracted via LSA.get_trim_history()
         accel (str): Name of the accelerator
         acc_time (AccDatetime): User given (End)Time
         acc_start_time (AccDatetime): User given Start Time
@@ -372,7 +394,7 @@ def write_trim_histories(
         headers.update({const.head_optics: optics_info.Name})
 
     # Write trim history per knob ----
-    for knob, trim_history in trim_hisotries.items():
+    for knob, trim_history in trim_histories.items():
         trims_tfs = tfs.TfsDataFrame(headers=headers, columns=[const.column_time, const.column_timestamp, const.column_value])
         for timestamp, value in zip(trim_history.time, trim_history.data):
             time = AccDT.from_timestamp(timestamp).cern_utc_string()
@@ -394,19 +416,24 @@ def write_trim_histories(
 # Beamprocess ##################################################################
 
 
-def _get_beamprocess(acc_time: AccDatetime, accel: str, source: str) -> DotDict:
-    """Get the info about the active beamprocess at ``acc_time``."""
-    fill_no, fill_bps = LSA.find_last_fill(acc_time, accel, source)
-    beamprocess = LSA.find_active_beamprocess_at_time(acc_time)
+def _get_beamprocess(acc_time: AccDatetime, accel: str, source: str, beamprocess: str = None) -> DotDict:
+    """Get the info about the active beamprocess at ``acc_time`` or the given one."""
+    if beamprocess is None:
+        beamprocess = LSA.find_active_beamprocess_at_time(acc_time, accelerator=accel)
+    bp_info = LSA.get_beamprocess_info(beamprocess)
+    bp_info = DotDict(bp_info)
+
+    fill_no, fill_bps = LSA.find_last_fill(acc_time, accelerator=accel, source=source)
+    bp_info.Fill = fill_no
+
     try:
-        start_time = _get_beamprocess_start(fill_bps, acc_time, str(beamprocess))
+        start_time = _get_beamprocess_start(fill_bps, acc_time, bp_info.Name)
     except ValueError as e:
         raise ValueError(f"In fill {fill_no} the {str(e)}") from e
-    bp_info = LSA.get_beamprocess_info(beamprocess)
-    bp_info.update({"Fill": fill_no, "StartTime": start_time})
+    bp_info.StartTime = start_time
+
     LOG.debug(
-        f"Beamprocess {bp_info['Name']} in fill {fill_no}"
-        f" extracted at time {start_time}."
+        f"Beamprocess {bp_info.Name} in fill {bp_info.Fill} started at time {bp_info.StartTime}."
     )
     return DotDict(bp_info)
 

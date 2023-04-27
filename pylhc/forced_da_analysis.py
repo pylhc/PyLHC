@@ -869,7 +869,7 @@ def _add_emittance_to_kicks(plane, energy, kick_df, emittance_df, nominal):
     kick_df = kick_df.reindex(columns=kick_df.columns.tolist() + cols_kick)
     idx_emitt = [emittance_df.columns.get_loc(c) for c in cols_emitt]
     for time in kick_df.index:
-        idx_kick = emittance_df.index.get_loc(time, method="nearest")
+        idx_kick = get_approximate_index(emittance_df, time)
         kick_df.loc[time, cols_kick] = emittance_df.iloc[idx_kick, idx_emitt].values
 
     # add de-normalized emittance
@@ -1052,8 +1052,10 @@ def _plot_intensity(directory, beam, plane, kick_df, intensity_df):
     )  # defines x-limits
 
     # convert to % relative to before first kick
-    idx_before = intensity_df.index.get_loc(
-        kick_df.index.min() - pd.Timedelta(seconds=x_span[0]), method="ffill"
+    idx_before = get_approximate_index(
+        intensity_df,
+        kick_df.index.min() - pd.Timedelta(seconds=x_span[0]),
+        method="ffill"
     )
     idx_intensity = intensity_df.columns.get_loc(INTENSITY)  # for iloc
     intensity_start = intensity_df.iloc[idx_before, idx_intensity]
@@ -1357,6 +1359,11 @@ def _get_fit_plot_data(da, da_err, data, fit_type):
 
 
 # Helper ---
+
+def get_approximate_index(df, item, method="nearest"):
+    """ Emulates the `get_loc` from pandas<2.0, i.e.
+    single index input and output. """
+    return df.index.get_indexer([item], method=method)[0]
 
 
 def _plot_kicks_and_scale_x(ax, kick_times, pad=20):
