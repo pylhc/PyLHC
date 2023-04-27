@@ -18,7 +18,11 @@ BSRT_INPUTS = INPUTS_DIR / "bsrt_analysis"
 
 def test_bsrt_df(_bsrt_df):
     results = bsrt_analysis.main(directory=str(BSRT_INPUTS), beam="B1")
-    assert_frame_equal(results["bsrt_df"].sort_index(axis=1), _bsrt_df.sort_index(axis=1), check_dtype=False)
+    assert_frame_equal(
+        results["bsrt_df"].sort_index(axis=1),
+        _bsrt_df.sort_index(axis=1),
+        check_dtype=False, check_index_type=False
+    )
 
 
 def test_select_by_time():
@@ -82,10 +86,11 @@ class TestPlotting:
         return results[0]
 
 
-@pytest.fixture()
+@pytest.fixture(scope="module")
 def _bsrt_df() -> pd.DataFrame:
-    return pd.read_csv(
+    df = pd.read_csv(
         BSRT_INPUTS / bsrt_analysis._get_bsrt_tfs_fname("B1"),
+        engine="c",
         parse_dates=True,
         index_col="TimeIndex",
         quotechar='"',
@@ -101,6 +106,8 @@ def _bsrt_df() -> pd.DataFrame:
             "projPositionSet2": literal_eval,
         },
     )
+    df.index = df.index.tz_localize("UTC")
+    return df
 
 
 @pytest.fixture()
