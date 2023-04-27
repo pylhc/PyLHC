@@ -200,11 +200,11 @@ def _load_pickled_data(opt, files_df):
     merged_df = pd.DataFrame()
     for bsrtfile in files_df["FILES"]:
         data = pickle.load(gzip.open(bsrtfile, "rb"))
-        new_df = pd.from_records([_check_and_fix_entries(entry) for entry in data])
+        new_df = pd.DataFrame.from_records([_check_and_fix_entries(entry) for entry in data])
         merged_df = pd.concat([merged_df, new_df], axis="index", ignore_index=True)
 
     merged_df = merged_df.set_index(
-        pd.to_datetime(merged_df["acqTime"], format=BSRT_FESA_TIME_FORMAT)
+        pd.to_datetime(merged_df["acqTime"], format=BSRT_FESA_TIME_FORMAT, utc=True)
     )
     merged_df.index.name = "TimeIndex"
     merged_df = merged_df.drop_duplicates(subset=["acqCounter", "acqTime"])
