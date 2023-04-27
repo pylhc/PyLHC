@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BPM Calibration &mdash; pylhc 0.7.4 documentation</title>
+  <title>BPM Calibration &mdash; pylhc 0.8.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -13,9 +13,6 @@
   <![endif]-->
   
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
         <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/js/theme.js"></script>
@@ -30,15 +27,19 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../index.html" class="icon icon-home"> pylhc
-            <img src="../_static/omc_logo.svg" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            pylhc
+              <img src="../_static/omc_logo.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.7
+                0.8
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -49,14 +50,6 @@
 <li class="toctree-l1"><a class="reference internal" href="analysis.html">Analysis Tools</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="analysis.html#bsrt-analysis">BSRT Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="analysis.html#forced-da-analysis">Forced DA Analysis</a></li>
-<li class="toctree-l2"><a class="reference internal" href="analysis.html#pylhc.forced_da_analysis.BoolOrPathOrDataFrame"><code class="docutils literal notranslate"><span class="pre">BoolOrPathOrDataFrame</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="analysis.html#pylhc.forced_da_analysis.PathOrDataframe"><code class="docutils literal notranslate"><span class="pre">PathOrDataframe</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="analysis.html#pylhc.forced_da_analysis.PathOrPagestore"><code class="docutils literal notranslate"><span class="pre">PathOrPagestore</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="analysis.html#pylhc.forced_da_analysis.PathOrString"><code class="docutils literal notranslate"><span class="pre">PathOrString</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="analysis.html#pylhc.forced_da_analysis.fun_exp_decay"><code class="docutils literal notranslate"><span class="pre">fun_exp_decay()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="analysis.html#pylhc.forced_da_analysis.fun_exp_sigma"><code class="docutils literal notranslate"><span class="pre">fun_exp_sigma()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="analysis.html#pylhc.forced_da_analysis.fun_linear"><code class="docutils literal notranslate"><span class="pre">fun_linear()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="analysis.html#pylhc.forced_da_analysis.swap_fun_parameters"><code class="docutils literal notranslate"><span class="pre">swap_fun_parameters()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">BPM Calibration</a><ul>
@@ -65,29 +58,14 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="kickgroups.html">KickGroup Informations</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="kickgroups.html#kickgroups">Kickgroups</a></li>
-<li class="toctree-l2"><a class="reference internal" href="kickgroups.html#pylhc.kickgroups.get_folder_json_files"><code class="docutils literal notranslate"><span class="pre">get_folder_json_files()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="kickgroups.html#pylhc.kickgroups.get_kickgroup_info"><code class="docutils literal notranslate"><span class="pre">get_kickgroup_info()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="kickgroups.html#pylhc.kickgroups.list_available_kickgroups"><code class="docutils literal notranslate"><span class="pre">list_available_kickgroups()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="kickgroups.html#pylhc.kickgroups.load_kickfile"><code class="docutils literal notranslate"><span class="pre">load_kickfile()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="kickgroups.html#pylhc.kickgroups.show_kickgroup_files"><code class="docutils literal notranslate"><span class="pre">show_kickgroup_files()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="kickgroups.html#pylhc.kickgroups.show_kickgroup_info"><code class="docutils literal notranslate"><span class="pre">show_kickgroup_info()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="lsa_to_madx.html">LSA Knobs to MAD-X Expressions Converter</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="lsa_to_madx.html#lsa-to-mad-x">LSA to MAD-X</a></li>
-<li class="toctree-l2"><a class="reference internal" href="lsa_to_madx.html#pylhc.lsa_to_madx.get_madx_script_from_definition_dataframe"><code class="docutils literal notranslate"><span class="pre">get_madx_script_from_definition_dataframe()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="lsa_to_madx.html#pylhc.lsa_to_madx.get_sign_madx_vs_lsa"><code class="docutils literal notranslate"><span class="pre">get_sign_madx_vs_lsa()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="lsa_to_madx.html#pylhc.lsa_to_madx.parse_knobs_and_trim_values_from_file"><code class="docutils literal notranslate"><span class="pre">parse_knobs_and_trim_values_from_file()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="machine_info.html">Machine Information Tools</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="machine_info.html#print-machine-settings-overview">Print Machine Settings Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="machine_info.html#pylhc.machine_settings_info.AccDatetimeOrStr"><code class="docutils literal notranslate"><span class="pre">AccDatetimeOrStr</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="machine_info.html#pylhc.machine_settings_info.get_info"><code class="docutils literal notranslate"><span class="pre">get_info()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="machine_info.html#pylhc.machine_settings_info.log_summary"><code class="docutils literal notranslate"><span class="pre">log_summary()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="machine_info.html#pylhc.machine_settings_info.write_knob_defitions"><code class="docutils literal notranslate"><span class="pre">write_knob_defitions()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="machine_info.html#pylhc.machine_settings_info.write_summary"><code class="docutils literal notranslate"><span class="pre">write_summary()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="machine_info.html#pylhc.machine_settings_info.write_trim_histories"><code class="docutils literal notranslate"><span class="pre">write_trim_histories()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="machine_info.html#bsrt-logger">BSRT logger</a></li>
 </ul>
 </li>
@@ -96,15 +74,11 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../modules/calibration.html">BPM Calibration Utilities</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../modules/calibration.html#beta">Beta</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modules/calibration.html#pylhc.calibration.beta.get_calibration_factors_from_beta"><code class="docutils literal notranslate"><span class="pre">get_calibration_factors_from_beta()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modules/calibration.html#dispersion">Dispersion</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modules/calibration.html#pylhc.calibration.dispersion.get_calibration_factors_from_dispersion"><code class="docutils literal notranslate"><span class="pre">get_calibration_factors_from_dispersion()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../modules/constants.html">Constants Definitions</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../modules/constants.html#constants-general">Constants: General</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modules/constants.html#pylhc.constants.general.get_proton_beta"><code class="docutils literal notranslate"><span class="pre">get_proton_beta()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modules/constants.html#pylhc.constants.general.get_proton_gamma"><code class="docutils literal notranslate"><span class="pre">get_proton_gamma()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modules/constants.html#constants-forced-da-analysis">Constants: Forced DA Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modules/constants.html#constants-kickgroups">Constants: KickGroups</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modules/constants.html#constants-machine-settings-info">Constants: Machine Settings Info</a></li>
@@ -113,18 +87,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../modules/data_extract.html">Data Extraction</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../modules/data_extract.html#pylsa">PyLSA</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modules/data_extract.html#pylhc.data_extract.lsa.LSA"><code class="docutils literal notranslate"><span class="pre">LSA</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modules/data_extract.html#pylhc.data_extract.lsa.LSAClient"><code class="docutils literal notranslate"><span class="pre">LSAClient</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modules/data_extract.html#pylhc.data_extract.lsa.LSAMeta"><code class="docutils literal notranslate"><span class="pre">LSAMeta</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modules/data_extract.html#pylhc.data_extract.lsa.try_to_acquire_data"><code class="docutils literal notranslate"><span class="pre">try_to_acquire_data()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modules/data_extract.html#timber">Timber</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modules/data_extract.html#pylhc.data_extract.timber.find_exact_time_for_beamprocess"><code class="docutils literal notranslate"><span class="pre">find_exact_time_for_beamprocess()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../modules/utils.html">Utilities</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../modules/utils.html#additional-io-tools">Additional IO-Tools</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modules/utils.html#pylhc.utils.tfs_tools.read_hdf"><code class="docutils literal notranslate"><span class="pre">read_hdf()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modules/utils.html#pylhc.utils.tfs_tools.write_hdf"><code class="docutils literal notranslate"><span class="pre">write_hdf()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -142,8 +105,8 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>BPM Calibration</li>
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">BPM Calibration</li>
       <li class="wy-breadcrumbs-aside">
               <!-- User defined GitHub URL -->
               <a href="https://github.com/pylhc/pylhc" class="fa fa-github"> Edit on GitHub</a>
@@ -154,8 +117,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-pylhc.bpm_calibration">
-<span id="bpm-calibration"></span><h1>BPM Calibration<a class="headerlink" href="#module-pylhc.bpm_calibration" title="Permalink to this heading"></a></h1>
+  <section id="bpm-calibration">
+<h1>BPM Calibration<a class="headerlink" href="#bpm-calibration" title="Permalink to this heading"></a></h1>
 <section id="id1">
 <h2>BPM Calibration<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
 <p>This script computes the calibration factors for the LHC BPMs using either a

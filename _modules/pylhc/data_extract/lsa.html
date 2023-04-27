@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pylhc.data_extract.lsa &mdash; pylhc 0.7.4 documentation</title>
+  <title>pylhc.data_extract.lsa &mdash; pylhc 0.8.0 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/custom.css" type="text/css" />
@@ -12,9 +12,6 @@
   <![endif]-->
   
         <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
         <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -27,15 +24,19 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> pylhc
-            <img src="../../../_static/omc_logo.svg" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            pylhc
+              <img src="../../../_static/omc_logo.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.7
+                0.8
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -46,14 +47,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../entrypoints/analysis.html">Analysis Tools</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/analysis.html#bsrt-analysis">BSRT Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/analysis.html#forced-da-analysis">Forced DA Analysis</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/analysis.html#pylhc.forced_da_analysis.BoolOrPathOrDataFrame"><code class="docutils literal notranslate"><span class="pre">BoolOrPathOrDataFrame</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/analysis.html#pylhc.forced_da_analysis.PathOrDataframe"><code class="docutils literal notranslate"><span class="pre">PathOrDataframe</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/analysis.html#pylhc.forced_da_analysis.PathOrPagestore"><code class="docutils literal notranslate"><span class="pre">PathOrPagestore</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/analysis.html#pylhc.forced_da_analysis.PathOrString"><code class="docutils literal notranslate"><span class="pre">PathOrString</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/analysis.html#pylhc.forced_da_analysis.fun_exp_decay"><code class="docutils literal notranslate"><span class="pre">fun_exp_decay()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/analysis.html#pylhc.forced_da_analysis.fun_exp_sigma"><code class="docutils literal notranslate"><span class="pre">fun_exp_sigma()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/analysis.html#pylhc.forced_da_analysis.fun_linear"><code class="docutils literal notranslate"><span class="pre">fun_linear()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/analysis.html#pylhc.forced_da_analysis.swap_fun_parameters"><code class="docutils literal notranslate"><span class="pre">swap_fun_parameters()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../entrypoints/bpm_calibration.html">BPM Calibration</a><ul>
@@ -62,29 +55,14 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../entrypoints/kickgroups.html">KickGroup Informations</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/kickgroups.html#kickgroups">Kickgroups</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/kickgroups.html#pylhc.kickgroups.get_folder_json_files"><code class="docutils literal notranslate"><span class="pre">get_folder_json_files()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/kickgroups.html#pylhc.kickgroups.get_kickgroup_info"><code class="docutils literal notranslate"><span class="pre">get_kickgroup_info()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/kickgroups.html#pylhc.kickgroups.list_available_kickgroups"><code class="docutils literal notranslate"><span class="pre">list_available_kickgroups()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/kickgroups.html#pylhc.kickgroups.load_kickfile"><code class="docutils literal notranslate"><span class="pre">load_kickfile()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/kickgroups.html#pylhc.kickgroups.show_kickgroup_files"><code class="docutils literal notranslate"><span class="pre">show_kickgroup_files()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/kickgroups.html#pylhc.kickgroups.show_kickgroup_info"><code class="docutils literal notranslate"><span class="pre">show_kickgroup_info()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../entrypoints/lsa_to_madx.html">LSA Knobs to MAD-X Expressions Converter</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/lsa_to_madx.html#lsa-to-mad-x">LSA to MAD-X</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/lsa_to_madx.html#pylhc.lsa_to_madx.get_madx_script_from_definition_dataframe"><code class="docutils literal notranslate"><span class="pre">get_madx_script_from_definition_dataframe()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/lsa_to_madx.html#pylhc.lsa_to_madx.get_sign_madx_vs_lsa"><code class="docutils literal notranslate"><span class="pre">get_sign_madx_vs_lsa()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/lsa_to_madx.html#pylhc.lsa_to_madx.parse_knobs_and_trim_values_from_file"><code class="docutils literal notranslate"><span class="pre">parse_knobs_and_trim_values_from_file()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../entrypoints/machine_info.html">Machine Information Tools</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/machine_info.html#print-machine-settings-overview">Print Machine Settings Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/machine_info.html#pylhc.machine_settings_info.AccDatetimeOrStr"><code class="docutils literal notranslate"><span class="pre">AccDatetimeOrStr</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/machine_info.html#pylhc.machine_settings_info.get_info"><code class="docutils literal notranslate"><span class="pre">get_info()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/machine_info.html#pylhc.machine_settings_info.log_summary"><code class="docutils literal notranslate"><span class="pre">log_summary()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/machine_info.html#pylhc.machine_settings_info.write_knob_defitions"><code class="docutils literal notranslate"><span class="pre">write_knob_defitions()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/machine_info.html#pylhc.machine_settings_info.write_summary"><code class="docutils literal notranslate"><span class="pre">write_summary()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/machine_info.html#pylhc.machine_settings_info.write_trim_histories"><code class="docutils literal notranslate"><span class="pre">write_trim_histories()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/machine_info.html#bsrt-logger">BSRT logger</a></li>
 </ul>
 </li>
@@ -93,15 +71,11 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules/calibration.html">BPM Calibration Utilities</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../modules/calibration.html#beta">Beta</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../modules/calibration.html#pylhc.calibration.beta.get_calibration_factors_from_beta"><code class="docutils literal notranslate"><span class="pre">get_calibration_factors_from_beta()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../modules/calibration.html#dispersion">Dispersion</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../modules/calibration.html#pylhc.calibration.dispersion.get_calibration_factors_from_dispersion"><code class="docutils literal notranslate"><span class="pre">get_calibration_factors_from_dispersion()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules/constants.html">Constants Definitions</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../modules/constants.html#constants-general">Constants: General</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../modules/constants.html#pylhc.constants.general.get_proton_beta"><code class="docutils literal notranslate"><span class="pre">get_proton_beta()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../modules/constants.html#pylhc.constants.general.get_proton_gamma"><code class="docutils literal notranslate"><span class="pre">get_proton_gamma()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../modules/constants.html#constants-forced-da-analysis">Constants: Forced DA Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../modules/constants.html#constants-kickgroups">Constants: KickGroups</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../modules/constants.html#constants-machine-settings-info">Constants: Machine Settings Info</a></li>
@@ -110,18 +84,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules/data_extract.html">Data Extraction</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../modules/data_extract.html#pylsa">PyLSA</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../modules/data_extract.html#pylhc.data_extract.lsa.LSA"><code class="docutils literal notranslate"><span class="pre">LSA</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../modules/data_extract.html#pylhc.data_extract.lsa.LSAClient"><code class="docutils literal notranslate"><span class="pre">LSAClient</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../modules/data_extract.html#pylhc.data_extract.lsa.LSAMeta"><code class="docutils literal notranslate"><span class="pre">LSAMeta</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../modules/data_extract.html#pylhc.data_extract.lsa.try_to_acquire_data"><code class="docutils literal notranslate"><span class="pre">try_to_acquire_data()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../modules/data_extract.html#timber">Timber</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../modules/data_extract.html#pylhc.data_extract.timber.find_exact_time_for_beamprocess"><code class="docutils literal notranslate"><span class="pre">find_exact_time_for_beamprocess()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../../../modules/utils.html">Utilities</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../modules/utils.html#additional-io-tools">Additional IO-Tools</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../modules/utils.html#pylhc.utils.tfs_tools.read_hdf"><code class="docutils literal notranslate"><span class="pre">read_hdf()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../modules/utils.html#pylhc.utils.tfs_tools.write_hdf"><code class="docutils literal notranslate"><span class="pre">write_hdf()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -139,9 +102,9 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../../index.html">Module code</a> &raquo;</li>
-      <li>pylhc.data_extract.lsa</li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pylhc.data_extract.lsa</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -189,10 +152,10 @@
 
 
 <div class="viewcode-block" id="LSAClient"><a class="viewcode-back" href="../../../modules/data_extract.html#pylhc.data_extract.lsa.LSAClient">[docs]</a><span class="k">class</span> <span class="nc">LSAClient</span><span class="p">(</span><span class="n">pjLSAClient</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Extension of the LSAClient.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extension of the LSAClient.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Overwrite __getattr__ to raise the proper import errors at the proper time.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Overwrite __getattr__ to raise the proper import errors at the proper time.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__getattr__</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
@@ -202,7 +165,7 @@
             <span class="k">raise</span> <span class="n">e</span>  <span class="c1"># if that worked, raise the actual attribute error</span>
 
 <div class="viewcode-block" id="LSAClient.find_knob_names"><a class="viewcode-back" href="../../../modules/data_extract.html#pylhc.data_extract.lsa.LSAClient.find_knob_names">[docs]</a>    <span class="k">def</span> <span class="nf">find_knob_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">accelerator</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;lhc&quot;</span><span class="p">,</span> <span class="n">regexp</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return knobs for accelerator.</span>
 
 <span class="sd">        Args:</span>
@@ -225,7 +188,7 @@
         <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span> <span class="k">for</span> <span class="n">pp</span> <span class="ow">in</span> <span class="n">lst</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LSAClient.find_existing_knobs"><a class="viewcode-back" href="../../../modules/data_extract.html#pylhc.data_extract.lsa.LSAClient.find_existing_knobs">[docs]</a>    <span class="k">def</span> <span class="nf">find_existing_knobs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">knobs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return only the knobs that exist from the given list.</span>
 <span class="sd">        This function was created out of the need to filter these first,</span>
 <span class="sd">        as knobs that exist but do not belong to a beamprocess return noting in</span>
@@ -248,7 +211,7 @@
 <div class="viewcode-block" id="LSAClient.find_last_fill"><a class="viewcode-back" href="../../../modules/data_extract.html#pylhc.data_extract.lsa.LSAClient.find_last_fill">[docs]</a>    <span class="k">def</span> <span class="nf">find_last_fill</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">acc_time</span><span class="p">:</span> <span class="n">AccDatetime</span><span class="p">,</span> <span class="n">accelerator</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;lhc&quot;</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;nxcals&quot;</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return last fill name and BeamProcesses.</span>
 
 <span class="sd">         Args:</span>
@@ -276,7 +239,7 @@
 <div class="viewcode-block" id="LSAClient.find_beamprocess_history"><a class="viewcode-back" href="../../../modules/data_extract.html#pylhc.data_extract.lsa.LSAClient.find_beamprocess_history">[docs]</a>    <span class="k">def</span> <span class="nf">find_beamprocess_history</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">t_start</span><span class="p">:</span> <span class="n">AccDatetime</span><span class="p">,</span> <span class="n">t_end</span><span class="p">:</span> <span class="n">AccDatetime</span><span class="p">,</span> <span class="n">accelerator</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;lhc&quot;</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;nxcals&quot;</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Finds the BeamProcesses between t_start and t_end and sorts then by fills.</span>
 <span class="sd">        Adapted from pjlsa&#39;s FindBeamProcessHistory but with source pass-through</span>
 <span class="sd">        and trial-loop.</span>
@@ -316,7 +279,7 @@
             <span class="n">start_time</span><span class="p">:</span> <span class="n">AccDatetime</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">end_time</span><span class="p">:</span> <span class="n">AccDatetime</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
             <span class="n">accelerator</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;lhc&quot;</span>           
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get trim history for knobs between specified times.</span>
 <span class="sd">        If any of the times are not given, all available data in that time-direction</span>
 <span class="sd">        is extracted.</span>
@@ -356,11 +319,13 @@
         <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">trims</span><span class="p">)</span><span class="si">}</span><span class="s2"> trims extracted.&quot;</span><span class="p">)</span>
         <span class="n">trims_not_found</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">knobs</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">trims</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">trims_not_found</span><span class="p">):</span>
-            <span class="n">LOG</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The following knobs were not found in &#39;</span><span class="si">{</span><span class="n">beamprocess</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="n">trims_not_found</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;The following knobs were not found in &#39;</span><span class="si">{</span><span class="n">beamprocess</span><span class="si">}</span><span class="s2">&#39; &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;or had no trims during the given time: </span><span class="si">{</span><span class="n">trims_not_found</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">trims</span></div>
 
 <div class="viewcode-block" id="LSAClient.get_beamprocess_info"><a class="viewcode-back" href="../../../modules/data_extract.html#pylhc.data_extract.lsa.LSAClient.get_beamprocess_info">[docs]</a>    <span class="k">def</span> <span class="nf">get_beamprocess_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beamprocess</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get context info of the given beamprocess.</span>
 
 <span class="sd">        Args:</span>
@@ -380,7 +345,7 @@
             <span class="bp">self</span><span class="p">,</span> <span class="n">acc_time</span><span class="p">:</span> <span class="n">AccDatetime</span><span class="p">,</span> <span class="n">accelerator</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;lhc&quot;</span><span class="p">,</span>
             <span class="n">bp_group</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;POWERCONVERTERS&quot;</span>  <span class="c1"># the Beamprocesses relevant for OMC,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Find the active beam process at the time given.</span>
 <span class="sd">        Same as what online model extractor (KnobExtractor) does.</span>
 
@@ -407,7 +372,7 @@
         <span class="k">return</span> <span class="n">beamprocess</span></div>
 
 <div class="viewcode-block" id="LSAClient.get_knob_circuits"><a class="viewcode-back" href="../../../modules/data_extract.html#pylhc.data_extract.lsa.LSAClient.get_knob_circuits">[docs]</a>    <span class="k">def</span> <span class="nf">get_knob_circuits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">knob_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">optics</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">tfs</span><span class="o">.</span><span class="n">TfsDataFrame</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get a dataframe of the structure of the knob. Similar to online model extractor</span>
 <span class="sd">        (KnobExtractor.getKnobHiercarchy)</span>
 <span class="sd">        </span>
@@ -449,7 +414,7 @@
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LSAClient.get_madx_name_from_circuit"><a class="viewcode-back" href="../../../modules/data_extract.html#pylhc.data_extract.lsa.LSAClient.get_madx_name_from_circuit">[docs]</a>    <span class="k">def</span> <span class="nf">get_madx_name_from_circuit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">circuit</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns the ``MAD-X`` Strength Name (Circuit/Knob) from the given circuit name.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the ``MAD-X`` Strength Name (Circuit/Knob) from the given circuit name.&quot;&quot;&quot;</span>
         <span class="n">logical_name</span> <span class="o">=</span> <span class="n">circuit</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">slist</span> <span class="o">=</span> <span class="n">jpype</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">Collections</span><span class="o">.</span><span class="n">singletonList</span><span class="p">(</span>  <span class="c1"># python lists did not work (jdilly)</span>
             <span class="n">logical_name</span>
@@ -464,7 +429,7 @@
 
 
 <div class="viewcode-block" id="LSAMeta"><a class="viewcode-back" href="../../../modules/data_extract.html#pylhc.data_extract.lsa.LSAMeta">[docs]</a><span class="k">class</span> <span class="nc">LSAMeta</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Metaclass for single instance LSAClient.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Metaclass for single instance LSAClient.&quot;&quot;&quot;</span>
 
     <span class="n">_client</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -474,7 +439,7 @@
             <span class="bp">cls</span><span class="o">.</span><span class="n">_client</span> <span class="o">=</span> <span class="n">LSAClient</span><span class="p">()</span>
 
         <span class="n">client_attr</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">client_attr</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">client_attr</span><span class="p">):</span>
 
             <span class="k">def</span> <span class="nf">hooked</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
                 <span class="n">result</span> <span class="o">=</span> <span class="n">client_attr</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -495,7 +460,7 @@
 
 
 <div class="viewcode-block" id="LSA"><a class="viewcode-back" href="../../../modules/data_extract.html#pylhc.data_extract.lsa.LSA">[docs]</a><span class="k">class</span> <span class="nc">LSA</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">LSAMeta</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Import this class to use LSA like the client without the need to instantiate it.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Import this class to use LSA like the client without the need to instantiate it.</span>
 <span class="sd">    Disadvantage: It will always use the default Server.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
@@ -505,7 +470,7 @@
 
 
 <span class="k">def</span> <span class="nf">_beamprocess_to_dict</span><span class="p">(</span><span class="n">bp</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Converts some fields of the beamprocess (java) to a dictionary.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts some fields of the beamprocess (java) to a dictionary.&quot;&quot;&quot;</span>
     <span class="n">bp_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Name&#39;</span><span class="p">:</span> <span class="n">bp</span><span class="o">.</span><span class="n">toString</span><span class="p">(),</span> <span class="s2">&quot;Object&quot;</span><span class="p">:</span> <span class="n">bp</span><span class="p">}</span>
     <span class="n">bp_dict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">getter</span><span class="p">[</span><span class="mi">3</span><span class="p">:]:</span> <span class="nb">str</span><span class="p">(</span><span class="n">bp</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="n">getter</span><span class="p">)())</span>  <span class="c1"># __getattr__ does not exist</span>
                     <span class="k">for</span> <span class="n">getter</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">bp</span><span class="p">)</span>
@@ -514,7 +479,7 @@
 
 
 <div class="viewcode-block" id="try_to_acquire_data"><a class="viewcode-back" href="../../../modules/data_extract.html#pylhc.data_extract.lsa.try_to_acquire_data">[docs]</a><span class="k">def</span> <span class="nf">try_to_acquire_data</span><span class="p">(</span><span class="n">function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Tries to get data from function multiple times.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Tries to get data from function multiple times.</span>
 <span class="sd">    TODO: Move to omc3 as is also used there in BBQ extraction.</span>
 
 <span class="sd">     Args:</span>
@@ -533,7 +498,7 @@
             <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s2">&quot;Could not acquire data, user probably has no access to NXCALS&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
         <span class="k">except</span> <span class="n">JException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>  <span class="c1"># Might be a case for retries</span>
             <span class="k">if</span> <span class="s2">&quot;RetryableException&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">tries</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">retries</span><span class="p">:</span>
-                <span class="n">LOG</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not acquire data! Trial no </span><span class="si">{</span><span class="n">tries</span> <span class="o">+</span> <span class="mi">1</span><span class="si">}</span><span class="s2"> / </span><span class="si">{</span><span class="n">retries</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">LOG</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not acquire data! Trial no </span><span class="si">{</span><span class="n">tries</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2"> / </span><span class="si">{</span><span class="n">retries</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                 <span class="k">continue</span>  <span class="c1"># will go to the next iteratoin of the loop, so retry</span>
             <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s2">&quot;Could not acquire data!&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span></div>
 </pre></div>

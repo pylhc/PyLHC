@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Constants Definitions &mdash; pylhc 0.7.4 documentation</title>
+  <title>Constants Definitions &mdash; pylhc 0.8.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -13,9 +13,6 @@
   <![endif]-->
   
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
         <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/js/theme.js"></script>
@@ -30,15 +27,19 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../index.html" class="icon icon-home"> pylhc
-            <img src="../_static/omc_logo.svg" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            pylhc
+              <img src="../_static/omc_logo.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.7
+                0.8
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -49,14 +50,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../entrypoints/analysis.html">Analysis Tools</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../entrypoints/analysis.html#bsrt-analysis">BSRT Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../entrypoints/analysis.html#forced-da-analysis">Forced DA Analysis</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../entrypoints/analysis.html#pylhc.forced_da_analysis.BoolOrPathOrDataFrame"><code class="docutils literal notranslate"><span class="pre">BoolOrPathOrDataFrame</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../entrypoints/analysis.html#pylhc.forced_da_analysis.PathOrDataframe"><code class="docutils literal notranslate"><span class="pre">PathOrDataframe</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../entrypoints/analysis.html#pylhc.forced_da_analysis.PathOrPagestore"><code class="docutils literal notranslate"><span class="pre">PathOrPagestore</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../entrypoints/analysis.html#pylhc.forced_da_analysis.PathOrString"><code class="docutils literal notranslate"><span class="pre">PathOrString</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../entrypoints/analysis.html#pylhc.forced_da_analysis.fun_exp_decay"><code class="docutils literal notranslate"><span class="pre">fun_exp_decay()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../entrypoints/analysis.html#pylhc.forced_da_analysis.fun_exp_sigma"><code class="docutils literal notranslate"><span class="pre">fun_exp_sigma()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../entrypoints/analysis.html#pylhc.forced_da_analysis.fun_linear"><code class="docutils literal notranslate"><span class="pre">fun_linear()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../entrypoints/analysis.html#pylhc.forced_da_analysis.swap_fun_parameters"><code class="docutils literal notranslate"><span class="pre">swap_fun_parameters()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../entrypoints/bpm_calibration.html">BPM Calibration</a><ul>
@@ -65,29 +58,14 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../entrypoints/kickgroups.html">KickGroup Informations</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../entrypoints/kickgroups.html#kickgroups">Kickgroups</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../entrypoints/kickgroups.html#pylhc.kickgroups.get_folder_json_files"><code class="docutils literal notranslate"><span class="pre">get_folder_json_files()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../entrypoints/kickgroups.html#pylhc.kickgroups.get_kickgroup_info"><code class="docutils literal notranslate"><span class="pre">get_kickgroup_info()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../entrypoints/kickgroups.html#pylhc.kickgroups.list_available_kickgroups"><code class="docutils literal notranslate"><span class="pre">list_available_kickgroups()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../entrypoints/kickgroups.html#pylhc.kickgroups.load_kickfile"><code class="docutils literal notranslate"><span class="pre">load_kickfile()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../entrypoints/kickgroups.html#pylhc.kickgroups.show_kickgroup_files"><code class="docutils literal notranslate"><span class="pre">show_kickgroup_files()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../entrypoints/kickgroups.html#pylhc.kickgroups.show_kickgroup_info"><code class="docutils literal notranslate"><span class="pre">show_kickgroup_info()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../entrypoints/lsa_to_madx.html">LSA Knobs to MAD-X Expressions Converter</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../entrypoints/lsa_to_madx.html#lsa-to-mad-x">LSA to MAD-X</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../entrypoints/lsa_to_madx.html#pylhc.lsa_to_madx.get_madx_script_from_definition_dataframe"><code class="docutils literal notranslate"><span class="pre">get_madx_script_from_definition_dataframe()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../entrypoints/lsa_to_madx.html#pylhc.lsa_to_madx.get_sign_madx_vs_lsa"><code class="docutils literal notranslate"><span class="pre">get_sign_madx_vs_lsa()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../entrypoints/lsa_to_madx.html#pylhc.lsa_to_madx.parse_knobs_and_trim_values_from_file"><code class="docutils literal notranslate"><span class="pre">parse_knobs_and_trim_values_from_file()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../entrypoints/machine_info.html">Machine Information Tools</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../entrypoints/machine_info.html#print-machine-settings-overview">Print Machine Settings Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../entrypoints/machine_info.html#pylhc.machine_settings_info.AccDatetimeOrStr"><code class="docutils literal notranslate"><span class="pre">AccDatetimeOrStr</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../entrypoints/machine_info.html#pylhc.machine_settings_info.get_info"><code class="docutils literal notranslate"><span class="pre">get_info()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../entrypoints/machine_info.html#pylhc.machine_settings_info.log_summary"><code class="docutils literal notranslate"><span class="pre">log_summary()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../entrypoints/machine_info.html#pylhc.machine_settings_info.write_knob_defitions"><code class="docutils literal notranslate"><span class="pre">write_knob_defitions()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../entrypoints/machine_info.html#pylhc.machine_settings_info.write_summary"><code class="docutils literal notranslate"><span class="pre">write_summary()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../entrypoints/machine_info.html#pylhc.machine_settings_info.write_trim_histories"><code class="docutils literal notranslate"><span class="pre">write_trim_histories()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../entrypoints/machine_info.html#bsrt-logger">BSRT logger</a></li>
 </ul>
 </li>
@@ -96,15 +74,11 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="calibration.html">BPM Calibration Utilities</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="calibration.html#beta">Beta</a></li>
-<li class="toctree-l2"><a class="reference internal" href="calibration.html#pylhc.calibration.beta.get_calibration_factors_from_beta"><code class="docutils literal notranslate"><span class="pre">get_calibration_factors_from_beta()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="calibration.html#dispersion">Dispersion</a></li>
-<li class="toctree-l2"><a class="reference internal" href="calibration.html#pylhc.calibration.dispersion.get_calibration_factors_from_dispersion"><code class="docutils literal notranslate"><span class="pre">get_calibration_factors_from_dispersion()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Constants Definitions</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#constants-general">Constants: General</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#pylhc.constants.general.get_proton_beta"><code class="docutils literal notranslate"><span class="pre">get_proton_beta()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#pylhc.constants.general.get_proton_gamma"><code class="docutils literal notranslate"><span class="pre">get_proton_gamma()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#constants-forced-da-analysis">Constants: Forced DA Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#constants-kickgroups">Constants: KickGroups</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#constants-machine-settings-info">Constants: Machine Settings Info</a></li>
@@ -113,18 +87,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="data_extract.html">Data Extraction</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="data_extract.html#pylsa">PyLSA</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data_extract.html#pylhc.data_extract.lsa.LSA"><code class="docutils literal notranslate"><span class="pre">LSA</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="data_extract.html#pylhc.data_extract.lsa.LSAClient"><code class="docutils literal notranslate"><span class="pre">LSAClient</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="data_extract.html#pylhc.data_extract.lsa.LSAMeta"><code class="docutils literal notranslate"><span class="pre">LSAMeta</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="data_extract.html#pylhc.data_extract.lsa.try_to_acquire_data"><code class="docutils literal notranslate"><span class="pre">try_to_acquire_data()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="data_extract.html#timber">Timber</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data_extract.html#pylhc.data_extract.timber.find_exact_time_for_beamprocess"><code class="docutils literal notranslate"><span class="pre">find_exact_time_for_beamprocess()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="utils.html">Utilities</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="utils.html#additional-io-tools">Additional IO-Tools</a></li>
-<li class="toctree-l2"><a class="reference internal" href="utils.html#pylhc.utils.tfs_tools.read_hdf"><code class="docutils literal notranslate"><span class="pre">read_hdf()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="utils.html#pylhc.utils.tfs_tools.write_hdf"><code class="docutils literal notranslate"><span class="pre">write_hdf()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -142,8 +105,8 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Constants Definitions</li>
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Constants Definitions</li>
       <li class="wy-breadcrumbs-aside">
               <!-- User defined GitHub URL -->
               <a href="https://github.com/pylhc/pylhc" class="fa fa-github"> Edit on GitHub</a>
@@ -154,39 +117,39 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-pylhc.constants.general">
-<span id="constants-definitions"></span><h1>Constants Definitions<a class="headerlink" href="#module-pylhc.constants.general" title="Permalink to this heading"></a></h1>
+  <section id="constants-definitions">
+<h1>Constants Definitions<a class="headerlink" href="#constants-definitions" title="Permalink to this heading"></a></h1>
 <section id="constants-general">
 <h2>Constants: General<a class="headerlink" href="#constants-general" title="Permalink to this heading"></a></h2>
 <p>General constants to be used in <code class="docutils literal notranslate"><span class="pre">PyLHC</span></code>, to help with consistency.</p>
 </section>
 <dl class="py function">
-<dt class="sig sig-object py" id="pylhc.constants.general.get_proton_beta">
-<span class="sig-prename descclassname"><span class="pre">pylhc.constants.general.</span></span><span class="sig-name descname"><span class="pre">get_proton_beta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/constants/general.html#get_proton_beta"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.constants.general.get_proton_beta" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">pylhc.constants.general.</span></span><span class="sig-name descname"><span class="pre">get_proton_beta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/constants/general.html#get_proton_beta"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
 <dd><p>Returns relativistic beta for protons</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="pylhc.constants.general.get_proton_gamma">
-<span class="sig-prename descclassname"><span class="pre">pylhc.constants.general.</span></span><span class="sig-name descname"><span class="pre">get_proton_gamma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/constants/general.html#get_proton_gamma"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.constants.general.get_proton_gamma" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">pylhc.constants.general.</span></span><span class="sig-name descname"><span class="pre">get_proton_gamma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/constants/general.html#get_proton_gamma"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
 <dd><p>Returns relativistic gamma for protons.</p>
 </dd></dl>
 
-<span class="target" id="module-pylhc.constants.forced_da_analysis"></span><section id="constants-forced-da-analysis">
+<section id="constants-forced-da-analysis">
 <h2>Constants: Forced DA Analysis<a class="headerlink" href="#constants-forced-da-analysis" title="Permalink to this heading"></a></h2>
 <p>Specific constants relating to the forced DA analysis to be used in <code class="docutils literal notranslate"><span class="pre">PyLHC</span></code>, to help with
 consistency.</p>
 </section>
-<span class="target" id="module-pylhc.constants.kickgroups"></span><section id="constants-kickgroups">
+<section id="constants-kickgroups">
 <h2>Constants: KickGroups<a class="headerlink" href="#constants-kickgroups" title="Permalink to this heading"></a></h2>
 <p>Constants used in the KickGroups</p>
 </section>
-<span class="target" id="module-pylhc.constants.machine_settings_info"></span><section id="constants-machine-settings-info">
+<section id="constants-machine-settings-info">
 <h2>Constants: Machine Settings Info<a class="headerlink" href="#constants-machine-settings-info" title="Permalink to this heading"></a></h2>
 <p>Specific constants relating to the retrieval of machine settings information to be used in
 <code class="docutils literal notranslate"><span class="pre">PyLHC</span></code>, to help with consistency.</p>
 </section>
-<span class="target" id="module-pylhc.constants.calibration"></span><section id="constants-bpm-calibration">
+<section id="constants-bpm-calibration">
 <h2>Constants: BPM Calibration<a class="headerlink" href="#constants-bpm-calibration" title="Permalink to this heading"></a></h2>
 <p>Specific constants related to the BPM calibration script in <code class="docutils literal notranslate"><span class="pre">PyLHC</span></code>.</p>
 </section>

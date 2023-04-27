@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pylhc.forced_da_analysis &mdash; pylhc 0.7.4 documentation</title>
+  <title>pylhc.forced_da_analysis &mdash; pylhc 0.8.0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
@@ -12,9 +12,6 @@
   <![endif]-->
   
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
         <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -27,15 +24,19 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> pylhc
-            <img src="../../_static/omc_logo.svg" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            pylhc
+              <img src="../../_static/omc_logo.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.7
+                0.8
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -46,14 +47,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../entrypoints/analysis.html">Analysis Tools</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../entrypoints/analysis.html#bsrt-analysis">BSRT Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../entrypoints/analysis.html#forced-da-analysis">Forced DA Analysis</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/analysis.html#pylhc.forced_da_analysis.BoolOrPathOrDataFrame"><code class="docutils literal notranslate"><span class="pre">BoolOrPathOrDataFrame</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/analysis.html#pylhc.forced_da_analysis.PathOrDataframe"><code class="docutils literal notranslate"><span class="pre">PathOrDataframe</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/analysis.html#pylhc.forced_da_analysis.PathOrPagestore"><code class="docutils literal notranslate"><span class="pre">PathOrPagestore</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/analysis.html#pylhc.forced_da_analysis.PathOrString"><code class="docutils literal notranslate"><span class="pre">PathOrString</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/analysis.html#pylhc.forced_da_analysis.fun_exp_decay"><code class="docutils literal notranslate"><span class="pre">fun_exp_decay()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/analysis.html#pylhc.forced_da_analysis.fun_exp_sigma"><code class="docutils literal notranslate"><span class="pre">fun_exp_sigma()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/analysis.html#pylhc.forced_da_analysis.fun_linear"><code class="docutils literal notranslate"><span class="pre">fun_linear()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/analysis.html#pylhc.forced_da_analysis.swap_fun_parameters"><code class="docutils literal notranslate"><span class="pre">swap_fun_parameters()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../entrypoints/bpm_calibration.html">BPM Calibration</a><ul>
@@ -62,29 +55,14 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../entrypoints/kickgroups.html">KickGroup Informations</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../entrypoints/kickgroups.html#kickgroups">Kickgroups</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/kickgroups.html#pylhc.kickgroups.get_folder_json_files"><code class="docutils literal notranslate"><span class="pre">get_folder_json_files()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/kickgroups.html#pylhc.kickgroups.get_kickgroup_info"><code class="docutils literal notranslate"><span class="pre">get_kickgroup_info()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/kickgroups.html#pylhc.kickgroups.list_available_kickgroups"><code class="docutils literal notranslate"><span class="pre">list_available_kickgroups()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/kickgroups.html#pylhc.kickgroups.load_kickfile"><code class="docutils literal notranslate"><span class="pre">load_kickfile()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/kickgroups.html#pylhc.kickgroups.show_kickgroup_files"><code class="docutils literal notranslate"><span class="pre">show_kickgroup_files()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/kickgroups.html#pylhc.kickgroups.show_kickgroup_info"><code class="docutils literal notranslate"><span class="pre">show_kickgroup_info()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../entrypoints/lsa_to_madx.html">LSA Knobs to MAD-X Expressions Converter</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../entrypoints/lsa_to_madx.html#lsa-to-mad-x">LSA to MAD-X</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/lsa_to_madx.html#pylhc.lsa_to_madx.get_madx_script_from_definition_dataframe"><code class="docutils literal notranslate"><span class="pre">get_madx_script_from_definition_dataframe()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/lsa_to_madx.html#pylhc.lsa_to_madx.get_sign_madx_vs_lsa"><code class="docutils literal notranslate"><span class="pre">get_sign_madx_vs_lsa()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/lsa_to_madx.html#pylhc.lsa_to_madx.parse_knobs_and_trim_values_from_file"><code class="docutils literal notranslate"><span class="pre">parse_knobs_and_trim_values_from_file()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../entrypoints/machine_info.html">Machine Information Tools</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../entrypoints/machine_info.html#print-machine-settings-overview">Print Machine Settings Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/machine_info.html#pylhc.machine_settings_info.AccDatetimeOrStr"><code class="docutils literal notranslate"><span class="pre">AccDatetimeOrStr</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/machine_info.html#pylhc.machine_settings_info.get_info"><code class="docutils literal notranslate"><span class="pre">get_info()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/machine_info.html#pylhc.machine_settings_info.log_summary"><code class="docutils literal notranslate"><span class="pre">log_summary()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/machine_info.html#pylhc.machine_settings_info.write_knob_defitions"><code class="docutils literal notranslate"><span class="pre">write_knob_defitions()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/machine_info.html#pylhc.machine_settings_info.write_summary"><code class="docutils literal notranslate"><span class="pre">write_summary()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/machine_info.html#pylhc.machine_settings_info.write_trim_histories"><code class="docutils literal notranslate"><span class="pre">write_trim_histories()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../entrypoints/machine_info.html#bsrt-logger">BSRT logger</a></li>
 </ul>
 </li>
@@ -93,15 +71,11 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../modules/calibration.html">BPM Calibration Utilities</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/calibration.html#beta">Beta</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../modules/calibration.html#pylhc.calibration.beta.get_calibration_factors_from_beta"><code class="docutils literal notranslate"><span class="pre">get_calibration_factors_from_beta()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/calibration.html#dispersion">Dispersion</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../modules/calibration.html#pylhc.calibration.dispersion.get_calibration_factors_from_dispersion"><code class="docutils literal notranslate"><span class="pre">get_calibration_factors_from_dispersion()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules/constants.html">Constants Definitions</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/constants.html#constants-general">Constants: General</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../modules/constants.html#pylhc.constants.general.get_proton_beta"><code class="docutils literal notranslate"><span class="pre">get_proton_beta()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../modules/constants.html#pylhc.constants.general.get_proton_gamma"><code class="docutils literal notranslate"><span class="pre">get_proton_gamma()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/constants.html#constants-forced-da-analysis">Constants: Forced DA Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/constants.html#constants-kickgroups">Constants: KickGroups</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/constants.html#constants-machine-settings-info">Constants: Machine Settings Info</a></li>
@@ -110,18 +84,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules/data_extract.html">Data Extraction</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/data_extract.html#pylsa">PyLSA</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../modules/data_extract.html#pylhc.data_extract.lsa.LSA"><code class="docutils literal notranslate"><span class="pre">LSA</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../modules/data_extract.html#pylhc.data_extract.lsa.LSAClient"><code class="docutils literal notranslate"><span class="pre">LSAClient</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../modules/data_extract.html#pylhc.data_extract.lsa.LSAMeta"><code class="docutils literal notranslate"><span class="pre">LSAMeta</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../modules/data_extract.html#pylhc.data_extract.lsa.try_to_acquire_data"><code class="docutils literal notranslate"><span class="pre">try_to_acquire_data()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/data_extract.html#timber">Timber</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../modules/data_extract.html#pylhc.data_extract.timber.find_exact_time_for_beamprocess"><code class="docutils literal notranslate"><span class="pre">find_exact_time_for_beamprocess()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../../modules/utils.html">Utilities</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../modules/utils.html#additional-io-tools">Additional IO-Tools</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../modules/utils.html#pylhc.utils.tfs_tools.read_hdf"><code class="docutils literal notranslate"><span class="pre">read_hdf()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../modules/utils.html#pylhc.utils.tfs_tools.write_hdf"><code class="docutils literal notranslate"><span class="pre">write_hdf()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -139,9 +102,9 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">Module code</a> &raquo;</li>
-      <li>pylhc.forced_da_analysis</li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pylhc.forced_da_analysis</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -341,7 +304,7 @@
 <div class="viewcode-block" id="BoolOrPathOrDataFrame"><a class="viewcode-back" href="../../entrypoints/analysis.html#pylhc.forced_da_analysis.BoolOrPathOrDataFrame">[docs]</a><span class="k">class</span> <span class="nc">BoolOrPathOrDataFrame</span><span class="p">(</span>
     <span class="n">metaclass</span><span class="o">=</span><span class="n">get_instance_faker_meta</span><span class="p">(</span><span class="nb">bool</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">tfs</span><span class="o">.</span><span class="n">TfsDataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A class that behaves like a `boolean` when possible, otherwise like a `Path`, `string` or</span>
 <span class="sd">    `Dataframe`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -365,7 +328,7 @@
 
 <span class="k">def</span> <span class="nf">_get_pathclass</span><span class="p">(</span><span class="o">*</span><span class="n">other_classes</span><span class="p">):</span>
     <span class="k">class</span> <span class="nc">SomethingOrPath</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">get_instance_faker_meta</span><span class="p">(</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">other_classes</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">))):</span>
-        <span class="sd">&quot;&quot;&quot;A class that behaves like a if possible `Path`, `string` or something else.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A class that behaves like a if possible `Path`, `string` or something else.&quot;&quot;&quot;</span>
 
         <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
@@ -577,7 +540,7 @@
 
 
 <span class="k">def</span> <span class="nf">_log_opt</span><span class="p">(</span><span class="n">opt</span><span class="p">:</span> <span class="n">DotDict</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Show options in log.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Show options in log.&quot;&quot;&quot;</span>
     <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Performing ForcedDA Analysis for:&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">opt</span><span class="o">.</span><span class="n">fill</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Fill: </span><span class="si">{</span><span class="n">opt</span><span class="o">.</span><span class="n">fill</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -595,7 +558,7 @@
     <span class="n">emittance_df</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">,</span>
     <span class="n">emittance_bws_df</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Write out gathered data.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Write out gathered data.&quot;&quot;&quot;</span>
     <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Writing tfs files.&quot;</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">df</span> <span class="ow">in</span> <span class="p">(</span><span class="n">kick_df</span><span class="p">,</span> <span class="n">intensity_df</span><span class="p">,</span> <span class="n">emittance_df</span><span class="p">,</span> <span class="n">emittance_bws_df</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">df</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -611,7 +574,7 @@
 
 
 <span class="k">def</span> <span class="nf">_check_all_times_in</span><span class="p">(</span><span class="n">series</span><span class="p">:</span> <span class="n">Series</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="n">CERNDatetime</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="n">CERNDatetime</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Check if all times in series are between start and end.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if all times in series are between start and end.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">series</span> <span class="k">if</span> <span class="n">s</span> <span class="o">&lt;</span> <span class="n">start</span> <span class="ow">or</span> <span class="n">s</span> <span class="o">&gt;</span> <span class="n">end</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="s2">&quot;Some of the kick-times are outside of the fill times! &quot;</span>
@@ -620,7 +583,7 @@
 
 
 <span class="k">def</span> <span class="nf">_convert_time_index</span><span class="p">(</span><span class="n">list_</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Tries to convert time index to cerntime, first from datetime, then string, then timestamp.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Tries to convert time index to cerntime, first from datetime, then string, then timestamp.&quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">index_convert</span> <span class="ow">in</span> <span class="p">(</span>
         <span class="n">_datetime_to_cerntime_index</span><span class="p">,</span>
         <span class="n">_string_to_cerntime_index</span><span class="p">,</span>
@@ -659,7 +622,7 @@
 <span class="k">def</span> <span class="nf">_get_dataframes</span><span class="p">(</span>
     <span class="n">kick_times</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">,</span> <span class="n">opt</span><span class="p">:</span> <span class="n">DotDict</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">TfsDataFrame</span><span class="p">,</span> <span class="n">TfsDataFrame</span><span class="p">,</span> <span class="n">TfsDataFrame</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;Gets the intensity and emittance dataframes from either input, files or (timber) database.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Gets the intensity and emittance dataframes from either input, files or (timber) database.&quot;&quot;&quot;</span>
     <span class="n">db</span> <span class="o">=</span> <span class="n">_get_db</span><span class="p">(</span><span class="n">opt</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">opt</span><span class="o">.</span><span class="n">fill</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -696,7 +659,7 @@
 
 
 <span class="k">def</span> <span class="nf">_read_tfs</span><span class="p">(</span><span class="n">tfs_file_or_path</span><span class="p">,</span> <span class="n">timespan</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Read previously gathered data (see :meth:`pylhc.forced_da_analysis._write_tfs`).&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read previously gathered data (see :meth:`pylhc.forced_da_analysis._write_tfs`).&quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">tfs_df</span> <span class="o">=</span> <span class="n">tfs</span><span class="o">.</span><span class="n">read_tfs</span><span class="p">(</span><span class="n">tfs_file_or_path</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">TIME_COLUMN</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
@@ -708,7 +671,7 @@
 
 
 <span class="k">def</span> <span class="nf">_filter_emittance_data</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">planes</span><span class="p">,</span> <span class="n">window_length</span><span class="p">,</span> <span class="n">limit</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Cleans emittance data via outlier filter and moving average.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Cleans emittance data via outlier filter and moving average.&quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">plane</span> <span class="ow">in</span> <span class="n">planes</span><span class="p">:</span>
         <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Filtering emittance data in plane </span><span class="si">{</span><span class="n">plane</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
         <span class="n">col_nemittance</span> <span class="o">=</span> <span class="n">column_norm_emittance</span><span class="p">(</span><span class="n">plane</span><span class="p">)</span>
@@ -744,7 +707,7 @@
 
 
 <span class="k">def</span> <span class="nf">_get_db</span><span class="p">(</span><span class="n">opt</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Get the database either presaved or from timber.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the database either presaved or from timber.&quot;&quot;&quot;</span>
     <span class="n">db</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">if</span> <span class="n">opt</span><span class="o">.</span><span class="n">pagestore_db</span><span class="p">:</span>
@@ -784,7 +747,7 @@
 
 
 <span class="k">def</span> <span class="nf">_get_fill_times</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">fill</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Extract Fill times from database.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract Fill times from database.&quot;&quot;&quot;</span>
     <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Getting Timespan from fill </span><span class="si">{</span><span class="n">fill</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="n">filldata</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">getLHCFillData</span><span class="p">(</span><span class="n">fill</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">filldata</span><span class="p">[</span><span class="s2">&quot;startTime&quot;</span><span class="p">],</span> <span class="n">filldata</span><span class="p">[</span><span class="s2">&quot;endTime&quot;</span><span class="p">]</span>
@@ -902,7 +865,7 @@
 
 
 <span class="k">def</span> <span class="nf">_get_old_kick_file</span><span class="p">(</span><span class="n">kick_dir</span><span class="p">,</span> <span class="n">plane</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Kick files from ``Beta-Beat.src``.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Kick files from ``Beta-Beat.src``.&quot;&quot;&quot;</span>
     <span class="n">path</span> <span class="o">=</span> <span class="n">kick_dir</span> <span class="o">/</span> <span class="s2">&quot;getkickac.out&quot;</span>
     <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Reading kickfile &#39;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;.&#39;&quot;</span><span class="p">)</span>
     <span class="n">df</span> <span class="o">=</span> <span class="n">tfs</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
@@ -925,7 +888,7 @@
 
 
 <span class="k">def</span> <span class="nf">_get_new_kick_file</span><span class="p">(</span><span class="n">kick_dir</span><span class="p">,</span> <span class="n">planes</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Kick files from ``omc3``.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Kick files from ``omc3``.&quot;&quot;&quot;</span>
     <span class="n">dfs</span> <span class="o">=</span> <span class="p">{</span><span class="n">p</span><span class="p">:</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">planes</span><span class="p">}</span>
     <span class="k">for</span> <span class="n">plane</span> <span class="ow">in</span> <span class="n">planes</span><span class="p">:</span>
         <span class="n">path</span> <span class="o">=</span> <span class="n">kick_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">KICKFILE</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">plane</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}{</span><span class="n">TFS_SUFFIX</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -1022,7 +985,7 @@
     <span class="n">kick_df</span> <span class="o">=</span> <span class="n">kick_df</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">kick_df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="o">+</span> <span class="n">cols_kick</span><span class="p">)</span>
     <span class="n">idx_emitt</span> <span class="o">=</span> <span class="p">[</span><span class="n">emittance_df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cols_emitt</span><span class="p">]</span>
     <span class="k">for</span> <span class="n">time</span> <span class="ow">in</span> <span class="n">kick_df</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
-        <span class="n">idx_kick</span> <span class="o">=</span> <span class="n">emittance_df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span>
+        <span class="n">idx_kick</span> <span class="o">=</span> <span class="n">get_approximate_index</span><span class="p">(</span><span class="n">emittance_df</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
         <span class="n">kick_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">time</span><span class="p">,</span> <span class="n">cols_kick</span><span class="p">]</span> <span class="o">=</span> <span class="n">emittance_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">idx_kick</span><span class="p">,</span> <span class="n">idx_emitt</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
 
     <span class="c1"># add de-normalized emittance</span>
@@ -1042,22 +1005,22 @@
 
 
 <div class="viewcode-block" id="fun_exp_decay"><a class="viewcode-back" href="../../entrypoints/analysis.html#pylhc.forced_da_analysis.fun_exp_decay">[docs]</a><span class="k">def</span> <span class="nf">fun_exp_decay</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>  <span class="c1"># fit and plot</span>
-    <span class="sd">&quot;&quot;&quot;sp = DA_J, x[0] = action (2J res), x[1] = emittance&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;sp = DA_J, x[0] = action (2J res), x[1] = emittance&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">p</span> <span class="o">-</span> <span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span> <span class="o">/</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></div>
 
 
 <div class="viewcode-block" id="fun_exp_sigma"><a class="viewcode-back" href="../../entrypoints/analysis.html#pylhc.forced_da_analysis.fun_exp_sigma">[docs]</a><span class="k">def</span> <span class="nf">fun_exp_sigma</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>  <span class="c1"># only used for plotting</span>
-    <span class="sd">&quot;&quot;&quot;p = DA_sigma, x = action (J_sigma)&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;p = DA_sigma, x = action (J_sigma)&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">p</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">x</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="fun_linear"><a class="viewcode-back" href="../../entrypoints/analysis.html#pylhc.forced_da_analysis.fun_linear">[docs]</a><span class="k">def</span> <span class="nf">fun_linear</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>  <span class="c1"># fit and plot</span>
-    <span class="sd">&quot;&quot;&quot;p = DA_J, x = action (2J res)&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;p = DA_J, x = action (2J res)&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="mf">0.5</span> <span class="o">-</span> <span class="n">p</span></div>
 
 
 <div class="viewcode-block" id="swap_fun_parameters"><a class="viewcode-back" href="../../entrypoints/analysis.html#pylhc.forced_da_analysis.swap_fun_parameters">[docs]</a><span class="k">def</span> <span class="nf">swap_fun_parameters</span><span class="p">(</span><span class="n">fun</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Parameter swapped for Curvefit.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parameter swapped for Curvefit.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">p</span><span class="p">:</span> <span class="n">fun</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span></div>
 
 
@@ -1087,7 +1050,7 @@
 
 
 <span class="k">def</span> <span class="nf">_get_fit_data</span><span class="p">(</span><span class="n">kick_df</span><span class="p">,</span> <span class="n">plane</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Extracts necessary data from ``kick-df``. Returns tri-tuple of tuples (data, std).&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extracts necessary data from ``kick-df``. Returns tri-tuple of tuples (data, std).&quot;&quot;&quot;</span>
     <span class="n">col_action</span> <span class="o">=</span> <span class="n">column_action</span><span class="p">(</span><span class="n">plane</span><span class="p">)</span>
     <span class="n">col_emittance</span> <span class="o">=</span> <span class="n">column_emittance</span><span class="p">(</span><span class="n">plane</span><span class="p">)</span>
     <span class="n">col_losses</span> <span class="o">=</span> <span class="n">rel_col</span><span class="p">(</span><span class="n">INTENSITY_LOSSES</span><span class="p">)</span>
@@ -1100,7 +1063,7 @@
 
 
 <span class="k">def</span> <span class="nf">_exponential_fit_parameters</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="n">emittance</span><span class="p">,</span> <span class="n">rel_losses</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Returns exponential fit function and parameters. All inputs are tuples of (data, std).&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns exponential fit function and parameters. All inputs are tuples of (data, std).&quot;&quot;&quot;</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">action</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">emittance</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">y</span> <span class="o">=</span> <span class="n">rel_losses</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
@@ -1110,7 +1073,7 @@
 
 
 <span class="k">def</span> <span class="nf">_linear_fit_parameters</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="n">emittance</span><span class="p">,</span> <span class="n">rel_losses</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns linear fit function and parameters. All inputs are tuples of (data, std).&quot;&quot;&quot;</span>
     <span class="n">log_losses</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">rel_losses</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">action</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -1124,14 +1087,14 @@
 
 
 <span class="k">def</span> <span class="nf">_fit_curve</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">init</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Initial curve fit, without errors.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Initial curve fit, without errors.&quot;&quot;&quot;</span>
     <span class="n">fit</span><span class="p">,</span> <span class="n">cov</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="n">init</span><span class="p">,</span> <span class="n">maxfev</span><span class="o">=</span><span class="n">MAX_CURVEFIT_FEV</span><span class="p">)</span>
     <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Initial DA fit: </span><span class="si">{</span><span class="n">fit</span><span class="si">}</span><span class="s2"> with cov </span><span class="si">{</span><span class="n">cov</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">fit</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">cov</span><span class="p">))</span>
 
 
 <span class="k">def</span> <span class="nf">_fit_odr</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sx</span><span class="p">,</span> <span class="n">sy</span><span class="p">,</span> <span class="n">init</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;ODR Fit (includes errors).&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;ODR Fit (includes errors).&quot;&quot;&quot;</span>
     <span class="c1"># fill zero errors with the minimum error - otherwise fit will not work</span>
     <span class="n">fit_model_sigma</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">odr</span><span class="o">.</span><span class="n">Model</span><span class="p">(</span><span class="n">fun</span><span class="p">)</span>
     <span class="n">data_model_sigma</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">odr</span><span class="o">.</span><span class="n">RealData</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">sx</span><span class="o">=</span><span class="n">sx</span><span class="p">,</span> <span class="n">sy</span><span class="o">=</span><span class="n">sy</span><span class="p">,)</span>
@@ -1143,7 +1106,7 @@
 
 
 <span class="k">def</span> <span class="nf">_no_nonzero_errors</span><span class="p">(</span><span class="n">series</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Removes all zero-erros and replaces them with minimum errors in set.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Removes all zero-erros and replaces them with minimum errors in set.&quot;&quot;&quot;</span>
     <span class="n">series</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="n">nonzero</span> <span class="o">=</span> <span class="n">series</span><span class="p">[</span><span class="n">series</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">nonzero</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -1153,7 +1116,7 @@
 
 
 <span class="k">def</span> <span class="nf">_convert_to_sigmas</span><span class="p">(</span><span class="n">plane</span><span class="p">,</span> <span class="n">kick_df</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Converts the DA and the Action into Sigma-Units.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts the DA and the Action into Sigma-Units.&quot;&quot;&quot;</span>
     <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Calculating action and da in sigmas.&quot;</span><span class="p">)</span>
     <span class="n">nominal_emittance</span> <span class="o">=</span> <span class="n">kick_df</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="n">header_nominal_emittance</span><span class="p">(</span><span class="n">plane</span><span class="p">)]</span>
     <span class="n">emittance</span> <span class="o">=</span> <span class="n">kick_df</span><span class="p">[</span><span class="n">column_emittance</span><span class="p">(</span><span class="n">plane</span><span class="p">)]</span>
@@ -1193,7 +1156,7 @@
 
 
 <span class="k">def</span> <span class="nf">_plot_intensity</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">beam</span><span class="p">,</span> <span class="n">plane</span><span class="p">,</span> <span class="n">kick_df</span><span class="p">,</span> <span class="n">intensity_df</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plots beam intensity. For losses, the absolute values are used and then normalized</span>
 <span class="sd">    to the Intensity before the kicks, to get the percentage relative to that (global) value.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -1205,8 +1168,10 @@
     <span class="p">)</span>  <span class="c1"># defines x-limits</span>
 
     <span class="c1"># convert to % relative to before first kick</span>
-    <span class="n">idx_before</span> <span class="o">=</span> <span class="n">intensity_df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span>
-        <span class="n">kick_df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">-</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="n">x_span</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;ffill&quot;</span>
+    <span class="n">idx_before</span> <span class="o">=</span> <span class="n">get_approximate_index</span><span class="p">(</span>
+        <span class="n">intensity_df</span><span class="p">,</span>
+        <span class="n">kick_df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">-</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="n">x_span</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+        <span class="n">method</span><span class="o">=</span><span class="s2">&quot;ffill&quot;</span>
     <span class="p">)</span>
     <span class="n">idx_intensity</span> <span class="o">=</span> <span class="n">intensity_df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span><span class="n">INTENSITY</span><span class="p">)</span>  <span class="c1"># for iloc</span>
     <span class="n">intensity_start</span> <span class="o">=</span> <span class="n">intensity_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">idx_before</span><span class="p">,</span> <span class="n">idx_intensity</span><span class="p">]</span>
@@ -1330,7 +1295,7 @@
 
 
 <span class="k">def</span> <span class="nf">_plot_da_fit</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">beam</span><span class="p">,</span> <span class="n">plane</span><span class="p">,</span> <span class="n">k_df</span><span class="p">,</span> <span class="n">fit_type</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot the Forced Dynamic Aperture fit.</span>
 <span class="sd">    (I do not like the complexity of this function. jdilly).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -1477,10 +1442,10 @@
             <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;$N_</span><span class="se">{{</span><span class="s2">\sigma</span><span class="se">}}</span><span class="s2"> = \sqrt</span><span class="se">{{</span><span class="s2">2J_</span><span class="se">{{</span><span class="si">{</span><span class="n">plane</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">plane</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="si">}</span><span class="se">}}</span><span class="s2">/\epsilon</span><span class="se">}}</span><span class="s2">$&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;$N_</span><span class="se">{{</span><span class="s2">\sigma</span><span class="se">}}</span><span class="s2"> = \sqrt</span><span class="se">{{</span><span class="s2">2J_</span><span class="se">{{</span><span class="si">{</span><span class="n">plane</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">plane</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="si">}</span><span class="se">}}</span><span class="s2">/\epsilon</span><span class="se">}}</span><span class="s2">$&quot;</span>
         <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;$2J_</span><span class="se">{{</span><span class="si">{</span><span class="n">plane</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">plane</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="si">}</span><span class="se">}}</span><span class="s2"> \; [\mu m]$&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;$2J_</span><span class="se">{{</span><span class="si">{</span><span class="n">plane</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">plane</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="si">}</span><span class="se">}}</span><span class="s2"> \; [\mu m]$&quot;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">fit_type</span> <span class="o">==</span> <span class="s2">&quot;linear&quot;</span><span class="p">:</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;ln($I/I_0$)&quot;</span><span class="p">)</span>
@@ -1491,7 +1456,7 @@
     <span class="n">annotations</span><span class="o">.</span><span class="n">make_top_legend</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
     <span class="n">annotations</span><span class="o">.</span><span class="n">set_name</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;DA </span><span class="si">{</span><span class="s1">&#39;&#39;</span> <span class="k">if</span> <span class="n">fit_type</span> <span class="o">==</span> <span class="s1">&#39;norm&#39;</span> <span class="k">else</span> <span class="s1">&#39;J&#39;</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">fit_type</span><span class="si">}</span><span class="s2"> Fit </span><span class="si">{</span><span class="n">beam</span><span class="si">}</span><span class="s2">, Plane </span><span class="si">{</span><span class="n">plane</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fig</span>
+        <span class="sa">f</span><span class="s2">&quot;DA </span><span class="si">{</span><span class="s1">&#39;&#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">fit_type</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s1">&#39;norm&#39;</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;J&#39;</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">fit_type</span><span class="si">}</span><span class="s2"> Fit </span><span class="si">{</span><span class="n">beam</span><span class="si">}</span><span class="s2">, Plane </span><span class="si">{</span><span class="n">plane</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fig</span>
     <span class="p">)</span>
     <span class="n">_save_fig</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">plane</span><span class="p">,</span> <span class="n">fig</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;dafit_</span><span class="si">{</span><span class="n">fit_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">fig</span>
@@ -1510,6 +1475,11 @@
 
 
 <span class="c1"># Helper ---</span>
+
+<div class="viewcode-block" id="get_approximate_index"><a class="viewcode-back" href="../../entrypoints/analysis.html#pylhc.forced_da_analysis.get_approximate_index">[docs]</a><span class="k">def</span> <span class="nf">get_approximate_index</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Emulates the `get_loc` from pandas&lt;2.0, i.e.</span>
+<span class="sd">    single index input and output. &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">get_indexer</span><span class="p">([</span><span class="n">item</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div>
 
 
 <span class="k">def</span> <span class="nf">_plot_kicks_and_scale_x</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">kick_times</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
@@ -1531,14 +1501,14 @@
 
 
 <span class="k">def</span> <span class="nf">_merge_df_planes</span><span class="p">(</span><span class="n">df_dict</span><span class="p">,</span> <span class="n">planes</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;In case planes == &#39;XY&#39; merge the ``df_dict`` into one dataframe..&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;In case planes == &#39;XY&#39; merge the ``df_dict`` into one dataframe..&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">planes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">df_dict</span><span class="p">[</span><span class="n">planes</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="o">*</span><span class="n">df_dict</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;inner&quot;</span><span class="p">,</span> <span class="n">left_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">right_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">_maybe_add_sum_for_planes</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">planes</span><span class="p">,</span> <span class="n">col_fun</span><span class="p">,</span> <span class="n">col_err_fun</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;In case planes == &#39;XY&#39; add the two plane columns and their errors.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;In case planes == &#39;XY&#39; add the two plane columns and their errors.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">planes</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">col_err_fun</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">cols</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="p">[</span><span class="n">col_fun</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">col_err_fun</span><span class="p">(</span><span class="n">p</span><span class="p">)]</span>
@@ -1556,7 +1526,7 @@
 
 
 <span class="k">def</span> <span class="nf">_date2num</span><span class="p">(</span><span class="n">times</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert CERNDatetime to mpl-number (days).</span>
 
 <span class="sd">    Converts input times to plain-datetime first as date2num causes infinite loop with</span>
