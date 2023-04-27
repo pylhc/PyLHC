@@ -17,7 +17,7 @@ matplotlib.use("Agg")
 
 INPUTS_DIR = Path(__file__).parent.parent / "inputs"
 BSRT_INPUTS = INPUTS_DIR / "bsrt_analysis"
-BASELINE_DIR = str(INPUTS_DIR / f"mpl_bsrt_baseline{'' if sys.version_info >= (3, 7) else '_37'}")
+BASELINE_DIR = str(INPUTS_DIR / f"mpl_bsrt_baseline{'' if sys.version_info > (3, 7) else '_37'}")
 
 def test_bsrt_df(_bsrt_df):
     results = bsrt_analysis.main(directory=str(BSRT_INPUTS), beam="B1")
