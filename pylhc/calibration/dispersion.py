@@ -26,12 +26,9 @@ from pylhc.constants.calibration import (
     BPMS,
     D_BPMS,
     D,
-    IPS,
     LABELS,
-    ND,
     TFS_INDEX,
 )
-from pylhc.constants.general import PLANES
 import tfs
 
 

@@ -52,10 +52,7 @@ Arguments:
     default: ``beta``
 """
 from pathlib import Path
-from typing import List, Tuple
 
-import numpy as np
-import pandas as pd
 import tfs
 from generic_parser import EntryPointParameters, entrypoint
 from omc3.optics_measurements.constants import EXT
