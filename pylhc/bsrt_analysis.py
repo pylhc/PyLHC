@@ -365,7 +365,7 @@ def plot_crosssection_for_timesteps(opt, bsrt_df):
         fig.suptitle(f"Timestamp: {timestamp}")
 
         ax[0].imshow(_reshaped_imageset(data_row), cmap="hot", interpolation="nearest")
-        ax[0].set_title(f"2D Pixel count")
+        ax[0].set_title("2D Pixel count")
 
         ax[1].plot(data_row["projPositionSet1"], data_row["projDataSet1"], color="darkred")
         ax[1].plot(

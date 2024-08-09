@@ -155,7 +155,7 @@ class LSAClient(pjLSAClient):
             idx = fillnts.searchsorted(ts) - 1
             filln = int(fillnv[idx])
             fills.setdefault(filln, []).insert(0, (ts, name))
-        LOG.debug(f"Beamprocess History extracted.")
+        LOG.debug("Beamprocess History extracted.")
         return fills
 
     def get_trim_history(

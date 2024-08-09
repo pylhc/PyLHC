@@ -323,7 +323,7 @@ def main():
         exit(1)
 
     if options.knobs and options.file:
-        LOG.error(f"Either provide knobs at the command line or from a text file, but not both")
+        LOG.error("Either provide knobs at the command line or from a text file, but not both")
         exit(1)
 
     if options.file and Path(options.file).is_file():

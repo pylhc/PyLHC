@@ -133,7 +133,7 @@ def list_available_kickgroups(by: str = TIMESTAMP, root: Union[Path, str] = KICK
     df_info = df_info.sort_values(by=by).set_index(TIMESTAMP)
 
     if printout:
-        LOG.debug(f"Here is information about the loaded KickGroups")
+        LOG.debug("Here is information about the loaded KickGroups")
         print(df_info.to_string(index=False, formatters=_time_formatters(), justify="center"))
 
     return df_info
@@ -228,7 +228,7 @@ def load_kickfile(kickfile: Union[Path, str]) -> pd.Series:
         data[AMPY] = kick["excitationSettings"][0]["acDipoleSettings"][idy]["amplitude"]
         data[AMPZ] = kick["excitationSettings"][0]["longitudinalRfSettings"]["excitationAmplitude"]
     else:
-        LOG.debug(f"Kick is 2D Excitation, longitudinal settings will be set as NaNs")
+        LOG.debug("Kick is 2D Excitation, longitudinal settings will be set as NaNs")
         idx = _get_plane_index(kick["excitationSettings"], "X")
         idy = _get_plane_index(kick["excitationSettings"], "Y")
 
