@@ -20,11 +20,7 @@ name = "pylhc"
 readme = "README.md"
 description = "An accelerator physics script collection for the OMC team at CERN."
 authors = [
-    {name = "PyLHC", email = "pylhc@github.com"},
-    {name = "Joschua Dilly", email = "joschua.dilly@cern.ch"},
-    {name = "Felix Soubelet", email = "felix.soubelet@cern.ch"},
-    {name = "Michael Hofer"},
-    {name = "Yngve Levinsen"},
+    {name = "OMC Team", email = "pylhc@github.com"},  # see zenodo file / commits for details
 ]
 license = "MIT"
 dynamic = ["version"]
