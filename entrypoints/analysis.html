@@ -1,20 +1,24 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Analysis Tools &mdash; pylhc 0.8.0 documentation</title>
-      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=0db14186" />
+
+  
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/doctools.js"></script>
-        <script src="../_static/sphinx_highlight.js"></script>
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=486e5634"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -118,9 +122,9 @@
            <div itemprop="articleBody">
              
   <section id="analysis-tools">
-<h1>Analysis Tools<a class="headerlink" href="#analysis-tools" title="Permalink to this heading"></a></h1>
+<h1>Analysis Tools<a class="headerlink" href="#analysis-tools" title="Link to this heading"></a></h1>
 <section id="bsrt-analysis">
-<h2>BSRT Analysis<a class="headerlink" href="#bsrt-analysis" title="Permalink to this heading"></a></h2>
+<h2>BSRT Analysis<a class="headerlink" href="#bsrt-analysis" title="Link to this heading"></a></h2>
 <p>Top-level script to query BRST data, then perform an analysis and output the generated plots. The
 script runs through the following steps:
 - Processes the output files of <code class="docutils literal notranslate"><span class="pre">BSRT_logger.py</span></code> for a given timeframe, returns them in as a
@@ -131,7 +135,7 @@ are generated.
 of fit parameters to cross sections are added.</p>
 </section>
 <section id="forced-da-analysis">
-<h2>Forced DA Analysis<a class="headerlink" href="#forced-da-analysis" title="Permalink to this heading"></a></h2>
+<h2>Forced DA Analysis<a class="headerlink" href="#forced-da-analysis" title="Link to this heading"></a></h2>
 <p>Top-level script to run the forced DA analysis, following the procedure described in
 <a class="reference external" href="https://journals.aps.org/prab/pdf/10.1103/PhysRevAccelBeams.22.031002">CarlierForcedDA2019</a>.</p>
 <p>Arguments:</p>
@@ -216,7 +220,7 @@ either from omc3 styles or default mpl.</p>
 <dl class="py class">
 <dt class="sig sig-object py">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pylhc.forced_da_analysis.</span></span><span class="sig-name descname"><span class="pre">BoolOrPathOrDataFrame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/forced_da_analysis.html#BoolOrPathOrDataFrame"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
-<dd><p>A class that behaves like a <code class="xref py py-obj docutils literal notranslate"><span class="pre">boolean</span></code> when possible, otherwise like a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Path</span></code>, <a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">string</span></code></a> or
+<dd><p>A class that behaves like a <code class="xref py py-obj docutils literal notranslate"><span class="pre">boolean</span></code> when possible, otherwise like a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Path</span></code>, <a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">string</span></code></a> or
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">Dataframe</span></code>.</p>
 </dd></dl>
 

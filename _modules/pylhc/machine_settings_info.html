@@ -1,19 +1,23 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>pylhc.machine_settings_info &mdash; pylhc 0.8.0 documentation</title>
-      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=0db14186" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=486e5634"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -181,12 +185,15 @@
 <span class="n">LOG</span> <span class="o">=</span> <span class="n">logging_tools</span><span class="o">.</span><span class="n">get_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="AccDatetimeOrStr"><a class="viewcode-back" href="../../entrypoints/machine_info.html#pylhc.machine_settings_info.AccDatetimeOrStr">[docs]</a><span class="k">class</span> <span class="nc">AccDatetimeOrStr</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">get_instance_faker_meta</span><span class="p">(</span><span class="n">AccDatetime</span><span class="p">,</span> <span class="nb">str</span><span class="p">)):</span>
+<div class="viewcode-block" id="AccDatetimeOrStr">
+<a class="viewcode-back" href="../../entrypoints/machine_info.html#pylhc.machine_settings_info.AccDatetimeOrStr">[docs]</a>
+<span class="k">class</span> <span class="nc">AccDatetimeOrStr</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">get_instance_faker_meta</span><span class="p">(</span><span class="n">AccDatetime</span><span class="p">,</span> <span class="nb">str</span><span class="p">)):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A class that accepts AccDateTime and strings.&quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\&#39;\&quot;</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># behavior like dict-parser, IMPORTANT FOR EVERY STRING-FAKER</span>
         <span class="k">return</span> <span class="n">value</span></div>
+
 
 
 <span class="c1"># Main #########################################################################</span>
@@ -243,7 +250,9 @@
     <span class="p">)</span>
 
 
-<div class="viewcode-block" id="get_info"><a class="viewcode-back" href="../../entrypoints/machine_info.html#pylhc.machine_settings_info.get_info">[docs]</a><span class="nd">@entrypoint</span><span class="p">(</span><span class="n">_get_params</span><span class="p">(),</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="viewcode-block" id="get_info">
+<a class="viewcode-back" href="../../entrypoints/machine_info.html#pylhc.machine_settings_info.get_info">[docs]</a>
+<span class="nd">@entrypoint</span><span class="p">(</span><span class="n">_get_params</span><span class="p">(),</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">get_info</span><span class="p">(</span><span class="n">opt</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get info about **Beamprocess**, **Optics** and **Knobs** at given time.</span>
@@ -389,10 +398,13 @@
     <span class="p">}</span></div>
 
 
+
 <span class="c1"># Output #######################################################################</span>
 
 
-<div class="viewcode-block" id="log_summary"><a class="viewcode-back" href="../../entrypoints/machine_info.html#pylhc.machine_settings_info.log_summary">[docs]</a><span class="k">def</span> <span class="nf">log_summary</span><span class="p">(</span><span class="n">acc_time</span><span class="p">:</span> <span class="n">AccDatetime</span><span class="p">,</span> <span class="n">bp_info</span><span class="p">:</span> <span class="n">DotDict</span><span class="p">,</span>
+<div class="viewcode-block" id="log_summary">
+<a class="viewcode-back" href="../../entrypoints/machine_info.html#pylhc.machine_settings_info.log_summary">[docs]</a>
+<span class="k">def</span> <span class="nf">log_summary</span><span class="p">(</span><span class="n">acc_time</span><span class="p">:</span> <span class="n">AccDatetime</span><span class="p">,</span> <span class="n">bp_info</span><span class="p">:</span> <span class="n">DotDict</span><span class="p">,</span>
                 <span class="n">optics_info</span><span class="p">:</span> <span class="n">DotDict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">trims</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Log the summary.</span>
 
@@ -426,7 +438,10 @@
     <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">summary</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="write_summary"><a class="viewcode-back" href="../../entrypoints/machine_info.html#pylhc.machine_settings_info.write_summary">[docs]</a><span class="k">def</span> <span class="nf">write_summary</span><span class="p">(</span>
+
+<div class="viewcode-block" id="write_summary">
+<a class="viewcode-back" href="../../entrypoints/machine_info.html#pylhc.machine_settings_info.write_summary">[docs]</a>
+<span class="k">def</span> <span class="nf">write_summary</span><span class="p">(</span>
     <span class="n">output_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">accel</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">acc_time</span><span class="p">:</span> <span class="n">AccDatetime</span><span class="p">,</span> <span class="n">bp_info</span><span class="p">:</span> <span class="n">DotDict</span><span class="p">,</span>
     <span class="n">optics_info</span><span class="p">:</span> <span class="n">DotDict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">trims</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">):</span>
@@ -462,14 +477,20 @@
     <span class="n">tfs</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">output_path</span> <span class="o">/</span> <span class="n">const</span><span class="o">.</span><span class="n">info_name</span><span class="p">,</span> <span class="n">info_tfs</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="write_knob_defitions"><a class="viewcode-back" href="../../entrypoints/machine_info.html#pylhc.machine_settings_info.write_knob_defitions">[docs]</a><span class="k">def</span> <span class="nf">write_knob_defitions</span><span class="p">(</span><span class="n">output_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">definitions</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+
+<div class="viewcode-block" id="write_knob_defitions">
+<a class="viewcode-back" href="../../entrypoints/machine_info.html#pylhc.machine_settings_info.write_knob_defitions">[docs]</a>
+<span class="k">def</span> <span class="nf">write_knob_defitions</span><span class="p">(</span><span class="n">output_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">definitions</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Write Knob definitions into a **tfs** file.&quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">knob</span><span class="p">,</span> <span class="n">definition</span> <span class="ow">in</span> <span class="n">definitions</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">path</span> <span class="o">=</span> <span class="n">output_path</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">knob</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;_&#39;</span><span class="p">)</span><span class="si">}{</span><span class="n">const</span><span class="o">.</span><span class="n">knobdef_suffix</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="n">tfs</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">definition</span><span class="p">,</span> <span class="n">save_index</span><span class="o">=</span><span class="n">LSA_COLUMN_NAME</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="write_trim_histories"><a class="viewcode-back" href="../../entrypoints/machine_info.html#pylhc.machine_settings_info.write_trim_histories">[docs]</a><span class="k">def</span> <span class="nf">write_trim_histories</span><span class="p">(</span>
+
+<div class="viewcode-block" id="write_trim_histories">
+<a class="viewcode-back" href="../../entrypoints/machine_info.html#pylhc.machine_settings_info.write_trim_histories">[docs]</a>
+<span class="k">def</span> <span class="nf">write_trim_histories</span><span class="p">(</span>
     <span class="n">output_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">trim_histories</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">namedtuple</span><span class="p">],</span> <span class="n">accel</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">acc_time</span><span class="p">:</span> <span class="n">AccDatetime</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">acc_start_time</span><span class="p">:</span> <span class="n">AccDatetime</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
     <span class="n">bp_info</span><span class="p">:</span> <span class="n">DotDict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">optics_info</span><span class="p">:</span> <span class="n">DotDict</span> <span class="o">=</span> <span class="kc">None</span>
@@ -527,6 +548,7 @@
 
         <span class="n">path</span> <span class="o">=</span> <span class="n">output_path</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">knob</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;_&#39;</span><span class="p">)</span><span class="si">}{</span><span class="n">const</span><span class="o">.</span><span class="n">trimhistory_suffix</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="n">tfs</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">trims_tfs</span><span class="p">)</span></div>
+
 
 
 <span class="c1"># Beamprocess ##################################################################</span>

@@ -1,19 +1,23 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>pylhc.forced_da_analysis &mdash; pylhc 0.8.0 documentation</title>
-      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=0db14186" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=486e5634"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -301,7 +305,9 @@
 
 
 <span class="c1"># Weird Datatypes</span>
-<div class="viewcode-block" id="BoolOrPathOrDataFrame"><a class="viewcode-back" href="../../entrypoints/analysis.html#pylhc.forced_da_analysis.BoolOrPathOrDataFrame">[docs]</a><span class="k">class</span> <span class="nc">BoolOrPathOrDataFrame</span><span class="p">(</span>
+<div class="viewcode-block" id="BoolOrPathOrDataFrame">
+<a class="viewcode-back" href="../../entrypoints/analysis.html#pylhc.forced_da_analysis.BoolOrPathOrDataFrame">[docs]</a>
+<span class="k">class</span> <span class="nc">BoolOrPathOrDataFrame</span><span class="p">(</span>
     <span class="n">metaclass</span><span class="o">=</span><span class="n">get_instance_faker_meta</span><span class="p">(</span><span class="nb">bool</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">tfs</span><span class="o">.</span><span class="n">TfsDataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -324,6 +330,7 @@
                 <span class="k">return</span> <span class="n">Path</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">value</span></div>
+
 
 
 <span class="k">def</span> <span class="nf">_get_pathclass</span><span class="p">(</span><span class="o">*</span><span class="n">other_classes</span><span class="p">):</span>
@@ -722,11 +729,11 @@
             <span class="k">if</span> <span class="n">opt</span><span class="o">.</span><span class="n">fill</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">EnvironmentError</span><span class="p">(</span><span class="s2">&quot;&#39;fill&#39; can&#39;t be used with pagestore database.&quot;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; Trying to load database from timber.&quot;</span><span class="p">)</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot; Trying to load database from timber.&quot;</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">db</span> <span class="o">=</span> <span class="n">pytimber</span><span class="o">.</span><span class="n">LoggingDB</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="n">opt</span><span class="p">[</span><span class="s2">&quot;timber_db&quot;</span><span class="p">])</span>
         <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-            <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; Loading from timber failed.&quot;</span><span class="p">)</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot; Loading from timber failed.&quot;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">db</span><span class="p">:</span>
         <span class="n">error_msg</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
@@ -1004,24 +1011,36 @@
 <span class="c1"># Forced DA Fitting ------------------------------------------------------------</span>
 
 
-<div class="viewcode-block" id="fun_exp_decay"><a class="viewcode-back" href="../../entrypoints/analysis.html#pylhc.forced_da_analysis.fun_exp_decay">[docs]</a><span class="k">def</span> <span class="nf">fun_exp_decay</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>  <span class="c1"># fit and plot</span>
+<div class="viewcode-block" id="fun_exp_decay">
+<a class="viewcode-back" href="../../entrypoints/analysis.html#pylhc.forced_da_analysis.fun_exp_decay">[docs]</a>
+<span class="k">def</span> <span class="nf">fun_exp_decay</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>  <span class="c1"># fit and plot</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;sp = DA_J, x[0] = action (2J res), x[1] = emittance&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">p</span> <span class="o">-</span> <span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span> <span class="o">/</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></div>
 
 
-<div class="viewcode-block" id="fun_exp_sigma"><a class="viewcode-back" href="../../entrypoints/analysis.html#pylhc.forced_da_analysis.fun_exp_sigma">[docs]</a><span class="k">def</span> <span class="nf">fun_exp_sigma</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>  <span class="c1"># only used for plotting</span>
+
+<div class="viewcode-block" id="fun_exp_sigma">
+<a class="viewcode-back" href="../../entrypoints/analysis.html#pylhc.forced_da_analysis.fun_exp_sigma">[docs]</a>
+<span class="k">def</span> <span class="nf">fun_exp_sigma</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>  <span class="c1"># only used for plotting</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;p = DA_sigma, x = action (J_sigma)&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">p</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">x</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="fun_linear"><a class="viewcode-back" href="../../entrypoints/analysis.html#pylhc.forced_da_analysis.fun_linear">[docs]</a><span class="k">def</span> <span class="nf">fun_linear</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>  <span class="c1"># fit and plot</span>
+
+<div class="viewcode-block" id="fun_linear">
+<a class="viewcode-back" href="../../entrypoints/analysis.html#pylhc.forced_da_analysis.fun_linear">[docs]</a>
+<span class="k">def</span> <span class="nf">fun_linear</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>  <span class="c1"># fit and plot</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;p = DA_J, x = action (2J res)&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="mf">0.5</span> <span class="o">-</span> <span class="n">p</span></div>
 
 
-<div class="viewcode-block" id="swap_fun_parameters"><a class="viewcode-back" href="../../entrypoints/analysis.html#pylhc.forced_da_analysis.swap_fun_parameters">[docs]</a><span class="k">def</span> <span class="nf">swap_fun_parameters</span><span class="p">(</span><span class="n">fun</span><span class="p">):</span>
+
+<div class="viewcode-block" id="swap_fun_parameters">
+<a class="viewcode-back" href="../../entrypoints/analysis.html#pylhc.forced_da_analysis.swap_fun_parameters">[docs]</a>
+<span class="k">def</span> <span class="nf">swap_fun_parameters</span><span class="p">(</span><span class="n">fun</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Parameter swapped for Curvefit.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">p</span><span class="p">:</span> <span class="n">fun</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span></div>
+
 
 
 <span class="k">def</span> <span class="nf">_do_fit</span><span class="p">(</span><span class="n">plane</span><span class="p">,</span> <span class="n">kick_df</span><span class="p">,</span> <span class="n">fit_type</span><span class="p">):</span>
@@ -1185,7 +1204,7 @@
         <span class="n">markersize</span><span class="o">=</span><span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;lines.markersize&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">,</span>
         <span class="n">fillstyle</span><span class="o">=</span><span class="s2">&quot;full&quot;</span><span class="p">,</span>
         <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="o">.</span><span class="n">get_mpl_color</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
-        <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Intensity&quot;</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Intensity&quot;</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="c1"># plot losses per kick</span>
@@ -1253,7 +1272,7 @@
         <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span>
         <span class="n">markeredgewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
         <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;None&quot;</span><span class="p">,</span>
-        <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;From BSRT&quot;</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;From BSRT&quot;</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="n">ax</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span>
@@ -1267,7 +1286,7 @@
 
     <span class="k">if</span> <span class="n">emittance_bws_df</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">emittance_bws_df</span><span class="o">.</span><span class="n">index</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">BWS_DIRECTIONS</span><span class="p">:</span>
-            <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;__nolegend__&quot;</span> <span class="k">if</span> <span class="n">d</span> <span class="o">==</span> <span class="n">BWS_DIRECTIONS</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;From BWS&quot;</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;__nolegend__&quot;</span> <span class="k">if</span> <span class="n">d</span> <span class="o">==</span> <span class="n">BWS_DIRECTIONS</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">else</span> <span class="s2">&quot;From BWS&quot;</span>
             <span class="n">color</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="n">bws_color</span>
                 <span class="k">if</span> <span class="n">d</span> <span class="o">==</span> <span class="n">BWS_DIRECTIONS</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
@@ -1338,7 +1357,7 @@
         <span class="n">yerr</span><span class="o">=</span><span class="n">intensity_err</span><span class="p">,</span>
         <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span>
         <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="o">.</span><span class="n">get_mpl_color</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
-        <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Kicks&quot;</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Kicks&quot;</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="c1"># Plot Fit</span>
@@ -1476,10 +1495,13 @@
 
 <span class="c1"># Helper ---</span>
 
-<div class="viewcode-block" id="get_approximate_index"><a class="viewcode-back" href="../../entrypoints/analysis.html#pylhc.forced_da_analysis.get_approximate_index">[docs]</a><span class="k">def</span> <span class="nf">get_approximate_index</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="get_approximate_index">
+<a class="viewcode-back" href="../../entrypoints/analysis.html#pylhc.forced_da_analysis.get_approximate_index">[docs]</a>
+<span class="k">def</span> <span class="nf">get_approximate_index</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Emulates the `get_loc` from pandas&lt;2.0, i.e.</span>
 <span class="sd">    single index input and output. &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">get_indexer</span><span class="p">([</span><span class="n">item</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div>
+
 
 
 <span class="k">def</span> <span class="nf">_plot_kicks_and_scale_x</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">kick_times</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>

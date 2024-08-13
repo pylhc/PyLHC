@@ -1,20 +1,24 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>LSA Knobs to MAD-X Expressions Converter &mdash; pylhc 0.8.0 documentation</title>
-      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=0db14186" />
+
+  
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/doctools.js"></script>
-        <script src="../_static/sphinx_highlight.js"></script>
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=486e5634"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -118,9 +122,9 @@
            <div itemprop="articleBody">
              
   <section id="lsa-knobs-to-mad-x-expressions-converter">
-<h1>LSA Knobs to MAD-X Expressions Converter<a class="headerlink" href="#lsa-knobs-to-mad-x-expressions-converter" title="Permalink to this heading"></a></h1>
+<h1>LSA Knobs to MAD-X Expressions Converter<a class="headerlink" href="#lsa-knobs-to-mad-x-expressions-converter" title="Link to this heading"></a></h1>
 <section id="lsa-to-mad-x">
-<h2>LSA to MAD-X<a class="headerlink" href="#lsa-to-mad-x" title="Permalink to this heading"></a></h2>
+<h2>LSA to MAD-X<a class="headerlink" href="#lsa-to-mad-x" title="Link to this heading"></a></h2>
 <p>This script is meant to convert various <code class="docutils literal notranslate"><span class="pre">LSA</span></code> knobs to their <code class="docutils literal notranslate"><span class="pre">MAD-X</span></code> equivalent scripts.</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>usage: lsa_to_madx.py [-h] --optics OPTICS [--knobs [KNOBS ...]] [--file FILE]
 
@@ -202,23 +206,23 @@ The call would be:</p>
 </section>
 <dl class="py function">
 <dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">pylhc.lsa_to_madx.</span></span><span class="sig-name descname"><span class="pre">get_madx_script_from_definition_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">deltas_df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pylhc.github.io/tfs/modules/index.html#tfs.frame.TfsDataFrame" title="(in tfs-pandas v3.7)"><span class="pre">TfsDataFrame</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">lsa_knob</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">trim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">by_reference</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/pylhc/lsa_to_madx.html#get_madx_script_from_definition_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pylhc.lsa_to_madx.</span></span><span class="sig-name descname"><span class="pre">get_madx_script_from_definition_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">deltas_df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TfsDataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lsa_knob</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">trim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">by_reference</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/pylhc/lsa_to_madx.html#get_madx_script_from_definition_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
 <dd><p>Given the extracted definition dataframe of an LSA knob - as returned by
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_knob_circuits</span></code> - this function will generate the
 corresponding <code class="docutils literal notranslate"><span class="pre">MAD-X</span></code> text commands that would reproduce this knob in a script.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>deltas_df</strong> (<a class="reference external" href="https://pylhc.github.io/tfs/modules/index.html#tfs.frame.TfsDataFrame" title="(in tfs-pandas v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">TfsDataFrame</span></code></a>) -- The extracted definition dataframe of an <code class="docutils literal notranslate"><span class="pre">LSA</span></code> knob. This
+<li><p><strong>deltas_df</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">TfsDataFrame</span></code>) -- The extracted definition dataframe of an <code class="docutils literal notranslate"><span class="pre">LSA</span></code> knob. This
 can be obtained with <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_knob_circuits</span></code>.</p></li>
-<li><p><strong>lsa_knob</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) -- The complete <code class="docutils literal notranslate"><span class="pre">LSA</span></code> name of the knob, including any <code class="docutils literal notranslate"><span class="pre">LHCBEAM[12]?/</span></code> part.</p></li>
-<li><p><strong>trim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) -- The trim value to write for the knob. Defaults to 1.</p></li>
-<li><p><strong>by_reference</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) -- If true, creates an _init variable and uses deferred expressions (<code class="xref py py-obj docutils literal notranslate"><span class="pre">:=</span></code>)
+<li><p><strong>lsa_knob</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) -- The complete <code class="docutils literal notranslate"><span class="pre">LSA</span></code> name of the knob, including any <code class="docutils literal notranslate"><span class="pre">LHCBEAM[12]?/</span></code> part.</p></li>
+<li><p><strong>trim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) -- The trim value to write for the knob. Defaults to 1.</p></li>
+<li><p><strong>by_reference</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) -- If true, creates an _init variable and uses deferred expressions (<code class="xref py py-obj docutils literal notranslate"><span class="pre">:=</span></code>)
 so that changing the trim later in the script changes all
 variables as well. Might be problematic if a variable depends on
 multiple trim-knobs.
 Otherwise <code class="xref py py-obj docutils literal notranslate"><span class="pre">variable</span> <span class="pre">=</span> <span class="pre">variable</span> <span class="pre">+</span> <span class="pre">delta*trim</span></code> is used.</p></li>
-<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) -- Adds some extra comments into the madx code.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) -- Adds some extra comments into the madx code.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -229,33 +233,33 @@ Otherwise <code class="xref py py-obj docutils literal notranslate"><span class=
 
 <dl class="py function">
 <dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">pylhc.lsa_to_madx.</span></span><span class="sig-name descname"><span class="pre">get_sign_madx_vs_lsa</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">madx_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><span class="pre">int</span></a></span></span><a class="reference internal" href="../_modules/pylhc/lsa_to_madx.html#get_sign_madx_vs_lsa"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pylhc.lsa_to_madx.</span></span><span class="sig-name descname"><span class="pre">get_sign_madx_vs_lsa</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">madx_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></span></span><a class="reference internal" href="../_modules/pylhc/lsa_to_madx.html#get_sign_madx_vs_lsa"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
 <dd><p>Return the sign convention between madx and lsa for the given variable.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>madx_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) -- Name of the variable as used in MAD-X.</p>
+<dd class="field-odd"><p><strong>madx_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) -- Name of the variable as used in MAD-X.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>1 or -1.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)">int</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)">int</a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">pylhc.lsa_to_madx.</span></span><span class="sig-name descname"><span class="pre">parse_knobs_and_trim_values_from_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">knobs_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><span class="pre">Path</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.11)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/pylhc/lsa_to_madx.html#parse_knobs_and_trim_values_from_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pylhc.lsa_to_madx.</span></span><span class="sig-name descname"><span class="pre">parse_knobs_and_trim_values_from_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">knobs_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><span class="pre">Path</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.12)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/pylhc/lsa_to_madx.html#parse_knobs_and_trim_values_from_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
 <dd><p>Parses a file for LSA knobs and their trim values. Each line should be a knob name
 following by a number of the trim value. If no value is written, it defaults
 to <code class="docutils literal notranslate"><span class="pre">1.0</span></code>. Lines starting with a <code class="docutils literal notranslate"><span class="pre">#</span></code> are ignored.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>knobs_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></a>) -- Path to the file with definitions.</p>
+<dd class="field-odd"><p><strong>knobs_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></a>) -- Path to the file with definitions.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> with as keys the parsed knob names and as values their associated trims.</p>
+<dd class="field-even"><p>A <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> with as keys the parsed knob names and as values their associated trims.</p>
 </dd>
 </dl>
 </dd></dl>

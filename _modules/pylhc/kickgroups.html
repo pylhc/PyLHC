@@ -1,19 +1,23 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>pylhc.kickgroups &mdash; pylhc 0.8.0 documentation</title>
-      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=0db14186" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=486e5634"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -221,7 +225,9 @@
 <span class="c1"># List Kickgroups --------------------------------------------------------------</span>
 
 
-<div class="viewcode-block" id="list_available_kickgroups"><a class="viewcode-back" href="../../entrypoints/kickgroups.html#pylhc.kickgroups.list_available_kickgroups">[docs]</a><span class="k">def</span> <span class="nf">list_available_kickgroups</span><span class="p">(</span><span class="n">by</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">TIMESTAMP</span><span class="p">,</span> <span class="n">root</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">KICKGROUPS_ROOT</span><span class="p">,</span> <span class="n">printout</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
+<div class="viewcode-block" id="list_available_kickgroups">
+<a class="viewcode-back" href="../../entrypoints/kickgroups.html#pylhc.kickgroups.list_available_kickgroups">[docs]</a>
+<span class="k">def</span> <span class="nf">list_available_kickgroups</span><span class="p">(</span><span class="n">by</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">TIMESTAMP</span><span class="p">,</span> <span class="n">root</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">KICKGROUPS_ROOT</span><span class="p">,</span> <span class="n">printout</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    List all available KickGroups in `root` with optional sorting..</span>
 
@@ -249,13 +255,16 @@
     <span class="n">df_info</span> <span class="o">=</span> <span class="n">df_info</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="n">by</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">TIMESTAMP</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">printout</span><span class="p">:</span>
-        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Here is information about the loaded KickGroups&quot;</span><span class="p">)</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Here is information about the loaded KickGroups&quot;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">df_info</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">formatters</span><span class="o">=</span><span class="n">_time_formatters</span><span class="p">(),</span> <span class="n">justify</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="n">df_info</span></div>
 
 
-<div class="viewcode-block" id="get_folder_json_files"><a class="viewcode-back" href="../../entrypoints/kickgroups.html#pylhc.kickgroups.get_folder_json_files">[docs]</a><span class="k">def</span> <span class="nf">get_folder_json_files</span><span class="p">(</span><span class="n">root</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">KICKGROUPS_ROOT</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
+
+<div class="viewcode-block" id="get_folder_json_files">
+<a class="viewcode-back" href="../../entrypoints/kickgroups.html#pylhc.kickgroups.get_folder_json_files">[docs]</a>
+<span class="k">def</span> <span class="nf">get_folder_json_files</span><span class="p">(</span><span class="n">root</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">KICKGROUPS_ROOT</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns a list of all **.json** files in the folder.</span>
 
 <span class="sd">    Args:</span>
@@ -270,10 +279,13 @@
     <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">root</span><span class="p">)</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.json&quot;</span><span class="p">))</span></div>
 
 
+
 <span class="c1"># Kickgroup Info ---------------------------------------------------------------</span>
 
 
-<div class="viewcode-block" id="get_kickgroup_info"><a class="viewcode-back" href="../../entrypoints/kickgroups.html#pylhc.kickgroups.get_kickgroup_info">[docs]</a><span class="k">def</span> <span class="nf">get_kickgroup_info</span><span class="p">(</span><span class="n">kick_group</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">root</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">KICKGROUPS_ROOT</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TfsDataFrame</span><span class="p">:</span>
+<div class="viewcode-block" id="get_kickgroup_info">
+<a class="viewcode-back" href="../../entrypoints/kickgroups.html#pylhc.kickgroups.get_kickgroup_info">[docs]</a>
+<span class="k">def</span> <span class="nf">get_kickgroup_info</span><span class="p">(</span><span class="n">kick_group</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">root</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">KICKGROUPS_ROOT</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TfsDataFrame</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Gather all important info about the KickGroup into a `~tfs.TfsDataFrame`.</span>
 
@@ -303,7 +315,10 @@
     <span class="k">return</span> <span class="n">df_info</span></div>
 
 
-<div class="viewcode-block" id="load_kickfile"><a class="viewcode-back" href="../../entrypoints/kickgroups.html#pylhc.kickgroups.load_kickfile">[docs]</a><span class="k">def</span> <span class="nf">load_kickfile</span><span class="p">(</span><span class="n">kickfile</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
+
+<div class="viewcode-block" id="load_kickfile">
+<a class="viewcode-back" href="../../entrypoints/kickgroups.html#pylhc.kickgroups.load_kickfile">[docs]</a>
+<span class="k">def</span> <span class="nf">load_kickfile</span><span class="p">(</span><span class="n">kickfile</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Load the important data from a **json** kickfile into a `~pandas.Series`.</span>
 
@@ -344,7 +359,7 @@
         <span class="n">data</span><span class="p">[</span><span class="n">AMPY</span><span class="p">]</span> <span class="o">=</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;acDipoleSettings&quot;</span><span class="p">][</span><span class="n">idy</span><span class="p">][</span><span class="s2">&quot;amplitude&quot;</span><span class="p">]</span>
         <span class="n">data</span><span class="p">[</span><span class="n">AMPZ</span><span class="p">]</span> <span class="o">=</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;longitudinalRfSettings&quot;</span><span class="p">][</span><span class="s2">&quot;excitationAmplitude&quot;</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Kick is 2D Excitation, longitudinal settings will be set as NaNs&quot;</span><span class="p">)</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Kick is 2D Excitation, longitudinal settings will be set as NaNs&quot;</span><span class="p">)</span>
         <span class="n">idx</span> <span class="o">=</span> <span class="n">_get_plane_index</span><span class="p">(</span><span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">],</span> <span class="s2">&quot;X&quot;</span><span class="p">)</span>
         <span class="n">idy</span> <span class="o">=</span> <span class="n">_get_plane_index</span><span class="p">(</span><span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">],</span> <span class="s2">&quot;Y&quot;</span><span class="p">)</span>
 
@@ -360,12 +375,15 @@
     <span class="k">return</span> <span class="n">data</span></div>
 
 
+
 <span class="c1"># Functions with console output ---</span>
 
 <span class="c1"># Full Info -</span>
 
 
-<div class="viewcode-block" id="show_kickgroup_info"><a class="viewcode-back" href="../../entrypoints/kickgroups.html#pylhc.kickgroups.show_kickgroup_info">[docs]</a><span class="k">def</span> <span class="nf">show_kickgroup_info</span><span class="p">(</span><span class="n">kick_group</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">root</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">KICKGROUPS_ROOT</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="show_kickgroup_info">
+<a class="viewcode-back" href="../../entrypoints/kickgroups.html#pylhc.kickgroups.show_kickgroup_info">[docs]</a>
+<span class="k">def</span> <span class="nf">show_kickgroup_info</span><span class="p">(</span><span class="n">kick_group</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">root</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">KICKGROUPS_ROOT</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Wrapper around `~pylhc.kickgroups.get_kickgroup_info`, gathering the relevant</span>
 <span class="sd">    information from the kick files in the group and printing it to console.</span>
@@ -378,6 +396,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">kicks_info</span> <span class="o">=</span> <span class="n">get_kickgroup_info</span><span class="p">(</span><span class="n">kick_group</span><span class="p">,</span> <span class="n">root</span><span class="p">)</span>
     <span class="n">_print_kickgroup_info</span><span class="p">(</span><span class="n">kicks_info</span><span class="p">)</span></div>
+
 
 
 <span class="k">def</span> <span class="nf">_print_kickgroup_info</span><span class="p">(</span><span class="n">kicks_info</span><span class="p">:</span> <span class="n">TfsDataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -400,7 +419,9 @@
 <span class="c1"># Files only -</span>
 
 
-<div class="viewcode-block" id="show_kickgroup_files"><a class="viewcode-back" href="../../entrypoints/kickgroups.html#pylhc.kickgroups.show_kickgroup_files">[docs]</a><span class="k">def</span> <span class="nf">show_kickgroup_files</span><span class="p">(</span><span class="n">kick_group</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">nfiles</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">root</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">KICKGROUPS_ROOT</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="show_kickgroup_files">
+<a class="viewcode-back" href="../../entrypoints/kickgroups.html#pylhc.kickgroups.show_kickgroup_files">[docs]</a>
+<span class="k">def</span> <span class="nf">show_kickgroup_files</span><span class="p">(</span><span class="n">kick_group</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">nfiles</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">root</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">KICKGROUPS_ROOT</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Wrapper around `pylhc.kickgroups.get_kickgroup_info`, gathering the relevant</span>
 <span class="sd">    information from all kickfiles in the KickGroup and printing only the sdds-filepaths</span>
@@ -416,6 +437,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">kicks_info</span> <span class="o">=</span> <span class="n">get_kickgroup_info</span><span class="p">(</span><span class="n">kick_group</span><span class="p">,</span> <span class="n">root</span><span class="p">)</span>
     <span class="n">_print_kickgroup_files</span><span class="p">(</span><span class="n">kicks_info</span><span class="p">,</span> <span class="n">nfiles</span><span class="o">=</span><span class="n">nfiles</span><span class="p">)</span></div>
+
 
 
 <span class="k">def</span> <span class="nf">_print_kickgroup_files</span><span class="p">(</span><span class="n">kicks_info</span><span class="p">:</span> <span class="n">TfsDataFrame</span><span class="p">,</span> <span class="n">nfiles</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>

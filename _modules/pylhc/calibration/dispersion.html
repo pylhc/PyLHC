@@ -1,19 +1,23 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>pylhc.calibration.dispersion &mdash; pylhc 0.8.0 documentation</title>
-      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="../../../_static/css/custom.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=0db14186" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=486e5634"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -142,12 +146,9 @@
     <span class="n">BPMS</span><span class="p">,</span>
     <span class="n">D_BPMS</span><span class="p">,</span>
     <span class="n">D</span><span class="p">,</span>
-    <span class="n">IPS</span><span class="p">,</span>
     <span class="n">LABELS</span><span class="p">,</span>
-    <span class="n">ND</span><span class="p">,</span>
     <span class="n">TFS_INDEX</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">pylhc.constants.general</span> <span class="kn">import</span> <span class="n">PLANES</span>
 <span class="kn">import</span> <span class="nn">tfs</span>
 
 
@@ -233,7 +234,9 @@
     <span class="k">return</span> <span class="n">factors</span><span class="p">,</span> <span class="n">calibration_error</span>
 
 
-<div class="viewcode-block" id="get_calibration_factors_from_dispersion"><a class="viewcode-back" href="../../../modules/calibration.html#pylhc.calibration.dispersion.get_calibration_factors_from_dispersion">[docs]</a><span class="k">def</span> <span class="nf">get_calibration_factors_from_dispersion</span><span class="p">(</span>
+<div class="viewcode-block" id="get_calibration_factors_from_dispersion">
+<a class="viewcode-back" href="../../../modules/calibration.html#pylhc.calibration.dispersion.get_calibration_factors_from_dispersion">[docs]</a>
+<span class="k">def</span> <span class="nf">get_calibration_factors_from_dispersion</span><span class="p">(</span>
     <span class="n">ips</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">input_path</span><span class="p">:</span> <span class="n">Path</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -301,10 +304,10 @@
         <span class="n">dispersion</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="n">normalised_dispersion</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
 
-        <span class="n">dispersion</span><span class="p">[</span><span class="s2">&quot;amp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dispersion_tfs</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">bpms</span><span class="p">)[</span><span class="sa">f</span><span class="s2">&quot;DX&quot;</span><span class="p">]</span>
+        <span class="n">dispersion</span><span class="p">[</span><span class="s2">&quot;amp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dispersion_tfs</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">bpms</span><span class="p">)[</span><span class="s2">&quot;DX&quot;</span><span class="p">]</span>
         <span class="n">dispersion</span><span class="p">[</span><span class="s2">&quot;amp_err&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dispersion_tfs</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">bpms</span><span class="p">)[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ERR</span><span class="si">}{</span><span class="n">D</span><span class="si">}</span><span class="s2">X&quot;</span><span class="p">]</span>
 
-        <span class="n">dispersion</span><span class="p">[</span><span class="s2">&quot;phase&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">norm_dispersion_tfs</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">bpms</span><span class="p">)[</span><span class="sa">f</span><span class="s2">&quot;DX&quot;</span><span class="p">]</span>
+        <span class="n">dispersion</span><span class="p">[</span><span class="s2">&quot;phase&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">norm_dispersion_tfs</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">bpms</span><span class="p">)[</span><span class="s2">&quot;DX&quot;</span><span class="p">]</span>
         <span class="n">dispersion</span><span class="p">[</span><span class="s2">&quot;phase_err&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">norm_dispersion_tfs</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">bpms</span><span class="p">)[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ERR</span><span class="si">}{</span><span class="n">D</span><span class="si">}</span><span class="s2">X&quot;</span><span class="p">]</span>
 
         <span class="c1"># Compute the calibration factors using the dispersion from phase and amp</span>
@@ -341,6 +344,7 @@
             <span class="n">calibration_factors</span><span class="p">[</span><span class="s2">&quot;X&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">calibration_factors</span><span class="p">[</span><span class="s2">&quot;X&quot;</span><span class="p">],</span> <span class="n">factors_for_ip</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">calibration_factors</span></div>
+
 </pre></div>
 
            </div>
