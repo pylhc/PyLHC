@@ -43,40 +43,38 @@ classifiers = [
 ]
 
 dependencies = [
-    "numpy >= 1.24",
-    "scipy >= 1.10",
-    "pandas >= 2.1",
-    "matplotlib >= 3.8",
-    "tfs-pandas >= 3.8",
-    "generic-parser >= 1.1",
-    "parse >= 1.15",
-    "omc3 >= 0.15",
-    "jpype1 >= 1.3",
-    "h5py >= 2.9.0",  # same as tfs-pandas, do we need it here?
-    "tables >= 3.6.0",  # same as tfs-pandas, do we need it here?
+  "numpy >= 1.24",
+  "scipy >= 1.10",
+  "pandas >= 2.1",
+  "matplotlib >= 3.8",
+  "tfs-pandas >= 3.8",
+  "generic-parser >= 1.1",
+  "parse >= 1.15",
+  "omc3 >= 0.15",
+  "jpype1 >= 1.3",
 ]
 
 [project.optional-dependencies]
 cern = [
-    "omc3[cern] >= 0.15",
-    "pjlsa >= 0.2",
-    "pytimber >= 3.0",  # NXCALS support
-    "pyjapc",
+  "omc3[cern] >= 0.15",
+  "pjlsa >= 0.2",
+  "pytimber >= 3.0",  # NXCALS support
+  "pyjapc",
 ]
 test = [
-    "pytest>=7.0",
-    "pytest-cov>=2.9",
-    "pytest-mpl>=0.15",
+  "pytest>=7.0",
+  "pytest-cov>=2.9",
+  "pytest-mpl>=0.15",
 ]
 doc = [
-    "sphinx >= 7.0",
-    "sphinx_rtd_theme >= 2.0",
+  "sphinx >= 7.0",
+  "sphinx_rtd_theme >= 2.0",
 ]
 
 all = [
-    "pylhc[cern]",
-    "pylhc[test]",
-    "pylhc[doc]",
+  "pylhc[cern]",
+  "pylhc[test]",
+  "pylhc[doc]",
 ]
 
 [project.urls]
