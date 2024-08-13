@@ -606,11 +606,11 @@ def _get_db(opt):
             if opt.fill is not None:
                 raise EnvironmentError("'fill' can't be used with pagestore database.")
     else:
-        LOG.debug(f" Trying to load database from timber.")
+        LOG.debug(" Trying to load database from timber.")
         try:
             db = pytimber.LoggingDB(source=opt["timber_db"])
         except AttributeError:
-            LOG.debug(f" Loading from timber failed.")
+            LOG.debug(" Loading from timber failed.")
 
     if not db:
         error_msg = ""
@@ -1069,7 +1069,7 @@ def _plot_intensity(directory, beam, plane, kick_df, intensity_df):
         markersize=mpl.rcParams["lines.markersize"] * 0.5,
         fillstyle="full",
         color=colors.get_mpl_color(0),
-        label=f"Intensity",
+        label="Intensity",
     )
 
     # plot losses per kick
@@ -1137,7 +1137,7 @@ def _plot_emittances(directory, beam, plane, emittance_df, emittance_bws_df, kic
         marker="o",
         markeredgewidth=2,
         linestyle="None",
-        label=f"From BSRT",
+        label="From BSRT",
     )
 
     ax.errorbar(
@@ -1151,7 +1151,7 @@ def _plot_emittances(directory, beam, plane, emittance_df, emittance_bws_df, kic
 
     if emittance_bws_df is not None and len(emittance_bws_df.index):
         for d in BWS_DIRECTIONS:
-            label = "__nolegend__" if d == BWS_DIRECTIONS[1] else f"From BWS"
+            label = "__nolegend__" if d == BWS_DIRECTIONS[1] else "From BWS"
             color = (
                 bws_color
                 if d == BWS_DIRECTIONS[1]
@@ -1222,7 +1222,7 @@ def _plot_da_fit(directory, beam, plane, k_df, fit_type):
         yerr=intensity_err,
         marker=".",
         color=colors.get_mpl_color(0),
-        label=f"Kicks",
+        label="Kicks",
     )
 
     # Plot Fit

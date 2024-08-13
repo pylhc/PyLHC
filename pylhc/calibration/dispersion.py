@@ -26,12 +26,9 @@ from pylhc.constants.calibration import (
     BPMS,
     D_BPMS,
     D,
-    IPS,
     LABELS,
-    ND,
     TFS_INDEX,
 )
-from pylhc.constants.general import PLANES
 import tfs
 
 
@@ -185,10 +182,10 @@ def get_calibration_factors_from_dispersion(
         dispersion = dict()
         normalised_dispersion = dict()
 
-        dispersion["amp"] = dispersion_tfs.reindex(bpms)[f"DX"]
+        dispersion["amp"] = dispersion_tfs.reindex(bpms)["DX"]
         dispersion["amp_err"] = dispersion_tfs.reindex(bpms)[f"{ERR}{D}X"]
 
-        dispersion["phase"] = norm_dispersion_tfs.reindex(bpms)[f"DX"]
+        dispersion["phase"] = norm_dispersion_tfs.reindex(bpms)["DX"]
         dispersion["phase_err"] = norm_dispersion_tfs.reindex(bpms)[f"{ERR}{D}X"]
 
         # Compute the calibration factors using the dispersion from phase and amp

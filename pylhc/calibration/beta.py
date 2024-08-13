@@ -8,7 +8,7 @@ to be used with the script `bpm_calibration.py`.
 
 """
 from pathlib import Path
-from typing import Dict, List, Sequence, Tuple
+from typing import Dict, Sequence, Tuple
 
 import numpy as np
 import pandas as pd
@@ -17,7 +17,7 @@ from omc3.optics_measurements.constants import AMP_BETA_NAME, BETA, BETA_NAME, E
 from omc3.utils import logging_tools
 from scipy.optimize import curve_fit
 
-from pylhc.constants.calibration import BETA_STAR_ESTIMATION, BPMS, IPS, LABELS, TFS_INDEX
+from pylhc.constants.calibration import BETA_STAR_ESTIMATION, BPMS, LABELS, TFS_INDEX
 from pylhc.constants.general import PLANES
 
 LOG = logging_tools.get_logger(__name__)
