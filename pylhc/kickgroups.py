@@ -61,7 +61,6 @@ import json
 
 from datetime import datetime
 from pathlib import Path
-from typing import List, Union
 
 import numpy as np
 import pandas as pd
@@ -83,6 +82,8 @@ from pylhc.constants.kickgroups import (
     DRIVEN_TUNEX,
     DRIVEN_TUNEY,
     DRIVEN_TUNEZ,
+    FILL,
+    JSON_FILE,
     KICK_COLUMNS,
     KICK_GROUP_COLUMNS,
     KICKGROUP,
@@ -105,7 +106,7 @@ LOG = logging_tools.get_logger(__name__)
 # List Kickgroups --------------------------------------------------------------
 
 
-def list_available_kickgroups(by: str = TIMESTAMP, root: Union[Path, str] = KICKGROUPS_ROOT, printout: bool = True) -> DataFrame:
+def list_available_kickgroups(by: str = TIMESTAMP, root: Path | str = KICKGROUPS_ROOT, printout: bool = True) -> DataFrame:
     """
     List all available KickGroups in `root` with optional sorting..
 
@@ -139,11 +140,11 @@ def list_available_kickgroups(by: str = TIMESTAMP, root: Union[Path, str] = KICK
     return df_info
 
 
-def get_folder_json_files(root: Union[Path, str] = KICKGROUPS_ROOT) -> List[Path]:
+def get_folder_json_files(root: Path | str = KICKGROUPS_ROOT) -> list[Path]:
     """Returns a list of all **.json** files in the folder.
 
     Args:
-        root (Union[Path, str])): the path to the folder. (Defaults
+        root (Path | str)): the path to the folder. (Defaults
             to the ``NFS`` path of our kickgroups).
 
     Returns:
@@ -157,7 +158,7 @@ def get_folder_json_files(root: Union[Path, str] = KICKGROUPS_ROOT) -> List[Path
 # Kickgroup Info ---------------------------------------------------------------
 
 
-def get_kickgroup_info(kick_group: str, root: Union[Path, str] = KICKGROUPS_ROOT) -> TfsDataFrame:
+def get_kickgroup_info(kick_group: str, root: Path | str = KICKGROUPS_ROOT) -> TfsDataFrame:
     """
     Gather all important info about the KickGroup into a `~tfs.TfsDataFrame`.
 
@@ -176,7 +177,7 @@ def get_kickgroup_info(kick_group: str, root: Union[Path, str] = KICKGROUPS_ROOT
     df_info = TfsDataFrame(index=range(len(kicks_files)), columns=KICK_COLUMNS, headers={KICKGROUP: kick_group})
 
     if not len(kicks_files):
-        raise FileNotFoundError(f"KickGroup {kick_group} contains no kicks.")
+        raise ValueError(f"KickGroup {kick_group} contains no kicks.")
 
     for idx, kf in enumerate(kicks_files):
         df_info.loc[idx, :] = load_kickfile(kf)
@@ -187,12 +188,12 @@ def get_kickgroup_info(kick_group: str, root: Union[Path, str] = KICKGROUPS_ROOT
     return df_info
 
 
-def load_kickfile(kickfile: Union[Path, str]) -> pd.Series:
+def load_kickfile(kickfile: Path | str) -> pd.Series:
     """
     Load the important data from a **json** kickfile into a `~pandas.Series`.
 
     Args:
-        kickfile (Union[Path, str]): the path to the kickfile to load data from.
+        kickfile (Path | str): the path to the kickfile to load data from.
 
     Returns:
         A `~pandas.Series` with the relevant information loaded from the provided
@@ -200,11 +201,21 @@ def load_kickfile(kickfile: Union[Path, str]) -> pd.Series:
         as ``KICK_COLUMNS``.
     """
     LOG.debug(f"Loading kick information from Kickfile at '{Path(kickfile).absolute()}'")
+    kickfile = _find_existing_file_path(kickfile)
     kick = _load_json(kickfile)
+
     data = pd.Series(index=KICK_COLUMNS, dtype=object)
+    data[JSON_FILE] = _find_existing_file_path(kickfile)
     data[LOCALTIME] = _jsontime_to_datetime(kick["acquisitionTime"])
     data[UTCTIME] = _local_to_utc(data[LOCALTIME])
-    data[SDDS] = kick["sddsFile"]
+
+    try:
+        data[SDDS] = _find_existing_file_path(kick["sddsFile"])
+    except FileNotFoundError as e:
+        LOG.warning(str(e))
+        data[SDDS] = None
+
+    data[FILL] = _get_fill_from_path(kick["sddsFile"])  # TODO: Ask OP to include in json?
     data[BEAM] = kick["measurementEnvironment"]["lhcBeam"]["beamName"]
     data[BEAMPROCESS] = kick["measurementEnvironment"]["environmentContext"]["name"]
     data[TURNS] = kick["acqSettings"]["capturedTurns"]
@@ -229,19 +240,77 @@ def load_kickfile(kickfile: Union[Path, str]) -> pd.Series:
         data[AMPZ] = kick["excitationSettings"][0]["longitudinalRfSettings"]["excitationAmplitude"]
     else:
         LOG.debug("Kick is 2D Excitation, longitudinal settings will be set as NaNs")
-        idx = _get_plane_index(kick["excitationSettings"], "X")
-        idy = _get_plane_index(kick["excitationSettings"], "Y")
+        entry_map = {"X": (TUNEX, DRIVEN_TUNEX, AMPX), "Y": (TUNEY, DRIVEN_TUNEY, AMPY)}
+        for plane in ["X", "Y"]:
+            tune, driven_tune, amp = entry_map[plane]
 
-        data[TUNEX] = kick["excitationSettings"][idx]["measuredTune"]
-        data[TUNEY] = kick["excitationSettings"][idy]["measuredTune"]
-        data[DRIVEN_TUNEX] = data[TUNEX] + kick["excitationSettings"][idx]["deltaTuneStart"]
-        data[DRIVEN_TUNEY] = data[TUNEY] + kick["excitationSettings"][idy]["deltaTuneStart"]
+            data[tune] = np.NaN
+            data[driven_tune] = np.NaN
+            data[amp] = np.NaN
+
+            try:
+                idx = _get_plane_index(kick["excitationSettings"], plane)
+            except ValueError as e:
+                LOG.warning(f"{str(e)} in {kickfile}")
+                continue
+
+            if "measuredTune" not in kick["excitationSettings"][idx]:  # Happens in very early files in 2022
+                LOG.warning(f"No measured tune {plane} in the kick file: {kickfile}")
+                continue
+
+            data[tune] = kick["excitationSettings"][idx]["measuredTune"]
+            data[driven_tune] = data[tune] + _get_delta_tune(kick, idx)
+            data[amp] = kick["excitationSettings"][idx]["amplitude"]
+
         data[DRIVEN_TUNEZ] = np.NaN
-        data[AMPX] = kick["excitationSettings"][idx]["amplitude"]
-        data[AMPY] = kick["excitationSettings"][idy]["amplitude"]
         data[AMPZ] = np.NaN
 
     return data
+
+def _get_delta_tune(kick: dict, idx_plane: int) -> float:
+    """ Return the delta from the tune for the kicks.
+    For some reason, there are multiple different keys where this can be stored. """
+
+    # Default key for ACDipole ---
+    # There is also "deltaTuneEnd", but we usually don't change the delta during kick
+    try:
+        return kick["excitationSettings"][idx_plane]["deltaTuneStart"]
+    except KeyError:
+        pass
+
+    # Key for ADTACDipole ---
+    try:
+        return kick["excitationSettings"][idx_plane]["deltaTune"]
+    except KeyError:
+        pass
+
+    # Another key for ADTACDipole (unclear to me why) ---
+    try:
+        return kick["excitationSettings"][idx_plane]["deltaTuneOffset"]
+    except KeyError:
+        pass
+
+    raise KeyError(f"Could not find delta tune for plane-entry {idx_plane}")
+
+
+def _find_existing_file_path(path: str|Path) -> Path:
+    """ Find the existing kick file for the kick group. """
+    path = Path(path)
+    if path.is_file():
+        return path
+
+    fill_data = "FILL_DATA"
+    all_fill_data = "ALL_FILL_DATA"
+
+    if fill_data in path.parts:
+        # Fills are moved at the end of year
+        idx = path.parts.index(fill_data)+1
+        new_path = Path(*path.parts[:idx], all_fill_data, *path.parts[idx:])
+        if new_path.exists():
+            return new_path
+
+    raise FileNotFoundError(f"Could not find kick file at {path}")
+
 
 
 # Functions with console output ---
@@ -249,7 +318,7 @@ def load_kickfile(kickfile: Union[Path, str]) -> pd.Series:
 # Full Info -
 
 
-def show_kickgroup_info(kick_group: str, root: Union[Path, str] = KICKGROUPS_ROOT) -> None:
+def show_kickgroup_info(kick_group: str, root: Path | str = KICKGROUPS_ROOT) -> None:
     """
     Wrapper around `~pylhc.kickgroups.get_kickgroup_info`, gathering the relevant
     information from the kick files in the group and printing it to console.
@@ -284,7 +353,7 @@ def _print_kickgroup_info(kicks_info: TfsDataFrame) -> None:
 # Files only -
 
 
-def show_kickgroup_files(kick_group: str, nfiles: int = None, root: Union[Path, str] = KICKGROUPS_ROOT) -> None:
+def show_kickgroup_files(kick_group: str, nfiles: int = None, root: Path | str = KICKGROUPS_ROOT) -> None:
     """
     Wrapper around `pylhc.kickgroups.get_kickgroup_info`, gathering the relevant
     information from all kickfiles in the KickGroup and printing only the sdds-filepaths
@@ -337,7 +406,7 @@ def _print_kickgroup_files(kicks_info: TfsDataFrame, nfiles: int = None) -> None
 # IO ---
 
 
-def _load_json(jsonfile: Union[Path, str]) -> dict:
+def _load_json(jsonfile: Path | str) -> dict:
     return json.loads(Path(jsonfile).read_text())
 
 
@@ -371,7 +440,7 @@ def _local_to_utc(dt: datetime):
 # Other ---
 
 
-def _get_plane_index(data: List[dict], plane: str) -> str:
+def _get_plane_index(data: list[dict], plane: str) -> str:
     """
     Find the index for the given plane in the data list.
     This is necessary as they are not always in X,Y order.
@@ -382,6 +451,16 @@ def _get_plane_index(data: List[dict], plane: str) -> str:
             return idx
     else:
         raise ValueError(f"Plane '{plane}' not found in data.")
+
+
+def _get_fill_from_path(sdds_path: str | Path) -> str:
+    """ Get the fill number from the path to the sdds file.
+    Note: Not sure why the fill is not saved automatically into the .json file.
+    Maybe we should ask OP to include this.
+    """
+    parts = Path(sdds_path).parts
+    idx_parent = parts.index("FILL_DATA")
+    return int(parts[idx_parent + 1])
 
 
 # Script Mode ------------------------------------------------------------------
