@@ -159,9 +159,9 @@ class LSAClient(pjLSAClient):
         return fills
 
     def get_trim_history(
-            self, beamprocess: str, knobs: list, 
-            start_time: AccDatetime = None, end_time: AccDatetime = None, 
-            accelerator: str = "lhc"           
+            self, beamprocess: str, knobs: list,
+            start_time: AccDatetime = None, end_time: AccDatetime = None,
+            accelerator: str = "lhc"
     ) -> dict:
         """
         Get trim history for knobs between specified times.
@@ -187,10 +187,10 @@ class LSAClient(pjLSAClient):
                 raise ValueError("None of the given knobs exist!")
 
         if start_time is not None:
-            start_time = start_time.timestamp() 
-        
+            start_time = start_time.timestamp()
+
         if end_time is not None:
-            end_time = end_time.timestamp() 
+            end_time = end_time.timestamp()
 
         LOG.debug(f"Getting trims for {len(knobs)} knobs.")
         try:
@@ -259,7 +259,7 @@ class LSAClient(pjLSAClient):
         """
         Get a dataframe of the structure of the knob. Similar to online model extractor
         (KnobExtractor.getKnobHiercarchy)
-        
+
         Args:
             knob_name: name of the knob.
             optics: name of the optics.
