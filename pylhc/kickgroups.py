@@ -205,7 +205,7 @@ def load_kickfile(kickfile: Path | str) -> pd.Series:
     kick = _load_json(kickfile)
 
     data = pd.Series(index=KICK_COLUMNS, dtype=object)
-    data[JSON_FILE] = _find_existing_file_path(kickfile)
+    data[JSON_FILE] = kickfile
     data[LOCALTIME] = _jsontime_to_datetime(kick["acquisitionTime"])
     data[UTCTIME] = _local_to_utc(data[LOCALTIME])
 
