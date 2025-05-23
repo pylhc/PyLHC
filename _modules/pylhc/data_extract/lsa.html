@@ -1,23 +1,21 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pylhc.data_extract.lsa &mdash; pylhc 0.8.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+  <title>pylhc.data_extract.lsa &mdash; pylhc 0.8.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=0db14186" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=486e5634"></script>
-        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=ec16d22d"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -35,9 +33,6 @@
             pylhc
               <img src="../../../_static/omc_logo.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                0.8
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -124,14 +119,14 @@
 
 <span class="sd">This module provides useful functions to conveniently wrap the functionality of ``pjlsa``.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">jpype</span>
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">import</span> <span class="nn">tfs</span>
-<span class="kn">from</span> <span class="nn">jpype</span> <span class="kn">import</span> <span class="n">java</span><span class="p">,</span> <span class="n">JException</span>
-<span class="kn">from</span> <span class="nn">omc3.utils.mock</span> <span class="kn">import</span> <span class="n">cern_network_import</span>
-<span class="kn">from</span> <span class="nn">omc3.utils.time_tools</span> <span class="kn">import</span> <span class="n">AccDatetime</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">jpype</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tfs</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">jpype</span><span class="w"> </span><span class="kn">import</span> <span class="n">java</span><span class="p">,</span> <span class="n">JException</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">omc3.utils.mock</span><span class="w"> </span><span class="kn">import</span> <span class="n">cern_network_import</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">omc3.utils.time_tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">AccDatetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span>
 
 <span class="n">LOG</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 <span class="n">pytimber</span> <span class="o">=</span> <span class="n">cern_network_import</span><span class="p">(</span><span class="s2">&quot;pytimber&quot;</span><span class="p">)</span>
@@ -157,10 +152,10 @@
 
 <div class="viewcode-block" id="LSAClient">
 <a class="viewcode-back" href="../../../modules/data_extract.html#pylhc.data_extract.lsa.LSAClient">[docs]</a>
-<span class="k">class</span> <span class="nc">LSAClient</span><span class="p">(</span><span class="n">pjLSAClient</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LSAClient</span><span class="p">(</span><span class="n">pjLSAClient</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Extension of the LSAClient.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Overwrite __getattr__ to raise the proper import errors at the proper time.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__getattr__</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
@@ -172,7 +167,7 @@
 
 <div class="viewcode-block" id="LSAClient.find_knob_names">
 <a class="viewcode-back" href="../../../modules/data_extract.html#pylhc.data_extract.lsa.LSAClient.find_knob_names">[docs]</a>
-    <span class="k">def</span> <span class="nf">find_knob_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">accelerator</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;lhc&quot;</span><span class="p">,</span> <span class="n">regexp</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_knob_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">accelerator</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;lhc&quot;</span><span class="p">,</span> <span class="n">regexp</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return knobs for accelerator.</span>
 
@@ -198,7 +193,7 @@
 
 <div class="viewcode-block" id="LSAClient.find_existing_knobs">
 <a class="viewcode-back" href="../../../modules/data_extract.html#pylhc.data_extract.lsa.LSAClient.find_existing_knobs">[docs]</a>
-    <span class="k">def</span> <span class="nf">find_existing_knobs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">knobs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_existing_knobs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">knobs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return only the knobs that exist from the given list.</span>
 <span class="sd">        This function was created out of the need to filter these first,</span>
@@ -222,7 +217,7 @@
 
 <div class="viewcode-block" id="LSAClient.find_last_fill">
 <a class="viewcode-back" href="../../../modules/data_extract.html#pylhc.data_extract.lsa.LSAClient.find_last_fill">[docs]</a>
-    <span class="k">def</span> <span class="nf">find_last_fill</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_last_fill</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">acc_time</span><span class="p">:</span> <span class="n">AccDatetime</span><span class="p">,</span> <span class="n">accelerator</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;lhc&quot;</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;nxcals&quot;</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -246,14 +241,14 @@
         <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;No beamprocesses found in the day before </span><span class="si">{</span><span class="n">acc_time</span><span class="o">.</span><span class="n">cern_utc_string</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+            <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
         <span class="n">last_fill</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">fills</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">last_fill</span><span class="p">,</span> <span class="n">fills</span><span class="p">[</span><span class="n">last_fill</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="LSAClient.find_beamprocess_history">
 <a class="viewcode-back" href="../../../modules/data_extract.html#pylhc.data_extract.lsa.LSAClient.find_beamprocess_history">[docs]</a>
-    <span class="k">def</span> <span class="nf">find_beamprocess_history</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_beamprocess_history</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">t_start</span><span class="p">:</span> <span class="n">AccDatetime</span><span class="p">,</span> <span class="n">t_end</span><span class="p">:</span> <span class="n">AccDatetime</span><span class="p">,</span> <span class="n">accelerator</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;lhc&quot;</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;nxcals&quot;</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -294,10 +289,10 @@
 
 <div class="viewcode-block" id="LSAClient.get_trim_history">
 <a class="viewcode-back" href="../../../modules/data_extract.html#pylhc.data_extract.lsa.LSAClient.get_trim_history">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_trim_history</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span> <span class="n">beamprocess</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">knobs</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> 
-            <span class="n">start_time</span><span class="p">:</span> <span class="n">AccDatetime</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">end_time</span><span class="p">:</span> <span class="n">AccDatetime</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
-            <span class="n">accelerator</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;lhc&quot;</span>           
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_trim_history</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">beamprocess</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">knobs</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+            <span class="n">start_time</span><span class="p">:</span> <span class="n">AccDatetime</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">end_time</span><span class="p">:</span> <span class="n">AccDatetime</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">accelerator</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;lhc&quot;</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get trim history for knobs between specified times.</span>
@@ -323,10 +318,10 @@
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;None of the given knobs exist!&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">start_time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">start_time</span> <span class="o">=</span> <span class="n">start_time</span><span class="o">.</span><span class="n">timestamp</span><span class="p">()</span> 
-        
+            <span class="n">start_time</span> <span class="o">=</span> <span class="n">start_time</span><span class="o">.</span><span class="n">timestamp</span><span class="p">()</span>
+
         <span class="k">if</span> <span class="n">end_time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">end_time</span> <span class="o">=</span> <span class="n">end_time</span><span class="o">.</span><span class="n">timestamp</span><span class="p">()</span> 
+            <span class="n">end_time</span> <span class="o">=</span> <span class="n">end_time</span><span class="o">.</span><span class="n">timestamp</span><span class="p">()</span>
 
         <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Getting trims for </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">knobs</span><span class="p">)</span><span class="si">}</span><span class="s2"> knobs.&quot;</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
@@ -334,7 +329,7 @@
         <span class="k">except</span> <span class="n">jpype</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">lang</span><span class="o">.</span><span class="n">NullPointerException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="c1"># In the past this happened, when a knob was not defined, but</span>
             <span class="c1"># this should have been caught by the filter_existing_knobs above</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Something went wrong when extracting trims for the knobs: </span><span class="si">{</span><span class="n">knobs</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Something went wrong when extracting trims for the knobs: </span><span class="si">{</span><span class="n">knobs</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
         <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">trims</span><span class="p">)</span><span class="si">}</span><span class="s2"> trims extracted.&quot;</span><span class="p">)</span>
         <span class="n">trims_not_found</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">knobs</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">trims</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
@@ -347,7 +342,7 @@
 
 <div class="viewcode-block" id="LSAClient.get_beamprocess_info">
 <a class="viewcode-back" href="../../../modules/data_extract.html#pylhc.data_extract.lsa.LSAClient.get_beamprocess_info">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_beamprocess_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beamprocess</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_beamprocess_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beamprocess</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get context info of the given beamprocess.</span>
 
@@ -367,7 +362,7 @@
 
 <div class="viewcode-block" id="LSAClient.find_active_beamprocess_at_time">
 <a class="viewcode-back" href="../../../modules/data_extract.html#pylhc.data_extract.lsa.LSAClient.find_active_beamprocess_at_time">[docs]</a>
-    <span class="k">def</span> <span class="nf">find_active_beamprocess_at_time</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_active_beamprocess_at_time</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">acc_time</span><span class="p">:</span> <span class="n">AccDatetime</span><span class="p">,</span> <span class="n">accelerator</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;lhc&quot;</span><span class="p">,</span>
             <span class="n">bp_group</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;POWERCONVERTERS&quot;</span>  <span class="c1"># the Beamprocesses relevant for OMC,</span>
     <span class="p">):</span>
@@ -400,11 +395,11 @@
 
 <div class="viewcode-block" id="LSAClient.get_knob_circuits">
 <a class="viewcode-back" href="../../../modules/data_extract.html#pylhc.data_extract.lsa.LSAClient.get_knob_circuits">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_knob_circuits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">knob_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">optics</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">tfs</span><span class="o">.</span><span class="n">TfsDataFrame</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_knob_circuits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">knob_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">optics</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">tfs</span><span class="o">.</span><span class="n">TfsDataFrame</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get a dataframe of the structure of the knob. Similar to online model extractor</span>
 <span class="sd">        (KnobExtractor.getKnobHiercarchy)</span>
-<span class="sd">        </span>
+
 <span class="sd">        Args:</span>
 <span class="sd">            knob_name: name of the knob.</span>
 <span class="sd">            optics: name of the optics.</span>
@@ -445,7 +440,7 @@
 
 <div class="viewcode-block" id="LSAClient.get_madx_name_from_circuit">
 <a class="viewcode-back" href="../../../modules/data_extract.html#pylhc.data_extract.lsa.LSAClient.get_madx_name_from_circuit">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_madx_name_from_circuit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">circuit</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_madx_name_from_circuit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">circuit</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the ``MAD-X`` Strength Name (Circuit/Knob) from the given circuit name.&quot;&quot;&quot;</span>
         <span class="n">logical_name</span> <span class="o">=</span> <span class="n">circuit</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">slist</span> <span class="o">=</span> <span class="n">jpype</span><span class="o">.</span><span class="n">java</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">Collections</span><span class="o">.</span><span class="n">singletonList</span><span class="p">(</span>  <span class="c1"># python lists did not work (jdilly)</span>
@@ -464,12 +459,12 @@
 
 <div class="viewcode-block" id="LSAMeta">
 <a class="viewcode-back" href="../../../modules/data_extract.html#pylhc.data_extract.lsa.LSAMeta">[docs]</a>
-<span class="k">class</span> <span class="nc">LSAMeta</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LSAMeta</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Metaclass for single instance LSAClient.&quot;&quot;&quot;</span>
 
     <span class="n">_client</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getattr__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_client</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Creating LSA Client (only once).&quot;</span><span class="p">)</span>
             <span class="bp">cls</span><span class="o">.</span><span class="n">_client</span> <span class="o">=</span> <span class="n">LSAClient</span><span class="p">()</span>
@@ -477,7 +472,7 @@
         <span class="n">client_attr</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">client_attr</span><span class="p">):</span>
 
-            <span class="k">def</span> <span class="nf">hooked</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">hooked</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
                 <span class="n">result</span> <span class="o">=</span> <span class="n">client_attr</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
                 <span class="n">result_is_self</span> <span class="o">=</span> <span class="kc">False</span>
                 <span class="k">try</span><span class="p">:</span>
@@ -498,7 +493,7 @@
 
 <div class="viewcode-block" id="LSA">
 <a class="viewcode-back" href="../../../modules/data_extract.html#pylhc.data_extract.lsa.LSA">[docs]</a>
-<span class="k">class</span> <span class="nc">LSA</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">LSAMeta</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LSA</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">LSAMeta</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Import this class to use LSA like the client without the need to instantiate it.</span>
 <span class="sd">    Disadvantage: It will always use the default Server.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -509,7 +504,7 @@
 <span class="c1"># Helper Functions #############################################################</span>
 
 
-<span class="k">def</span> <span class="nf">_beamprocess_to_dict</span><span class="p">(</span><span class="n">bp</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_beamprocess_to_dict</span><span class="p">(</span><span class="n">bp</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts some fields of the beamprocess (java) to a dictionary.&quot;&quot;&quot;</span>
     <span class="n">bp_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Name&#39;</span><span class="p">:</span> <span class="n">bp</span><span class="o">.</span><span class="n">toString</span><span class="p">(),</span> <span class="s2">&quot;Object&quot;</span><span class="p">:</span> <span class="n">bp</span><span class="p">}</span>
     <span class="n">bp_dict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">getter</span><span class="p">[</span><span class="mi">3</span><span class="p">:]:</span> <span class="nb">str</span><span class="p">(</span><span class="n">bp</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="n">getter</span><span class="p">)())</span>  <span class="c1"># __getattr__ does not exist</span>
@@ -520,7 +515,7 @@
 
 <div class="viewcode-block" id="try_to_acquire_data">
 <a class="viewcode-back" href="../../../modules/data_extract.html#pylhc.data_extract.lsa.try_to_acquire_data">[docs]</a>
-<span class="k">def</span> <span class="nf">try_to_acquire_data</span><span class="p">(</span><span class="n">function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">try_to_acquire_data</span><span class="p">(</span><span class="n">function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Tries to get data from function multiple times.</span>
 <span class="sd">    TODO: Move to omc3 as is also used there in BBQ extraction.</span>
 
@@ -537,12 +532,12 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">function</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">except</span> <span class="n">java</span><span class="o">.</span><span class="n">lang</span><span class="o">.</span><span class="n">IllegalStateException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s2">&quot;Could not acquire data, user probably has no access to NXCALS&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s2">&quot;Could not acquire data, user probably has no access to NXCALS&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
         <span class="k">except</span> <span class="n">JException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>  <span class="c1"># Might be a case for retries</span>
             <span class="k">if</span> <span class="s2">&quot;RetryableException&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">tries</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">retries</span><span class="p">:</span>
                 <span class="n">LOG</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not acquire data! Trial no </span><span class="si">{</span><span class="n">tries</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2"> / </span><span class="si">{</span><span class="n">retries</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                 <span class="k">continue</span>  <span class="c1"># will go to the next iteratoin of the loop, so retry</span>
-            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s2">&quot;Could not acquire data!&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span></div>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s2">&quot;Could not acquire data!&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span></div>
 
 </pre></div>
 

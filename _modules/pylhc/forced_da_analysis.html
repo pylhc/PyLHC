@@ -1,23 +1,21 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pylhc.forced_da_analysis &mdash; pylhc 0.8.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+  <title>pylhc.forced_da_analysis &mdash; pylhc 0.8.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=0db14186" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=486e5634"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=ec16d22d"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -35,9 +33,6 @@
             pylhc
               <img src="../../_static/omc_logo.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                0.8
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -207,48 +202,48 @@
 
 <span class="sd">.. _CarlierForcedDA2019: https://journals.aps.org/prab/pdf/10.1103/PhysRevAccelBeams.22.031002</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
-<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">suppress</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">contextlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">suppress</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tuple</span>
 
-<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
-<span class="kn">import</span> <span class="nn">matplotlib.colors</span> <span class="k">as</span> <span class="nn">mcolors</span>
-<span class="kn">import</span> <span class="nn">matplotlib.dates</span> <span class="k">as</span> <span class="nn">mdates</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">matplotlib.transforms</span> <span class="k">as</span> <span class="nn">mtrans</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">scipy.odr</span>
-<span class="kn">import</span> <span class="nn">scipy.optimize</span>
-<span class="kn">import</span> <span class="nn">tfs</span>
-<span class="kn">from</span> <span class="nn">generic_parser</span> <span class="kn">import</span> <span class="n">EntryPointParameters</span><span class="p">,</span> <span class="n">entrypoint</span>
-<span class="kn">from</span> <span class="nn">generic_parser.entry_datatypes</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mpl</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.colors</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mcolors</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.dates</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mdates</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.transforms</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mtrans</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">scipy.odr</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">scipy.optimize</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tfs</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">generic_parser</span><span class="w"> </span><span class="kn">import</span> <span class="n">EntryPointParameters</span><span class="p">,</span> <span class="n">entrypoint</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">generic_parser.entry_datatypes</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">DictAsString</span><span class="p">,</span>
     <span class="n">FALSE_ITEMS</span><span class="p">,</span>
     <span class="n">TRUE_ITEMS</span><span class="p">,</span>
     <span class="n">get_instance_faker_meta</span><span class="p">,</span>
     <span class="n">get_multi_class</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">generic_parser.tools</span> <span class="kn">import</span> <span class="n">DotDict</span>
-<span class="kn">from</span> <span class="nn">omc3.optics_measurements</span> <span class="kn">import</span> <span class="n">toolbox</span>
-<span class="kn">from</span> <span class="nn">omc3.plotting.utils</span> <span class="kn">import</span> <span class="n">annotations</span><span class="p">,</span> <span class="n">colors</span><span class="p">,</span> <span class="n">lines</span><span class="p">,</span> <span class="n">style</span>
-<span class="kn">from</span> <span class="nn">omc3.tune_analysis.bbq_tools</span> <span class="kn">import</span> <span class="n">clean_outliers_moving_average</span>
-<span class="kn">from</span> <span class="nn">omc3.utils</span> <span class="kn">import</span> <span class="n">logging_tools</span>
-<span class="kn">from</span> <span class="nn">omc3.utils.iotools</span> <span class="kn">import</span> <span class="n">save_config</span>
-<span class="kn">from</span> <span class="nn">omc3.utils.mock</span> <span class="kn">import</span> <span class="n">cern_network_import</span>
-<span class="kn">from</span> <span class="nn">omc3.utils.time_tools</span> <span class="kn">import</span> <span class="n">CERNDatetime</span>
-<span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">DataFrame</span><span class="p">,</span> <span class="n">Series</span>
-<span class="kn">from</span> <span class="nn">pandas.plotting</span> <span class="kn">import</span> <span class="n">register_matplotlib_converters</span>
-<span class="kn">from</span> <span class="nn">tfs</span> <span class="kn">import</span> <span class="n">TfsDataFrame</span>
-<span class="kn">from</span> <span class="nn">tfs.tools</span> <span class="kn">import</span> <span class="n">significant_digits</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">generic_parser.tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">DotDict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">omc3.optics_measurements</span><span class="w"> </span><span class="kn">import</span> <span class="n">toolbox</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">omc3.plotting.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span><span class="p">,</span> <span class="n">colors</span><span class="p">,</span> <span class="n">lines</span><span class="p">,</span> <span class="n">style</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">omc3.tune_analysis.bbq_tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">clean_outliers_moving_average</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">omc3.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">logging_tools</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">omc3.utils.iotools</span><span class="w"> </span><span class="kn">import</span> <span class="n">save_config</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">omc3.utils.mock</span><span class="w"> </span><span class="kn">import</span> <span class="n">cern_network_import</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">omc3.utils.time_tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">CERNDatetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataFrame</span><span class="p">,</span> <span class="n">Series</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pandas.plotting</span><span class="w"> </span><span class="kn">import</span> <span class="n">register_matplotlib_converters</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tfs</span><span class="w"> </span><span class="kn">import</span> <span class="n">TfsDataFrame</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tfs.tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">significant_digits</span>
 
 <span class="n">pytimber</span> <span class="o">=</span> <span class="n">cern_network_import</span><span class="p">(</span><span class="s1">&#39;pytimber&#39;</span><span class="p">)</span>
 <span class="n">PageStore</span> <span class="o">=</span> <span class="n">cern_network_import</span><span class="p">(</span><span class="s1">&#39;pytimber.pagestore.PageStore&#39;</span><span class="p">)</span>
 
 
-<span class="kn">from</span> <span class="nn">pylhc.constants.forced_da_analysis</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pylhc.constants.forced_da_analysis</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">BSRT_EMITTANCE_TO_METER</span><span class="p">,</span>
     <span class="n">BWS_DIRECTIONS</span><span class="p">,</span>
     <span class="n">BWS_EMITTANCE_TO_METER</span><span class="p">,</span>
@@ -293,7 +288,7 @@
     <span class="n">rel_col</span><span class="p">,</span>
     <span class="n">sigma_col</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">pylhc.constants.general</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pylhc.constants.general</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">LHC_NOMINAL_EMITTANCE</span><span class="p">,</span>
     <span class="n">TFS_SUFFIX</span><span class="p">,</span>
     <span class="n">TIME_COLUMN</span><span class="p">,</span>
@@ -307,7 +302,7 @@
 <span class="c1"># Weird Datatypes</span>
 <div class="viewcode-block" id="BoolOrPathOrDataFrame">
 <a class="viewcode-back" href="../../entrypoints/analysis.html#pylhc.forced_da_analysis.BoolOrPathOrDataFrame">[docs]</a>
-<span class="k">class</span> <span class="nc">BoolOrPathOrDataFrame</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BoolOrPathOrDataFrame</span><span class="p">(</span>
     <span class="n">metaclass</span><span class="o">=</span><span class="n">get_instance_faker_meta</span><span class="p">(</span><span class="nb">bool</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">tfs</span><span class="o">.</span><span class="n">TfsDataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -315,7 +310,7 @@
 <span class="sd">    `Dataframe`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;&#39;</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># behavior like dict-parser</span>
 
@@ -333,11 +328,11 @@
 
 
 
-<span class="k">def</span> <span class="nf">_get_pathclass</span><span class="p">(</span><span class="o">*</span><span class="n">other_classes</span><span class="p">):</span>
-    <span class="k">class</span> <span class="nc">SomethingOrPath</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">get_instance_faker_meta</span><span class="p">(</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">other_classes</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">))):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_pathclass</span><span class="p">(</span><span class="o">*</span><span class="n">other_classes</span><span class="p">):</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">SomethingOrPath</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">get_instance_faker_meta</span><span class="p">(</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">other_classes</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">))):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;A class that behaves like a if possible `Path`, `string` or something else.&quot;&quot;&quot;</span>
 
-        <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
                 <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;&#39;</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># Needs to be done for strings in config-files</span>
 
@@ -354,7 +349,7 @@
 <span class="n">PathOrString</span> <span class="o">=</span> <span class="n">_get_pathclass</span><span class="p">()</span>
 
 
-<span class="k">def</span> <span class="nf">get_params</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_params</span><span class="p">():</span>
     <span class="k">return</span> <span class="n">EntryPointParameters</span><span class="p">(</span>
         <span class="n">kick_directory</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
             <span class="n">flags</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;-k&quot;</span><span class="p">,</span> <span class="s2">&quot;--kickdir&quot;</span><span class="p">],</span>
@@ -481,7 +476,7 @@
 
 
 <span class="nd">@entrypoint</span><span class="p">(</span><span class="n">get_params</span><span class="p">(),</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">opt</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">opt</span><span class="p">):</span>
     <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Starting Forced DA analysis.&quot;</span><span class="p">)</span>
     <span class="n">_log_opt</span><span class="p">(</span><span class="n">opt</span><span class="p">)</span>
 
@@ -546,7 +541,7 @@
 <span class="c1"># Helper ---</span>
 
 
-<span class="k">def</span> <span class="nf">_log_opt</span><span class="p">(</span><span class="n">opt</span><span class="p">:</span> <span class="n">DotDict</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_log_opt</span><span class="p">(</span><span class="n">opt</span><span class="p">:</span> <span class="n">DotDict</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Show options in log.&quot;&quot;&quot;</span>
     <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Performing ForcedDA Analysis for:&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">opt</span><span class="o">.</span><span class="n">fill</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -557,7 +552,7 @@
     <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Analysis Directory: &#39;</span><span class="si">{</span><span class="n">opt</span><span class="o">.</span><span class="n">kick_directory</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_write_tfs</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_write_tfs</span><span class="p">(</span>
     <span class="n">out_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
     <span class="n">plane</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">kick_df</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">,</span>
@@ -580,7 +575,7 @@
         <span class="n">LOG</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot write into directory: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">out_dir</span><span class="p">)</span><span class="si">}</span><span class="s2"> &quot;</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_check_all_times_in</span><span class="p">(</span><span class="n">series</span><span class="p">:</span> <span class="n">Series</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="n">CERNDatetime</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="n">CERNDatetime</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_check_all_times_in</span><span class="p">(</span><span class="n">series</span><span class="p">:</span> <span class="n">Series</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="n">CERNDatetime</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="n">CERNDatetime</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if all times in series are between start and end.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">series</span> <span class="k">if</span> <span class="n">s</span> <span class="o">&lt;</span> <span class="n">start</span> <span class="ow">or</span> <span class="n">s</span> <span class="o">&gt;</span> <span class="n">end</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -589,7 +584,7 @@
         <span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_convert_time_index</span><span class="p">(</span><span class="n">list_</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_convert_time_index</span><span class="p">(</span><span class="n">list_</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Tries to convert time index to cerntime, first from datetime, then string, then timestamp.&quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">index_convert</span> <span class="ow">in</span> <span class="p">(</span>
         <span class="n">_datetime_to_cerntime_index</span><span class="p">,</span>
@@ -604,19 +599,19 @@
     <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_string_to_cerntime_index</span><span class="p">(</span><span class="n">list_</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_string_to_cerntime_index</span><span class="p">(</span><span class="n">list_</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">((</span><span class="n">CERNDatetime</span><span class="o">.</span><span class="n">from_cern_utc_string</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">list_</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_timestamp_to_cerntime_index</span><span class="p">(</span><span class="n">list_</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_timestamp_to_cerntime_index</span><span class="p">(</span><span class="n">list_</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">((</span><span class="n">CERNDatetime</span><span class="o">.</span><span class="n">from_timestamp</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">list_</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_datetime_to_cerntime_index</span><span class="p">(</span><span class="n">list_</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_datetime_to_cerntime_index</span><span class="p">(</span><span class="n">list_</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">((</span><span class="n">CERNDatetime</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">list_</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_drop_duplicate_indices</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_drop_duplicate_indices</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
     <span class="n">duplicate_mask</span> <span class="o">=</span> <span class="p">[</span><span class="kc">True</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span>
         <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">!=</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">idx</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">))</span>
     <span class="p">]</span>
@@ -626,7 +621,7 @@
 <span class="c1"># TFS Data Loading -------------------------------------------------------------</span>
 
 
-<span class="k">def</span> <span class="nf">_get_dataframes</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_dataframes</span><span class="p">(</span>
     <span class="n">kick_times</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">,</span> <span class="n">opt</span><span class="p">:</span> <span class="n">DotDict</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">TfsDataFrame</span><span class="p">,</span> <span class="n">TfsDataFrame</span><span class="p">,</span> <span class="n">TfsDataFrame</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Gets the intensity and emittance dataframes from either input, files or (timber) database.&quot;&quot;&quot;</span>
@@ -665,7 +660,7 @@
     <span class="k">return</span> <span class="n">intensity_df</span><span class="p">,</span> <span class="n">emittance_df</span><span class="p">,</span> <span class="n">emittance_bws_df</span>
 
 
-<span class="k">def</span> <span class="nf">_read_tfs</span><span class="p">(</span><span class="n">tfs_file_or_path</span><span class="p">,</span> <span class="n">timespan</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_read_tfs</span><span class="p">(</span><span class="n">tfs_file_or_path</span><span class="p">,</span> <span class="n">timespan</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Read previously gathered data (see :meth:`pylhc.forced_da_analysis._write_tfs`).&quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">tfs_df</span> <span class="o">=</span> <span class="n">tfs</span><span class="o">.</span><span class="n">read_tfs</span><span class="p">(</span><span class="n">tfs_file_or_path</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">TIME_COLUMN</span><span class="p">)</span>
@@ -677,7 +672,7 @@
     <span class="k">return</span> <span class="n">tfs_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="nb">slice</span><span class="p">(</span><span class="o">*</span><span class="n">timespan</span><span class="p">),</span> <span class="p">:]</span>
 
 
-<span class="k">def</span> <span class="nf">_filter_emittance_data</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">planes</span><span class="p">,</span> <span class="n">window_length</span><span class="p">,</span> <span class="n">limit</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_filter_emittance_data</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">planes</span><span class="p">,</span> <span class="n">window_length</span><span class="p">,</span> <span class="n">limit</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Cleans emittance data via outlier filter and moving average.&quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">plane</span> <span class="ow">in</span> <span class="n">planes</span><span class="p">:</span>
         <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Filtering emittance data in plane </span><span class="si">{</span><span class="n">plane</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
@@ -713,7 +708,7 @@
 <span class="c1"># Timber Data ------------------------------------------------------------------</span>
 
 
-<span class="k">def</span> <span class="nf">_get_db</span><span class="p">(</span><span class="n">opt</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_db</span><span class="p">(</span><span class="n">opt</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the database either presaved or from timber.&quot;&quot;&quot;</span>
     <span class="n">db</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -753,14 +748,14 @@
     <span class="k">return</span> <span class="n">db</span>
 
 
-<span class="k">def</span> <span class="nf">_get_fill_times</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">fill</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_fill_times</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">fill</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract Fill times from database.&quot;&quot;&quot;</span>
     <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Getting Timespan from fill </span><span class="si">{</span><span class="n">fill</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="n">filldata</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">getLHCFillData</span><span class="p">(</span><span class="n">fill</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">filldata</span><span class="p">[</span><span class="s2">&quot;startTime&quot;</span><span class="p">],</span> <span class="n">filldata</span><span class="p">[</span><span class="s2">&quot;endTime&quot;</span><span class="p">]</span>
 
 
-<span class="k">def</span> <span class="nf">_get_bctrf_beam_intensity_from_timber</span><span class="p">(</span><span class="n">beam</span><span class="p">,</span> <span class="n">db</span><span class="p">,</span> <span class="n">timespan</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_bctrf_beam_intensity_from_timber</span><span class="p">(</span><span class="n">beam</span><span class="p">,</span> <span class="n">db</span><span class="p">,</span> <span class="n">timespan</span><span class="p">):</span>
     <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Getting beam intensity from bctfr for beam </span><span class="si">{</span><span class="n">beam</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
     <span class="n">intensity_key</span> <span class="o">=</span> <span class="n">INTENSITY_KEY</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">beam</span><span class="o">=</span><span class="n">beam</span><span class="p">)</span>
     <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Key: </span><span class="si">{</span><span class="n">intensity_key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -774,7 +769,7 @@
     <span class="k">return</span> <span class="n">df</span>
 
 
-<span class="k">def</span> <span class="nf">_get_bsrt_bunch_emittances_from_timber</span><span class="p">(</span><span class="n">beam</span><span class="p">,</span> <span class="n">planes</span><span class="p">,</span> <span class="n">db</span><span class="p">,</span> <span class="n">timespan</span><span class="p">,</span> <span class="n">key_type</span><span class="p">,</span> <span class="n">nominal_emittance</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_bsrt_bunch_emittances_from_timber</span><span class="p">(</span><span class="n">beam</span><span class="p">,</span> <span class="n">planes</span><span class="p">,</span> <span class="n">db</span><span class="p">,</span> <span class="n">timespan</span><span class="p">,</span> <span class="n">key_type</span><span class="p">,</span> <span class="n">nominal_emittance</span><span class="p">):</span>
     <span class="n">dfs</span> <span class="o">=</span> <span class="p">{</span><span class="n">p</span><span class="p">:</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">planes</span><span class="p">}</span>
     <span class="k">for</span> <span class="n">plane</span> <span class="ow">in</span> <span class="n">planes</span><span class="p">:</span>
         <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Getting emittance from BSRT for beam </span><span class="si">{</span><span class="n">beam</span><span class="si">}</span><span class="s2">  and plane </span><span class="si">{</span><span class="n">plane</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
@@ -817,7 +812,7 @@
     <span class="k">return</span> <span class="n">df</span>
 
 
-<span class="k">def</span> <span class="nf">_get_bws_emittances_from_timber</span><span class="p">(</span><span class="n">beam</span><span class="p">,</span> <span class="n">planes</span><span class="p">,</span> <span class="n">db</span><span class="p">,</span> <span class="n">timespan</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_bws_emittances_from_timber</span><span class="p">(</span><span class="n">beam</span><span class="p">,</span> <span class="n">planes</span><span class="p">,</span> <span class="n">db</span><span class="p">,</span> <span class="n">timespan</span><span class="p">):</span>
     <span class="n">dfs</span> <span class="o">=</span> <span class="p">{</span><span class="n">p</span><span class="p">:</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">planes</span><span class="p">}</span>
     <span class="k">for</span> <span class="n">plane</span> <span class="ow">in</span> <span class="n">planes</span><span class="p">:</span>
         <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Getting emittance from BWS for beam </span><span class="si">{</span><span class="n">beam</span><span class="si">}</span><span class="s2"> and plane </span><span class="si">{</span><span class="n">plane</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
@@ -857,8 +852,8 @@
 <span class="c1"># Kick Data --------------------------------------------------------------------</span>
 
 
-<span class="k">def</span> <span class="nf">_get_kick_df</span><span class="p">(</span><span class="n">kick_dir</span><span class="p">,</span> <span class="n">plane</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">column_action_error</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_kick_df</span><span class="p">(</span><span class="n">kick_dir</span><span class="p">,</span> <span class="n">plane</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">column_action_error</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">err_col</span><span class="p">(</span><span class="n">column_action</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
 
     <span class="k">try</span><span class="p">:</span>
@@ -871,7 +866,7 @@
     <span class="k">return</span> <span class="n">df</span><span class="p">[[</span><span class="n">column_action</span><span class="p">(</span><span class="n">plane</span><span class="p">),</span> <span class="n">column_action_error</span><span class="p">(</span><span class="n">plane</span><span class="p">)]]</span>
 
 
-<span class="k">def</span> <span class="nf">_get_old_kick_file</span><span class="p">(</span><span class="n">kick_dir</span><span class="p">,</span> <span class="n">plane</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_old_kick_file</span><span class="p">(</span><span class="n">kick_dir</span><span class="p">,</span> <span class="n">plane</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Kick files from ``Beta-Beat.src``.&quot;&quot;&quot;</span>
     <span class="n">path</span> <span class="o">=</span> <span class="n">kick_dir</span> <span class="o">/</span> <span class="s2">&quot;getkickac.out&quot;</span>
     <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Reading kickfile &#39;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;.&#39;&quot;</span><span class="p">)</span>
@@ -894,7 +889,7 @@
     <span class="k">return</span> <span class="n">df</span>
 
 
-<span class="k">def</span> <span class="nf">_get_new_kick_file</span><span class="p">(</span><span class="n">kick_dir</span><span class="p">,</span> <span class="n">planes</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_new_kick_file</span><span class="p">(</span><span class="n">kick_dir</span><span class="p">,</span> <span class="n">planes</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Kick files from ``omc3``.&quot;&quot;&quot;</span>
     <span class="n">dfs</span> <span class="o">=</span> <span class="p">{</span><span class="n">p</span><span class="p">:</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">planes</span><span class="p">}</span>
     <span class="k">for</span> <span class="n">plane</span> <span class="ow">in</span> <span class="n">planes</span><span class="p">:</span>
@@ -906,7 +901,7 @@
     <span class="k">return</span> <span class="n">_merge_df_planes</span><span class="p">(</span><span class="n">dfs</span><span class="p">,</span> <span class="n">planes</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_get_output_dir</span><span class="p">(</span><span class="n">kick_directory</span><span class="p">,</span> <span class="n">output_directory</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_output_dir</span><span class="p">(</span><span class="n">kick_directory</span><span class="p">,</span> <span class="n">output_directory</span><span class="p">):</span>
     <span class="n">kick_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">kick_directory</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">output_directory</span><span class="p">:</span>
         <span class="n">output_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_directory</span><span class="p">)</span>
@@ -926,7 +921,7 @@
 <span class="c1"># Intensity at Kicks -----------------------------------------------------------</span>
 
 
-<span class="k">def</span> <span class="nf">_add_intensity_and_losses_to_kicks</span><span class="p">(</span><span class="n">kick_df</span><span class="p">,</span> <span class="n">intensity_df</span><span class="p">,</span> <span class="n">time_before</span><span class="p">,</span> <span class="n">time_after</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_add_intensity_and_losses_to_kicks</span><span class="p">(</span><span class="n">kick_df</span><span class="p">,</span> <span class="n">intensity_df</span><span class="p">,</span> <span class="n">time_before</span><span class="p">,</span> <span class="n">time_after</span><span class="p">):</span>
     <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Calculating intensity and losses for the kicks.&quot;</span><span class="p">)</span>
     <span class="n">col_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">INTENSITY_BEFORE</span><span class="p">,</span> <span class="n">INTENSITY_AFTER</span><span class="p">,</span> <span class="n">INTENSITY_LOSSES</span><span class="p">]</span>
     <span class="n">new_columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">col_list</span> <span class="o">+</span> <span class="p">[</span><span class="n">err_col</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">col_list</span><span class="p">]]</span>
@@ -936,7 +931,7 @@
     <span class="k">return</span> <span class="n">kick_df</span>
 
 
-<span class="k">def</span> <span class="nf">_get_intensities_around_kicks</span><span class="p">(</span><span class="n">kick_df</span><span class="p">,</span> <span class="n">intensity_df</span><span class="p">,</span> <span class="n">time_before</span><span class="p">,</span> <span class="n">time_after</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_intensities_around_kicks</span><span class="p">(</span><span class="n">kick_df</span><span class="p">,</span> <span class="n">intensity_df</span><span class="p">,</span> <span class="n">time_before</span><span class="p">,</span> <span class="n">time_after</span><span class="p">):</span>
     <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Calculating beam intensity before and after kicks.&quot;</span><span class="p">)</span>
     <span class="c1"># input signs and order does not matter</span>
     <span class="n">time_before</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">time_before</span><span class="p">)</span>
@@ -958,7 +953,7 @@
     <span class="k">return</span> <span class="n">kick_df</span>
 
 
-<span class="k">def</span> <span class="nf">_calculate_intensity_losses_at_kicks</span><span class="p">(</span><span class="n">kick_df</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_calculate_intensity_losses_at_kicks</span><span class="p">(</span><span class="n">kick_df</span><span class="p">):</span>
     <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Calculating intensity losses.&quot;</span><span class="p">)</span>
     <span class="c1"># absolute losses</span>
     <span class="n">kick_df</span><span class="p">[</span><span class="n">INTENSITY_LOSSES</span><span class="p">]</span> <span class="o">=</span> <span class="n">kick_df</span><span class="p">[</span><span class="n">INTENSITY_BEFORE</span><span class="p">]</span> <span class="o">-</span> <span class="n">kick_df</span><span class="p">[</span><span class="n">INTENSITY_AFTER</span><span class="p">]</span>
@@ -981,7 +976,7 @@
 <span class="c1"># Emittance at Kicks -----------------------------------------------------------</span>
 
 
-<span class="k">def</span> <span class="nf">_add_emittance_to_kicks</span><span class="p">(</span><span class="n">plane</span><span class="p">,</span> <span class="n">energy</span><span class="p">,</span> <span class="n">kick_df</span><span class="p">,</span> <span class="n">emittance_df</span><span class="p">,</span> <span class="n">nominal</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_add_emittance_to_kicks</span><span class="p">(</span><span class="n">plane</span><span class="p">,</span> <span class="n">energy</span><span class="p">,</span> <span class="n">kick_df</span><span class="p">,</span> <span class="n">emittance_df</span><span class="p">,</span> <span class="n">nominal</span><span class="p">):</span>
     <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Retrieving normalized emittance at the kicks.&quot;</span><span class="p">)</span>
     <span class="n">kick_df</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="n">HEADER_ENERGY</span><span class="p">]</span> <span class="o">=</span> <span class="n">energy</span>
     <span class="n">kick_df</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="n">HEADER_BSRT_ROLLING_WINDOW</span><span class="p">]</span> <span class="o">=</span> <span class="n">ROLLING_AVERAGE_WINDOW</span>
@@ -1013,7 +1008,7 @@
 
 <div class="viewcode-block" id="fun_exp_decay">
 <a class="viewcode-back" href="../../entrypoints/analysis.html#pylhc.forced_da_analysis.fun_exp_decay">[docs]</a>
-<span class="k">def</span> <span class="nf">fun_exp_decay</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>  <span class="c1"># fit and plot</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">fun_exp_decay</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>  <span class="c1"># fit and plot</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;sp = DA_J, x[0] = action (2J res), x[1] = emittance&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">p</span> <span class="o">-</span> <span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span> <span class="o">/</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></div>
 
@@ -1021,7 +1016,7 @@
 
 <div class="viewcode-block" id="fun_exp_sigma">
 <a class="viewcode-back" href="../../entrypoints/analysis.html#pylhc.forced_da_analysis.fun_exp_sigma">[docs]</a>
-<span class="k">def</span> <span class="nf">fun_exp_sigma</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>  <span class="c1"># only used for plotting</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">fun_exp_sigma</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>  <span class="c1"># only used for plotting</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;p = DA_sigma, x = action (J_sigma)&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">p</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">x</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span></div>
 
@@ -1029,7 +1024,7 @@
 
 <div class="viewcode-block" id="fun_linear">
 <a class="viewcode-back" href="../../entrypoints/analysis.html#pylhc.forced_da_analysis.fun_linear">[docs]</a>
-<span class="k">def</span> <span class="nf">fun_linear</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>  <span class="c1"># fit and plot</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">fun_linear</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>  <span class="c1"># fit and plot</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;p = DA_J, x = action (2J res)&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="mf">0.5</span> <span class="o">-</span> <span class="n">p</span></div>
 
@@ -1037,13 +1032,13 @@
 
 <div class="viewcode-block" id="swap_fun_parameters">
 <a class="viewcode-back" href="../../entrypoints/analysis.html#pylhc.forced_da_analysis.swap_fun_parameters">[docs]</a>
-<span class="k">def</span> <span class="nf">swap_fun_parameters</span><span class="p">(</span><span class="n">fun</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">swap_fun_parameters</span><span class="p">(</span><span class="n">fun</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Parameter swapped for Curvefit.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">p</span><span class="p">:</span> <span class="n">fun</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span></div>
 
 
 
-<span class="k">def</span> <span class="nf">_do_fit</span><span class="p">(</span><span class="n">plane</span><span class="p">,</span> <span class="n">kick_df</span><span class="p">,</span> <span class="n">fit_type</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_do_fit</span><span class="p">(</span><span class="n">plane</span><span class="p">,</span> <span class="n">kick_df</span><span class="p">,</span> <span class="n">fit_type</span><span class="p">):</span>
     <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Fitting forced da to exponential. &quot;</span><span class="p">)</span>
     <span class="n">action</span><span class="p">,</span> <span class="n">emittance</span><span class="p">,</span> <span class="n">rel_losses</span> <span class="o">=</span> <span class="n">_get_fit_data</span><span class="p">(</span><span class="n">kick_df</span><span class="p">,</span> <span class="n">plane</span><span class="p">)</span>
     <span class="n">init_guess</span> <span class="o">=</span> <span class="p">[</span><span class="n">INITIAL_DA_FIT</span> <span class="o">*</span> <span class="n">kick_df</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="n">header_nominal_emittance</span><span class="p">(</span><span class="n">plane</span><span class="p">)]]</span>
@@ -1068,7 +1063,7 @@
     <span class="k">return</span> <span class="n">kick_df</span>
 
 
-<span class="k">def</span> <span class="nf">_get_fit_data</span><span class="p">(</span><span class="n">kick_df</span><span class="p">,</span> <span class="n">plane</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_fit_data</span><span class="p">(</span><span class="n">kick_df</span><span class="p">,</span> <span class="n">plane</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Extracts necessary data from ``kick-df``. Returns tri-tuple of tuples (data, std).&quot;&quot;&quot;</span>
     <span class="n">col_action</span> <span class="o">=</span> <span class="n">column_action</span><span class="p">(</span><span class="n">plane</span><span class="p">)</span>
     <span class="n">col_emittance</span> <span class="o">=</span> <span class="n">column_emittance</span><span class="p">(</span><span class="n">plane</span><span class="p">)</span>
@@ -1081,7 +1076,7 @@
     <span class="k">return</span> <span class="n">action</span><span class="p">,</span> <span class="n">emittance</span><span class="p">,</span> <span class="n">rel_losses</span>
 
 
-<span class="k">def</span> <span class="nf">_exponential_fit_parameters</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="n">emittance</span><span class="p">,</span> <span class="n">rel_losses</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_exponential_fit_parameters</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="n">emittance</span><span class="p">,</span> <span class="n">rel_losses</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns exponential fit function and parameters. All inputs are tuples of (data, std).&quot;&quot;&quot;</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">action</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">emittance</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">y</span> <span class="o">=</span> <span class="n">rel_losses</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -1091,7 +1086,7 @@
     <span class="k">return</span> <span class="n">fun_exp_decay</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sx</span><span class="p">,</span> <span class="n">sy</span>
 
 
-<span class="k">def</span> <span class="nf">_linear_fit_parameters</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="n">emittance</span><span class="p">,</span> <span class="n">rel_losses</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_linear_fit_parameters</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="n">emittance</span><span class="p">,</span> <span class="n">rel_losses</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns linear fit function and parameters. All inputs are tuples of (data, std).&quot;&quot;&quot;</span>
     <span class="n">log_losses</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">rel_losses</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
@@ -1105,14 +1100,14 @@
     <span class="k">return</span> <span class="n">fun_linear</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sx</span><span class="p">,</span> <span class="n">sy</span>
 
 
-<span class="k">def</span> <span class="nf">_fit_curve</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">init</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_fit_curve</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">init</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Initial curve fit, without errors.&quot;&quot;&quot;</span>
     <span class="n">fit</span><span class="p">,</span> <span class="n">cov</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="n">init</span><span class="p">,</span> <span class="n">maxfev</span><span class="o">=</span><span class="n">MAX_CURVEFIT_FEV</span><span class="p">)</span>
     <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Initial DA fit: </span><span class="si">{</span><span class="n">fit</span><span class="si">}</span><span class="s2"> with cov </span><span class="si">{</span><span class="n">cov</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">fit</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">cov</span><span class="p">))</span>
 
 
-<span class="k">def</span> <span class="nf">_fit_odr</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sx</span><span class="p">,</span> <span class="n">sy</span><span class="p">,</span> <span class="n">init</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_fit_odr</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sx</span><span class="p">,</span> <span class="n">sy</span><span class="p">,</span> <span class="n">init</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;ODR Fit (includes errors).&quot;&quot;&quot;</span>
     <span class="c1"># fill zero errors with the minimum error - otherwise fit will not work</span>
     <span class="n">fit_model_sigma</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">odr</span><span class="o">.</span><span class="n">Model</span><span class="p">(</span><span class="n">fun</span><span class="p">)</span>
@@ -1124,7 +1119,7 @@
     <span class="k">return</span> <span class="n">odr_output</span>
 
 
-<span class="k">def</span> <span class="nf">_no_nonzero_errors</span><span class="p">(</span><span class="n">series</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_no_nonzero_errors</span><span class="p">(</span><span class="n">series</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Removes all zero-erros and replaces them with minimum errors in set.&quot;&quot;&quot;</span>
     <span class="n">series</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="n">nonzero</span> <span class="o">=</span> <span class="n">series</span><span class="p">[</span><span class="n">series</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span>
@@ -1134,7 +1129,7 @@
     <span class="k">return</span> <span class="n">series</span>
 
 
-<span class="k">def</span> <span class="nf">_convert_to_sigmas</span><span class="p">(</span><span class="n">plane</span><span class="p">,</span> <span class="n">kick_df</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_convert_to_sigmas</span><span class="p">(</span><span class="n">plane</span><span class="p">,</span> <span class="n">kick_df</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts the DA and the Action into Sigma-Units.&quot;&quot;&quot;</span>
     <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Calculating action and da in sigmas.&quot;</span><span class="p">)</span>
     <span class="n">nominal_emittance</span> <span class="o">=</span> <span class="n">kick_df</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="n">header_nominal_emittance</span><span class="p">(</span><span class="n">plane</span><span class="p">)]</span>
@@ -1174,7 +1169,7 @@
 <span class="c1"># Plotting ---------------------------------------------------------------------</span>
 
 
-<span class="k">def</span> <span class="nf">_plot_intensity</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">beam</span><span class="p">,</span> <span class="n">plane</span><span class="p">,</span> <span class="n">kick_df</span><span class="p">,</span> <span class="n">intensity_df</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_plot_intensity</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">beam</span><span class="p">,</span> <span class="n">plane</span><span class="p">,</span> <span class="n">kick_df</span><span class="p">,</span> <span class="n">intensity_df</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plots beam intensity. For losses, the absolute values are used and then normalized</span>
 <span class="sd">    to the Intensity before the kicks, to get the percentage relative to that (global) value.</span>
@@ -1255,7 +1250,7 @@
     <span class="k">return</span> <span class="n">fig</span>
 
 
-<span class="k">def</span> <span class="nf">_plot_emittances</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">beam</span><span class="p">,</span> <span class="n">plane</span><span class="p">,</span> <span class="n">emittance_df</span><span class="p">,</span> <span class="n">emittance_bws_df</span><span class="p">,</span> <span class="n">kick_times</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_plot_emittances</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">beam</span><span class="p">,</span> <span class="n">plane</span><span class="p">,</span> <span class="n">emittance_df</span><span class="p">,</span> <span class="n">emittance_bws_df</span><span class="p">,</span> <span class="n">kick_times</span><span class="p">):</span>
     <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Plotting normalized emittances&quot;</span><span class="p">)</span>
     <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">10.24</span><span class="p">,</span> <span class="mf">7.68</span><span class="p">))</span>
 
@@ -1313,7 +1308,7 @@
     <span class="k">return</span> <span class="n">fig</span>
 
 
-<span class="k">def</span> <span class="nf">_plot_da_fit</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">beam</span><span class="p">,</span> <span class="n">plane</span><span class="p">,</span> <span class="n">k_df</span><span class="p">,</span> <span class="n">fit_type</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_plot_da_fit</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">beam</span><span class="p">,</span> <span class="n">plane</span><span class="p">,</span> <span class="n">k_df</span><span class="p">,</span> <span class="n">fit_type</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot the Forced Dynamic Aperture fit.</span>
 <span class="sd">    (I do not like the complexity of this function. jdilly).</span>
@@ -1481,7 +1476,7 @@
     <span class="k">return</span> <span class="n">fig</span>
 
 
-<span class="k">def</span> <span class="nf">_get_fit_plot_data</span><span class="p">(</span><span class="n">da</span><span class="p">,</span> <span class="n">da_err</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">fit_type</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_fit_plot_data</span><span class="p">(</span><span class="n">da</span><span class="p">,</span> <span class="n">da_err</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">fit_type</span><span class="p">):</span>
     <span class="n">fit_fun</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;exponential&quot;</span><span class="p">:</span> <span class="n">fun_exp_decay</span><span class="p">,</span> <span class="s2">&quot;linear&quot;</span><span class="p">:</span> <span class="n">fun_linear</span><span class="p">}[</span><span class="n">fit_type</span><span class="p">]</span>
     <span class="n">multiplier</span> <span class="o">=</span> <span class="mi">100</span>  <span class="c1"># for percentages</span>
     <span class="k">if</span> <span class="n">fit_type</span> <span class="o">==</span> <span class="s2">&quot;linear&quot;</span><span class="p">:</span>
@@ -1497,14 +1492,14 @@
 
 <div class="viewcode-block" id="get_approximate_index">
 <a class="viewcode-back" href="../../entrypoints/analysis.html#pylhc.forced_da_analysis.get_approximate_index">[docs]</a>
-<span class="k">def</span> <span class="nf">get_approximate_index</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_approximate_index</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Emulates the `get_loc` from pandas&lt;2.0, i.e.</span>
 <span class="sd">    single index input and output. &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">get_indexer</span><span class="p">([</span><span class="n">item</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div>
 
 
 
-<span class="k">def</span> <span class="nf">_plot_kicks_and_scale_x</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">kick_times</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_plot_kicks_and_scale_x</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">kick_times</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
     <span class="n">lines</span><span class="o">.</span><span class="n">plot_vertical_lines_fast</span><span class="p">(</span>
         <span class="n">ax</span><span class="p">,</span> <span class="n">kick_times</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;grey&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Kicks&quot;</span>
     <span class="p">)</span>
@@ -1522,14 +1517,14 @@
     <span class="n">annotations</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Date: </span><span class="si">{</span><span class="n">first_kick</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="s2">&quot;left&quot;</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_merge_df_planes</span><span class="p">(</span><span class="n">df_dict</span><span class="p">,</span> <span class="n">planes</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_merge_df_planes</span><span class="p">(</span><span class="n">df_dict</span><span class="p">,</span> <span class="n">planes</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;In case planes == &#39;XY&#39; merge the ``df_dict`` into one dataframe..&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">planes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">df_dict</span><span class="p">[</span><span class="n">planes</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="o">*</span><span class="n">df_dict</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;inner&quot;</span><span class="p">,</span> <span class="n">left_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">right_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_maybe_add_sum_for_planes</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">planes</span><span class="p">,</span> <span class="n">col_fun</span><span class="p">,</span> <span class="n">col_err_fun</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_maybe_add_sum_for_planes</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">planes</span><span class="p">,</span> <span class="n">col_fun</span><span class="p">,</span> <span class="n">col_err_fun</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;In case planes == &#39;XY&#39; add the two plane columns and their errors.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">planes</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">col_err_fun</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -1547,7 +1542,7 @@
     <span class="k">return</span> <span class="n">df</span>
 
 
-<span class="k">def</span> <span class="nf">_date2num</span><span class="p">(</span><span class="n">times</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_date2num</span><span class="p">(</span><span class="n">times</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert CERNDatetime to mpl-number (days).</span>
 
@@ -1566,7 +1561,7 @@
     <span class="k">return</span> <span class="n">mdates</span><span class="o">.</span><span class="n">date2num</span><span class="p">(</span><span class="n">times</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_save_fig</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">plane</span><span class="p">,</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ptype</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_save_fig</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">plane</span><span class="p">,</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ptype</span><span class="p">):</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">ftype</span> <span class="ow">in</span> <span class="n">PLOT_FILETYPES</span><span class="p">:</span>
             <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">outfile_plot</span><span class="p">(</span><span class="n">ptype</span><span class="p">,</span> <span class="n">plane</span><span class="p">,</span> <span class="n">ftype</span><span class="p">))</span>

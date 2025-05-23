@@ -1,23 +1,21 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pylhc.data_extract.timber &mdash; pylhc 0.8.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+  <title>pylhc.data_extract.timber &mdash; pylhc 0.8.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=0db14186" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=486e5634"></script>
-        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=ec16d22d"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -35,9 +33,6 @@
             pylhc
               <img src="../../../_static/omc_logo.svg" class="logo" alt="Logo"/>
           </a>
-              <div class="version">
-                0.8
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -124,10 +119,10 @@
 
 <span class="sd">This module provides useful functions to conveniently wrap the functionality of ``pytimber``.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 
-<span class="kn">from</span> <span class="nn">omc3.utils.mock</span> <span class="kn">import</span> <span class="n">cern_network_import</span>
-<span class="kn">from</span> <span class="nn">omc3.utils.time_tools</span> <span class="kn">import</span> <span class="n">AccDatetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">omc3.utils.mock</span><span class="w"> </span><span class="kn">import</span> <span class="n">cern_network_import</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">omc3.utils.time_tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">AccDatetime</span>
 
 <span class="n">pytimber</span> <span class="o">=</span> <span class="n">cern_network_import</span><span class="p">(</span><span class="s2">&quot;pytimber&quot;</span><span class="p">)</span>
 
@@ -136,7 +131,7 @@
 
 <div class="viewcode-block" id="find_exact_time_for_beamprocess">
 <a class="viewcode-back" href="../../../modules/data_extract.html#pylhc.data_extract.timber.find_exact_time_for_beamprocess">[docs]</a>
-<span class="k">def</span> <span class="nf">find_exact_time_for_beamprocess</span><span class="p">(</span><span class="n">acc_time</span><span class="p">:</span> <span class="n">AccDatetime</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AccDatetime</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_exact_time_for_beamprocess</span><span class="p">(</span><span class="n">acc_time</span><span class="p">:</span> <span class="n">AccDatetime</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AccDatetime</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Finds the last entry where HX:SRMP-POW equals 123. Which is, according to the online model</span>
 <span class="sd">    KnobExtractor, the timing event for SQUEEZE or RAMP.</span>
