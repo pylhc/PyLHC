@@ -194,7 +194,7 @@ def _get_timestamp_from_name(name, formatstring):
 def _check_and_fix_entries(entry):
     # pd.to_csv does not handle np.array as entries nicely, converting to list circumvents this
     for key, val in entry.items():
-        if isinstance(val, (np.ndarray, tuple)):
+        if isinstance(val, (np.ndarray | tuple)):
             entry[key] = list(val)
         if np.array(val).size == 0:
             entry[key] = np.nan
