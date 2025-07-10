@@ -61,7 +61,7 @@ def _get_beta_fit(
     beta_phase_err = beta_phase_tfs.reindex(bpms)[f"{ERR}{BETA}{plane}"]
 
     # Get the rough IP position and beta star for the initial values
-    ip_position = (positions[-1] - positions[0]) / 2
+    ip_position = (positions.iloc[-1] - positions.iloc[0]) / 2
     initial_values = (BETA_STAR_ESTIMATION, ip_position)
 
     # Get the curve fit for the expected parabola
