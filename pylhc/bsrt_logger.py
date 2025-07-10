@@ -94,12 +94,9 @@ if __name__ == "__main__":
             j += 1
             f1name = "data_BSRT_B1_" + B1_IMGtime_st + ".dat"
             f2name = "data_BSRT_B2_" + B2_IMGtime_st + ".dat"
-            f1 = open(f1name, "wb")
-            f2 = open(f2name, "wb")
-            pickle.dump(all_b1_data, f1)
-            pickle.dump(all_b2_data, f2)
-            f1.close()
-            f2.close()
+            with open(f1name, "wb") as f1, open(f2name, "wb") as f2:
+                pickle.dump(all_b1_data, f1)
+                pickle.dump(all_b2_data, f2)
             os.system("gzip " + f1name)
             os.system("gzip " + f2name)
             t = 0

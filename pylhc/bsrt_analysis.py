@@ -204,7 +204,8 @@ def _check_and_fix_entries(entry):
 def _load_pickled_data(opt, files_df):
     merged_df = pd.DataFrame()
     for bsrtfile in files_df["FILES"]:
-        data = pickle.load(gzip.open(bsrtfile, "rb"))
+        with gzip.open(bsrtfile, "rb") as f:
+            data = pickle.load(f)
         new_df = pd.DataFrame.from_records([_check_and_fix_entries(entry) for entry in data])
         merged_df = pd.concat([merged_df, new_df], axis="index", ignore_index=True)
 
