@@ -111,7 +111,7 @@ def main(opt):
 
     # Fill NaN with 1 because of missing BPMs and that fit cannot be done everywhere
     for plane in factors:
-        factors[plane] = factors[plane].fillna(1)
+        factors[plane] = factors[plane].infer_objects().fillna(1)
     LOG.debug("".join([f"\nPlane {plane}:\n{factors[plane]}" for plane in factors]))
 
     # Write the TFS file to the desired output directory
