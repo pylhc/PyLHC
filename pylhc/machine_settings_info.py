@@ -397,7 +397,7 @@ def write_trim_histories(
         bp_info (DotDict): BeamProcess Info Dictionary
         optics_info (DotDict): Optics Info Dictionary
     """
-    AccDT = AcceleratorDatetime[accel]
+    AccDT = AcceleratorDatetime[accel]  # noqa: N806
 
     # Create headers with basic info ---
     headers = OrderedDict([("Hint:", "All times are given in UTC."), (const.head_accel, accel)])
