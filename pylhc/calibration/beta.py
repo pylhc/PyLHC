@@ -217,7 +217,7 @@ def get_calibration_factors_from_beta(
     """
     LOG.info("Computing the calibration factors via beta")
     # Loop over each plane and compute the calibration factors
-    calibration_factors = dict()
+    calibration_factors = {}
     for plane in PLANES:
         LOG.info(f"  Computing the calibration factors for plane {plane}")
 

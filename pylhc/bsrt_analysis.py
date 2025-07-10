@@ -39,47 +39,52 @@ NEW_FILENAMING_CONV = "{}_{}_{}@{}_{}_{}_{}"
 
 def get_params():
     return EntryPointParameters(
-        directory=dict(
-            flags=["-d", "--directory"],
-            required=True,
-            type=str,
-            help="Directory containing the logged BSRT files.",
-        ),
-        beam=dict(
-            flags=["-b", "--beam"],
-            required=True,
-            choices=["B1", "B2"],
-            type=str,
-            help="Beam for which analysis is performed.",
-        ),
-        outputdir=dict(
-            flags=["-o", "--outputdir"],
-            type=str,
-            default=None,
-            help=(
+        directory={
+            "flags": ["-d", "--directory"],
+            "required": True,
+            "type": str,
+            "help": "Directory containing the logged BSRT files.",
+        },
+        beam={
+            "flags": ["-b", "--beam"],
+            "required": True,
+            "choices": ["B1", "B2"],
+            "type": str,
+            "help": "Beam for which analysis is performed.",
+        },
+        outputdir={
+            "flags": ["-o", "--outputdir"],
+            "type": str,
+            "default": None,
+            "help": (
                 "Directory in which plots and dataframe will be saved in. If omitted, "
                 "no data will be saved."
             ),
-        ),
-        starttime=dict(
-            flags=["--starttime"],
-            type=int,
-            help="Start of time window for analysis in milliseconds UTC.",
-        ),
-        endtime=dict(
-            flags=["--endtime"],
-            type=int,
-            help="End of time window for analysis in milliseconds UTC.",
-        ),
-        kick_df=dict(
-            flags=["--kick_df"],
-            default=None,
-            help=(
+        },
+        starttime={
+            "flags": ["--starttime"],
+            "type": int,
+            "help": "Start of time window for analysis in milliseconds UTC.",
+        },
+        endtime={
+            "flags": ["--endtime"],
+            "type": int,
+            "help": "End of time window for analysis in milliseconds UTC.",
+        },
+        kick_df={
+            "flags": ["--kick_df"],
+            "default": None,
+            "help": (
                 f"TFS with column {TIME_COLUMN} with time stamps to be added in the plots. "
                 f"Additionally, cross section at these timestamps will be plotted.",
             ),
-        ),
-        show_plots=dict(flags=["--show_plots"], type=bool, default=False, help="Show BSRT plots."),
+        },
+        show_plots={
+            "flags": ["--show_plots"],
+            "type": bool,
+            "default": False,
+            "help": "Show BSRT plots.",
+        },
     )
 
 

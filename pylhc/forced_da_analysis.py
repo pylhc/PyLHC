@@ -232,132 +232,136 @@ PathOrString = _get_pathclass()
 
 def get_params():
     return EntryPointParameters(
-        kick_directory=dict(
-            flags=["-k", "--kickdir"],
-            required=True,
-            type=PathOrString,
-            help="Analysis kick_directory containing kick files.",
-        ),
-        output_directory=dict(
-            flags=["-o", "--outdir"],
-            type=PathOrString,
-            help="Output kick_directory, if not given subfolder in kick kick_directory",
-        ),
-        energy=dict(
-            flags=["-e", "--energy"],
-            required=True,
-            type=get_multi_class(float, int),
-            help="Beam energy in GeV.",
-        ),
-        fill=dict(
-            flags=["-f", "--fill"],
-            type=get_multi_class(int, type(None)),
-            help="Fill that was used. If not given, check out time_around_kicks.",
-        ),
-        beam=dict(
-            flags=["-b", "--beam"], required=True, choices=[1, 2], type=int, help="Beam to use."
-        ),
-        plane=dict(
-            flags=["-p", "--plane"],
-            choices=["X", "Y"],
-            required=True,
-            type=str,
-            help=(
+        kick_directory={
+            "flags": ["-k", "--kickdir"],
+            "required": True,
+            "type": PathOrString,
+            "help": "Analysis kick_directory containing kick files.",
+        },
+        output_directory={
+            "flags": ["-o", "--outdir"],
+            "type": PathOrString,
+            "help": "Output kick_directory, if not given subfolder in kick kick_directory",
+        },
+        energy={
+            "flags": ["-e", "--energy"],
+            "required": True,
+            "type": get_multi_class(float, int),
+            "help": "Beam energy in GeV.",
+        },
+        fill={
+            "flags": ["-f", "--fill"],
+            "type": get_multi_class(int, type(None)),
+            "help": "Fill that was used. If not given, check out time_around_kicks.",
+        },
+        beam={
+            "flags": ["-b", "--beam"],
+            "required": True,
+            "choices": [1, 2],
+            "type": int,
+            "help": "Beam to use.",
+        },
+        plane={
+            "flags": ["-p", "--plane"],
+            "choices": ["X", "Y"],
+            "required": True,
+            "type": str,
+            "help": (
                 "Plane of the kicks."
                 # " Give 'XY' for using both planes (e.g. diagonal kicks)."  # Future release
             ),
-        ),
-        time_around_kicks=dict(
-            type=int,
-            default=TIME_AROUND_KICKS_MIN,
-            help=(
+        },
+        time_around_kicks={
+            "type": int,
+            "default": TIME_AROUND_KICKS_MIN,
+            "help": (
                 "If no fill is given, this defines the time (in minutes) "
                 "when data before the first and after the last kick is extracted."
             ),
-        ),
-        intensity_time_before_kick=dict(
-            type=int,
-            nargs=2,
-            default=TIME_BEFORE_KICK_S,
-            help=(
+        },
+        intensity_time_before_kick={
+            "type": int,
+            "nargs": 2,
+            "default": TIME_BEFORE_KICK_S,
+            "help": (
                 "Defines the times before the kicks (in seconds) "
                 "which is used for intensity averaging to calculate the losses."
             ),
-        ),
-        intensity_time_after_kick=dict(
-            type=int,
-            nargs=2,
-            default=TIME_AFTER_KICK_S,
-            help=(
+        },
+        intensity_time_after_kick={
+            "type": int,
+            "nargs": 2,
+            "default": TIME_AFTER_KICK_S,
+            "help": (
                 "Defines the times after the kicks (in seconds) "
                 "which is used for intensity averaging to calculate the losses."
             ),
-        ),
-        normalized_emittance=dict(
-            type=float,
-            default=LHC_NOMINAL_EMITTANCE,
-            help="Assumed NORMALIZED nominal emittance for the machine.",
-        ),
-        emittance_tfs=dict(
-            type=PathOrDataframe,
-            help="Dataframe or Path of pre-saved emittance tfs.",
-        ),
-        intensity_tfs=dict(
-            type=PathOrDataframe,
-            help="Dataframe or Path of pre-saved intensity tfs.",
-        ),
-        show_wirescan_emittance=dict(
-            default=False,
-            type=BoolOrPathOrDataFrame,
-            help=(
+        },
+        normalized_emittance={
+            "type": float,
+            "default": LHC_NOMINAL_EMITTANCE,
+            "help": "Assumed NORMALIZED nominal emittance for the machine.",
+        },
+        emittance_tfs={
+            "type": PathOrDataframe,
+            "help": "Dataframe or Path of pre-saved emittance tfs.",
+        },
+        intensity_tfs={
+            "type": PathOrDataframe,
+            "help": "Dataframe or Path of pre-saved intensity tfs.",
+        },
+        show_wirescan_emittance={
+            "default": False,
+            "type": BoolOrPathOrDataFrame,
+            "help": (
                 "Flag if the emittance from wirescan should also be shown, "
                 "can also be a Dataframe or Path of pre-saved emittance bws tfs."
             ),
-        ),
-        timber_db=dict(
-            type=str,
-            default="all",
-            choices=["all", "mdb", "ldb", "nxcals"],
-            help="Which timber database to use.",
-        ),
-        pagestore_db=dict(type=PathOrPagestore, help="(Path to-) presaved timber database"),
-        fit=dict(
-            type=str,
-            default="exponential",
-            choices=["exponential", "linear"],
-            help="Fitting function to use (rearranges parameters to make sense).",
-        ),
-        emittance_window_length=dict(
-            help="Length of the moving average window. (# data points)",
-            type=int,
-            default=ROLLING_AVERAGE_WINDOW,
-        ),
-        emittance_outlier_limit=dict(
-            help="Limit, i.e. cut from mean, on emittance outliers in meter.",
-            type=float,
-            default=OUTLIER_LIMIT,
-        ),
-        emittance_type=dict(
-            type=str,
-            default="average",
-            choices=["fit_sigma", "average"],
-            help="Which BSRT data to use (from database).",
-        ),
-        show=dict(
-            action="store_true",
-            help="Show plots.",
-        ),
-        plot_styles=dict(
-            type=str,
-            nargs="+",
-            default=["standard"],
-            help="Which plotting styles to use, either from omc3 styles or default mpl.",
-        ),
-        manual_style=dict(
-            type=DictAsString,
-            default={},
-            help="Additional style rcParameters which update the set of predefined ones.",
-        ),
+        },
+        timber_db={
+            "type": str,
+            "default": "all",
+            "choices": ["all", "mdb", "ldb", "nxcals"],
+            "help": "Which timber database to use.",
+        },
+        pagestore_db={"type": PathOrPagestore, "help": "(Path to-) presaved timber database"},
+        fit={
+            "type": str,
+            "default": "exponential",
+            "choices": ["exponential", "linear"],
+            "help": "Fitting function to use (rearranges parameters to make sense).",
+        },
+        emittance_window_length={
+            "help": "Length of the moving average window. (# data points)",
+            "type": int,
+            "default": ROLLING_AVERAGE_WINDOW,
+        },
+        emittance_outlier_limit={
+            "help": "Limit, i.e. cut from mean, on emittance outliers in meter.",
+            "type": float,
+            "default": OUTLIER_LIMIT,
+        },
+        emittance_type={
+            "type": str,
+            "default": "average",
+            "choices": ["fit_sigma", "average"],
+            "help": "Which BSRT data to use (from database).",
+        },
+        show={
+            "action": "store_true",
+            "help": "Show plots.",
+        },
+        plot_styles={
+            "type": str,
+            "nargs": "+",
+            "default": ["standard"],
+            "help": "Which plotting styles to use, either from omc3 styles or default mpl.",
+        },
+        manual_style={
+            "type": DictAsString,
+            "default": {},
+            "help": "Additional style rcParameters which update the set of predefined ones.",
+        },
     )
 
 
@@ -408,7 +412,7 @@ def main(opt):
     _write_tfs(out_dir, opt.plane, kick_df, intensity_df, emittance_df, emittance_bws_df)
 
     # plotting
-    figs = dict()
+    figs = {}
     register_matplotlib_converters()  # for datetime plotting
     style.set_style(opt.plot_styles, opt.manual_style)
     figs["emittance"] = _plot_emittances(
@@ -1107,7 +1111,7 @@ def _plot_intensity(directory, beam, plane, kick_df, intensity_df):
             + r" (-{:.1f}$\pm${:.1f} %)".format(*normalized_losses_kick.loc[kick, :]),
             va="bottom",
             color=colors.get_mpl_color(1),
-            fontdict=dict(fontsize=mpl.rcParams["font.size"] * 0.8),
+            fontdict={"fontsize": mpl.rcParams["font.size"] * 0.8},
         )
 
     _plot_kicks_and_scale_x(ax, kick_df.index, pad=x_span)

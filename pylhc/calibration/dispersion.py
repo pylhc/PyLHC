@@ -152,7 +152,7 @@ def get_calibration_factors_from_dispersion(
     beam = int(dispersion_tfs.iloc[0].name[-1])
 
     # Loop over the IPs and compute the calibration factors
-    calibration_factors = dict()
+    calibration_factors = {}
     for ip in ips:
         LOG.info(f"  Computing the calibration factors for IP {ip}, plane X")
         # Filter our TFS files to only keep the BPMs for the selected IR
@@ -176,7 +176,7 @@ def get_calibration_factors_from_dispersion(
         positions_fit = dispersion_tfs.reindex(d_bpms)[S]
 
         # Get the dispersion and dispersion from phase from the tfs files
-        dispersion = dict()
+        dispersion = {}
         # normalised_dispersion = dict()
 
         dispersion["amp"] = dispersion_tfs.reindex(bpms)["DX"]

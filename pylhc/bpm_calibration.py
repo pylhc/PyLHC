@@ -75,29 +75,29 @@ def _get_params() -> dict:
     """
 
     return EntryPointParameters(
-        inputdir=dict(type=Path, required=True, help="Measurements path."),
-        outputdir=dict(
-            type=Path,
-            required=True,
-            help="Output directory where to write the calibration factors.",
-        ),
-        ips=dict(
-            type=int,
-            nargs="+",
-            choices=IPS,
-            required=False,
-            help="IPs to compute calibration factors for.",
-        ),
-        method=dict(
-            type=str,
-            required=False,
-            choices=METHODS,
-            default=METHODS[0],
-            help=(
+        inputdir={"type": Path, "required": True, "help": "Measurements path."},
+        outputdir={
+            "type": Path,
+            "required": True,
+            "help": "Output directory where to write the calibration factors.",
+        },
+        ips={
+            "type": int,
+            "nargs": "+",
+            "choices": IPS,
+            "required": False,
+            "help": "IPs to compute calibration factors for.",
+        },
+        method={
+            "type": str,
+            "required": False,
+            "choices": METHODS,
+            "default": METHODS[0],
+            "help": (
                 "Method to be used to compute the calibration factors. "
                 "The Beta function is used by default."
             ),
-        ),
+        },
     )
 
 

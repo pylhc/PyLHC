@@ -84,44 +84,44 @@ class AccDatetimeOrStr(metaclass=get_instance_faker_meta(AccDatetime, str)):
 def _get_params() -> dict:
     """Parse Commandline Arguments and return them as options."""
     return EntryPointParameters(
-        time=dict(
-            default=None,
-            type=AccDatetimeOrStr,
-            help=(
+        time={
+            "default": None,
+            "type": AccDatetimeOrStr,
+            "help": (
                 "UTC Time as 'Y-m-d H:M:S.f' or ISO format or AccDatetime object."
                 " Acts as point in time or end time (if ``start_time`` is given)."
             ),
-        ),
-        start_time=dict(
-            default=None,
-            type=AccDatetimeOrStr,
-            help=(
+        },
+        start_time={
+            "default": None,
+            "type": AccDatetimeOrStr,
+            "help": (
                 "UTC Time as 'Y-m-d H:M:S.f' or ISO format or AccDatetime object."
                 " Defines the beginning of the time-range."
             ),
-        ),
-        knobs=dict(
-            default=None,
-            nargs="+",
-            type=str,
-            help="List of knobnames. "
+        },
+        knobs={
+            "default": None,
+            "nargs": "+",
+            "type": str,
+            "help": "List of knobnames. "
             "If `None` (or omitted) no knobs will be extracted. "
             "If it is just the string ``'all'``, "
             "all knobs will be extracted (can be slow). "
             "Use the string ``'default'`` for pre-defined knobs of interest.",
-        ),
-        accel=dict(default="lhc", type=str, help="Accelerator name."),
-        beamprocess=dict(
-            type=str,
-            help=("Manual override for the Beamprocess (otherwise taken at the given ``time``)"),
-        ),
-        output_dir=dict(default=None, type=PathOrStr, help="Output directory."),
-        knob_definitions=dict(action="store_true", help="Set to extract knob definitions."),
-        source=dict(type=str, default="nxcals", help="Source to extract data from."),
-        log=dict(
-            action="store_true",
-            help="Write summary into log (automatically done if no output path is given).",
-        ),
+        },
+        accel={"default": "lhc", "type": str, "help": "Accelerator name."},
+        beamprocess={
+            "type": str,
+            "help": ("Manual override for the Beamprocess (otherwise taken at the given ``time``)"),
+        },
+        output_dir={"default": None, "type": PathOrStr, "help": "Output directory."},
+        knob_definitions={"action": "store_true", "help": "Set to extract knob definitions."},
+        source={"type": str, "default": "nxcals", "help": "Source to extract data from."},
+        log={
+            "action": "store_true",
+            "help": "Write summary into log (automatically done if no output path is given).",
+        },
     )
 
 
