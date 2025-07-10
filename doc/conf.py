@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # pyLHC documentation build configuration file, created by
 # sphinx-quickstart on Tue Feb  6 12:10:18 2018.

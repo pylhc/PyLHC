@@ -59,13 +59,11 @@ Function ``info``:
 
 import argparse
 import json
-
 from datetime import datetime
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
-
 from dateutil import tz
 from omc3.utils import logging_tools
 from pandas import DataFrame
@@ -253,9 +251,9 @@ def load_kickfile(kickfile: Path | str) -> pd.Series:
         for plane in ["X", "Y"]:
             tune, driven_tune, amp = entry_map[plane]
 
-            data[tune] = np.NaN
-            data[driven_tune] = np.NaN
-            data[amp] = np.NaN
+            data[tune] = np.nan
+            data[driven_tune] = np.nan
+            data[amp] = np.nan
 
             try:
                 idx = _get_plane_index(kick["excitationSettings"], plane)
@@ -273,8 +271,8 @@ def load_kickfile(kickfile: Path | str) -> pd.Series:
             data[driven_tune] = data[tune] + _get_delta_tune(kick, idx)
             data[amp] = kick["excitationSettings"][idx]["amplitude"]
 
-        data[DRIVEN_TUNEZ] = np.NaN
-        data[AMPZ] = np.NaN
+        data[DRIVEN_TUNEZ] = np.nan
+        data[AMPZ] = np.nan
 
     return data
 

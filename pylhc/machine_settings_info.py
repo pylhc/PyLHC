@@ -49,19 +49,20 @@ All gathered data is returned, if this function is called from python.
 """
 
 from collections import OrderedDict, namedtuple
+from collections.abc import Iterable
+from pathlib import Path
 
 import tfs
 from generic_parser import DotDict, EntryPointParameters, entrypoint
 from generic_parser.entry_datatypes import get_instance_faker_meta
+from omc3.knob_extractor import KNOB_CATEGORIES, name2lsa
 from omc3.utils import logging_tools
 from omc3.utils.iotools import PathOrStr
 from omc3.utils.time_tools import AccDatetime, AcceleratorDatetime
-from pathlib import Path
-from typing import Tuple, Iterable, Dict, Union
-from omc3.knob_extractor import name2lsa, KNOB_CATEGORIES
 
 from pylhc.constants import machine_settings_info as const
-from pylhc.data_extract.lsa import COL_NAME as LSA_COLUMN_NAME, LSA
+from pylhc.data_extract.lsa import COL_NAME as LSA_COLUMN_NAME
+from pylhc.data_extract.lsa import LSA
 
 LOG = logging_tools.get_logger(__name__)
 
@@ -125,7 +126,7 @@ def _get_params() -> dict:
 
 
 @entrypoint(_get_params(), strict=True)
-def get_info(opt) -> Dict[str, object]:
+def get_info(opt) -> dict[str, object]:
     """
      Get info about **Beamprocess**, **Optics** and **Knobs** at given time.
 
@@ -287,7 +288,7 @@ def log_summary(
     acc_time: AccDatetime,
     bp_info: DotDict,
     optics_info: DotDict = None,
-    trims: Dict[str, float] = None,
+    trims: dict[str, float] = None,
 ):
     """Log the summary.
 
@@ -327,7 +328,7 @@ def write_summary(
     acc_time: AccDatetime,
     bp_info: DotDict,
     optics_info: DotDict = None,
-    trims: Dict[str, float] = None,
+    trims: dict[str, float] = None,
 ):
     """Write summary into a ``tfs`` file.
 
@@ -376,7 +377,7 @@ def write_knob_defitions(output_path: Path, definitions: dict):
 
 def write_trim_histories(
     output_path: Path,
-    trim_histories: Dict[str, namedtuple],
+    trim_histories: dict[str, namedtuple],
     accel: str,
     acc_time: AccDatetime = None,
     acc_start_time: AccDatetime = None,
@@ -468,7 +469,7 @@ def _get_beamprocess(
 
 
 def _get_beamprocess_start(
-    beamprocesses: Iterable[Tuple[float, str]], acc_time: AccDatetime, bp_name: str
+    beamprocesses: Iterable[tuple[float, str]], acc_time: AccDatetime, bp_name: str
 ) -> AccDatetime:
     """
     Get the last beamprocess in the list of beamprocesses before dt_utc.
@@ -519,7 +520,7 @@ def _get_knob_definitions(knobs: list, optics: str):
     for knob in knobs:
         try:
             defs[knob] = LSA.get_knob_circuits(knob, optics)
-        except IOError as e:
+        except OSError as e:
             LOG.warning(e.args[0])
     return defs
 
@@ -534,7 +535,7 @@ def _get_last_trim(trims: dict) -> dict:
         Dictionary of knob names and their values.
     """
     LOG.debug("Extracting last trim from found trim histories.")
-    trim_dict = {trim: trims[trim].data[-1] for trim in trims.keys()}  # return last set value
+    trim_dict = {trim: trims[trim].data[-1] for trim in trims}  # return last set value
     for trim, value in trim_dict.items():
         try:
             trim_dict[trim] = value.flatten()[-1]  # the very last entry ...
@@ -548,7 +549,7 @@ def _get_last_trim(trims: dict) -> dict:
 # Other ########################################################################
 
 
-def _get_times(time: Union[str, AccDatetime], start_time: Union[str, AccDatetime], accel: str):
+def _get_times(time: str | AccDatetime, start_time: str | AccDatetime, accel: str):
     """Returns acc_time and acc_start_time parameters depending on the user input."""
     acc_dt = AcceleratorDatetime[accel]
 

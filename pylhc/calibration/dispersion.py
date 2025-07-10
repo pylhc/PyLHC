@@ -9,36 +9,34 @@ intended to be used with the script `bpm_calibration.py`.
 """
 
 from pathlib import Path
-from scipy.optimize import curve_fit
+
 import numpy as np
 import pandas as pd
-from typing import Tuple, List, Dict
-
-from omc3.utils import logging_tools
+import tfs
 from omc3.optics_measurements.constants import (
+    DISPERSION_NAME,
     ERR,
     EXT,
     NORM_DISP_NAME,
-    DISPERSION_NAME,
     S,
 )
+from omc3.utils import logging_tools
+from scipy.optimize import curve_fit
 
 from pylhc.constants.calibration import (
     BPMS,
     D_BPMS,
-    D,
     LABELS,
     TFS_INDEX,
+    D,
 )
-import tfs
-
 
 LOG = logging_tools.get_logger(__name__)
 
 
 def _get_dispersion_fit(
     positions: pd.Series, dispersion_values: pd.Series, dispersion_err: pd.Series
-) -> Tuple[pd.Series, pd.Series]:
+) -> tuple[pd.Series, pd.Series]:
     """
     This function returns a fit of the given dispersion values along with the
     associated error.
@@ -77,10 +75,10 @@ def _get_dispersion_fit(
 
 
 def _get_factors_from_dispersion(
-    dispersion: Dict[str, pd.Series],
+    dispersion: dict[str, pd.Series],
     phase: str,
     phase_err: str,
-) -> Tuple[pd.Series, pd.Series]:
+) -> tuple[pd.Series, pd.Series]:
     """
     This function computes the calibration factors for the dispersion method
     with the non fitted dispersion values. The associated error is also
@@ -114,8 +112,8 @@ def _get_factors_from_dispersion(
 
 
 def get_calibration_factors_from_dispersion(
-    ips: List[int], input_path: Path
-) -> Dict[str, pd.DataFrame]:
+    ips: list[int], input_path: Path
+) -> dict[str, pd.DataFrame]:
     """
     This function is the main function to compute the calibration factors for
     the dispersion method.
@@ -216,7 +214,7 @@ def get_calibration_factors_from_dispersion(
         factors_for_ip.columns = LABELS
         factors_for_ip.index.name = TFS_INDEX
 
-        if "X" not in calibration_factors.keys():
+        if "X" not in calibration_factors:
             calibration_factors = {"X": factors_for_ip}
         else:
             calibration_factors["X"] = pd.concat(

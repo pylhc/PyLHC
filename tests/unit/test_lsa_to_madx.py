@@ -1,19 +1,15 @@
 import json
-
 from pathlib import Path
-from typing import Dict
-import numpy as np
 
 import pytest
 import tfs
-
 from pandas._testing import assert_dict_equal
 
 from pylhc.lsa_to_madx import (
+    _get_delta,
     _get_trim_variable,
     get_madx_script_from_definition_dataframe,
     parse_knobs_and_trim_values_from_file,
-    _get_delta,
 )
 
 INPUTS_DIR = Path(__file__).parent.parent / "inputs"
@@ -98,7 +94,7 @@ def knob_definition_df() -> tfs.TfsDataFrame:
 
 
 @pytest.fixture()
-def parsed_definitions() -> Dict[str, float]:
+def parsed_definitions() -> dict[str, float]:
     with (LSA_TO_MADX_INPUTS / "parsed_definitions.json").open("r") as f:
         defs = json.load(f)
     return defs

@@ -1,12 +1,13 @@
+import pathlib
 from pathlib import Path
+
 import numpy as np
 import pandas as pd
-import pathlib
 import pytest
-from pandas.testing import assert_series_equal, assert_frame_equal
-
 import tfs
 from generic_parser.dict_parser import ArgumentError
+from pandas.testing import assert_frame_equal, assert_series_equal
+
 from pylhc import bpm_calibration as calibration
 from pylhc.constants.calibration import BPMS
 

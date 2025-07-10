@@ -96,14 +96,11 @@ Hint: the knobs active at a given time can be retrieved with the `~pylhc.machine
 import argparse
 import re
 import string
-
 from pathlib import Path
-from typing import Dict
 
 import numpy as np
 import pandas as pd
 import tfs
-
 from omc3.utils import logging_tools
 from omc3.utils.contexts import timeit
 
@@ -115,7 +112,7 @@ ALLOWED_IN_MADX_NAMES = "_" + string.ascii_letters + string.digits
 # ----- Helper functions ----- #
 
 
-def parse_knobs_and_trim_values_from_file(knobs_file: Path) -> Dict[str, float]:
+def parse_knobs_and_trim_values_from_file(knobs_file: Path) -> dict[str, float]:
     """
     Parses a file for LSA knobs and their trim values. Each line should be a knob name
     following by a number of the trim value. If no value is written, it defaults
@@ -349,7 +346,7 @@ def main():
         LOG.info(f"Loading knob names from file '{options.file}'")
         knobs_dict = parse_knobs_and_trim_values_from_file(Path(options.file))
     else:  # given at the command line with --knobs, we initialise trim values to 1
-        knobs_dict = {knob: 1.0 for knob in options.knobs}
+        knobs_dict = dict.fromkeys(options.knobs, 1.0)
 
     LOG.info("Instantiating LSA client")
     lsa_client = LSAClient()
@@ -366,7 +363,7 @@ def main():
                     deltas_df=knob_definition, lsa_knob=lsa_knob, trim=trim_value
                 )
 
-            except (OSError, IOError):  # raised by pjlsa if knob not found
+            except OSError:  # raised by pjlsa if knob not found
                 LOG.warning(
                     f"Could not find knob '{lsa_knob}' in the given optics '{lsa_optics}' - skipping"
                 )

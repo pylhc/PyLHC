@@ -8,8 +8,8 @@ to be used with the script `bpm_calibration.py`.
 
 """
 
+from collections.abc import Sequence
 from pathlib import Path
-from typing import Dict, Sequence, Tuple
 
 import numpy as np
 import pandas as pd
@@ -131,7 +131,7 @@ def _get_factors_from_phase_fit(
     beta_amp_tfs: pd.DataFrame,
     ips: Sequence[int],
     plane: str,
-) -> Tuple[pd.Series, pd.Series]:
+) -> tuple[pd.Series, pd.Series]:
     """
     This function computes the calibration factors for the beta method with the
     beta from phase fit values. The associated error is also calculated.
@@ -186,7 +186,7 @@ def _get_factors_from_phase_fit(
 
 def get_calibration_factors_from_beta(
     ips: Sequence[int], input_path: Path
-) -> Dict[str, pd.DataFrame]:
+) -> dict[str, pd.DataFrame]:
     """
     This function is the main function to compute the calibration factors for
     the beta method.

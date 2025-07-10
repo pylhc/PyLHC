@@ -1,6 +1,5 @@
 from ast import literal_eval
 from pathlib import Path
-import sys
 
 import matplotlib
 import numpy as np
