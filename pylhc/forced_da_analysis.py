@@ -815,7 +815,7 @@ def _get_output_dir(kick_directory, output_directory):
 def _add_intensity_and_losses_to_kicks(kick_df, intensity_df, time_before, time_after):
     LOG.debug("Calculating intensity and losses for the kicks.")
     col_list = [INTENSITY_BEFORE, INTENSITY_AFTER, INTENSITY_LOSSES]
-    new_columns = [col for col in col_list + [err_col(c) for c in col_list]]
+    new_columns = list(col_list + [err_col(c) for c in col_list])
     kick_df = kick_df.reindex(columns=kick_df.columns.tolist() + new_columns)
     kick_df = _get_intensities_around_kicks(kick_df, intensity_df, time_before, time_after)
     return _calculate_intensity_losses_at_kicks(kick_df)
