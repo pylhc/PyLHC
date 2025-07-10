@@ -124,10 +124,6 @@ from pandas.plotting import register_matplotlib_converters
 from tfs import TfsDataFrame
 from tfs.tools import significant_digits
 
-pytimber = cern_network_import("pytimber")
-PageStore = cern_network_import("pytimber.pagestore.PageStore")
-
-
 from pylhc.constants.forced_da_analysis import (
     BSRT_EMITTANCE_TO_METER,
     BWS_DIRECTIONS,
@@ -180,6 +176,9 @@ from pylhc.constants.general import (
     get_proton_beta,
     get_proton_gamma,
 )
+
+pytimber = cern_network_import("pytimber")
+PageStore = cern_network_import("pytimber.pagestore.PageStore")
 
 LOG = logging_tools.get_logger(__name__)
 
