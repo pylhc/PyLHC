@@ -53,7 +53,7 @@ class TestOnCernNetwork:
                 output_directory=tmp_path,
             )
 
-    def test_md2162_timberdb(tmp_path):
+    def test_md2162_timberdb(self, tmp_path):
         data_dir = INPUT / "kicks_horizontal_md2162"
         fda_analysis(
             fit="linear",
