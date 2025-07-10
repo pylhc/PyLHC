@@ -35,8 +35,7 @@ def parse_timestamp(thistime):
     ]
     for fmat in accepted_time_input_format:
         try:
-            dtobject = dt.datetime.strptime(thistime, fmat)
-            return dtobject
+            return dt.datetime.strptime(thistime, fmat)
         except ValueError:
             pass
     timefmatstring = ""
@@ -54,8 +53,7 @@ def parse_timestamp(thistime):
 
 # function to help write output from datetime objects in standard format throughout code
 def convert_to_data_output_format(dtobject):
-    output_timestamp = dtobject.strftime(formats.TIME)
-    return output_timestamp
+    return dtobject.strftime(formats.TIME)
 
 
 ##########################################

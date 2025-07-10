@@ -96,8 +96,7 @@ def knob_definition_df() -> tfs.TfsDataFrame:
 @pytest.fixture()
 def parsed_definitions() -> dict[str, float]:
     with (LSA_TO_MADX_INPUTS / "parsed_definitions.json").open("r") as f:
-        defs = json.load(f)
-    return defs
+        return json.load(f)
 
 
 @pytest.fixture

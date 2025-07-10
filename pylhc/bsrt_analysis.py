@@ -176,8 +176,7 @@ def _load_files_in_df(opt):
     )
     files_df = files_df.assign(TIME=[f.timestamp() for f in files_df["TIMESTAMP"]])
 
-    files_df = files_df.sort_values(by=["TIME"]).reset_index(drop=True).set_index("TIME")
-    return files_df
+    return files_df.sort_values(by=["TIME"]).reset_index(drop=True).set_index("TIME")
 
 
 def _get_timestamp_from_name(name, formatstring):

@@ -582,13 +582,12 @@ def _filter_emittance_data(df, planes, window_length, limit):
     df.headers[HEADER_BSRT_ROLLING_WINDOW] = window_length
     df.headers[HEADER_BSRT_OUTLIER_LIMIT] = limit
     df = _maybe_add_sum_for_planes(df, planes, column_norm_emittance)
-    df = _maybe_add_sum_for_planes(
+    return _maybe_add_sum_for_planes(
         df,
         planes,
         lambda p: mean_col(column_norm_emittance(p)),
         lambda p: err_col(mean_col(column_norm_emittance(p))),
     )
-    return df
 
 
 # Timber Data ------------------------------------------------------------------
@@ -815,8 +814,7 @@ def _add_intensity_and_losses_to_kicks(kick_df, intensity_df, time_before, time_
     new_columns = [col for col in col_list + [err_col(c) for c in col_list]]
     kick_df = kick_df.reindex(columns=kick_df.columns.tolist() + new_columns)
     kick_df = _get_intensities_around_kicks(kick_df, intensity_df, time_before, time_after)
-    kick_df = _calculate_intensity_losses_at_kicks(kick_df)
-    return kick_df
+    return _calculate_intensity_losses_at_kicks(kick_df)
 
 
 def _get_intensities_around_kicks(kick_df, intensity_df, time_before, time_after):
