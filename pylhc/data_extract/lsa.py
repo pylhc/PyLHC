@@ -352,7 +352,6 @@ class LSAMeta(type):
 
             def hooked(*args, **kwargs):
                 result = client_attr(*args, **kwargs)
-                result_is_self = False
                 try:
                     if result == cls._client:
                         # prevent client from becoming unwrapped

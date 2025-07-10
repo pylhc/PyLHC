@@ -17,9 +17,7 @@ EXPECTED_OUTPUT = INPUTS_DIR / "output"
 
 
 def test_calibration_same_betabeat(tmp_path):
-    factors = calibration.main(
-        inputdir=MEASUREMENTS / "for_beta", outputdir=tmp_path, ips=[1, 4, 5]
-    )
+    calibration.main(inputdir=MEASUREMENTS / "for_beta", outputdir=tmp_path, ips=[1, 4, 5])
 
     # Let's open the tfs files we just created
     x_tfs = tfs.read(tmp_path / "calibration_beta_x.tfs", index="NAME")
@@ -72,7 +70,7 @@ def test_wrong_ip(tmp_path):
 
 
 def test_calibration_same_dispersion(tmp_path):
-    factors = calibration.main(
+    calibration.main(
         inputdir=MEASUREMENTS / "for_dispersion",
         outputdir=tmp_path,
         method="dispersion",

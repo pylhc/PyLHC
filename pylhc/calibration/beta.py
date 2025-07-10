@@ -82,7 +82,7 @@ def _get_beta_fit(
     )
 
     # Get the error from the covariance matrix
-    perr = np.sqrt(np.diag(pcov))
+    _perr = np.sqrt(np.diag(pcov))  # not used?
 
     # Get the fitted beta and add the errors to get min/max values
     beta_fit = beta_function(positions[valid], *popt)
@@ -151,7 +151,7 @@ def _get_factors_from_phase_fit(
     # Get the beam concerned by those tfs files
     beam = int(beta_phase_tfs.iloc[0].name[-1])
 
-    calibration_phase_fit, calibration_phase_fit_err = None, None
+    calibration_phase_fit, _calibration_phase_fit_err = None, None
     for ip in ips:
         LOG.info(f"    Computing the calibration factors from phase fit for IP {ip}")
 
