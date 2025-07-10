@@ -20,9 +20,9 @@ pytimber = cern_network_import("pytimber")
 pjlsa = cern_network_import("pjlsa")
 
 try:
-    pjLSAClient = pjlsa.LSAClient
+    pjLSAClient = pjlsa.LSAClient  # noqa: N816 (it's the real name)
 except ImportError:
-    pjLSAClient = object
+    pjLSAClient = object  # noqa: N816 (it's the real name)
 
 RELEVANT_BP_CONTEXTS = ("OPERATIONAL", "MD")
 RELEVANT_BP_CATEGORIES = ("DISCRETE",)

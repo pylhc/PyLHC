@@ -65,9 +65,9 @@ if __name__ == "__main__":
 
     CycleName = "LHC.USER.ALL"
     INCAacc = "LHC"
-    noSetFlag = True
+    no_set_flag = True
 
-    japc = pyjapc.PyJapc(selector=CycleName, incaAcceleratorName=INCAacc, noSet=noSetFlag)
+    japc = pyjapc.PyJapc(selector=CycleName, incaAcceleratorName=INCAacc, noSet=no_set_flag)
     japc.rbacLogin()
     acquesitions_per_file = 100
     j = 0
@@ -78,8 +78,8 @@ if __name__ == "__main__":
         B1_image = japc.getParam("LHC.BSRTS.5R4.B1/Image")
         B2_image = japc.getParam("LHC.BSRTS.5L4.B2/Image")
         if t == 0:
-            allB1data = []
-            allB2data = []
+            all_b1_data = []
+            all_b2_data = []
             B1_IMGtime = B1_image["acqTime"]
             B2_IMGtime = B2_image["acqTime"]
             B1_IMGtime_dt = parse_timestamp(B1_IMGtime)
@@ -87,8 +87,8 @@ if __name__ == "__main__":
             B1_IMGtime_st = convert_to_data_output_format(B1_IMGtime_dt)
             B2_IMGtime_st = convert_to_data_output_format(B2_IMGtime_dt)
 
-        allB1data.append(B1_image)
-        allB2data.append(B2_image)
+        all_b1_data.append(B1_image)
+        all_b2_data.append(B2_image)
         t += 1
         if t == acquesitions_per_file:
             j += 1
@@ -96,8 +96,8 @@ if __name__ == "__main__":
             f2name = "data_BSRT_B2_" + B2_IMGtime_st + ".dat"
             f1 = open(f1name, "wb")
             f2 = open(f2name, "wb")
-            pickle.dump(allB1data, f1)
-            pickle.dump(allB2data, f2)
+            pickle.dump(all_b1_data, f1)
+            pickle.dump(all_b2_data, f2)
             f1.close()
             f2.close()
             os.system("gzip " + f1name)
