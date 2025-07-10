@@ -39,7 +39,7 @@ Two files, **LHCBEAM_MD_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos_definition.tfs*
     One should not be surprised if long ``LSA`` knob names appear slightly differently in the created ``MAD-X`` files, then functionality stays intact.
 
     For instance, the knob ``LHCBEAM/MD_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos`` will lead to the following trim variable definition:
-    
+
     .. code-block:: fortran
 
         trim_D_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos = 1.0;
@@ -90,7 +90,7 @@ The call would be:
         --optics R2017aT_A30C30A10mL300_CTPPS2 \\
         --file knobs.txt
 
-Hint: the knobs active at a given time can be retrieved with the `~pylhc.machine_settings_info` script. 
+Hint: the knobs active at a given time can be retrieved with the `~pylhc.machine_settings_info` script.
 """
 
 import argparse
@@ -211,7 +211,7 @@ def get_madx_script_from_definition_dataframe(
 
     # write all inits first (looks nicer in madx)
     if by_reference:
-        for variable in deltas.keys():
+        for variable in deltas.keys():  # noqa: SIM118 (this is not a dict)
             variable_init = f"{variable}_init"
             change_commands.append(f"{variable_init:<17} = {variable};")
 

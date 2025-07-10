@@ -678,7 +678,7 @@ def _get_bsrt_bunch_emittances_from_timber(beam, planes, db, timespan, key_type,
                 y_new[f"{x_elem:.3f}"] += y_elem.tolist()
 
             # get average and std per timestamp
-            x = np.array([float(elem) for elem in y_new.keys()])
+            x = np.array([float(elem) for elem in y_new])
             y = np.array([np.average(elem) for elem in y_new.values()]) * nominal_emittance
             y_std = np.array([np.std(elem) for elem in y_new.values()]) * nominal_emittance
         elif key_type == "average":

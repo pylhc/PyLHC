@@ -110,13 +110,13 @@ def main(opt):
         factors = get_calibration_factors_from_dispersion(opt.ips, opt.inputdir)
 
     # Fill NaN with 1 because of missing BPMs and that fit cannot be done everywhere
-    for plane in factors.keys():
+    for plane in factors:
         factors[plane] = factors[plane].fillna(1)
-    LOG.debug("".join([f"\nPlane {plane}:\n{factors[plane]}" for plane in factors.keys()]))
+    LOG.debug("".join([f"\nPlane {plane}:\n{factors[plane]}" for plane in factors]))
 
     # Write the TFS file to the desired output directory
     opt.outputdir.mkdir(parents=True, exist_ok=True)
-    for plane in factors.keys():
+    for plane in factors:
         tfs.write(
             opt.outputdir / f"{CALIBRATION_NAME[opt.method]}{plane.lower()}{EXT}",
             factors[plane].reset_index(),
