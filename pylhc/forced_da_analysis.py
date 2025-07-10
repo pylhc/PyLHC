@@ -793,10 +793,7 @@ def _get_new_kick_file(kick_dir, planes):
 
 def _get_output_dir(kick_directory, output_directory):
     kick_path = Path(kick_directory)
-    if output_directory:
-        output_path = Path(output_directory)
-    else:
-        output_path = kick_path / RESULTS_DIR
+    output_path = Path(output_directory) if output_directory else kick_path / RESULTS_DIR
     try:
         output_path.mkdir(exist_ok=True)
     except PermissionError:
