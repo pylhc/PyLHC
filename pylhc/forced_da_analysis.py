@@ -88,6 +88,7 @@ Arguments:
 .. _CarlierForcedDA2019: https://journals.aps.org/prab/pdf/10.1103/PhysRevAccelBeams.22.031002
 """
 
+import contextlib
 import os
 from collections import defaultdict
 from contextlib import suppress
@@ -1432,10 +1433,8 @@ def _date2num(times):
     except AttributeError:
         pass  # probably datetime already
     except TypeError:
-        try:  # not iterable
+        with contextlib.suppress(AttributeError):
             times = times.datetime
-        except AttributeError:
-            pass  # probably datetime already
     return mdates.date2num(times)
 
 
