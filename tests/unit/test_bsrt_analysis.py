@@ -1,7 +1,7 @@
 from ast import literal_eval
 from pathlib import Path
 
-import matplotlib
+import matplotlib as mpl
 import numpy as np
 import pandas as pd
 import pytest
@@ -10,7 +10,7 @@ from pandas.testing import assert_frame_equal
 from pylhc import bsrt_analysis
 
 # Forcing non-interactive Agg backend so rendering is done similarly across platforms during tests
-matplotlib.use("Agg")
+mpl.use("Agg")
 
 INPUTS_DIR = Path(__file__).parent.parent / "inputs"
 BSRT_INPUTS = INPUTS_DIR / "bsrt_analysis"
