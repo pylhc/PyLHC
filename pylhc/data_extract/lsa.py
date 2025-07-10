@@ -390,7 +390,7 @@ def _beamprocess_to_dict(bp):
     return bp_dict
 
 
-def try_to_acquire_data(function: Callable, *args, **kwargs):
+def try_to_acquire_data(function: Callable, *args, **kwargs):  # noqa: RET503
     """Tries to get data from function multiple times.
     TODO: Move to omc3 as is also used there in BBQ extraction.
 
