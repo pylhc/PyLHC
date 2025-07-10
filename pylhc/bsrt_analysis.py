@@ -165,7 +165,7 @@ def _select_files(opt, files_df):
 
 def _load_files_in_df(opt):
     files_df = pd.DataFrame(
-        data={"FILES": glob.glob(str(Path(opt.directory) / _get_bsrt_logger_fname(opt.beam, "*")))}
+        data={"FILES": glob.glob(str(Path(opt.directory) / _get_bsrt_logger_fname(opt.beam, "*")))}  # noqa: PTH207
     )
 
     files_df = files_df.assign(

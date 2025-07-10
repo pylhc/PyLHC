@@ -89,7 +89,6 @@ Arguments:
 """
 
 import contextlib
-import os
 from collections import defaultdict
 from contextlib import suppress
 from pathlib import Path
@@ -1441,7 +1440,7 @@ def _date2num(times):
 def _save_fig(directory, plane, fig, ptype):
     try:
         for ftype in PLOT_FILETYPES:
-            path = os.path.join(directory, outfile_plot(ptype, plane, ftype))
+            path = Path(directory) / outfile_plot(ptype, plane, ftype)
             LOG.debug(f"Saving Figure to {path}")
             fig.savefig(path)
     except OSError:

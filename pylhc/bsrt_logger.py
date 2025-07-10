@@ -15,6 +15,7 @@ import os
 import pickle
 import sys
 import time
+from pathlib import Path
 
 from omc3.definitions import formats
 from omc3.utils.mock import cern_network_import
@@ -94,7 +95,7 @@ if __name__ == "__main__":
             j += 1
             f1name = "data_BSRT_B1_" + B1_IMGtime_st + ".dat"
             f2name = "data_BSRT_B2_" + B2_IMGtime_st + ".dat"
-            with open(f1name, "wb") as f1, open(f2name, "wb") as f2:
+            with Path(f1name).open("wb") as f1, Path(f2name).open("wb") as f2:
                 pickle.dump(all_b1_data, f1)
                 pickle.dump(all_b2_data, f2)
             os.system("gzip " + f1name)

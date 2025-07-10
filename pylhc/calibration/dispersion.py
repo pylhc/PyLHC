@@ -13,23 +13,11 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import tfs
-from omc3.optics_measurements.constants import (
-    DISPERSION_NAME,
-    ERR,
-    EXT,
-    NORM_DISP_NAME,
-    S,
-)
+from omc3.optics_measurements.constants import DISPERSION_NAME, ERR, EXT, NORM_DISP_NAME, S
 from omc3.utils import logging_tools
 from scipy.optimize import curve_fit
 
-from pylhc.constants.calibration import (
-    BPMS,
-    D_BPMS,
-    LABELS,
-    TFS_INDEX,
-    D,
-)
+from pylhc.constants.calibration import BPMS, D_BPMS, LABELS, TFS_INDEX, D
 
 LOG = logging_tools.get_logger(__name__)
 
