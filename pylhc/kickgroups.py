@@ -56,6 +56,7 @@ Function ``info``:
                             values for the first ones. A value of zero means showing
                             all files in the group.
 """
+
 import argparse
 import json
 
@@ -106,7 +107,9 @@ LOG = logging_tools.get_logger(__name__)
 # List Kickgroups --------------------------------------------------------------
 
 
-def list_available_kickgroups(by: str = TIMESTAMP, root: Path | str = KICKGROUPS_ROOT, printout: bool = True) -> DataFrame:
+def list_available_kickgroups(
+    by: str = TIMESTAMP, root: Path | str = KICKGROUPS_ROOT, printout: bool = True
+) -> DataFrame:
     """
     List all available KickGroups in `root` with optional sorting..
 
@@ -174,7 +177,9 @@ def get_kickgroup_info(kick_group: str, root: Path | str = KICKGROUPS_ROOT) -> T
     LOG.debug(f"Loading info from all KickFiles in KickGroup '{kick_group}'")
     kick_group_data = _load_json(Path(root) / f"{kick_group}.json")
     kicks_files = kick_group_data["jsonFiles"]
-    df_info = TfsDataFrame(index=range(len(kicks_files)), columns=KICK_COLUMNS, headers={KICKGROUP: kick_group})
+    df_info = TfsDataFrame(
+        index=range(len(kicks_files)), columns=KICK_COLUMNS, headers={KICKGROUP: kick_group}
+    )
 
     if not len(kicks_files):
         raise ValueError(f"KickGroup {kick_group} contains no kicks.")
@@ -232,8 +237,12 @@ def load_kickfile(kickfile: Path | str) -> pd.Series:
 
         data[TUNEX] = kick["excitationSettings"][0]["acDipoleSettings"][idx]["measuredTune"]
         data[TUNEY] = kick["excitationSettings"][0]["acDipoleSettings"][idy]["measuredTune"]
-        data[DRIVEN_TUNEX] = data[TUNEX] + kick["excitationSettings"][0]["acDipoleSettings"][idx]["deltaTuneStart"]
-        data[DRIVEN_TUNEY] = data[TUNEY] + kick["excitationSettings"][0]["acDipoleSettings"][idy]["deltaTuneStart"]
+        data[DRIVEN_TUNEX] = (
+            data[TUNEX] + kick["excitationSettings"][0]["acDipoleSettings"][idx]["deltaTuneStart"]
+        )
+        data[DRIVEN_TUNEY] = (
+            data[TUNEY] + kick["excitationSettings"][0]["acDipoleSettings"][idy]["deltaTuneStart"]
+        )
         data[DRIVEN_TUNEZ] = kick["excitationData"][0]["rfdata"]["excitationFrequency"]
         data[AMPX] = kick["excitationSettings"][0]["acDipoleSettings"][idx]["amplitude"]
         data[AMPY] = kick["excitationSettings"][0]["acDipoleSettings"][idy]["amplitude"]
@@ -254,7 +263,9 @@ def load_kickfile(kickfile: Path | str) -> pd.Series:
                 LOG.warning(f"{str(e)} in {kickfile}")
                 continue
 
-            if "measuredTune" not in kick["excitationSettings"][idx]:  # Happens in very early files in 2022
+            if (
+                "measuredTune" not in kick["excitationSettings"][idx]
+            ):  # Happens in very early files in 2022
                 LOG.warning(f"No measured tune {plane} in the kick file: {kickfile}")
                 continue
 
@@ -267,9 +278,10 @@ def load_kickfile(kickfile: Path | str) -> pd.Series:
 
     return data
 
+
 def _get_delta_tune(kick: dict, idx_plane: int) -> float:
-    """ Return the delta from the tune for the kicks.
-    For some reason, there are multiple different keys where this can be stored. """
+    """Return the delta from the tune for the kicks.
+    For some reason, there are multiple different keys where this can be stored."""
 
     # Default key for ACDipole ---
     # There is also "deltaTuneEnd", but we usually don't change the delta during kick
@@ -293,8 +305,8 @@ def _get_delta_tune(kick: dict, idx_plane: int) -> float:
     raise KeyError(f"Could not find delta tune for plane-entry {idx_plane}")
 
 
-def _find_existing_file_path(path: str|Path) -> Path:
-    """ Find the existing kick file for the kick group. """
+def _find_existing_file_path(path: str | Path) -> Path:
+    """Find the existing kick file for the kick group."""
     path = Path(path)
     if path.is_file():
         return path
@@ -304,13 +316,12 @@ def _find_existing_file_path(path: str|Path) -> Path:
 
     if fill_data in path.parts:
         # Fills are moved at the end of year
-        idx = path.parts.index(fill_data)+1
+        idx = path.parts.index(fill_data) + 1
         new_path = Path(*path.parts[:idx], all_fill_data, *path.parts[idx:])
         if new_path.exists():
             return new_path
 
     raise FileNotFoundError(f"Could not find kick file at {path}")
-
 
 
 # Functions with console output ---
@@ -353,7 +364,9 @@ def _print_kickgroup_info(kicks_info: TfsDataFrame) -> None:
 # Files only -
 
 
-def show_kickgroup_files(kick_group: str, nfiles: int = None, root: Path | str = KICKGROUPS_ROOT) -> None:
+def show_kickgroup_files(
+    kick_group: str, nfiles: int = None, root: Path | str = KICKGROUPS_ROOT
+) -> None:
     """
     Wrapper around `pylhc.kickgroups.get_kickgroup_info`, gathering the relevant
     information from all kickfiles in the KickGroup and printing only the sdds-filepaths
@@ -454,7 +467,7 @@ def _get_plane_index(data: list[dict], plane: str) -> str:
 
 
 def _get_fill_from_path(sdds_path: str | Path) -> str:
-    """ Get the fill number from the path to the sdds file.
+    """Get the fill number from the path to the sdds file.
     Note: Not sure why the fill is not saved automatically into the .json file.
     Maybe we should ask OP to include this.
     """

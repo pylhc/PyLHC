@@ -87,6 +87,7 @@ Arguments:
 
 .. _CarlierForcedDA2019: https://journals.aps.org/prab/pdf/10.1103/PhysRevAccelBeams.22.031002
 """
+
 import os
 from collections import defaultdict
 from contextlib import suppress
@@ -124,8 +125,8 @@ from pandas.plotting import register_matplotlib_converters
 from tfs import TfsDataFrame
 from tfs.tools import significant_digits
 
-pytimber = cern_network_import('pytimber')
-PageStore = cern_network_import('pytimber.pagestore.PageStore')
+pytimber = cern_network_import("pytimber")
+PageStore = cern_network_import("pytimber.pagestore.PageStore")
 
 
 from pylhc.constants.forced_da_analysis import (
@@ -300,10 +301,12 @@ def get_params():
             help="Assumed NORMALIZED nominal emittance for the machine.",
         ),
         emittance_tfs=dict(
-            type=PathOrDataframe, help="Dataframe or Path of pre-saved emittance tfs.",
+            type=PathOrDataframe,
+            help="Dataframe or Path of pre-saved emittance tfs.",
         ),
         intensity_tfs=dict(
-            type=PathOrDataframe, help="Dataframe or Path of pre-saved intensity tfs.",
+            type=PathOrDataframe,
+            help="Dataframe or Path of pre-saved intensity tfs.",
         ),
         show_wirescan_emittance=dict(
             default=False,
@@ -342,7 +345,10 @@ def get_params():
             choices=["fit_sigma", "average"],
             help="Which BSRT data to use (from database).",
         ),
-        show=dict(action="store_true", help="Show plots.",),
+        show=dict(
+            action="store_true",
+            help="Show plots.",
+        ),
         plot_styles=dict(
             type=str,
             nargs="+",
@@ -682,7 +688,9 @@ def _get_bsrt_bunch_emittances_from_timber(beam, planes, db, timespan, key_type,
         x, y, y_std = x[y != 0], y[y != 0], y_std[y != 0]
 
         df = tfs.TfsDataFrame(
-            index=_timestamp_to_cerntime_index(x), columns=all_columns, dtype=float,
+            index=_timestamp_to_cerntime_index(x),
+            columns=all_columns,
+            dtype=float,
         )
         df[col_nemittance] = y
         df[err_col(col_nemittance)] = y_std
@@ -895,7 +903,7 @@ def fun_exp_decay(p, x):  # fit and plot
 
 def fun_exp_sigma(p, x):  # only used for plotting
     """p = DA_sigma, x = action (J_sigma)"""
-    return np.exp(-0.5 * (p ** 2 - x ** 2))
+    return np.exp(-0.5 * (p**2 - x**2))
 
 
 def fun_linear(p, x):  # fit and plot
@@ -981,7 +989,12 @@ def _fit_odr(fun, x, y, sx, sy, init):
     """ODR Fit (includes errors)."""
     # fill zero errors with the minimum error - otherwise fit will not work
     fit_model_sigma = scipy.odr.Model(fun)
-    data_model_sigma = scipy.odr.RealData(x=x, y=y, sx=sx, sy=sy,)
+    data_model_sigma = scipy.odr.RealData(
+        x=x,
+        y=y,
+        sx=sx,
+        sy=sy,
+    )
     da_odr = scipy.odr.ODR(data_model_sigma, fit_model_sigma, beta0=init)
     # da_odr.set_job(fit_type=2)
     odr_output = da_odr.run()
@@ -1010,7 +1023,7 @@ def _convert_to_sigmas(plane, kick_df):
     )
     LOG.info(
         f"Measured Emittance {emittance_sign} ± {emittance_sign_std} pm"
-        f" (Nominal {nominal_emittance*1e12: .2f} pm)"
+        f" (Nominal {nominal_emittance * 1e12: .2f} pm)"
     )
 
     # DA (in units of J) to DA_sigma
@@ -1053,9 +1066,7 @@ def _plot_intensity(directory, beam, plane, kick_df, intensity_df):
 
     # convert to % relative to before first kick
     idx_before = get_approximate_index(
-        intensity_df,
-        kick_df.index.min() - pd.Timedelta(seconds=x_span[0]),
-        method="ffill"
+        intensity_df, kick_df.index.min() - pd.Timedelta(seconds=x_span[0]), method="ffill"
     )
     idx_intensity = intensity_df.columns.get_loc(INTENSITY)  # for iloc
     intensity_start = intensity_df.iloc[idx_before, idx_intensity]
@@ -1112,7 +1123,7 @@ def _plot_intensity(directory, beam, plane, kick_df, intensity_df):
     plt.tight_layout()
     annotations.set_name(f"Intensity Beam {beam}, Plane {plane}", fig)
     annotations.set_annotation(
-        f"Intensity at 100%: {intensity_start*1e-10:.3f}" "$\;\cdot\;10^{{10}}$ charges",
+        f"Intensity at 100%: {intensity_start * 1e-10:.3f}$\;\cdot\;10^{{{{10}}}}$ charges",
         ax=ax,
         position="left",
     )
@@ -1319,7 +1330,7 @@ def _plot_da_fit(directory, beam, plane, k_df, fit_type):
             y=1.00,
             s=(
                 f"$\epsilon_{{mean}}$ = {emittance_sign} $\pm$ {emittance_sign_std} pm "
-                f"($\epsilon_{{nominal}}$ = {nominal_emittance*1e12: .2f} pm)"
+                f"($\epsilon_{{nominal}}$ = {nominal_emittance * 1e12: .2f} pm)"
             ),
             transform=ax.transAxes,
             va="bottom",
@@ -1360,9 +1371,10 @@ def _get_fit_plot_data(da, da_err, data, fit_type):
 
 # Helper ---
 
+
 def get_approximate_index(df, item, method="nearest"):
-    """ Emulates the `get_loc` from pandas<2.0, i.e.
-    single index input and output. """
+    """Emulates the `get_loc` from pandas<2.0, i.e.
+    single index input and output."""
     return df.index.get_indexer([item], method=method)[0]
 
 

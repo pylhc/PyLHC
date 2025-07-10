@@ -7,6 +7,7 @@ using the beta method. The `get_calibration_factors_from_beta` is intended
 to be used with the script `bpm_calibration.py`.
 
 """
+
 from pathlib import Path
 from typing import Dict, Sequence, Tuple
 
@@ -50,9 +51,9 @@ def _get_beta_fit(
         sa, sb, sab = pcov[0, 0], pcov[1, 1], pcov[0, 1]
         a, b = popt[0], popt[1]
 
-        beta_err = ((a ** 2 - (x - b) ** 2) / a ** 2) ** 2 * sa
+        beta_err = ((a**2 - (x - b) ** 2) / a**2) ** 2 * sa
         beta_err += 4 * ((x - b) / a) ** 2 * sb
-        beta_err -= 4 * (x - b) * (a ** 2 - (x - b) ** 2) / a ** 3 * sab
+        beta_err -= 4 * (x - b) * (a**2 - (x - b) ** 2) / a**3 * sab
         return beta_err
 
     positions = beta_phase_tfs.reindex(bpms)[f"{S}"]
@@ -118,8 +119,8 @@ def _get_factors_from_phase(
     factors = np.sqrt(beta_phase / beta_amp)
 
     # Now compute the errors
-    calibration_error = (beta_phase_err ** 2) / (4 * beta_amp * beta_phase)
-    calibration_error += (beta_phase * (beta_amp_err ** 2)) / (4 * (beta_amp ** 3))
+    calibration_error = (beta_phase_err**2) / (4 * beta_amp * beta_phase)
+    calibration_error += (beta_phase * (beta_amp_err**2)) / (4 * (beta_amp**3))
     calibration_error = np.sqrt(calibration_error)
 
     return pd.DataFrame({LABELS[1]: factors, LABELS[2]: calibration_error})
@@ -183,7 +184,9 @@ def _get_factors_from_phase_fit(
     return calibration_phase_fit
 
 
-def get_calibration_factors_from_beta(ips: Sequence[int], input_path: Path) -> Dict[str, pd.DataFrame]:
+def get_calibration_factors_from_beta(
+    ips: Sequence[int], input_path: Path
+) -> Dict[str, pd.DataFrame]:
     """
     This function is the main function to compute the calibration factors for
     the beta method.
@@ -220,14 +223,18 @@ def get_calibration_factors_from_beta(ips: Sequence[int], input_path: Path) -> D
 
         # Load the tfs files for beta from phase and beta from amp
         beta_phase_tfs = tfs.read(input_path / f"{BETA_NAME}{plane.lower()}{EXT}", index=TFS_INDEX)
-        beta_amp_tfs = tfs.read(input_path / f"{AMP_BETA_NAME}{plane.lower()}{EXT}", index=TFS_INDEX)
+        beta_amp_tfs = tfs.read(
+            input_path / f"{AMP_BETA_NAME}{plane.lower()}{EXT}", index=TFS_INDEX
+        )
 
         # Get the calibration factors from phase
         calibration_phase = _get_factors_from_phase(beta_phase_tfs, beta_amp_tfs, plane)
 
         # Calibration from phase fit can only be obtained via ballistic optics
         if ips is not None:
-            calibration_phase_fit = _get_factors_from_phase_fit(beta_phase_tfs, beta_amp_tfs, ips, plane)
+            calibration_phase_fit = _get_factors_from_phase_fit(
+                beta_phase_tfs, beta_amp_tfs, ips, plane
+            )
         else:
             calibration_phase_fit = pd.DataFrame(columns=(LABELS[3], LABELS[4]))
 

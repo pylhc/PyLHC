@@ -53,7 +53,6 @@ class TestOnCernNetwork:
                 output_directory=tmp_path,
             )
 
-
     def test_md2162_timberdb(tmp_path):
         data_dir = INPUT / "kicks_horizontal_md2162"
         fda_analysis(
@@ -72,6 +71,7 @@ class TestOnCernNetwork:
 
 
 # Helper -----------------------------------------------------------------------
+
 
 def check_output(output_dir: Path) -> None:
     assert len(list(output_dir.glob("*.pdf"))) == 5

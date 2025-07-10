@@ -9,6 +9,7 @@ only from the Technical Network.
 
 Original authors: E. H. Maclean, T. Persson and G. Trad.
 """
+
 import datetime as dt
 import os
 import pickle
@@ -60,7 +61,7 @@ def convert_to_data_output_format(dtobject):
 ##########################################
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Create a PyJapc instance with selector SCT.USER.ALL
     # INCA is automatically configured based on the timing domain you specify here
 

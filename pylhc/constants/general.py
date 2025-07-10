@@ -4,6 +4,7 @@ Constants: General
 
 General constants to be used in ``PyLHC``, to help with consistency.
 """
+
 import numpy as np
 
 BEAMS = (1, 2)
@@ -26,5 +27,5 @@ def get_proton_gamma(energy):
 
 
 def get_proton_beta(energy):
-    """ Returns relativistic beta for protons """
+    """Returns relativistic beta for protons"""
     return np.sqrt(1 - (1 / get_proton_gamma(energy) ** 2))

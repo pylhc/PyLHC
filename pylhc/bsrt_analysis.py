@@ -11,6 +11,7 @@ are generated.
 - If provided a `TfsDataFrame` file with timestamps, plots of the 2D distribution and comparison
 of fit parameters to cross sections are added.
 """
+
 import datetime
 import glob
 import gzip
@@ -224,7 +225,6 @@ def _add_kick_lines(ax, df):
 
 
 def _fit_var(ax, bsrt_df, plot_dict, opt):
-
     ax[plot_dict["idx"]].plot(
         bsrt_df.index, [entry[plot_dict["fitidx"]] for entry in bsrt_df["lastFitResults"]]
     )
@@ -234,7 +234,6 @@ def _fit_var(ax, bsrt_df, plot_dict, opt):
 
 
 def plot_fit_variables(opt, bsrt_df):
-
     fig, ax = plt.subplots(nrows=2, ncols=3, figsize=(20, 9), sharex=True, constrained_layout=True)
 
     plot_dicts = [
@@ -292,8 +291,8 @@ def _full_crossection(ax, bsrt_df, plot_dict, opt):
         ax,
         bsrt_df.reset_index(),
         "TimeIndex",
-        f'projPositionSet{plot_dict["idx"]}',
-        f'projDataSet{plot_dict["idx"]}',
+        f"projPositionSet{plot_dict['idx']}",
+        f"projDataSet{plot_dict['idx']}",
     )
     ax.plot(
         bsrt_df.index,
@@ -326,7 +325,6 @@ def _full_crossection(ax, bsrt_df, plot_dict, opt):
 
 
 def plot_full_crosssection(opt, bsrt_df):
-
     plot_dicts = [
         {"idx": 1, "fitresult": 3, "fiterror": 4, "title": "Horizontal Cross section"},
         {"idx": 2, "fitresult": 8, "fiterror": 9, "title": "Vertical Cross section"},
@@ -344,7 +342,7 @@ def plot_full_crosssection(opt, bsrt_df):
 
 def _gauss(x, *p):
     a, b, c = p
-    return a * np.exp(-((x - b) ** 2) / (2.0 * c ** 2.0))
+    return a * np.exp(-((x - b) ** 2) / (2.0 * c**2.0))
 
 
 def _reshaped_imageset(df):
@@ -408,7 +406,6 @@ def plot_crosssection_for_timesteps(opt, bsrt_df):
 
 
 def _aux_variables(ax, bsrt_df, plot_dict, opt):
-
     ax.plot(
         bsrt_df.index, bsrt_df[plot_dict["variable1"]], color="red", label=plot_dict["variable1"]
     )

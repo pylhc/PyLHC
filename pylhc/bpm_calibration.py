@@ -51,6 +51,7 @@ Arguments:
 
     default: ``beta``
 """
+
 from pathlib import Path
 
 import tfs
@@ -74,11 +75,7 @@ def _get_params() -> dict:
     """
 
     return EntryPointParameters(
-        inputdir=dict(
-            type=Path,
-            required=True, 
-            help="Measurements path."
-        ),
+        inputdir=dict(type=Path, required=True, help="Measurements path."),
         outputdir=dict(
             type=Path,
             required=True,
@@ -120,9 +117,11 @@ def main(opt):
     # Write the TFS file to the desired output directory
     opt.outputdir.mkdir(parents=True, exist_ok=True)
     for plane in factors.keys():
-        tfs.write(opt.outputdir / f"{CALIBRATION_NAME[opt.method]}{plane.lower()}{EXT}", 
-                  factors[plane].reset_index(), 
-                  save_index=False)
+        tfs.write(
+            opt.outputdir / f"{CALIBRATION_NAME[opt.method]}{plane.lower()}{EXT}",
+            factors[plane].reset_index(),
+            save_index=False,
+        )
 
     return factors
 

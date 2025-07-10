@@ -7,6 +7,7 @@ using the dispersion method. The `get_calibration_factors_from_dispersion` is
 intended to be used with the script `bpm_calibration.py`.
 
 """
+
 from pathlib import Path
 from scipy.optimize import curve_fit
 import numpy as np
@@ -68,19 +69,17 @@ def _get_dispersion_fit(
 
     # Get the fitted beta and add the errors to get min/max values
     dispersion_fit = dispersion_function(positions, fit[0], fit[1])
-    dispersion_max_fit = dispersion_function(
-        positions, fit[0] + fit_err[0], fit[1] + fit_err[1]
-    )
-    dispersion_min_fit = dispersion_function(
-        positions, fit[0] - fit_err[0], fit[1] - fit_err[1]
-    )
+    dispersion_max_fit = dispersion_function(positions, fit[0] + fit_err[0], fit[1] + fit_err[1])
+    dispersion_min_fit = dispersion_function(positions, fit[0] - fit_err[0], fit[1] - fit_err[1])
     dispersion_fit_err = (dispersion_max_fit - dispersion_min_fit) / 2
 
     return dispersion_fit, dispersion_fit_err
 
 
 def _get_factors_from_dispersion(
-        dispersion: Dict[str, pd.Series], phase: str, phase_err: str,
+    dispersion: Dict[str, pd.Series],
+    phase: str,
+    phase_err: str,
 ) -> Tuple[pd.Series, pd.Series]:
     """
     This function computes the calibration factors for the dispersion method
@@ -148,9 +147,7 @@ def get_calibration_factors_from_dispersion(
     """
     LOG.info("Computing the calibration factors via dispersion")
     # Load the normalized dispersion tfs file
-    norm_dispersion_tfs = tfs.read(
-        input_path / f"{NORM_DISP_NAME}x{EXT}", index=TFS_INDEX
-    )
+    norm_dispersion_tfs = tfs.read(input_path / f"{NORM_DISP_NAME}x{EXT}", index=TFS_INDEX)
     dispersion_tfs = tfs.read(input_path / f"{DISPERSION_NAME}x{EXT}", index=TFS_INDEX)
 
     # Get the beam concerned by those tfs files
@@ -163,14 +160,16 @@ def get_calibration_factors_from_dispersion(
         # Filter our TFS files to only keep the BPMs for the selected IR
         bpms = dispersion_tfs.reindex(BPMS[ip][beam])
         d_bpms = dispersion_tfs.reindex(D_BPMS[ip][beam])
-            
+
         # Check for possible missing bpms
         for bpm_set in [bpms, d_bpms]:
             missing = set(bpm_set.loc[bpm_set.isnull().values].index)
             if missing:
-                LOG.warning("    One or several BPMs are missing in the input"
-                            " DataFrame, the calibration factors calculation"
-                            f"from fit may not be accurate: {missing}")
+                LOG.warning(
+                    "    One or several BPMs are missing in the input"
+                    " DataFrame, the calibration factors calculation"
+                    f"from fit may not be accurate: {missing}"
+                )
 
         # Get the positions of the BPMs and the subset used for the fit
         bpms = bpms.index
@@ -190,7 +189,8 @@ def get_calibration_factors_from_dispersion(
 
         # Compute the calibration factors using the dispersion from phase and amp
         calibration, calibration_err = _get_factors_from_dispersion(
-            dispersion, "phase", "phase_err")
+            dispersion, "phase", "phase_err"
+        )
 
         # Fit the dispersion from phase
         dispersion["phase_fit"], dispersion["phase_fit_err"] = _get_dispersion_fit(
@@ -219,6 +219,8 @@ def get_calibration_factors_from_dispersion(
         if "X" not in calibration_factors.keys():
             calibration_factors = {"X": factors_for_ip}
         else:
-            calibration_factors["X"] = pd.concat([calibration_factors["X"], factors_for_ip], axis="index")
+            calibration_factors["X"] = pd.concat(
+                [calibration_factors["X"], factors_for_ip], axis="index"
+            )
 
     return calibration_factors

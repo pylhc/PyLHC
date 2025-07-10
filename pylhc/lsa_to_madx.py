@@ -92,6 +92,7 @@ The call would be:
 
 Hint: the knobs active at a given time can be retrieved with the `~pylhc.machine_settings_info` script. 
 """
+
 import argparse
 import re
 import string
@@ -126,7 +127,9 @@ def parse_knobs_and_trim_values_from_file(knobs_file: Path) -> Dict[str, float]:
     Returns:
         A `dict` with as keys the parsed knob names and as values their associated trims.
     """
-    knob_lines = [line for line in Path(knobs_file).read_text().splitlines() if not line.startswith("#")]
+    knob_lines = [
+        line for line in Path(knobs_file).read_text().splitlines() if not line.startswith("#")
+    ]
     results = {}
 
     for line in knob_lines:
@@ -169,9 +172,13 @@ def get_sign_madx_vs_lsa(madx_name: str) -> int:
     return 1
 
 
-def get_madx_script_from_definition_dataframe(deltas_df: tfs.TfsDataFrame, lsa_knob: str, trim: float = 1.0,
-                                              by_reference: bool = True, verbose: bool = False
-                                              ) -> str:
+def get_madx_script_from_definition_dataframe(
+    deltas_df: tfs.TfsDataFrame,
+    lsa_knob: str,
+    trim: float = 1.0,
+    by_reference: bool = True,
+    verbose: bool = False,
+) -> str:
     """
     Given the extracted definition dataframe of an LSA knob - as returned by
     `~pylhc.data_extract.lsa.LSAClient.get_knob_circuits` - this function will generate the
@@ -218,9 +225,13 @@ def get_madx_script_from_definition_dataframe(deltas_df: tfs.TfsDataFrame, lsa_k
         # mess up parsing of "var = var + -value" if delta_k is negative
         if by_reference:
             variable_init = f"{variable}_init"
-            change_commands.append(f"{variable:<12} := {variable_init:^19} + ({delta:^25}) * {trim_variable};")
+            change_commands.append(
+                f"{variable:<12} := {variable_init:^19} + ({delta:^25}) * {trim_variable};"
+            )
         else:
-            change_commands.append(f"{variable:<12} = {variable:^15} + ({delta:^25}) * {trim_variable};")
+            change_commands.append(
+                f"{variable:<12} = {variable:^15} + ({delta:^25}) * {trim_variable};"
+            )
 
     change_commands.append(f"! End of change commands for knob: {lsa_knob}\n")
     return "\n".join(change_commands)
@@ -261,7 +272,7 @@ def _get_trim_variable(lsa_knob: str) -> str:
 
 
 def _get_delta(deltas_df: tfs.TfsDataFrame) -> pd.Series:
-    """ Get the correct delta-column """
+    """Get the correct delta-column"""
     if "DELTA_K" not in deltas_df.columns:
         LOG.debug("Using DELTA_KL column.")
         return deltas_df.DELTA_KL
@@ -271,12 +282,16 @@ def _get_delta(deltas_df: tfs.TfsDataFrame) -> pd.Series:
         return deltas_df.DELTA_K
 
     if (deltas_df.DELTA_K.astype(bool) & deltas_df.DELTA_KL.astype(bool)).any():
-        raise ValueError("Some entries of DELTA_KL and DELTA_K seem to both be given. "
-                         "This looks like a bug. Please investigate.")
+        raise ValueError(
+            "Some entries of DELTA_KL and DELTA_K seem to both be given. "
+            "This looks like a bug. Please investigate."
+        )
 
     LOG.debug("Both DELTA_K and DELTA_KL columns present, merging columns.")
-    return pd.Series(np.where(deltas_df.DELTA_K.astype(bool), deltas_df.DELTA_K, deltas_df.DELTA_KL),
-                     index=deltas_df.index)
+    return pd.Series(
+        np.where(deltas_df.DELTA_K.astype(bool), deltas_df.DELTA_K, deltas_df.DELTA_KL),
+        index=deltas_df.index,
+    )
 
 
 # ----- Script Part ----- #
@@ -292,7 +307,11 @@ def _get_args():
         "scripts reproducing the provided knobs."
     )
     parser.add_argument(
-        "--optics", dest="optics", type=str, required=True, help="The LSA name of the optics for which the knobs are defined."
+        "--optics",
+        dest="optics",
+        type=str,
+        required=True,
+        help="The LSA name of the optics for which the knobs are defined.",
     )
     parser.add_argument(
         "--knobs",
@@ -340,13 +359,17 @@ def main():
         for lsa_knob, trim_value in knobs_dict.items():
             LOG.info(f"Processing LSA knob '{lsa_knob}'")
             try:  # next line might raise if knob not defined for the given optics
-                knob_definition = lsa_client.get_knob_circuits(knob_name=lsa_knob, optics=lsa_optics)
+                knob_definition = lsa_client.get_knob_circuits(
+                    knob_name=lsa_knob, optics=lsa_optics
+                )
                 madx_commands_string = get_madx_script_from_definition_dataframe(
                     deltas_df=knob_definition, lsa_knob=lsa_knob, trim=trim_value
                 )
 
             except (OSError, IOError):  # raised by pjlsa if knob not found
-                LOG.warning(f"Could not find knob '{lsa_knob}' in the given optics '{lsa_optics}' - skipping")
+                LOG.warning(
+                    f"Could not find knob '{lsa_knob}' in the given optics '{lsa_optics}' - skipping"
+                )
                 unfound_knobs.append(lsa_knob)
 
             else:  # we've managed to find knobs
@@ -360,7 +383,10 @@ def main():
                 Path(madx_file).write_text(madx_commands_string)
 
     if unfound_knobs:
-        LOG.info(f"The following knobs could not be found in the '{lsa_optics}' optics: \n\t\t" + "\n\t\t".join(unfound_knobs))
+        LOG.info(
+            f"The following knobs could not be found in the '{lsa_optics}' optics: \n\t\t"
+            + "\n\t\t".join(unfound_knobs)
+        )
 
 
 if __name__ == "__main__":

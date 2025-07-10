@@ -5,6 +5,7 @@ Constants: Machine Settings Info
 Specific constants relating to the retrieval of machine settings information to be used in
 ``PyLHC``, to help with consistency.
 """
+
 from pylhc.constants.general import TFS_SUFFIX
 
 # TFS-File Conventions #########################################################

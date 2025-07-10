@@ -4,6 +4,7 @@ Timber
 
 This module provides useful functions to conveniently wrap the functionality of ``pytimber``.
 """
+
 import logging
 
 from omc3.utils.mock import cern_network_import

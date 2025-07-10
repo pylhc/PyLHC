@@ -17,12 +17,14 @@ INPUTS_DIR = Path(__file__).parent.parent / "inputs"
 BSRT_INPUTS = INPUTS_DIR / "bsrt_analysis"
 BASELINE_DIR = str(INPUTS_DIR / "mpl_bsrt_baseline")
 
+
 def test_bsrt_df(_bsrt_df):
     results = bsrt_analysis.main(directory=str(BSRT_INPUTS), beam="B1")
     assert_frame_equal(
         results["bsrt_df"].sort_index(axis=1),
         _bsrt_df.copy().sort_index(axis=1),
-        check_dtype=False, check_index_type=False
+        check_dtype=False,
+        check_index_type=False,
     )
 
 
