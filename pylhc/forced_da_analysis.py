@@ -1403,7 +1403,8 @@ def _maybe_add_sum_for_planes(df, planes, col_fun, col_err_fun=None):
     """In case planes == 'XY' add the two plane columns and their errors."""
     if len(planes) > 1:
         if col_err_fun is not None:
-            cols = lambda p: [col_fun(p), col_err_fun(p)]
+            def cols(p):
+                return [col_fun(p), col_err_fun(p)]
             x_cols, y_cols = [cols(p) for p in planes]
             df = df.reindex(columns=df.columns.to_list() + cols(planes))
             df[cols(planes)] = np.array(
