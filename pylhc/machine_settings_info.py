@@ -498,7 +498,7 @@ def _get_optics(acc_time: AccDatetime, beamprocess: str, bp_start: AccDatetime) 
 
 def _get_last_optics(
     optics_table, bp: str, bp_start: AccDatetime, acc_time: AccDatetime
-) -> (str, AccDatetime):
+) -> tuple[str, AccDatetime]:
     """Get the name of the optics at the right time for current beam process."""
     ts = acc_time.timestamp() - bp_start.timestamp()
     item = None
