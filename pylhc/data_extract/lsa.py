@@ -390,7 +390,7 @@ def _beamprocess_to_dict(bp):
     return bp_dict
 
 
-def try_to_acquire_data(function: Callable, *args, **kwargs):  # noqa: RET503
+def try_to_acquire_data(function: Callable, *args, **kwargs):
     """Tries to get data from function multiple times.
     TODO: Move to omc3 as is also used there in BBQ extraction.
 
@@ -413,3 +413,4 @@ def try_to_acquire_data(function: Callable, *args, **kwargs):  # noqa: RET503
                 LOG.warning(f"Could not acquire data! Trial no {tries + 1} / {retries}")
                 continue  # will go to the next iteratoin of the loop, so retry
             raise OSError("Could not acquire data!") from e
+    raise RuntimeError(f"Could not acquire data after {retries:d} retries.")
