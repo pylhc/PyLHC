@@ -87,11 +87,11 @@ Arguments:
 
 .. _CarlierForcedDA2019: https://journals.aps.org/prab/pdf/10.1103/PhysRevAccelBeams.22.031002
 """
-import os
+
+import contextlib
 from collections import defaultdict
 from contextlib import suppress
 from pathlib import Path
-from typing import Tuple
 
 import matplotlib as mpl
 import matplotlib.colors as mcolors
@@ -105,9 +105,9 @@ import scipy.optimize
 import tfs
 from generic_parser import EntryPointParameters, entrypoint
 from generic_parser.entry_datatypes import (
-    DictAsString,
     FALSE_ITEMS,
     TRUE_ITEMS,
+    DictAsString,
     get_instance_faker_meta,
     get_multi_class,
 )
@@ -123,10 +123,6 @@ from pandas import DataFrame, Series
 from pandas.plotting import register_matplotlib_converters
 from tfs import TfsDataFrame
 from tfs.tools import significant_digits
-
-pytimber = cern_network_import('pytimber')
-PageStore = cern_network_import('pytimber.pagestore.PageStore')
-
 
 from pylhc.constants.forced_da_analysis import (
     BSRT_EMITTANCE_TO_METER,
@@ -181,6 +177,9 @@ from pylhc.constants.general import (
     get_proton_gamma,
 )
 
+pytimber = cern_network_import("pytimber")
+PageStore = cern_network_import("pytimber.pagestore.PageStore")
+
 LOG = logging_tools.get_logger(__name__)
 
 
@@ -200,14 +199,13 @@ class BoolOrPathOrDataFrame(
         if value in TRUE_ITEMS:
             return True
 
-        elif value in FALSE_ITEMS:
+        if value in FALSE_ITEMS:
             return False
 
-        else:
-            try:
-                return Path(value)
-            except TypeError:
-                return value
+        try:
+            return Path(value)
+        except TypeError:
+            return value
 
 
 def _get_pathclass(*other_classes):
@@ -233,127 +231,136 @@ PathOrString = _get_pathclass()
 
 def get_params():
     return EntryPointParameters(
-        kick_directory=dict(
-            flags=["-k", "--kickdir"],
-            required=True,
-            type=PathOrString,
-            help="Analysis kick_directory containing kick files.",
-        ),
-        output_directory=dict(
-            flags=["-o", "--outdir"],
-            type=PathOrString,
-            help="Output kick_directory, if not given subfolder in kick kick_directory",
-        ),
-        energy=dict(
-            flags=["-e", "--energy"],
-            required=True,
-            type=get_multi_class(float, int),
-            help="Beam energy in GeV.",
-        ),
-        fill=dict(
-            flags=["-f", "--fill"],
-            type=get_multi_class(int, type(None)),
-            help="Fill that was used. If not given, check out time_around_kicks.",
-        ),
-        beam=dict(
-            flags=["-b", "--beam"], required=True, choices=[1, 2], type=int, help="Beam to use."
-        ),
-        plane=dict(
-            flags=["-p", "--plane"],
-            choices=["X", "Y"],
-            required=True,
-            type=str,
-            help=(
+        kick_directory={
+            "flags": ["-k", "--kickdir"],
+            "required": True,
+            "type": PathOrString,
+            "help": "Analysis kick_directory containing kick files.",
+        },
+        output_directory={
+            "flags": ["-o", "--outdir"],
+            "type": PathOrString,
+            "help": "Output kick_directory, if not given subfolder in kick kick_directory",
+        },
+        energy={
+            "flags": ["-e", "--energy"],
+            "required": True,
+            "type": get_multi_class(float, int),
+            "help": "Beam energy in GeV.",
+        },
+        fill={
+            "flags": ["-f", "--fill"],
+            "type": get_multi_class(int, type(None)),
+            "help": "Fill that was used. If not given, check out time_around_kicks.",
+        },
+        beam={
+            "flags": ["-b", "--beam"],
+            "required": True,
+            "choices": [1, 2],
+            "type": int,
+            "help": "Beam to use.",
+        },
+        plane={
+            "flags": ["-p", "--plane"],
+            "choices": ["X", "Y"],
+            "required": True,
+            "type": str,
+            "help": (
                 "Plane of the kicks."
                 # " Give 'XY' for using both planes (e.g. diagonal kicks)."  # Future release
             ),
-        ),
-        time_around_kicks=dict(
-            type=int,
-            default=TIME_AROUND_KICKS_MIN,
-            help=(
+        },
+        time_around_kicks={
+            "type": int,
+            "default": TIME_AROUND_KICKS_MIN,
+            "help": (
                 "If no fill is given, this defines the time (in minutes) "
                 "when data before the first and after the last kick is extracted."
             ),
-        ),
-        intensity_time_before_kick=dict(
-            type=int,
-            nargs=2,
-            default=TIME_BEFORE_KICK_S,
-            help=(
+        },
+        intensity_time_before_kick={
+            "type": int,
+            "nargs": 2,
+            "default": TIME_BEFORE_KICK_S,
+            "help": (
                 "Defines the times before the kicks (in seconds) "
                 "which is used for intensity averaging to calculate the losses."
             ),
-        ),
-        intensity_time_after_kick=dict(
-            type=int,
-            nargs=2,
-            default=TIME_AFTER_KICK_S,
-            help=(
+        },
+        intensity_time_after_kick={
+            "type": int,
+            "nargs": 2,
+            "default": TIME_AFTER_KICK_S,
+            "help": (
                 "Defines the times after the kicks (in seconds) "
                 "which is used for intensity averaging to calculate the losses."
             ),
-        ),
-        normalized_emittance=dict(
-            type=float,
-            default=LHC_NOMINAL_EMITTANCE,
-            help="Assumed NORMALIZED nominal emittance for the machine.",
-        ),
-        emittance_tfs=dict(
-            type=PathOrDataframe, help="Dataframe or Path of pre-saved emittance tfs.",
-        ),
-        intensity_tfs=dict(
-            type=PathOrDataframe, help="Dataframe or Path of pre-saved intensity tfs.",
-        ),
-        show_wirescan_emittance=dict(
-            default=False,
-            type=BoolOrPathOrDataFrame,
-            help=(
+        },
+        normalized_emittance={
+            "type": float,
+            "default": LHC_NOMINAL_EMITTANCE,
+            "help": "Assumed NORMALIZED nominal emittance for the machine.",
+        },
+        emittance_tfs={
+            "type": PathOrDataframe,
+            "help": "Dataframe or Path of pre-saved emittance tfs.",
+        },
+        intensity_tfs={
+            "type": PathOrDataframe,
+            "help": "Dataframe or Path of pre-saved intensity tfs.",
+        },
+        show_wirescan_emittance={
+            "default": False,
+            "type": BoolOrPathOrDataFrame,
+            "help": (
                 "Flag if the emittance from wirescan should also be shown, "
                 "can also be a Dataframe or Path of pre-saved emittance bws tfs."
             ),
-        ),
-        timber_db=dict(
-            type=str,
-            default="all",
-            choices=["all", "mdb", "ldb", "nxcals"],
-            help="Which timber database to use.",
-        ),
-        pagestore_db=dict(type=PathOrPagestore, help="(Path to-) presaved timber database"),
-        fit=dict(
-            type=str,
-            default="exponential",
-            choices=["exponential", "linear"],
-            help="Fitting function to use (rearranges parameters to make sense).",
-        ),
-        emittance_window_length=dict(
-            help="Length of the moving average window. (# data points)",
-            type=int,
-            default=ROLLING_AVERAGE_WINDOW,
-        ),
-        emittance_outlier_limit=dict(
-            help="Limit, i.e. cut from mean, on emittance outliers in meter.",
-            type=float,
-            default=OUTLIER_LIMIT,
-        ),
-        emittance_type=dict(
-            type=str,
-            default="average",
-            choices=["fit_sigma", "average"],
-            help="Which BSRT data to use (from database).",
-        ),
-        show=dict(action="store_true", help="Show plots.",),
-        plot_styles=dict(
-            type=str,
-            nargs="+",
-            default=["standard"],
-            help="Which plotting styles to use, either from omc3 styles or default mpl.",
-        ),
-        manual_style=dict(
-            type=DictAsString,
-            default={},
-            help="Additional style rcParameters which update the set of predefined ones.",
-        ),
+        },
+        timber_db={
+            "type": str,
+            "default": "all",
+            "choices": ["all", "mdb", "ldb", "nxcals"],
+            "help": "Which timber database to use.",
+        },
+        pagestore_db={"type": PathOrPagestore, "help": "(Path to-) presaved timber database"},
+        fit={
+            "type": str,
+            "default": "exponential",
+            "choices": ["exponential", "linear"],
+            "help": "Fitting function to use (rearranges parameters to make sense).",
+        },
+        emittance_window_length={
+            "help": "Length of the moving average window. (# data points)",
+            "type": int,
+            "default": ROLLING_AVERAGE_WINDOW,
+        },
+        emittance_outlier_limit={
+            "help": "Limit, i.e. cut from mean, on emittance outliers in meter.",
+            "type": float,
+            "default": OUTLIER_LIMIT,
+        },
+        emittance_type={
+            "type": str,
+            "default": "average",
+            "choices": ["fit_sigma", "average"],
+            "help": "Which BSRT data to use (from database).",
+        },
+        show={
+            "action": "store_true",
+            "help": "Show plots.",
+        },
+        plot_styles={
+            "type": str,
+            "nargs": "+",
+            "default": ["standard"],
+            "help": "Which plotting styles to use, either from omc3 styles or default mpl.",
+        },
+        manual_style={
+            "type": DictAsString,
+            "default": {},
+            "help": "Additional style rcParameters which update the set of predefined ones.",
+        },
     )
 
 
@@ -404,7 +411,7 @@ def main(opt):
     _write_tfs(out_dir, opt.plane, kick_df, intensity_df, emittance_df, emittance_bws_df)
 
     # plotting
-    figs = dict()
+    figs = {}
     register_matplotlib_converters()  # for datetime plotting
     style.set_style(opt.plot_styles, opt.manual_style)
     figs["emittance"] = _plot_emittances(
@@ -453,7 +460,7 @@ def _write_tfs(
         tfs.write(out_dir / outfile_emittance(plane), emittance_df)
         if emittance_bws_df is not None:
             tfs.write(out_dir / outfile_emittance_bws(plane), emittance_bws_df)
-    except (FileNotFoundError, IOError):
+    except (OSError, FileNotFoundError):
         LOG.error(f"Cannot write into directory: {str(out_dir)} ")
 
 
@@ -505,7 +512,7 @@ def _drop_duplicate_indices(df):
 
 def _get_dataframes(
     kick_times: pd.Index, opt: DotDict
-) -> Tuple[TfsDataFrame, TfsDataFrame, TfsDataFrame]:
+) -> tuple[TfsDataFrame, TfsDataFrame, TfsDataFrame]:
     """Gets the intensity and emittance dataframes from either input, files or (timber) database."""
     db = _get_db(opt)
 
@@ -546,7 +553,7 @@ def _read_tfs(tfs_file_or_path, timespan):
     """Read previously gathered data (see :meth:`pylhc.forced_da_analysis._write_tfs`)."""
     try:
         tfs_df = tfs.read_tfs(tfs_file_or_path, index=TIME_COLUMN)
-    except IOError:
+    except OSError:
         tfs_df = tfs_file_or_path  # hopefully
 
     tfs_df.index = _convert_time_index(tfs_df.index)
@@ -578,13 +585,12 @@ def _filter_emittance_data(df, planes, window_length, limit):
     df.headers[HEADER_BSRT_ROLLING_WINDOW] = window_length
     df.headers[HEADER_BSRT_OUTLIER_LIMIT] = limit
     df = _maybe_add_sum_for_planes(df, planes, column_norm_emittance)
-    df = _maybe_add_sum_for_planes(
+    return _maybe_add_sum_for_planes(
         df,
         planes,
         lambda p: mean_col(column_norm_emittance(p)),
         lambda p: err_col(mean_col(column_norm_emittance(p))),
     )
-    return df
 
 
 # Timber Data ------------------------------------------------------------------
@@ -604,7 +610,7 @@ def _get_db(opt):
             LOG.debug(f"Loading database from file {str(db_path)}")
             db = PageStore(f"file:{str(db_path)}", str(db_path.with_suffix("")))
             if opt.fill is not None:
-                raise EnvironmentError("'fill' can't be used with pagestore database.")
+                raise OSError("'fill' can't be used with pagestore database.")
     else:
         LOG.debug(" Trying to load database from timber.")
         try:
@@ -626,7 +632,7 @@ def _get_db(opt):
             error_msg += (
                 "but there is no database given and no access to timber databases. Aborting."
             )
-            raise EnvironmentError(error_msg)
+            raise OSError(error_msg)
     return db
 
 
@@ -652,7 +658,7 @@ def _get_bctrf_beam_intensity_from_timber(beam, db, timespan):
 
 
 def _get_bsrt_bunch_emittances_from_timber(beam, planes, db, timespan, key_type, nominal_emittance):
-    dfs = {p: None for p in planes}
+    dfs = dict.fromkeys(planes)
     for plane in planes:
         LOG.debug(f"Getting emittance from BSRT for beam {beam}  and plane {plane}.")
         bunch_emittance_key = bsrt_emittance_key(beam, plane, key_type)
@@ -671,7 +677,7 @@ def _get_bsrt_bunch_emittances_from_timber(beam, planes, db, timespan, key_type,
                 y_new[f"{x_elem:.3f}"] += y_elem.tolist()
 
             # get average and std per timestamp
-            x = np.array([float(elem) for elem in y_new.keys()])
+            x = np.array([float(elem) for elem in y_new])
             y = np.array([np.average(elem) for elem in y_new.values()]) * nominal_emittance
             y_std = np.array([np.std(elem) for elem in y_new.values()]) * nominal_emittance
         elif key_type == "average":
@@ -682,7 +688,9 @@ def _get_bsrt_bunch_emittances_from_timber(beam, planes, db, timespan, key_type,
         x, y, y_std = x[y != 0], y[y != 0], y_std[y != 0]
 
         df = tfs.TfsDataFrame(
-            index=_timestamp_to_cerntime_index(x), columns=all_columns, dtype=float,
+            index=_timestamp_to_cerntime_index(x),
+            columns=all_columns,
+            dtype=float,
         )
         df[col_nemittance] = y
         df[err_col(col_nemittance)] = y_std
@@ -695,7 +703,7 @@ def _get_bsrt_bunch_emittances_from_timber(beam, planes, db, timespan, key_type,
 
 
 def _get_bws_emittances_from_timber(beam, planes, db, timespan):
-    dfs = {p: None for p in planes}
+    dfs = dict.fromkeys(planes)
     for plane in planes:
         LOG.debug(f"Getting emittance from BWS for beam {beam} and plane {plane}.")
         all_columns = [column_bws_norm_emittance(plane, d) for d in BWS_DIRECTIONS]
@@ -773,7 +781,7 @@ def _get_old_kick_file(kick_dir, plane):
 
 def _get_new_kick_file(kick_dir, planes):
     """Kick files from ``omc3``."""
-    dfs = {p: None for p in planes}
+    dfs = dict.fromkeys(planes)
     for plane in planes:
         path = kick_dir / f"{KICKFILE}_{plane.lower()}{TFS_SUFFIX}"
         LOG.debug(f"Reading kickfile '{str(path)}'.'")
@@ -785,10 +793,7 @@ def _get_new_kick_file(kick_dir, planes):
 
 def _get_output_dir(kick_directory, output_directory):
     kick_path = Path(kick_directory)
-    if output_directory:
-        output_path = Path(output_directory)
-    else:
-        output_path = kick_path / RESULTS_DIR
+    output_path = Path(output_directory) if output_directory else kick_path / RESULTS_DIR
     try:
         output_path.mkdir(exist_ok=True)
     except PermissionError:
@@ -806,11 +811,10 @@ def _get_output_dir(kick_directory, output_directory):
 def _add_intensity_and_losses_to_kicks(kick_df, intensity_df, time_before, time_after):
     LOG.debug("Calculating intensity and losses for the kicks.")
     col_list = [INTENSITY_BEFORE, INTENSITY_AFTER, INTENSITY_LOSSES]
-    new_columns = [col for col in col_list + [err_col(c) for c in col_list]]
+    new_columns = list(col_list + [err_col(c) for c in col_list])
     kick_df = kick_df.reindex(columns=kick_df.columns.tolist() + new_columns)
     kick_df = _get_intensities_around_kicks(kick_df, intensity_df, time_before, time_after)
-    kick_df = _calculate_intensity_losses_at_kicks(kick_df)
-    return kick_df
+    return _calculate_intensity_losses_at_kicks(kick_df)
 
 
 def _get_intensities_around_kicks(kick_df, intensity_df, time_before, time_after):
@@ -895,7 +899,7 @@ def fun_exp_decay(p, x):  # fit and plot
 
 def fun_exp_sigma(p, x):  # only used for plotting
     """p = DA_sigma, x = action (J_sigma)"""
-    return np.exp(-0.5 * (p ** 2 - x ** 2))
+    return np.exp(-0.5 * (p**2 - x**2))
 
 
 def fun_linear(p, x):  # fit and plot
@@ -981,7 +985,12 @@ def _fit_odr(fun, x, y, sx, sy, init):
     """ODR Fit (includes errors)."""
     # fill zero errors with the minimum error - otherwise fit will not work
     fit_model_sigma = scipy.odr.Model(fun)
-    data_model_sigma = scipy.odr.RealData(x=x, y=y, sx=sx, sy=sy,)
+    data_model_sigma = scipy.odr.RealData(
+        x=x,
+        y=y,
+        sx=sx,
+        sy=sy,
+    )
     da_odr = scipy.odr.ODR(data_model_sigma, fit_model_sigma, beta0=init)
     # da_odr.set_job(fit_type=2)
     odr_output = da_odr.run()
@@ -1010,7 +1019,7 @@ def _convert_to_sigmas(plane, kick_df):
     )
     LOG.info(
         f"Measured Emittance {emittance_sign} ± {emittance_sign_std} pm"
-        f" (Nominal {nominal_emittance*1e12: .2f} pm)"
+        f" (Nominal {nominal_emittance * 1e12: .2f} pm)"
     )
 
     # DA (in units of J) to DA_sigma
@@ -1053,9 +1062,7 @@ def _plot_intensity(directory, beam, plane, kick_df, intensity_df):
 
     # convert to % relative to before first kick
     idx_before = get_approximate_index(
-        intensity_df,
-        kick_df.index.min() - pd.Timedelta(seconds=x_span[0]),
-        method="ffill"
+        intensity_df, kick_df.index.min() - pd.Timedelta(seconds=x_span[0]), method="ffill"
     )
     idx_intensity = intensity_df.columns.get_loc(INTENSITY)  # for iloc
     intensity_start = intensity_df.iloc[idx_before, idx_intensity]
@@ -1096,11 +1103,11 @@ def _plot_intensity(directory, beam, plane, kick_df, intensity_df):
         ax.text(
             _date2num(kick),
             0.5 * sum(normalized_intensity.loc[kick, :]),
-            "  -{:.1f}$\pm${:.1f} %\n".format(*normalized_losses.loc[kick, :])
-            + " (-{:.1f}$\pm${:.1f} %)".format(*normalized_losses_kick.loc[kick, :]),
+            "  -{:.1f}$\\pm${:.1f} %\n".format(*normalized_losses.loc[kick, :])
+            + r" (-{:.1f}$\pm${:.1f} %)".format(*normalized_losses_kick.loc[kick, :]),
             va="bottom",
             color=colors.get_mpl_color(1),
-            fontdict=dict(fontsize=mpl.rcParams["font.size"] * 0.8),
+            fontdict={"fontsize": mpl.rcParams["font.size"] * 0.8},
         )
 
     _plot_kicks_and_scale_x(ax, kick_df.index, pad=x_span)
@@ -1112,7 +1119,7 @@ def _plot_intensity(directory, beam, plane, kick_df, intensity_df):
     plt.tight_layout()
     annotations.set_name(f"Intensity Beam {beam}, Plane {plane}", fig)
     annotations.set_annotation(
-        f"Intensity at 100%: {intensity_start*1e-10:.3f}" "$\;\cdot\;10^{{10}}$ charges",
+        rf"Intensity at 100%: {intensity_start * 1e-10:.3f}$\;\cdot\;10^{{{{10}}}}$ charges",
         ax=ax,
         position="left",
     )
@@ -1229,7 +1236,7 @@ def _plot_da_fit(directory, beam, plane, k_df, fit_type):
     emittance = kick_df[col_emittance]
     da, da_err = kick_df.headers[header_da(plane)], kick_df.headers[header_da_error(plane)]
     da_mu, da_err_mu = significant_digits(da * 1e6, da_err * 1e6)
-    da_label = f"Fit: DA$_J$= ${da_mu} \pm {da_err_mu} \mu m$"
+    da_label = rf"Fit: DA$_J$= ${da_mu} \pm {da_err_mu} \mu m$"
 
     if fit_type == "linear":
         fit_fun = fun_linear
@@ -1245,7 +1252,7 @@ def _plot_da_fit(directory, beam, plane, k_df, fit_type):
             kick_df.headers[header_da_error(plane, unit="sigma")],
         )
         da_round, da_err_round = significant_digits(da, da_err)
-        da_label = f"Fit: DA= ${da_round} \pm {da_err_round} N_{{\sigma}}$"
+        da_label = rf"Fit: DA= ${da_round} \pm {da_err_round} N_{{\sigma}}$"
         fit_fun = fun_exp_sigma
         fit_data = action
         multiplier = 100  # for percentages
@@ -1269,7 +1276,7 @@ def _plot_da_fit(directory, beam, plane, k_df, fit_type):
         da_string = "2DA$_J$"
     elif fit_type == "norm":
         da_x = da
-        da_string = "DA$_\sigma$"
+        da_string = r"DA$_\sigma$"
 
     if action_max < da:
         if fit_type in ["linear", "exponential"]:
@@ -1318,18 +1325,18 @@ def _plot_da_fit(directory, beam, plane, k_df, fit_type):
             x=0,
             y=1.00,
             s=(
-                f"$\epsilon_{{mean}}$ = {emittance_sign} $\pm$ {emittance_sign_std} pm "
-                f"($\epsilon_{{nominal}}$ = {nominal_emittance*1e12: .2f} pm)"
+                rf"$\epsilon_{{mean}}$ = {emittance_sign} $\pm$ {emittance_sign_std} pm "
+                rf"($\epsilon_{{nominal}}$ = {nominal_emittance * 1e12: .2f} pm)"
             ),
             transform=ax.transAxes,
             va="bottom",
             ha="left",
         )
         ax.set_xlabel(
-            f"$N_{{\sigma}} = \sqrt{{2J_{{{plane if len(plane) == 1 else ''}}}/\epsilon}}$"
+            rf"$N_{{\sigma}} = \sqrt{{2J_{{{plane if len(plane) == 1 else ''}}}/\epsilon}}$"
         )
     else:
-        ax.set_xlabel(f"$2J_{{{plane if len(plane) == 1 else ''}}} \; [\mu m]$")
+        ax.set_xlabel(rf"$2J_{{{plane if len(plane) == 1 else ''}}} \; [\mu m]$")
 
     if fit_type == "linear":
         ax.set_ylabel(r"ln($I/I_0$)")
@@ -1360,9 +1367,10 @@ def _get_fit_plot_data(da, da_err, data, fit_type):
 
 # Helper ---
 
+
 def get_approximate_index(df, item, method="nearest"):
-    """ Emulates the `get_loc` from pandas<2.0, i.e.
-    single index input and output. """
+    """Emulates the `get_loc` from pandas<2.0, i.e.
+    single index input and output."""
     return df.index.get_indexer([item], method=method)[0]
 
 
@@ -1395,7 +1403,10 @@ def _maybe_add_sum_for_planes(df, planes, col_fun, col_err_fun=None):
     """In case planes == 'XY' add the two plane columns and their errors."""
     if len(planes) > 1:
         if col_err_fun is not None:
-            cols = lambda p: [col_fun(p), col_err_fun(p)]
+
+            def cols(p):
+                return [col_fun(p), col_err_fun(p)]
+
             x_cols, y_cols = [cols(p) for p in planes]
             df = df.reindex(columns=df.columns.to_list() + cols(planes))
             df[cols(planes)] = np.array(
@@ -1421,20 +1432,18 @@ def _date2num(times):
     except AttributeError:
         pass  # probably datetime already
     except TypeError:
-        try:  # not iterable
+        with contextlib.suppress(AttributeError):
             times = times.datetime
-        except AttributeError:
-            pass  # probably datetime already
     return mdates.date2num(times)
 
 
 def _save_fig(directory, plane, fig, ptype):
     try:
         for ftype in PLOT_FILETYPES:
-            path = os.path.join(directory, outfile_plot(ptype, plane, ftype))
+            path = Path(directory) / outfile_plot(ptype, plane, ftype)
             LOG.debug(f"Saving Figure to {path}")
             fig.savefig(path)
-    except IOError:
+    except OSError:
         LOG.error(f"Couldn't create output files for {ptype} plots.")
 
 

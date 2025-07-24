@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # pyLHC documentation build configuration file, created by
 # sphinx-quickstart on Tue Feb  6 12:10:18 2018.
@@ -97,7 +96,7 @@ author = ABOUT_PYLHC["__author__"]
 
 # Override link in 'Edit on Github'
 rst_prolog = f"""
-:github_url: {ABOUT_PYLHC['__url__']}
+:github_url: {ABOUT_PYLHC["__url__"]}
 """
 
 # The version info for the project you're documenting, acts as replacement for

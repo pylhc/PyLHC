@@ -11,6 +11,7 @@ are generated.
 - If provided a `TfsDataFrame` file with timestamps, plots of the 2D distribution and comparison
 of fit parameters to cross sections are added.
 """
+
 import datetime
 import glob
 import gzip
@@ -22,10 +23,10 @@ import numpy as np
 import pandas as pd
 import parse
 import pytz
-
 import tfs
 from generic_parser import EntryPointParameters, entrypoint
 from omc3.utils import logging_tools, time_tools
+
 from pylhc.constants.general import TFS_SUFFIX, TIME_COLUMN
 from pylhc.forced_da_analysis import get_approximate_index
 
@@ -38,47 +39,52 @@ NEW_FILENAMING_CONV = "{}_{}_{}@{}_{}_{}_{}"
 
 def get_params():
     return EntryPointParameters(
-        directory=dict(
-            flags=["-d", "--directory"],
-            required=True,
-            type=str,
-            help="Directory containing the logged BSRT files.",
-        ),
-        beam=dict(
-            flags=["-b", "--beam"],
-            required=True,
-            choices=["B1", "B2"],
-            type=str,
-            help="Beam for which analysis is performed.",
-        ),
-        outputdir=dict(
-            flags=["-o", "--outputdir"],
-            type=str,
-            default=None,
-            help=(
+        directory={
+            "flags": ["-d", "--directory"],
+            "required": True,
+            "type": str,
+            "help": "Directory containing the logged BSRT files.",
+        },
+        beam={
+            "flags": ["-b", "--beam"],
+            "required": True,
+            "choices": ["B1", "B2"],
+            "type": str,
+            "help": "Beam for which analysis is performed.",
+        },
+        outputdir={
+            "flags": ["-o", "--outputdir"],
+            "type": str,
+            "default": None,
+            "help": (
                 "Directory in which plots and dataframe will be saved in. If omitted, "
                 "no data will be saved."
             ),
-        ),
-        starttime=dict(
-            flags=["--starttime"],
-            type=int,
-            help="Start of time window for analysis in milliseconds UTC.",
-        ),
-        endtime=dict(
-            flags=["--endtime"],
-            type=int,
-            help="End of time window for analysis in milliseconds UTC.",
-        ),
-        kick_df=dict(
-            flags=["--kick_df"],
-            default=None,
-            help=(
+        },
+        starttime={
+            "flags": ["--starttime"],
+            "type": int,
+            "help": "Start of time window for analysis in milliseconds UTC.",
+        },
+        endtime={
+            "flags": ["--endtime"],
+            "type": int,
+            "help": "End of time window for analysis in milliseconds UTC.",
+        },
+        kick_df={
+            "flags": ["--kick_df"],
+            "default": None,
+            "help": (
                 f"TFS with column {TIME_COLUMN} with time stamps to be added in the plots. "
                 f"Additionally, cross section at these timestamps will be plotted.",
             ),
-        ),
-        show_plots=dict(flags=["--show_plots"], type=bool, default=False, help="Show BSRT plots."),
+        },
+        show_plots={
+            "flags": ["--show_plots"],
+            "type": bool,
+            "default": False,
+            "help": "Show BSRT plots.",
+        },
     )
 
 
@@ -159,7 +165,7 @@ def _select_files(opt, files_df):
 
 def _load_files_in_df(opt):
     files_df = pd.DataFrame(
-        data={"FILES": glob.glob(str(Path(opt.directory) / _get_bsrt_logger_fname(opt.beam, "*")))}
+        data={"FILES": glob.glob(str(Path(opt.directory) / _get_bsrt_logger_fname(opt.beam, "*")))}  # noqa: PTH207
     )
 
     files_df = files_df.assign(
@@ -175,8 +181,7 @@ def _load_files_in_df(opt):
     )
     files_df = files_df.assign(TIME=[f.timestamp() for f in files_df["TIMESTAMP"]])
 
-    files_df = files_df.sort_values(by=["TIME"]).reset_index(drop=True).set_index("TIME")
-    return files_df
+    return files_df.sort_values(by=["TIME"]).reset_index(drop=True).set_index("TIME")
 
 
 def _get_timestamp_from_name(name, formatstring):
@@ -189,7 +194,7 @@ def _get_timestamp_from_name(name, formatstring):
 def _check_and_fix_entries(entry):
     # pd.to_csv does not handle np.array as entries nicely, converting to list circumvents this
     for key, val in entry.items():
-        if isinstance(val, (np.ndarray, tuple)):
+        if isinstance(val, (np.ndarray | tuple)):
             entry[key] = list(val)
         if np.array(val).size == 0:
             entry[key] = np.nan
@@ -199,7 +204,8 @@ def _check_and_fix_entries(entry):
 def _load_pickled_data(opt, files_df):
     merged_df = pd.DataFrame()
     for bsrtfile in files_df["FILES"]:
-        data = pickle.load(gzip.open(bsrtfile, "rb"))
+        with gzip.open(bsrtfile, "rb") as f:
+            data = pickle.load(f)
         new_df = pd.DataFrame.from_records([_check_and_fix_entries(entry) for entry in data])
         merged_df = pd.concat([merged_df, new_df], axis="index", ignore_index=True)
 
@@ -224,7 +230,6 @@ def _add_kick_lines(ax, df):
 
 
 def _fit_var(ax, bsrt_df, plot_dict, opt):
-
     ax[plot_dict["idx"]].plot(
         bsrt_df.index, [entry[plot_dict["fitidx"]] for entry in bsrt_df["lastFitResults"]]
     )
@@ -234,7 +239,6 @@ def _fit_var(ax, bsrt_df, plot_dict, opt):
 
 
 def plot_fit_variables(opt, bsrt_df):
-
     fig, ax = plt.subplots(nrows=2, ncols=3, figsize=(20, 9), sharex=True, constrained_layout=True)
 
     plot_dicts = [
@@ -292,8 +296,8 @@ def _full_crossection(ax, bsrt_df, plot_dict, opt):
         ax,
         bsrt_df.reset_index(),
         "TimeIndex",
-        f'projPositionSet{plot_dict["idx"]}',
-        f'projDataSet{plot_dict["idx"]}',
+        f"projPositionSet{plot_dict['idx']}",
+        f"projDataSet{plot_dict['idx']}",
     )
     ax.plot(
         bsrt_df.index,
@@ -326,7 +330,6 @@ def _full_crossection(ax, bsrt_df, plot_dict, opt):
 
 
 def plot_full_crosssection(opt, bsrt_df):
-
     plot_dicts = [
         {"idx": 1, "fitresult": 3, "fiterror": 4, "title": "Horizontal Cross section"},
         {"idx": 2, "fitresult": 8, "fiterror": 9, "title": "Vertical Cross section"},
@@ -344,7 +347,7 @@ def plot_full_crosssection(opt, bsrt_df):
 
 def _gauss(x, *p):
     a, b, c = p
-    return a * np.exp(-((x - b) ** 2) / (2.0 * c ** 2.0))
+    return a * np.exp(-((x - b) ** 2) / (2.0 * c**2.0))
 
 
 def _reshaped_imageset(df):
@@ -408,7 +411,6 @@ def plot_crosssection_for_timesteps(opt, bsrt_df):
 
 
 def _aux_variables(ax, bsrt_df, plot_dict, opt):
-
     ax.plot(
         bsrt_df.index, bsrt_df[plot_dict["variable1"]], color="red", label=plot_dict["variable1"]
     )

@@ -5,6 +5,7 @@ Constants: Forced DA Analysis
 Specific constants relating to the forced DA analysis to be used in ``PyLHC``, to help with
 consistency.
 """
+
 from pylhc.constants.general import PLANE_TO_HV, TFS_SUFFIX
 
 RESULTS_DIR = "forced_da_analysis"

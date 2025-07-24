@@ -9,11 +9,13 @@ only from the Technical Network.
 
 Original authors: E. H. Maclean, T. Persson and G. Trad.
 """
+
 import datetime as dt
 import os
 import pickle
 import sys
 import time
+from pathlib import Path
 
 from omc3.definitions import formats
 from omc3.utils.mock import cern_network_import
@@ -34,8 +36,7 @@ def parse_timestamp(thistime):
     ]
     for fmat in accepted_time_input_format:
         try:
-            dtobject = dt.datetime.strptime(thistime, fmat)
-            return dtobject
+            return dt.datetime.strptime(thistime, fmat)
         except ValueError:
             pass
     timefmatstring = ""
@@ -53,22 +54,21 @@ def parse_timestamp(thistime):
 
 # function to help write output from datetime objects in standard format throughout code
 def convert_to_data_output_format(dtobject):
-    output_timestamp = dtobject.strftime(formats.TIME)
-    return output_timestamp
+    return dtobject.strftime(formats.TIME)
 
 
 ##########################################
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Create a PyJapc instance with selector SCT.USER.ALL
     # INCA is automatically configured based on the timing domain you specify here
 
     CycleName = "LHC.USER.ALL"
     INCAacc = "LHC"
-    noSetFlag = True
+    no_set_flag = True
 
-    japc = pyjapc.PyJapc(selector=CycleName, incaAcceleratorName=INCAacc, noSet=noSetFlag)
+    japc = pyjapc.PyJapc(selector=CycleName, incaAcceleratorName=INCAacc, noSet=no_set_flag)
     japc.rbacLogin()
     acquesitions_per_file = 100
     j = 0
@@ -79,8 +79,8 @@ if __name__ == '__main__':
         B1_image = japc.getParam("LHC.BSRTS.5R4.B1/Image")
         B2_image = japc.getParam("LHC.BSRTS.5L4.B2/Image")
         if t == 0:
-            allB1data = []
-            allB2data = []
+            all_b1_data = []
+            all_b2_data = []
             B1_IMGtime = B1_image["acqTime"]
             B2_IMGtime = B2_image["acqTime"]
             B1_IMGtime_dt = parse_timestamp(B1_IMGtime)
@@ -88,19 +88,16 @@ if __name__ == '__main__':
             B1_IMGtime_st = convert_to_data_output_format(B1_IMGtime_dt)
             B2_IMGtime_st = convert_to_data_output_format(B2_IMGtime_dt)
 
-        allB1data.append(B1_image)
-        allB2data.append(B2_image)
+        all_b1_data.append(B1_image)
+        all_b2_data.append(B2_image)
         t += 1
         if t == acquesitions_per_file:
             j += 1
             f1name = "data_BSRT_B1_" + B1_IMGtime_st + ".dat"
             f2name = "data_BSRT_B2_" + B2_IMGtime_st + ".dat"
-            f1 = open(f1name, "wb")
-            f2 = open(f2name, "wb")
-            pickle.dump(allB1data, f1)
-            pickle.dump(allB2data, f2)
-            f1.close()
-            f2.close()
+            with Path(f1name).open("wb") as f1, Path(f2name).open("wb") as f2:
+                pickle.dump(all_b1_data, f1)
+                pickle.dump(all_b2_data, f2)
             os.system("gzip " + f1name)
             os.system("gzip " + f2name)
             t = 0

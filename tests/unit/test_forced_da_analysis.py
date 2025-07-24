@@ -1,12 +1,12 @@
 from pathlib import Path
 
-import matplotlib
+import matplotlib as mpl
 import pytest
 
 from pylhc.forced_da_analysis import main as fda_analysis
 
 # Forcing non-interactive Agg backend so rendering is done similarly across platforms during tests
-matplotlib.use("Agg")
+mpl.use("Agg")
 
 INPUT = Path(__file__).parent.parent / "inputs"
 
@@ -53,8 +53,7 @@ class TestOnCernNetwork:
                 output_directory=tmp_path,
             )
 
-
-    def test_md2162_timberdb(tmp_path):
+    def test_md2162_timberdb(self, tmp_path):
         data_dir = INPUT / "kicks_horizontal_md2162"
         fda_analysis(
             fit="linear",
@@ -72,6 +71,7 @@ class TestOnCernNetwork:
 
 
 # Helper -----------------------------------------------------------------------
+
 
 def check_output(output_dir: Path) -> None:
     assert len(list(output_dir.glob("*.pdf"))) == 5

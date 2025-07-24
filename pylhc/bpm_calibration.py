@@ -51,6 +51,7 @@ Arguments:
 
     default: ``beta``
 """
+
 from pathlib import Path
 
 import tfs
@@ -74,33 +75,29 @@ def _get_params() -> dict:
     """
 
     return EntryPointParameters(
-        inputdir=dict(
-            type=Path,
-            required=True, 
-            help="Measurements path."
-        ),
-        outputdir=dict(
-            type=Path,
-            required=True,
-            help="Output directory where to write the calibration factors.",
-        ),
-        ips=dict(
-            type=int,
-            nargs="+",
-            choices=IPS,
-            required=False,
-            help="IPs to compute calibration factors for.",
-        ),
-        method=dict(
-            type=str,
-            required=False,
-            choices=METHODS,
-            default=METHODS[0],
-            help=(
+        inputdir={"type": Path, "required": True, "help": "Measurements path."},
+        outputdir={
+            "type": Path,
+            "required": True,
+            "help": "Output directory where to write the calibration factors.",
+        },
+        ips={
+            "type": int,
+            "nargs": "+",
+            "choices": IPS,
+            "required": False,
+            "help": "IPs to compute calibration factors for.",
+        },
+        method={
+            "type": str,
+            "required": False,
+            "choices": METHODS,
+            "default": METHODS[0],
+            "help": (
                 "Method to be used to compute the calibration factors. "
                 "The Beta function is used by default."
             ),
-        ),
+        },
     )
 
 
@@ -113,16 +110,18 @@ def main(opt):
         factors = get_calibration_factors_from_dispersion(opt.ips, opt.inputdir)
 
     # Fill NaN with 1 because of missing BPMs and that fit cannot be done everywhere
-    for plane in factors.keys():
-        factors[plane] = factors[plane].fillna(1)
-    LOG.debug("".join([f"\nPlane {plane}:\n{factors[plane]}" for plane in factors.keys()]))
+    for plane in factors:
+        factors[plane] = factors[plane].infer_objects().fillna(1)
+    LOG.debug("".join([f"\nPlane {plane}:\n{factors[plane]}" for plane in factors]))
 
     # Write the TFS file to the desired output directory
     opt.outputdir.mkdir(parents=True, exist_ok=True)
-    for plane in factors.keys():
-        tfs.write(opt.outputdir / f"{CALIBRATION_NAME[opt.method]}{plane.lower()}{EXT}", 
-                  factors[plane].reset_index(), 
-                  save_index=False)
+    for plane in factors:
+        tfs.write(
+            opt.outputdir / f"{CALIBRATION_NAME[opt.method]}{plane.lower()}{EXT}",
+            factors[plane].reset_index(),
+            save_index=False,
+        )
 
     return factors
 
