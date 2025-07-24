@@ -119,14 +119,24 @@
 
 <span class="sd">General constants to be used in ``PyLHC``, to help with consistency.</span>
 <span class="sd">&quot;&quot;&quot;</span>
+
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="n">BEAMS</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 
 <span class="n">PLANES</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">,</span> <span class="s2">&quot;Y&quot;</span><span class="p">)</span>
-<span class="n">PLANE_TO_HV</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="s2">&quot;H&quot;</span><span class="p">,</span> <span class="n">Y</span><span class="o">=</span><span class="s2">&quot;V&quot;</span><span class="p">)</span>
+<span class="n">PLANE_TO_HV</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;X&quot;</span><span class="p">:</span> <span class="s2">&quot;H&quot;</span><span class="p">,</span> <span class="s2">&quot;Y&quot;</span><span class="p">:</span> <span class="s2">&quot;V&quot;</span><span class="p">}</span>
 
-<span class="n">UNIT_TO_M</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">km</span><span class="o">=</span><span class="mf">1e3</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="mf">1e0</span><span class="p">,</span> <span class="n">mm</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span> <span class="n">um</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span> <span class="n">nm</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">,</span> <span class="n">pm</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">,</span> <span class="n">fm</span><span class="o">=</span><span class="mf">1e-15</span><span class="p">,</span> <span class="n">am</span><span class="o">=</span><span class="mf">1e-18</span><span class="p">)</span>
+<span class="n">UNIT_TO_M</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;km&quot;</span><span class="p">:</span> <span class="mf">1e3</span><span class="p">,</span>
+    <span class="s2">&quot;m&quot;</span><span class="p">:</span> <span class="mf">1e0</span><span class="p">,</span>
+    <span class="s2">&quot;mm&quot;</span><span class="p">:</span> <span class="mf">1e-3</span><span class="p">,</span>
+    <span class="s2">&quot;um&quot;</span><span class="p">:</span> <span class="mf">1e-6</span><span class="p">,</span>
+    <span class="s2">&quot;nm&quot;</span><span class="p">:</span> <span class="mf">1e-9</span><span class="p">,</span>
+    <span class="s2">&quot;pm&quot;</span><span class="p">:</span> <span class="mf">1e-12</span><span class="p">,</span>
+    <span class="s2">&quot;fm&quot;</span><span class="p">:</span> <span class="mf">1e-15</span><span class="p">,</span>
+    <span class="s2">&quot;am&quot;</span><span class="p">:</span> <span class="mf">1e-18</span><span class="p">,</span>
+<span class="p">}</span>
 
 <span class="n">PROTON_MASS</span> <span class="o">=</span> <span class="mf">0.938272</span>  <span class="c1"># GeV/c^2</span>
 <span class="n">LHC_NOMINAL_EMITTANCE</span> <span class="o">=</span> <span class="mf">3.75</span> <span class="o">*</span> <span class="mf">1e-6</span>  <span class="c1"># Design LHC</span>
@@ -146,7 +156,7 @@
 <div class="viewcode-block" id="get_proton_beta">
 <a class="viewcode-back" href="../../../modules/constants.html#pylhc.constants.general.get_proton_beta">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_proton_beta</span><span class="p">(</span><span class="n">energy</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; Returns relativistic beta for protons &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns relativistic beta for protons&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">get_proton_gamma</span><span class="p">(</span><span class="n">energy</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span></div>
 
 </pre></div>

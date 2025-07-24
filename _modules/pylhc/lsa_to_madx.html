@@ -154,7 +154,7 @@
 <span class="sd">    One should not be surprised if long ``LSA`` knob names appear slightly differently in the created ``MAD-X`` files, then functionality stays intact.</span>
 
 <span class="sd">    For instance, the knob ``LHCBEAM/MD_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos`` will lead to the following trim variable definition:</span>
-<span class="sd">    </span>
+
 <span class="sd">    .. code-block:: fortran</span>
 
 <span class="sd">        trim_D_ATS_2022_05_04_B1_RigidWaitsShift_IP1pos = 1.0;</span>
@@ -205,19 +205,17 @@
 <span class="sd">        --optics R2017aT_A30C30A10mL300_CTPPS2 \\</span>
 <span class="sd">        --file knobs.txt</span>
 
-<span class="sd">Hint: the knobs active at a given time can be retrieved with the `~pylhc.machine_settings_info` script. </span>
+<span class="sd">Hint: the knobs active at a given time can be retrieved with the `~pylhc.machine_settings_info` script.</span>
 <span class="sd">&quot;&quot;&quot;</span>
+
 <span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">string</span>
-
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">tfs</span>
-
 <span class="kn">from</span><span class="w"> </span><span class="nn">omc3.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">logging_tools</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">omc3.utils.contexts</span><span class="w"> </span><span class="kn">import</span> <span class="n">timeit</span>
 
@@ -231,7 +229,7 @@
 
 <div class="viewcode-block" id="parse_knobs_and_trim_values_from_file">
 <a class="viewcode-back" href="../../entrypoints/lsa_to_madx.html#pylhc.lsa_to_madx.parse_knobs_and_trim_values_from_file">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">parse_knobs_and_trim_values_from_file</span><span class="p">(</span><span class="n">knobs_file</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_knobs_and_trim_values_from_file</span><span class="p">(</span><span class="n">knobs_file</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Parses a file for LSA knobs and their trim values. Each line should be a knob name</span>
 <span class="sd">    following by a number of the trim value. If no value is written, it defaults</span>
@@ -243,7 +241,9 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        A `dict` with as keys the parsed knob names and as values their associated trims.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">knob_lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">Path</span><span class="p">(</span><span class="n">knobs_file</span><span class="p">)</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">)]</span>
+    <span class="n">knob_lines</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">line</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">Path</span><span class="p">(</span><span class="n">knobs_file</span><span class="p">)</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">)</span>
+    <span class="p">]</span>
     <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">knob_lines</span><span class="p">:</span>
@@ -292,9 +292,13 @@
 
 <div class="viewcode-block" id="get_madx_script_from_definition_dataframe">
 <a class="viewcode-back" href="../../entrypoints/lsa_to_madx.html#pylhc.lsa_to_madx.get_madx_script_from_definition_dataframe">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_madx_script_from_definition_dataframe</span><span class="p">(</span><span class="n">deltas_df</span><span class="p">:</span> <span class="n">tfs</span><span class="o">.</span><span class="n">TfsDataFrame</span><span class="p">,</span> <span class="n">lsa_knob</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">trim</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
-                                              <span class="n">by_reference</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-                                              <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_madx_script_from_definition_dataframe</span><span class="p">(</span>
+    <span class="n">deltas_df</span><span class="p">:</span> <span class="n">tfs</span><span class="o">.</span><span class="n">TfsDataFrame</span><span class="p">,</span>
+    <span class="n">lsa_knob</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">trim</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">by_reference</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Given the extracted definition dataframe of an LSA knob - as returned by</span>
 <span class="sd">    `~pylhc.data_extract.lsa.LSAClient.get_knob_circuits` - this function will generate the</span>
@@ -330,7 +334,7 @@
 
     <span class="c1"># write all inits first (looks nicer in madx)</span>
     <span class="k">if</span> <span class="n">by_reference</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="n">deltas</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="n">deltas</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>  <span class="c1"># noqa: SIM118 (this is not a dict)</span>
             <span class="n">variable_init</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">variable</span><span class="si">}</span><span class="s2">_init&quot;</span>
             <span class="n">change_commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">variable_init</span><span class="si">:</span><span class="s2">&lt;17</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">variable</span><span class="si">}</span><span class="s2">;&quot;</span><span class="p">)</span>
 
@@ -341,9 +345,13 @@
         <span class="c1"># mess up parsing of &quot;var = var + -value&quot; if delta_k is negative</span>
         <span class="k">if</span> <span class="n">by_reference</span><span class="p">:</span>
             <span class="n">variable_init</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">variable</span><span class="si">}</span><span class="s2">_init&quot;</span>
-            <span class="n">change_commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">variable</span><span class="si">:</span><span class="s2">&lt;12</span><span class="si">}</span><span class="s2"> := </span><span class="si">{</span><span class="n">variable_init</span><span class="si">:</span><span class="s2">^19</span><span class="si">}</span><span class="s2"> + (</span><span class="si">{</span><span class="n">delta</span><span class="si">:</span><span class="s2">^25</span><span class="si">}</span><span class="s2">) * </span><span class="si">{</span><span class="n">trim_variable</span><span class="si">}</span><span class="s2">;&quot;</span><span class="p">)</span>
+            <span class="n">change_commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">variable</span><span class="si">:</span><span class="s2">&lt;12</span><span class="si">}</span><span class="s2"> := </span><span class="si">{</span><span class="n">variable_init</span><span class="si">:</span><span class="s2">^19</span><span class="si">}</span><span class="s2"> + (</span><span class="si">{</span><span class="n">delta</span><span class="si">:</span><span class="s2">^25</span><span class="si">}</span><span class="s2">) * </span><span class="si">{</span><span class="n">trim_variable</span><span class="si">}</span><span class="s2">;&quot;</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">change_commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">variable</span><span class="si">:</span><span class="s2">&lt;12</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">variable</span><span class="si">:</span><span class="s2">^15</span><span class="si">}</span><span class="s2"> + (</span><span class="si">{</span><span class="n">delta</span><span class="si">:</span><span class="s2">^25</span><span class="si">}</span><span class="s2">) * </span><span class="si">{</span><span class="n">trim_variable</span><span class="si">}</span><span class="s2">;&quot;</span><span class="p">)</span>
+            <span class="n">change_commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">variable</span><span class="si">:</span><span class="s2">&lt;12</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">variable</span><span class="si">:</span><span class="s2">^15</span><span class="si">}</span><span class="s2"> + (</span><span class="si">{</span><span class="n">delta</span><span class="si">:</span><span class="s2">^25</span><span class="si">}</span><span class="s2">) * </span><span class="si">{</span><span class="n">trim_variable</span><span class="si">}</span><span class="s2">;&quot;</span>
+            <span class="p">)</span>
 
     <span class="n">change_commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;! End of change commands for knob: </span><span class="si">{</span><span class="n">lsa_knob</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">change_commands</span><span class="p">)</span></div>
@@ -385,7 +393,7 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_get_delta</span><span class="p">(</span><span class="n">deltas_df</span><span class="p">:</span> <span class="n">tfs</span><span class="o">.</span><span class="n">TfsDataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; Get the correct delta-column &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the correct delta-column&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="s2">&quot;DELTA_K&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">deltas_df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
         <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Using DELTA_KL column.&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">deltas_df</span><span class="o">.</span><span class="n">DELTA_KL</span>
@@ -395,12 +403,16 @@
         <span class="k">return</span> <span class="n">deltas_df</span><span class="o">.</span><span class="n">DELTA_K</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="n">deltas_df</span><span class="o">.</span><span class="n">DELTA_K</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">deltas_df</span><span class="o">.</span><span class="n">DELTA_KL</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">))</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Some entries of DELTA_KL and DELTA_K seem to both be given. &quot;</span>
-                         <span class="s2">&quot;This looks like a bug. Please investigate.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Some entries of DELTA_KL and DELTA_K seem to both be given. &quot;</span>
+            <span class="s2">&quot;This looks like a bug. Please investigate.&quot;</span>
+        <span class="p">)</span>
 
     <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Both DELTA_K and DELTA_KL columns present, merging columns.&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">deltas_df</span><span class="o">.</span><span class="n">DELTA_K</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">),</span> <span class="n">deltas_df</span><span class="o">.</span><span class="n">DELTA_K</span><span class="p">,</span> <span class="n">deltas_df</span><span class="o">.</span><span class="n">DELTA_KL</span><span class="p">),</span>
-                     <span class="n">index</span><span class="o">=</span><span class="n">deltas_df</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">deltas_df</span><span class="o">.</span><span class="n">DELTA_K</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">),</span> <span class="n">deltas_df</span><span class="o">.</span><span class="n">DELTA_K</span><span class="p">,</span> <span class="n">deltas_df</span><span class="o">.</span><span class="n">DELTA_KL</span><span class="p">),</span>
+        <span class="n">index</span><span class="o">=</span><span class="n">deltas_df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+    <span class="p">)</span>
 
 
 <span class="c1"># ----- Script Part ----- #</span>
@@ -416,7 +428,11 @@
         <span class="s2">&quot;scripts reproducing the provided knobs.&quot;</span>
     <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--optics&quot;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;optics&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The LSA name of the optics for which the knobs are defined.&quot;</span>
+        <span class="s2">&quot;--optics&quot;</span><span class="p">,</span>
+        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;optics&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The LSA name of the optics for which the knobs are defined.&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;--knobs&quot;</span><span class="p">,</span>
@@ -454,7 +470,7 @@
         <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loading knob names from file &#39;</span><span class="si">{</span><span class="n">options</span><span class="o">.</span><span class="n">file</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
         <span class="n">knobs_dict</span> <span class="o">=</span> <span class="n">parse_knobs_and_trim_values_from_file</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">file</span><span class="p">))</span>
     <span class="k">else</span><span class="p">:</span>  <span class="c1"># given at the command line with --knobs, we initialise trim values to 1</span>
-        <span class="n">knobs_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">knob</span><span class="p">:</span> <span class="mf">1.0</span> <span class="k">for</span> <span class="n">knob</span> <span class="ow">in</span> <span class="n">options</span><span class="o">.</span><span class="n">knobs</span><span class="p">}</span>
+        <span class="n">knobs_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">knobs</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
 
     <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Instantiating LSA client&quot;</span><span class="p">)</span>
     <span class="n">lsa_client</span> <span class="o">=</span> <span class="n">LSAClient</span><span class="p">()</span>
@@ -464,13 +480,17 @@
         <span class="k">for</span> <span class="n">lsa_knob</span><span class="p">,</span> <span class="n">trim_value</span> <span class="ow">in</span> <span class="n">knobs_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Processing LSA knob &#39;</span><span class="si">{</span><span class="n">lsa_knob</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
             <span class="k">try</span><span class="p">:</span>  <span class="c1"># next line might raise if knob not defined for the given optics</span>
-                <span class="n">knob_definition</span> <span class="o">=</span> <span class="n">lsa_client</span><span class="o">.</span><span class="n">get_knob_circuits</span><span class="p">(</span><span class="n">knob_name</span><span class="o">=</span><span class="n">lsa_knob</span><span class="p">,</span> <span class="n">optics</span><span class="o">=</span><span class="n">lsa_optics</span><span class="p">)</span>
+                <span class="n">knob_definition</span> <span class="o">=</span> <span class="n">lsa_client</span><span class="o">.</span><span class="n">get_knob_circuits</span><span class="p">(</span>
+                    <span class="n">knob_name</span><span class="o">=</span><span class="n">lsa_knob</span><span class="p">,</span> <span class="n">optics</span><span class="o">=</span><span class="n">lsa_optics</span>
+                <span class="p">)</span>
                 <span class="n">madx_commands_string</span> <span class="o">=</span> <span class="n">get_madx_script_from_definition_dataframe</span><span class="p">(</span>
                     <span class="n">deltas_df</span><span class="o">=</span><span class="n">knob_definition</span><span class="p">,</span> <span class="n">lsa_knob</span><span class="o">=</span><span class="n">lsa_knob</span><span class="p">,</span> <span class="n">trim</span><span class="o">=</span><span class="n">trim_value</span>
                 <span class="p">)</span>
 
-            <span class="k">except</span> <span class="p">(</span><span class="ne">OSError</span><span class="p">,</span> <span class="ne">IOError</span><span class="p">):</span>  <span class="c1"># raised by pjlsa if knob not found</span>
-                <span class="n">LOG</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not find knob &#39;</span><span class="si">{</span><span class="n">lsa_knob</span><span class="si">}</span><span class="s2">&#39; in the given optics &#39;</span><span class="si">{</span><span class="n">lsa_optics</span><span class="si">}</span><span class="s2">&#39; - skipping&quot;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>  <span class="c1"># raised by pjlsa if knob not found</span>
+                <span class="n">LOG</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Could not find knob &#39;</span><span class="si">{</span><span class="n">lsa_knob</span><span class="si">}</span><span class="s2">&#39; in the given optics &#39;</span><span class="si">{</span><span class="n">lsa_optics</span><span class="si">}</span><span class="s2">&#39; - skipping&quot;</span>
+                <span class="p">)</span>
                 <span class="n">unfound_knobs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lsa_knob</span><span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>  <span class="c1"># we&#39;ve managed to find knobs</span>
@@ -484,7 +504,10 @@
                 <span class="n">Path</span><span class="p">(</span><span class="n">madx_file</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">madx_commands_string</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">unfound_knobs</span><span class="p">:</span>
-        <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The following knobs could not be found in the &#39;</span><span class="si">{</span><span class="n">lsa_optics</span><span class="si">}</span><span class="s2">&#39; optics: </span><span class="se">\n\t\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n\t\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">unfound_knobs</span><span class="p">))</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;The following knobs could not be found in the &#39;</span><span class="si">{</span><span class="n">lsa_optics</span><span class="si">}</span><span class="s2">&#39; optics: </span><span class="se">\n\t\t</span><span class="s2">&quot;</span>
+            <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n\t\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">unfound_knobs</span><span class="p">)</span>
+        <span class="p">)</span>
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>

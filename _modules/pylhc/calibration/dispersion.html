@@ -122,37 +122,24 @@
 <span class="sd">intended to be used with the script `bpm_calibration.py`.</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
+
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.optimize</span><span class="w"> </span><span class="kn">import</span> <span class="n">curve_fit</span>
+
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span>
-
-<span class="kn">from</span><span class="w"> </span><span class="nn">omc3.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">logging_tools</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">omc3.optics_measurements.constants</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">ERR</span><span class="p">,</span>
-    <span class="n">EXT</span><span class="p">,</span>
-    <span class="n">NORM_DISP_NAME</span><span class="p">,</span>
-    <span class="n">DISPERSION_NAME</span><span class="p">,</span>
-    <span class="n">S</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="kn">from</span><span class="w"> </span><span class="nn">pylhc.constants.calibration</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">BPMS</span><span class="p">,</span>
-    <span class="n">D_BPMS</span><span class="p">,</span>
-    <span class="n">D</span><span class="p">,</span>
-    <span class="n">LABELS</span><span class="p">,</span>
-    <span class="n">TFS_INDEX</span><span class="p">,</span>
-<span class="p">)</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">tfs</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">omc3.optics_measurements.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">DISPERSION_NAME</span><span class="p">,</span> <span class="n">ERR</span><span class="p">,</span> <span class="n">EXT</span><span class="p">,</span> <span class="n">NORM_DISP_NAME</span><span class="p">,</span> <span class="n">S</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">omc3.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">logging_tools</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.optimize</span><span class="w"> </span><span class="kn">import</span> <span class="n">curve_fit</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">pylhc.constants.calibration</span><span class="w"> </span><span class="kn">import</span> <span class="n">BPMS</span><span class="p">,</span> <span class="n">D_BPMS</span><span class="p">,</span> <span class="n">LABELS</span><span class="p">,</span> <span class="n">TFS_INDEX</span><span class="p">,</span> <span class="n">D</span>
 
 <span class="n">LOG</span> <span class="o">=</span> <span class="n">logging_tools</span><span class="o">.</span><span class="n">get_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_get_dispersion_fit</span><span class="p">(</span>
     <span class="n">positions</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">dispersion_values</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">dispersion_err</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This function returns a fit of the given dispersion values along with the</span>
 <span class="sd">    associated error.</span>
@@ -183,20 +170,18 @@
 
     <span class="c1"># Get the fitted beta and add the errors to get min/max values</span>
     <span class="n">dispersion_fit</span> <span class="o">=</span> <span class="n">dispersion_function</span><span class="p">(</span><span class="n">positions</span><span class="p">,</span> <span class="n">fit</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">fit</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-    <span class="n">dispersion_max_fit</span> <span class="o">=</span> <span class="n">dispersion_function</span><span class="p">(</span>
-        <span class="n">positions</span><span class="p">,</span> <span class="n">fit</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">fit_err</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">fit</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">fit_err</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="p">)</span>
-    <span class="n">dispersion_min_fit</span> <span class="o">=</span> <span class="n">dispersion_function</span><span class="p">(</span>
-        <span class="n">positions</span><span class="p">,</span> <span class="n">fit</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">fit_err</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">fit</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">fit_err</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="p">)</span>
+    <span class="n">dispersion_max_fit</span> <span class="o">=</span> <span class="n">dispersion_function</span><span class="p">(</span><span class="n">positions</span><span class="p">,</span> <span class="n">fit</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">fit_err</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">fit</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">fit_err</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">dispersion_min_fit</span> <span class="o">=</span> <span class="n">dispersion_function</span><span class="p">(</span><span class="n">positions</span><span class="p">,</span> <span class="n">fit</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">fit_err</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">fit</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">fit_err</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
     <span class="n">dispersion_fit_err</span> <span class="o">=</span> <span class="p">(</span><span class="n">dispersion_max_fit</span> <span class="o">-</span> <span class="n">dispersion_min_fit</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
 
     <span class="k">return</span> <span class="n">dispersion_fit</span><span class="p">,</span> <span class="n">dispersion_fit_err</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_get_factors_from_dispersion</span><span class="p">(</span>
-        <span class="n">dispersion</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">],</span> <span class="n">phase</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">phase_err</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">]:</span>
+    <span class="n">dispersion</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">],</span>
+    <span class="n">phase</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">phase_err</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This function computes the calibration factors for the dispersion method</span>
 <span class="sd">    with the non fitted dispersion values. The associated error is also</span>
@@ -232,8 +217,8 @@
 <div class="viewcode-block" id="get_calibration_factors_from_dispersion">
 <a class="viewcode-back" href="../../../modules/calibration.html#pylhc.calibration.dispersion.get_calibration_factors_from_dispersion">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_calibration_factors_from_dispersion</span><span class="p">(</span>
-    <span class="n">ips</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">input_path</span><span class="p">:</span> <span class="n">Path</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
+    <span class="n">ips</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">input_path</span><span class="p">:</span> <span class="n">Path</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This function is the main function to compute the calibration factors for</span>
 <span class="sd">    the dispersion method.</span>
@@ -265,29 +250,29 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Computing the calibration factors via dispersion&quot;</span><span class="p">)</span>
     <span class="c1"># Load the normalized dispersion tfs file</span>
-    <span class="n">norm_dispersion_tfs</span> <span class="o">=</span> <span class="n">tfs</span><span class="o">.</span><span class="n">read</span><span class="p">(</span>
-        <span class="n">input_path</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">NORM_DISP_NAME</span><span class="si">}</span><span class="s2">x</span><span class="si">{</span><span class="n">EXT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">TFS_INDEX</span>
-    <span class="p">)</span>
+    <span class="n">norm_dispersion_tfs</span> <span class="o">=</span> <span class="n">tfs</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">input_path</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">NORM_DISP_NAME</span><span class="si">}</span><span class="s2">x</span><span class="si">{</span><span class="n">EXT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">TFS_INDEX</span><span class="p">)</span>
     <span class="n">dispersion_tfs</span> <span class="o">=</span> <span class="n">tfs</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">input_path</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">DISPERSION_NAME</span><span class="si">}</span><span class="s2">x</span><span class="si">{</span><span class="n">EXT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">TFS_INDEX</span><span class="p">)</span>
 
     <span class="c1"># Get the beam concerned by those tfs files</span>
     <span class="n">beam</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">dispersion_tfs</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
 
     <span class="c1"># Loop over the IPs and compute the calibration factors</span>
-    <span class="n">calibration_factors</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">calibration_factors</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">ip</span> <span class="ow">in</span> <span class="n">ips</span><span class="p">:</span>
         <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Computing the calibration factors for IP </span><span class="si">{</span><span class="n">ip</span><span class="si">}</span><span class="s2">, plane X&quot;</span><span class="p">)</span>
         <span class="c1"># Filter our TFS files to only keep the BPMs for the selected IR</span>
         <span class="n">bpms</span> <span class="o">=</span> <span class="n">dispersion_tfs</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">BPMS</span><span class="p">[</span><span class="n">ip</span><span class="p">][</span><span class="n">beam</span><span class="p">])</span>
         <span class="n">d_bpms</span> <span class="o">=</span> <span class="n">dispersion_tfs</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">D_BPMS</span><span class="p">[</span><span class="n">ip</span><span class="p">][</span><span class="n">beam</span><span class="p">])</span>
-            
+
         <span class="c1"># Check for possible missing bpms</span>
         <span class="k">for</span> <span class="n">bpm_set</span> <span class="ow">in</span> <span class="p">[</span><span class="n">bpms</span><span class="p">,</span> <span class="n">d_bpms</span><span class="p">]:</span>
             <span class="n">missing</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">bpm_set</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">bpm_set</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">missing</span><span class="p">:</span>
-                <span class="n">LOG</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;    One or several BPMs are missing in the input&quot;</span>
-                            <span class="s2">&quot; DataFrame, the calibration factors calculation&quot;</span>
-                            <span class="sa">f</span><span class="s2">&quot;from fit may not be accurate: </span><span class="si">{</span><span class="n">missing</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">LOG</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">&quot;    One or several BPMs are missing in the input&quot;</span>
+                    <span class="s2">&quot; DataFrame, the calibration factors calculation&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;from fit may not be accurate: </span><span class="si">{</span><span class="n">missing</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
 
         <span class="c1"># Get the positions of the BPMs and the subset used for the fit</span>
         <span class="n">bpms</span> <span class="o">=</span> <span class="n">bpms</span><span class="o">.</span><span class="n">index</span>
@@ -296,8 +281,8 @@
         <span class="n">positions_fit</span> <span class="o">=</span> <span class="n">dispersion_tfs</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">d_bpms</span><span class="p">)[</span><span class="n">S</span><span class="p">]</span>
 
         <span class="c1"># Get the dispersion and dispersion from phase from the tfs files</span>
-        <span class="n">dispersion</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
-        <span class="n">normalised_dispersion</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">dispersion</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1"># normalised_dispersion = dict()</span>
 
         <span class="n">dispersion</span><span class="p">[</span><span class="s2">&quot;amp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dispersion_tfs</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">bpms</span><span class="p">)[</span><span class="s2">&quot;DX&quot;</span><span class="p">]</span>
         <span class="n">dispersion</span><span class="p">[</span><span class="s2">&quot;amp_err&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dispersion_tfs</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">bpms</span><span class="p">)[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ERR</span><span class="si">}{</span><span class="n">D</span><span class="si">}</span><span class="s2">X&quot;</span><span class="p">]</span>
@@ -307,7 +292,8 @@
 
         <span class="c1"># Compute the calibration factors using the dispersion from phase and amp</span>
         <span class="n">calibration</span><span class="p">,</span> <span class="n">calibration_err</span> <span class="o">=</span> <span class="n">_get_factors_from_dispersion</span><span class="p">(</span>
-            <span class="n">dispersion</span><span class="p">,</span> <span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="s2">&quot;phase_err&quot;</span><span class="p">)</span>
+            <span class="n">dispersion</span><span class="p">,</span> <span class="s2">&quot;phase&quot;</span><span class="p">,</span> <span class="s2">&quot;phase_err&quot;</span>
+        <span class="p">)</span>
 
         <span class="c1"># Fit the dispersion from phase</span>
         <span class="n">dispersion</span><span class="p">[</span><span class="s2">&quot;phase_fit&quot;</span><span class="p">],</span> <span class="n">dispersion</span><span class="p">[</span><span class="s2">&quot;phase_fit_err&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_get_dispersion_fit</span><span class="p">(</span>
@@ -333,10 +319,12 @@
         <span class="n">factors_for_ip</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">LABELS</span>
         <span class="n">factors_for_ip</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">TFS_INDEX</span>
 
-        <span class="k">if</span> <span class="s2">&quot;X&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">calibration_factors</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">if</span> <span class="s2">&quot;X&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">calibration_factors</span><span class="p">:</span>
             <span class="n">calibration_factors</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;X&quot;</span><span class="p">:</span> <span class="n">factors_for_ip</span><span class="p">}</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">calibration_factors</span><span class="p">[</span><span class="s2">&quot;X&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">calibration_factors</span><span class="p">[</span><span class="s2">&quot;X&quot;</span><span class="p">],</span> <span class="n">factors_for_ip</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="p">)</span>
+            <span class="n">calibration_factors</span><span class="p">[</span><span class="s2">&quot;X&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">calibration_factors</span><span class="p">[</span><span class="s2">&quot;X&quot;</span><span class="p">],</span> <span class="n">factors_for_ip</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="s2">&quot;index&quot;</span>
+            <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">calibration_factors</span></div>
 

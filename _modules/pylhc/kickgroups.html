@@ -171,15 +171,14 @@
 <span class="sd">                            values for the first ones. A value of zero means showing</span>
 <span class="sd">                            all files in the group.</span>
 <span class="sd">&quot;&quot;&quot;</span>
+
 <span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
-
 <span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-
 <span class="kn">from</span><span class="w"> </span><span class="nn">dateutil</span><span class="w"> </span><span class="kn">import</span> <span class="n">tz</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">omc3.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">logging_tools</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataFrame</span>
@@ -223,7 +222,9 @@
 
 <div class="viewcode-block" id="list_available_kickgroups">
 <a class="viewcode-back" href="../../entrypoints/kickgroups.html#pylhc.kickgroups.list_available_kickgroups">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">list_available_kickgroups</span><span class="p">(</span><span class="n">by</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">TIMESTAMP</span><span class="p">,</span> <span class="n">root</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">KICKGROUPS_ROOT</span><span class="p">,</span> <span class="n">printout</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">list_available_kickgroups</span><span class="p">(</span>
+    <span class="n">by</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">TIMESTAMP</span><span class="p">,</span> <span class="n">root</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">KICKGROUPS_ROOT</span><span class="p">,</span> <span class="n">printout</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    List all available KickGroups in `root` with optional sorting..</span>
 
@@ -297,7 +298,9 @@
     <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loading info from all KickFiles in KickGroup &#39;</span><span class="si">{</span><span class="n">kick_group</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
     <span class="n">kick_group_data</span> <span class="o">=</span> <span class="n">_load_json</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">root</span><span class="p">)</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">kick_group</span><span class="si">}</span><span class="s2">.json&quot;</span><span class="p">)</span>
     <span class="n">kicks_files</span> <span class="o">=</span> <span class="n">kick_group_data</span><span class="p">[</span><span class="s2">&quot;jsonFiles&quot;</span><span class="p">]</span>
-    <span class="n">df_info</span> <span class="o">=</span> <span class="n">TfsDataFrame</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">kicks_files</span><span class="p">)),</span> <span class="n">columns</span><span class="o">=</span><span class="n">KICK_COLUMNS</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="n">KICKGROUP</span><span class="p">:</span> <span class="n">kick_group</span><span class="p">})</span>
+    <span class="n">df_info</span> <span class="o">=</span> <span class="n">TfsDataFrame</span><span class="p">(</span>
+        <span class="n">index</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">kicks_files</span><span class="p">)),</span> <span class="n">columns</span><span class="o">=</span><span class="n">KICK_COLUMNS</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="n">KICKGROUP</span><span class="p">:</span> <span class="n">kick_group</span><span class="p">}</span>
+    <span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">kicks_files</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;KickGroup </span><span class="si">{</span><span class="n">kick_group</span><span class="si">}</span><span class="s2"> contains no kicks.&quot;</span><span class="p">)</span>
@@ -358,8 +361,12 @@
 
         <span class="n">data</span><span class="p">[</span><span class="n">TUNEX</span><span class="p">]</span> <span class="o">=</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;acDipoleSettings&quot;</span><span class="p">][</span><span class="n">idx</span><span class="p">][</span><span class="s2">&quot;measuredTune&quot;</span><span class="p">]</span>
         <span class="n">data</span><span class="p">[</span><span class="n">TUNEY</span><span class="p">]</span> <span class="o">=</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;acDipoleSettings&quot;</span><span class="p">][</span><span class="n">idy</span><span class="p">][</span><span class="s2">&quot;measuredTune&quot;</span><span class="p">]</span>
-        <span class="n">data</span><span class="p">[</span><span class="n">DRIVEN_TUNEX</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">TUNEX</span><span class="p">]</span> <span class="o">+</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;acDipoleSettings&quot;</span><span class="p">][</span><span class="n">idx</span><span class="p">][</span><span class="s2">&quot;deltaTuneStart&quot;</span><span class="p">]</span>
-        <span class="n">data</span><span class="p">[</span><span class="n">DRIVEN_TUNEY</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">TUNEY</span><span class="p">]</span> <span class="o">+</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;acDipoleSettings&quot;</span><span class="p">][</span><span class="n">idy</span><span class="p">][</span><span class="s2">&quot;deltaTuneStart&quot;</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">DRIVEN_TUNEX</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">TUNEX</span><span class="p">]</span> <span class="o">+</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;acDipoleSettings&quot;</span><span class="p">][</span><span class="n">idx</span><span class="p">][</span><span class="s2">&quot;deltaTuneStart&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">DRIVEN_TUNEY</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">TUNEY</span><span class="p">]</span> <span class="o">+</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;acDipoleSettings&quot;</span><span class="p">][</span><span class="n">idy</span><span class="p">][</span><span class="s2">&quot;deltaTuneStart&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
         <span class="n">data</span><span class="p">[</span><span class="n">DRIVEN_TUNEZ</span><span class="p">]</span> <span class="o">=</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationData&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;rfdata&quot;</span><span class="p">][</span><span class="s2">&quot;excitationFrequency&quot;</span><span class="p">]</span>
         <span class="n">data</span><span class="p">[</span><span class="n">AMPX</span><span class="p">]</span> <span class="o">=</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;acDipoleSettings&quot;</span><span class="p">][</span><span class="n">idx</span><span class="p">][</span><span class="s2">&quot;amplitude&quot;</span><span class="p">]</span>
         <span class="n">data</span><span class="p">[</span><span class="n">AMPY</span><span class="p">]</span> <span class="o">=</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;acDipoleSettings&quot;</span><span class="p">][</span><span class="n">idy</span><span class="p">][</span><span class="s2">&quot;amplitude&quot;</span><span class="p">]</span>
@@ -370,9 +377,9 @@
         <span class="k">for</span> <span class="n">plane</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;X&quot;</span><span class="p">,</span> <span class="s2">&quot;Y&quot;</span><span class="p">]:</span>
             <span class="n">tune</span><span class="p">,</span> <span class="n">driven_tune</span><span class="p">,</span> <span class="n">amp</span> <span class="o">=</span> <span class="n">entry_map</span><span class="p">[</span><span class="n">plane</span><span class="p">]</span>
 
-            <span class="n">data</span><span class="p">[</span><span class="n">tune</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span>
-            <span class="n">data</span><span class="p">[</span><span class="n">driven_tune</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span>
-            <span class="n">data</span><span class="p">[</span><span class="n">amp</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">tune</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">driven_tune</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">amp</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
 
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">idx</span> <span class="o">=</span> <span class="n">_get_plane_index</span><span class="p">(</span><span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">],</span> <span class="n">plane</span><span class="p">)</span>
@@ -380,7 +387,9 @@
                 <span class="n">LOG</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2"> in </span><span class="si">{</span><span class="n">kickfile</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                 <span class="k">continue</span>
 
-            <span class="k">if</span> <span class="s2">&quot;measuredTune&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="n">idx</span><span class="p">]:</span>  <span class="c1"># Happens in very early files in 2022</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="s2">&quot;measuredTune&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="n">idx</span><span class="p">]</span>
+            <span class="p">):</span>  <span class="c1"># Happens in very early files in 2022</span>
                 <span class="n">LOG</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No measured tune </span><span class="si">{</span><span class="n">plane</span><span class="si">}</span><span class="s2"> in the kick file: </span><span class="si">{</span><span class="n">kickfile</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                 <span class="k">continue</span>
 
@@ -388,15 +397,16 @@
             <span class="n">data</span><span class="p">[</span><span class="n">driven_tune</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">tune</span><span class="p">]</span> <span class="o">+</span> <span class="n">_get_delta_tune</span><span class="p">(</span><span class="n">kick</span><span class="p">,</span> <span class="n">idx</span><span class="p">)</span>
             <span class="n">data</span><span class="p">[</span><span class="n">amp</span><span class="p">]</span> <span class="o">=</span> <span class="n">kick</span><span class="p">[</span><span class="s2">&quot;excitationSettings&quot;</span><span class="p">][</span><span class="n">idx</span><span class="p">][</span><span class="s2">&quot;amplitude&quot;</span><span class="p">]</span>
 
-        <span class="n">data</span><span class="p">[</span><span class="n">DRIVEN_TUNEZ</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span>
-        <span class="n">data</span><span class="p">[</span><span class="n">AMPZ</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">DRIVEN_TUNEZ</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">AMPZ</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
 
     <span class="k">return</span> <span class="n">data</span></div>
 
 
+
 <span class="k">def</span><span class="w"> </span><span class="nf">_get_delta_tune</span><span class="p">(</span><span class="n">kick</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">idx_plane</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; Return the delta from the tune for the kicks.</span>
-<span class="sd">    For some reason, there are multiple different keys where this can be stored. &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the delta from the tune for the kicks.</span>
+<span class="sd">    For some reason, there are multiple different keys where this can be stored.&quot;&quot;&quot;</span>
 
     <span class="c1"># Default key for ACDipole ---</span>
     <span class="c1"># There is also &quot;deltaTuneEnd&quot;, but we usually don&#39;t change the delta during kick</span>
@@ -420,8 +430,8 @@
     <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not find delta tune for plane-entry </span><span class="si">{</span><span class="n">idx_plane</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_find_existing_file_path</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="o">|</span><span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; Find the existing kick file for the kick group. &quot;&quot;&quot;</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_find_existing_file_path</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Find the existing kick file for the kick group.&quot;&quot;&quot;</span>
     <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">path</span>
@@ -431,13 +441,12 @@
 
     <span class="k">if</span> <span class="n">fill_data</span> <span class="ow">in</span> <span class="n">path</span><span class="o">.</span><span class="n">parts</span><span class="p">:</span>
         <span class="c1"># Fills are moved at the end of year</span>
-        <span class="n">idx</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">fill_data</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">fill_data</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
         <span class="n">new_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="o">*</span><span class="n">path</span><span class="o">.</span><span class="n">parts</span><span class="p">[:</span><span class="n">idx</span><span class="p">],</span> <span class="n">all_fill_data</span><span class="p">,</span> <span class="o">*</span><span class="n">path</span><span class="o">.</span><span class="n">parts</span><span class="p">[</span><span class="n">idx</span><span class="p">:])</span>
         <span class="k">if</span> <span class="n">new_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
             <span class="k">return</span> <span class="n">new_path</span>
 
     <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not find kick file at </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
 
 
 <span class="c1"># Functions with console output ---</span>
@@ -485,7 +494,9 @@
 
 <div class="viewcode-block" id="show_kickgroup_files">
 <a class="viewcode-back" href="../../entrypoints/kickgroups.html#pylhc.kickgroups.show_kickgroup_files">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">show_kickgroup_files</span><span class="p">(</span><span class="n">kick_group</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">nfiles</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">root</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">KICKGROUPS_ROOT</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">show_kickgroup_files</span><span class="p">(</span>
+    <span class="n">kick_group</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">nfiles</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">root</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">KICKGROUPS_ROOT</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Wrapper around `pylhc.kickgroups.get_kickgroup_info`, gathering the relevant</span>
 <span class="sd">    information from all kickfiles in the KickGroup and printing only the sdds-filepaths</span>
@@ -587,7 +598,7 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_get_fill_from_path</span><span class="p">(</span><span class="n">sdds_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; Get the fill number from the path to the sdds file.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the fill number from the path to the sdds file.</span>
 <span class="sd">    Note: Not sure why the fill is not saved automatically into the .json file.</span>
 <span class="sd">    Maybe we should ask OP to include this.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
