@@ -86,6 +86,8 @@ changelog = "https://github.com/pylhc/PyLHC/blob/master/CHANGELOG.md"
 # ----- Testing ----- #
 
 [tool.pytest.ini_options]
+addopts = "--cov-report=xml --cov-report term-missing --cov-config=pyproject.toml --cov=pylhc"
+testpaths = ["tests"]
 markers = [
     "cern_network: tests that require access to afs or the technical network",
 ]
