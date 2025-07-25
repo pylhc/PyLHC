@@ -93,6 +93,17 @@ markers = [
 # log_cli=true
 # log_level=DEBUG
 
+[tool.coverage.run]
+source = ["pylhc/"]
+
+[tool.coverage.report]
+precision = 2
+ignore_errors = true
+exclude_also = [
+  "if TYPE_CHECKING:",  # do not count if TYPE_CHECKING block imports (ignored at runtime) for coverage
+  "except ImportError:",  # do not count missing optional dependencies set to None, we monkeypatch and test that
+]
+
 # ----- Dev Tools Configuration ----- #
 
 [tool.ruff]
