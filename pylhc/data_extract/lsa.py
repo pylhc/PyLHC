@@ -323,15 +323,51 @@ class LSAClient(pjLSAClient):
     def get_madx_name_from_circuit(self, circuit: str):
         """Returns the ``MAD-X`` Strength Name (Circuit/Knob) from the given circuit name."""
         logical_name = circuit.split("/")[0]
-        slist = jpype.java.util.Collections.singletonList(  # python lists did not work (jdilly)
-            logical_name
-        )
-        madx_name_map = self._deviceService.findMadStrengthNamesByLogicalNames(
-            slist
-        )  # returns a map
+        # python lists did not work (jdilly)
+        slist = jpype.java.util.Collections.singletonList(logical_name)
+
+        # returns a map
+        madx_name_map = self._deviceService.findMadStrengthNamesByLogicalNames(slist)
         madx_name = madx_name_map[logical_name]
         LOG.debug(f"Name conversion: {circuit} -> {logical_name} -> {madx_name}")
         return madx_name
+
+    def calc_k_from_iref(self, currents: dict[str, float], energy: float) -> dict[str, float]:
+        """
+        Calculate K values from IREF using the LSA service.
+
+        Args:
+            lsa: The LSA service instance
+            currents: A dictionary of current values keyed by variable name
+            energy: The beam energy in GeV
+
+        Returns:
+            A dictionary of K values keyed by variable name
+        """
+        # 1) Use the **instance** PJLSA already created
+        lhc_service = self._lhcService  # <-- INSTANCE (do NOT use self._LhcService)
+
+        # 2) Build a java.util.HashMap<String, Double> (not a Python dict)
+        j_hash_map = jpype.JClass("java.util.HashMap")
+        j_double = jpype.JClass("java.lang.Double")
+
+        jmap = j_hash_map()
+        for k, v in currents.items():
+            if v is None:
+                raise ValueError(f"Current for {k} is None")
+            # ensure primitive-compatible double values
+            jmap.put(k, j_double.valueOf(float(v)))  # boxed; Java unboxes internally
+
+        # 3) Call: Map<String, Double> calculateKfromIREF(Map<String, Double>, double)
+        out = lhc_service.calculateKfromIREF(jmap, float(energy))
+
+        # 4) Convert java.util.Map -> Python dict
+        res = {}
+        it = out.entrySet().iterator()
+        while it.hasNext():
+            e = it.next()
+            res[str(e.getKey())] = float(e.getValue())
+        return res
 
 
 # Single Instance LSAClient ####################################################
