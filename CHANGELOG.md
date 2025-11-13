@@ -1,5 +1,13 @@
 # pylhc Changelog
 
+## Version 0.8.1
+
+Fixed:
+  - add FILL and JSON_FILE to output table of kickgroup summary
+  - catch empty kickgroups gracefully
+  - adapt for moving the `.sdds` and `.json` files to backup folders on `nfs`
+  - addtional checks/warning/dict-keys for old versions of the `.json` files
+
 ## Version 0.8.0
 
 Fixed:
@@ -19,7 +27,7 @@ Changes in Machine Settings Info
  - Option `["default"]` available for default knobs.
  - Additional debug logging
 
-## Version 0.7.3 
+## Version 0.7.3
 
 Fixes:
  - LSA to MADX sign convention
@@ -65,11 +73,11 @@ Minor bugfixes in `machine_settings_info`.
 
 - Added:
   - `time` and `start_time` can now be given as `AccDatetime`-objects.
-  
+
 - Fixed:
-  - `trims` variable is initialized as `None`. Was not initialized if no 
+  - `trims` variable is initialized as `None`. Was not initialized if no
   trims were found, but used later on.
-    
+
 
 ## Version 0.4.0
 
@@ -95,8 +103,8 @@ Added:
 Changed:
 - The package's license has been moved from `GPLv3` to `MIT`.
 
-Note: if one wishes to extend the `IRNL` correction script to a different accelerator, 
-there are valuable pointers in the following 
+Note: if one wishes to extend the `IRNL` correction script to a different accelerator,
+there are valuable pointers in the following
 [PR comment](https://github.com/pylhc/PyLHC/pull/74#issuecomment-966212021).
 
 
@@ -122,7 +130,7 @@ Removed:
 
 - Added:
     - `python2` parameter for autosix.
-  
+
 - Changed:
     - Bugfix for non-unique column names when indexing (`forced_da_analysis`)
 
