@@ -1,9 +1,8 @@
-# <img src="https://raw.githubusercontent.com/pylhc/pylhc.github.io/master/docs/assets/logos/OMC_logo.svg" height="28"> PyLHC Tools
+# <img src="https://raw.githubusercontent.com/pylhc/pylhc.github.io/master/docs/assets/logos/OMC_logo.svg" height="28" alt="omc3 logo"> PyLHC Tools
 
-[![Cron Testing](https://github.com/pylhc/PyLHC/workflows/Cron%20Testing/badge.svg)](https://github.com/pylhc/PyLHC/actions?query=workflow%3A%22Cron+Testing%22)
-[![Code Climate coverage](https://img.shields.io/codeclimate/coverage/pylhc/PyLHC.svg?style=popout)](https://codeclimate.com/github/pylhc/PyLHC)
-[![Code Climate maintainability (percentage)](https://img.shields.io/codeclimate/maintainability-percentage/pylhc/PyLHC.svg?style=popout)](https://codeclimate.com/github/pylhc/PyLHC)
+[![Tests](https://github.com/pylhc/PyLHC/actions/workflows/coverage.yml/badge.svg?branch=master)](https://github.com/pylhc/PyLHC/actions/workflows/coverage.yml)
 [![GitHub last commit](https://img.shields.io/github/last-commit/pylhc/PyLHC.svg?style=popout)](https://github.com/pylhc/PyLHC/)
+[![PyPI Version](https://img.shields.io/pypi/v/PyLHC?label=PyPI&logo=pypi)](https://pypi.org/project/PyLHC/)
 [![GitHub release](https://img.shields.io/github/release/pylhc/PyLHC.svg?style=popout)](https://github.com/pylhc/PyLHC/)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5643602.svg)](https://doi.org/10.5281/zenodo.5643602)
 
@@ -18,6 +17,7 @@ It is a collection of useful scripts for the Optics Measurements and Corrections
 ## Installing
 
 This package is `Python 3.7+` compatible, and can be installed through `pip`:
+
 ```bash
 python -m pip install pylhc
 ```
@@ -25,6 +25,7 @@ python -m pip install pylhc
 After installing, scripts can be run with either `python -m pylhc.SCRIPT --FLAG ARGUMENT` or by calling the Python files directly.
 
 For development purposes, we recommend creating a new virtual environment and installing from VCS in editable mode with all extra dependencies:
+
 ```bash
 git clone https://github.com/pylhc/pylhc
 python -m pip install --editable "pylhc[all]"
