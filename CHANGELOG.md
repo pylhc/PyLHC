@@ -1,5 +1,9 @@
 # pylhc Changelog
 
+## Version 0.8.2
+
+Dropped support for `Python 3.9`.
+
 ## Version 0.8.1
 
 Fixed:
