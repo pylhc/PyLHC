@@ -13,4 +13,5 @@ jobs:
       with:
         src-dir: pylhc
         pytest-options: -m "not cern_network" --mpl
+        min-coverage: 0.33  # todo: remove if we ever get >80%
       secrets: inherit
