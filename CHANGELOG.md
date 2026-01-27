@@ -1,5 +1,9 @@
 # pylhc Changelog
 
+## Version 0.8.3
+
+Explicitely require the `pytz` package as a dependency since it is no longer a hard dependency of `pandas 3.x`, which we relied on.g
+
 ## Version 0.8.2
 
 Dropped support for `Python 3.9`.
@@ -7,38 +11,44 @@ Dropped support for `Python 3.9`.
 ## Version 0.8.1
 
 Fixed:
-  - add FILL and JSON_FILE to output table of kickgroup summary
-  - catch empty kickgroups gracefully
-  - adapt for moving the `.sdds` and `.json` files to backup folders on `nfs`
-  - addtional checks/warning/dict-keys for old versions of the `.json` files
+
+- add FILL and JSON_FILE to output table of kickgroup summary
+- catch empty kickgroups gracefully
+- adapt for moving the `.sdds` and `.json` files to backup folders on `nfs`
+- addtional checks/warning/dict-keys for old versions of the `.json` files
 
 ## Version 0.8.0
 
 Fixed:
- - replaced `get_loc` with `get_indexer` to be compatible with `pandas` > 2.0
+
+- replaced `get_loc` with `get_indexer` to be compatible with `pandas` > 2.0
 
 Added:
- - `beamprocess` option to Machine Settings Info, to allow manual override.
+
+- `beamprocess` option to Machine Settings Info, to allow manual override.
 
 Removed:
- - `hdf5` reader/writer for `tfs` as this is already in `tfs-pandas`
+
+- `hdf5` reader/writer for `tfs` as this is already in `tfs-pandas`
 
 ## Version 0.7.4
 
 Changes in Machine Settings Info
- - Default behaviour for no knobs given: extract None.
- - Old behaviour of extracting all restored by giving `knobs = ["all"]`
- - Option `["default"]` available for default knobs.
- - Additional debug logging
+
+- Default behaviour for no knobs given: extract None.
+- Old behaviour of extracting all restored by giving `knobs = ["all"]`
+- Option `["default"]` available for default knobs.
+- Additional debug logging
 
 ## Version 0.7.3
 
 Fixes:
- - LSA to MADX sign convention
- - Better trim naming
- - check madx names for allowed characters
- - option to init all variables
- - machine settings info takes ISO time
+
+- LSA to MADX sign convention
+- Better trim naming
+- check madx names for allowed characters
+- option to init all variables
+- machine settings info takes ISO time
 
 ## Version 0.7.2
 
@@ -59,9 +69,10 @@ Added a flag to the `info` functionality of `pylhc.kickgroups` to display a copy
 ## Version 0.6.1
 
 Bugfixes in KickGroups:
-  - Better error message when there are no kicks in group.
-  - Find correct planes in lists of data.
-  - Renamed functions to `list` and `info`.
+
+- Better error message when there are no kicks in group.
+- Find correct planes in lists of data.
+- Renamed functions to `list` and `info`.
 
 ## Version 0.6.0
 
@@ -76,10 +87,10 @@ Removed `irnl_rdt_correction`. Is now in https://github.com/pylhc/irnl_rdt_corre
 Minor bugfixes in `machine_settings_info`.
 
 - Added:
-  - `time` and `start_time` can now be given as `AccDatetime`-objects.
+    - `time` and `start_time` can now be given as `AccDatetime`-objects.
 
 - Fixed:
-  - `trims` variable is initialized as `None`. Was not initialized if no
+    - `trims` variable is initialized as `None`. Was not initialized if no
   trims were found, but used later on.
 
 
@@ -102,9 +113,11 @@ The return values are now organized into a dictionary.
 Release `0.3.0` brings the following:
 
 Added:
+
 - Non-linear correction script for the (HL)LHC Insertion Regions Resonance Driving Terms, including feed-down effects.
 
 Changed:
+
 - The package's license has been moved from `GPLv3` to `MIT`.
 
 Note: if one wishes to extend the `IRNL` correction script to a different accelerator,
@@ -117,16 +130,19 @@ there are valuable pointers in the following
 This is the first release of `pylhc` since its `omc3` dependency is available on `PyPI`.
 
 Added:
+
 - BPM calibration script to get calibration factors from different BPMs
 - Proper mocking of CERN TN packages (functionality imported from `omc3`)
 
 Changed:
+
 - Minimum required `tfs-pandas` version is now `3.0.2`
 - Minimum required `generic-parser` version is now `1.0.8`
 - Minimum required `omc3` version is now `0.2.0`
 - Extras related to the CERN TN are now installed with `python -m pip install pylhc[cern]`
 
 Removed:
+
 - The `HTCondor` and `AutoSix` functionality have been removed and extracted to another package at https://github.com/pylhc/submitter
 
 
