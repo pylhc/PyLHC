@@ -77,6 +77,11 @@ napoleon_use_admonition_for_references = True
 napoleon_preprocess_types = True
 napoleon_attr_annotations = True
 
+# This is to keep the class-based autodoc implementation from sphinx < 9.0
+# It allows us to build on members which needs other runtimes (such as some
+# members requiring the JVM to be running for inspection due to jpype)
+autodoc_use_legacy_class_based = True
+
 # Add any paths that contain templates here, relative to this directory.
 # templates_path = ['_templates']
 
