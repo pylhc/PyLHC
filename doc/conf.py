@@ -77,14 +77,16 @@ napoleon_use_admonition_for_references = True
 napoleon_preprocess_types = True
 napoleon_attr_annotations = True
 
+# This is to keep the class-based autodoc implementation from sphinx < 9.0
+# It allows us to build on members which needs other runtimes (such as some
+# members requiring the JVM to be running for inspection due to jpype)
+autodoc_use_legacy_class_based = True
+
 # Add any paths that contain templates here, relative to this directory.
 # templates_path = ['_templates']
 
 # The suffix(es) of source filenames.
-# You can specify multiple suffix as a list of string:
-#
-# source_suffix = ['.rst', '.md']
-source_suffix = ".rst"
+source_suffix = {".rst": "restructuredtext"}
 
 # The master toctree document.
 master_doc = "index"
@@ -140,8 +142,8 @@ html_theme = "sphinx_rtd_theme"
 
 html_theme_options = {
     "collapse_navigation": False,
-    "display_version": True,
-    "logo_only": False,
+    #'display_version': True,  # show version in the sidebar (currently not working: https://github.com/readthedocs/sphinx_rtd_theme/issues/1624)
+    'logo_only': True,        # if True, display only logo image, no project name
     "navigation_depth": 2,
     "style_external_links": True,
 }
@@ -248,9 +250,19 @@ autodoc_mock_imports = [
     "PyQt5.QtCore",
     "PyQt5.QtWidgets",
     "matplotlib.backends.backend_qt5agg",
+    "jpype"
     "pjlsa",
     "pytimber",
 ]
+
+autodoc_default_options = {
+    "members": True,  # include members
+    "undoc-members": True,  # add all members, even if they have no docstring
+    "show-inheritance": True,  # e.g. ``class LHC(Accelerator)`` shows ``BaseClass: Accelerator``
+    # "no-index-entry": True,  # don't add an index entry (toc_object_entries below works better for our use case)
+}
+
+toc_object_entries = False  # do not create entries for domain objects (e.g. functions, classes, attributes, etc.).
 
 # -- Instersphinx Configuration ----------------------------------------------
 
