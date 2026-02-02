@@ -5,17 +5,17 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pylhc.lsa_to_madx &mdash; pylhc 0.8.2 documentation</title>
+  <title>pylhc.lsa_to_madx &mdash; pylhc 0.8.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=0db14186" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=dbee5847"></script>
-      <script src="../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=7f96dc5e"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -29,8 +29,8 @@
 
           
           
-          <a href="../../index.html" class="icon icon-home">
-            pylhc
+          <a href="../../index.html">
+            
               <img src="../../_static/omc_logo.svg" class="logo" alt="Logo"/>
           </a>
 <div role="search">
@@ -454,6 +454,8 @@
     <span class="k">return</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
 
 
+<div class="viewcode-block" id="main">
+<a class="viewcode-back" href="../../entrypoints/lsa_to_madx.html#pylhc.lsa_to_madx.main">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
     <span class="n">options</span> <span class="o">=</span> <span class="n">_get_args</span><span class="p">()</span>
     <span class="n">lsa_optics</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">optics</span>
@@ -507,7 +509,8 @@
         <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;The following knobs could not be found in the &#39;</span><span class="si">{</span><span class="n">lsa_optics</span><span class="si">}</span><span class="s2">&#39; optics: </span><span class="se">\n\t\t</span><span class="s2">&quot;</span>
             <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n\t\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">unfound_knobs</span><span class="p">)</span>
-        <span class="p">)</span>
+        <span class="p">)</span></div>
+
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>

@@ -1,0 +1,257 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pylhc.bsrt_logger &mdash; pylhc 0.8.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=0db14186" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=7f96dc5e"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/omc_logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Entrypoints</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../entrypoints/analysis.html">Analysis Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/analysis.html#bsrt-analysis">BSRT Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/analysis.html#forced-da-analysis">Forced DA Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../entrypoints/bpm_calibration.html">BPM Calibration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/bpm_calibration.html#id1">BPM Calibration</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../entrypoints/kickgroups.html">KickGroup Informations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/kickgroups.html#kickgroups">Kickgroups</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../entrypoints/lsa_to_madx.html">LSA Knobs to MAD-X Expressions Converter</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/lsa_to_madx.html#lsa-to-mad-x">LSA to MAD-X</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../entrypoints/machine_info.html">Machine Information Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/machine_info.html#print-machine-settings-overview">Print Machine Settings Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../entrypoints/machine_info.html#bsrt-logger">BSRT logger</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/calibration.html">BPM Calibration Utilities</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/calibration.html#beta">Beta</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/calibration.html#dispersion">Dispersion</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/constants.html">Constants Definitions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/constants.html#constants-general">Constants: General</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/constants.html#constants-forced-da-analysis">Constants: Forced DA Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/constants.html#constants-kickgroups">Constants: KickGroups</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/constants.html#constants-machine-settings-info">Constants: Machine Settings Info</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/constants.html#constants-bpm-calibration">Constants: BPM Calibration</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/data_extract.html">Data Extraction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/data_extract.html#pylsa">PyLSA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/data_extract.html#timber">Timber</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pylhc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pylhc.bsrt_logger</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pylhc.bsrt_logger</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">BSRT logger</span>
+<span class="sd">-------------------</span>
+
+<span class="sd">Script used during Run II to log detailed BSRT data and save it for later analysis. Data from the</span>
+<span class="sd">BSRT for each timestep is put in a `dictionary` and append to a `list`. The `list` is then saved</span>
+<span class="sd">to disk through pickling. Proper testing requires communication with ``FESA`` s class, possible</span>
+<span class="sd">only from the Technical Network.</span>
+
+<span class="sd">Original authors: E. H. Maclean, T. Persson and G. Trad.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pickle</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">omc3.definitions</span><span class="w"> </span><span class="kn">import</span> <span class="n">formats</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">omc3.utils.mock</span><span class="w"> </span><span class="kn">import</span> <span class="n">cern_network_import</span>
+
+<span class="n">pyjapc</span> <span class="o">=</span> <span class="n">cern_network_import</span><span class="p">(</span><span class="s2">&quot;pyjapc&quot;</span><span class="p">)</span>
+
+
+<span class="c1">##########################################</span>
+
+
+<div class="viewcode-block" id="parse_timestamp">
+<a class="viewcode-back" href="../../entrypoints/machine_info.html#pylhc.bsrt_logger.parse_timestamp">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_timestamp</span><span class="p">(</span><span class="n">thistime</span><span class="p">):</span>
+    <span class="n">accepted_time_input_format</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S.</span><span class="si">%f</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">_%H:%M:%S.</span><span class="si">%f</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">_%H:%M:%S&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;%Y/%m/</span><span class="si">%d</span><span class="s2"> %H:%M:%S.</span><span class="si">%f</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+    <span class="k">for</span> <span class="n">fmat</span> <span class="ow">in</span> <span class="n">accepted_time_input_format</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">thistime</span><span class="p">,</span> <span class="n">fmat</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">pass</span>
+    <span class="n">timefmatstring</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">fmat</span> <span class="ow">in</span> <span class="n">accepted_time_input_format</span><span class="p">:</span>
+        <span class="n">timefmatstring</span> <span class="o">=</span> <span class="n">timefmatstring</span> <span class="o">+</span> <span class="s1">&#39;&quot;&#39;</span> <span class="o">+</span> <span class="n">fmat</span> <span class="o">+</span> <span class="s1">&#39;&quot; ,   &#39;</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">tracebacklimit</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+        <span class="s2">&quot;No appropriate input format found for start time of scan (-s).</span><span class="se">\n</span><span class="s2"> &quot;</span>
+        <span class="s2">&quot;---&gt; Accepted input formats are:   &quot;</span> <span class="o">+</span> <span class="n">timefmatstring</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="c1">##########################################</span>
+
+
+<span class="c1"># function to help write output from datetime objects in standard format throughout code</span>
+<div class="viewcode-block" id="convert_to_data_output_format">
+<a class="viewcode-back" href="../../entrypoints/machine_info.html#pylhc.bsrt_logger.convert_to_data_output_format">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_to_data_output_format</span><span class="p">(</span><span class="n">dtobject</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">dtobject</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">formats</span><span class="o">.</span><span class="n">TIME</span><span class="p">)</span></div>
+
+
+
+<span class="c1">##########################################</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># Create a PyJapc instance with selector SCT.USER.ALL</span>
+    <span class="c1"># INCA is automatically configured based on the timing domain you specify here</span>
+
+    <span class="n">CycleName</span> <span class="o">=</span> <span class="s2">&quot;LHC.USER.ALL&quot;</span>
+    <span class="n">INCAacc</span> <span class="o">=</span> <span class="s2">&quot;LHC&quot;</span>
+    <span class="n">no_set_flag</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="n">japc</span> <span class="o">=</span> <span class="n">pyjapc</span><span class="o">.</span><span class="n">PyJapc</span><span class="p">(</span><span class="n">selector</span><span class="o">=</span><span class="n">CycleName</span><span class="p">,</span> <span class="n">incaAcceleratorName</span><span class="o">=</span><span class="n">INCAacc</span><span class="p">,</span> <span class="n">noSet</span><span class="o">=</span><span class="n">no_set_flag</span><span class="p">)</span>
+    <span class="n">japc</span><span class="o">.</span><span class="n">rbacLogin</span><span class="p">()</span>
+    <span class="n">acquesitions_per_file</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.7</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+        <span class="n">B1_image</span> <span class="o">=</span> <span class="n">japc</span><span class="o">.</span><span class="n">getParam</span><span class="p">(</span><span class="s2">&quot;LHC.BSRTS.5R4.B1/Image&quot;</span><span class="p">)</span>
+        <span class="n">B2_image</span> <span class="o">=</span> <span class="n">japc</span><span class="o">.</span><span class="n">getParam</span><span class="p">(</span><span class="s2">&quot;LHC.BSRTS.5L4.B2/Image&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">t</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">all_b1_data</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">all_b2_data</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">B1_IMGtime</span> <span class="o">=</span> <span class="n">B1_image</span><span class="p">[</span><span class="s2">&quot;acqTime&quot;</span><span class="p">]</span>
+            <span class="n">B2_IMGtime</span> <span class="o">=</span> <span class="n">B2_image</span><span class="p">[</span><span class="s2">&quot;acqTime&quot;</span><span class="p">]</span>
+            <span class="n">B1_IMGtime_dt</span> <span class="o">=</span> <span class="n">parse_timestamp</span><span class="p">(</span><span class="n">B1_IMGtime</span><span class="p">)</span>
+            <span class="n">B2_IMGtime_dt</span> <span class="o">=</span> <span class="n">parse_timestamp</span><span class="p">(</span><span class="n">B2_IMGtime</span><span class="p">)</span>
+            <span class="n">B1_IMGtime_st</span> <span class="o">=</span> <span class="n">convert_to_data_output_format</span><span class="p">(</span><span class="n">B1_IMGtime_dt</span><span class="p">)</span>
+            <span class="n">B2_IMGtime_st</span> <span class="o">=</span> <span class="n">convert_to_data_output_format</span><span class="p">(</span><span class="n">B2_IMGtime_dt</span><span class="p">)</span>
+
+        <span class="n">all_b1_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">B1_image</span><span class="p">)</span>
+        <span class="n">all_b2_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">B2_image</span><span class="p">)</span>
+        <span class="n">t</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">t</span> <span class="o">==</span> <span class="n">acquesitions_per_file</span><span class="p">:</span>
+            <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">f1name</span> <span class="o">=</span> <span class="s2">&quot;data_BSRT_B1_&quot;</span> <span class="o">+</span> <span class="n">B1_IMGtime_st</span> <span class="o">+</span> <span class="s2">&quot;.dat&quot;</span>
+            <span class="n">f2name</span> <span class="o">=</span> <span class="s2">&quot;data_BSRT_B2_&quot;</span> <span class="o">+</span> <span class="n">B2_IMGtime_st</span> <span class="o">+</span> <span class="s2">&quot;.dat&quot;</span>
+            <span class="k">with</span> <span class="n">Path</span><span class="p">(</span><span class="n">f1name</span><span class="p">)</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f1</span><span class="p">,</span> <span class="n">Path</span><span class="p">(</span><span class="n">f2name</span><span class="p">)</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f2</span><span class="p">:</span>
+                <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">all_b1_data</span><span class="p">,</span> <span class="n">f1</span><span class="p">)</span>
+                <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">all_b2_data</span><span class="p">,</span> <span class="n">f2</span><span class="p">)</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;gzip &quot;</span> <span class="o">+</span> <span class="n">f1name</span><span class="p">)</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;gzip &quot;</span> <span class="o">+</span> <span class="n">f2name</span><span class="p">)</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># Close the RBAC session</span>
+    <span class="n">japc</span><span class="o">.</span><span class="n">rbacLogout</span><span class="p">()</span>  <span class="c1"># this code in not reachable! Encapsulate in a try..except maybe?</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -6,17 +6,17 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Analysis Tools &mdash; pylhc 0.8.2 documentation</title>
+  <title>Analysis Tools &mdash; pylhc 0.8.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=0db14186" />
 
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=dbee5847"></script>
-      <script src="../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/documentation_options.js?v=7f96dc5e"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -32,8 +32,8 @@
 
           
           
-          <a href="../index.html" class="icon icon-home">
-            pylhc
+          <a href="../index.html">
+            
               <img src="../_static/omc_logo.svg" class="logo" alt="Logo"/>
           </a>
 <div role="search">
@@ -116,8 +116,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="analysis-tools">
-<h1>Analysis Tools<a class="headerlink" href="#analysis-tools" title="Link to this heading"></a></h1>
+  <section id="module-pylhc.bsrt_analysis">
+<span id="analysis-tools"></span><h1>Analysis Tools<a class="headerlink" href="#module-pylhc.bsrt_analysis" title="Link to this heading"></a></h1>
 <section id="bsrt-analysis">
 <h2>BSRT Analysis<a class="headerlink" href="#bsrt-analysis" title="Link to this heading"></a></h2>
 <p>Top-level script to query BRST data, then perform an analysis and output the generated plots. The
@@ -129,8 +129,48 @@ are generated.
 - If provided a <code class="xref py py-obj docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> file with timestamps, plots of the 2D distribution and comparison
 of fit parameters to cross sections are added.</p>
 </section>
+<dl class="py function">
+<dt class="sig sig-object py" id="pylhc.bsrt_analysis.flattend_column">
+<span class="sig-prename descclassname"><span class="pre">pylhc.bsrt_analysis.</span></span><span class="sig-name descname"><span class="pre">flattend_column</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/bsrt_analysis.html#flattend_column"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.bsrt_analysis.flattend_column" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pylhc.bsrt_analysis.get_params">
+<span class="sig-prename descclassname"><span class="pre">pylhc.bsrt_analysis.</span></span><span class="sig-name descname"><span class="pre">get_params</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/bsrt_analysis.html#get_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.bsrt_analysis.get_params" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pylhc.bsrt_analysis.main">
+<span class="sig-prename descclassname"><span class="pre">pylhc.bsrt_analysis.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">opt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/bsrt_analysis.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.bsrt_analysis.main" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pylhc.bsrt_analysis.pcolormesh_irregulargrid">
+<span class="sig-prename descclassname"><span class="pre">pylhc.bsrt_analysis.</span></span><span class="sig-name descname"><span class="pre">pcolormesh_irregulargrid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_column</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_column</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_column</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/bsrt_analysis.html#pcolormesh_irregulargrid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.bsrt_analysis.pcolormesh_irregulargrid" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pylhc.bsrt_analysis.plot_auxiliary_variables">
+<span class="sig-prename descclassname"><span class="pre">pylhc.bsrt_analysis.</span></span><span class="sig-name descname"><span class="pre">plot_auxiliary_variables</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">opt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bsrt_df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/bsrt_analysis.html#plot_auxiliary_variables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.bsrt_analysis.plot_auxiliary_variables" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pylhc.bsrt_analysis.plot_crosssection_for_timesteps">
+<span class="sig-prename descclassname"><span class="pre">pylhc.bsrt_analysis.</span></span><span class="sig-name descname"><span class="pre">plot_crosssection_for_timesteps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">opt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bsrt_df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/bsrt_analysis.html#plot_crosssection_for_timesteps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.bsrt_analysis.plot_crosssection_for_timesteps" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pylhc.bsrt_analysis.plot_fit_variables">
+<span class="sig-prename descclassname"><span class="pre">pylhc.bsrt_analysis.</span></span><span class="sig-name descname"><span class="pre">plot_fit_variables</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">opt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bsrt_df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/bsrt_analysis.html#plot_fit_variables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.bsrt_analysis.plot_fit_variables" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pylhc.bsrt_analysis.plot_full_crosssection">
+<span class="sig-prename descclassname"><span class="pre">pylhc.bsrt_analysis.</span></span><span class="sig-name descname"><span class="pre">plot_full_crosssection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">opt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bsrt_df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/bsrt_analysis.html#plot_full_crosssection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.bsrt_analysis.plot_full_crosssection" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
 <section id="forced-da-analysis">
-<h2>Forced DA Analysis<a class="headerlink" href="#forced-da-analysis" title="Link to this heading"></a></h2>
+<span id="module-pylhc.forced_da_analysis"></span><h2>Forced DA Analysis<a class="headerlink" href="#forced-da-analysis" title="Link to this heading"></a></h2>
 <p>Top-level script to run the forced DA analysis, following the procedure described in
 <a class="reference external" href="https://journals.aps.org/prab/pdf/10.1103/PhysRevAccelBeams.22.031002">CarlierForcedDA2019</a>.</p>
 <p>Arguments:</p>
@@ -213,58 +253,69 @@ either from omc3 styles or default mpl.</p>
 </dl>
 </section>
 <dl class="py class">
-<dt class="sig sig-object py">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pylhc.forced_da_analysis.</span></span><span class="sig-name descname"><span class="pre">BoolOrPathOrDataFrame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/forced_da_analysis.html#BoolOrPathOrDataFrame"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
-<dd><p>A class that behaves like a <code class="xref py py-obj docutils literal notranslate"><span class="pre">boolean</span></code> when possible, otherwise like a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Path</span></code>, <a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">string</span></code></a> or
+<dt class="sig sig-object py" id="pylhc.forced_da_analysis.BoolOrPathOrDataFrame">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pylhc.forced_da_analysis.</span></span><span class="sig-name descname"><span class="pre">BoolOrPathOrDataFrame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/forced_da_analysis.html#BoolOrPathOrDataFrame"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.forced_da_analysis.BoolOrPathOrDataFrame" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>A class that behaves like a <code class="xref py py-obj docutils literal notranslate"><span class="pre">boolean</span></code> when possible, otherwise like a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Path</span></code>, <a class="reference external" href="https://docs.python.org/3/library/string.html#module-string" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">string</span></code></a> or
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">Dataframe</span></code>.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">pylhc.forced_da_analysis.</span></span><span class="sig-name descname"><span class="pre">PathOrDataframe</span></span></dt>
+<dt class="sig sig-object py" id="pylhc.forced_da_analysis.PathOrDataframe">
+<span class="sig-prename descclassname"><span class="pre">pylhc.forced_da_analysis.</span></span><span class="sig-name descname"><span class="pre">PathOrDataframe</span></span><a class="headerlink" href="#pylhc.forced_da_analysis.PathOrDataframe" title="Link to this definition"></a></dt>
 <dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">SomethingOrPath</span></code></p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">pylhc.forced_da_analysis.</span></span><span class="sig-name descname"><span class="pre">PathOrPagestore</span></span></dt>
+<dt class="sig sig-object py" id="pylhc.forced_da_analysis.PathOrPagestore">
+<span class="sig-prename descclassname"><span class="pre">pylhc.forced_da_analysis.</span></span><span class="sig-name descname"><span class="pre">PathOrPagestore</span></span><a class="headerlink" href="#pylhc.forced_da_analysis.PathOrPagestore" title="Link to this definition"></a></dt>
 <dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">SomethingOrPath</span></code></p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">pylhc.forced_da_analysis.</span></span><span class="sig-name descname"><span class="pre">PathOrString</span></span></dt>
+<dt class="sig sig-object py" id="pylhc.forced_da_analysis.PathOrString">
+<span class="sig-prename descclassname"><span class="pre">pylhc.forced_da_analysis.</span></span><span class="sig-name descname"><span class="pre">PathOrString</span></span><a class="headerlink" href="#pylhc.forced_da_analysis.PathOrString" title="Link to this definition"></a></dt>
 <dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">SomethingOrPath</span></code></p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">pylhc.forced_da_analysis.</span></span><span class="sig-name descname"><span class="pre">fun_exp_decay</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/forced_da_analysis.html#fun_exp_decay"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dt class="sig sig-object py" id="pylhc.forced_da_analysis.fun_exp_decay">
+<span class="sig-prename descclassname"><span class="pre">pylhc.forced_da_analysis.</span></span><span class="sig-name descname"><span class="pre">fun_exp_decay</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/forced_da_analysis.html#fun_exp_decay"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.forced_da_analysis.fun_exp_decay" title="Link to this definition"></a></dt>
 <dd><p>sp = DA_J, x[0] = action (2J res), x[1] = emittance</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">pylhc.forced_da_analysis.</span></span><span class="sig-name descname"><span class="pre">fun_exp_sigma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/forced_da_analysis.html#fun_exp_sigma"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dt class="sig sig-object py" id="pylhc.forced_da_analysis.fun_exp_sigma">
+<span class="sig-prename descclassname"><span class="pre">pylhc.forced_da_analysis.</span></span><span class="sig-name descname"><span class="pre">fun_exp_sigma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/forced_da_analysis.html#fun_exp_sigma"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.forced_da_analysis.fun_exp_sigma" title="Link to this definition"></a></dt>
 <dd><p>p = DA_sigma, x = action (J_sigma)</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">pylhc.forced_da_analysis.</span></span><span class="sig-name descname"><span class="pre">fun_linear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/forced_da_analysis.html#fun_linear"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dt class="sig sig-object py" id="pylhc.forced_da_analysis.fun_linear">
+<span class="sig-prename descclassname"><span class="pre">pylhc.forced_da_analysis.</span></span><span class="sig-name descname"><span class="pre">fun_linear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/forced_da_analysis.html#fun_linear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.forced_da_analysis.fun_linear" title="Link to this definition"></a></dt>
 <dd><p>p = DA_J, x = action (2J res)</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">pylhc.forced_da_analysis.</span></span><span class="sig-name descname"><span class="pre">get_approximate_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'nearest'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/forced_da_analysis.html#get_approximate_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dt class="sig sig-object py" id="pylhc.forced_da_analysis.get_approximate_index">
+<span class="sig-prename descclassname"><span class="pre">pylhc.forced_da_analysis.</span></span><span class="sig-name descname"><span class="pre">get_approximate_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'nearest'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/forced_da_analysis.html#get_approximate_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.forced_da_analysis.get_approximate_index" title="Link to this definition"></a></dt>
 <dd><p>Emulates the <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_loc</span></code> from pandas&lt;2.0, i.e.
 single index input and output.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">pylhc.forced_da_analysis.</span></span><span class="sig-name descname"><span class="pre">swap_fun_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fun</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/forced_da_analysis.html#swap_fun_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dt class="sig sig-object py" id="pylhc.forced_da_analysis.get_params">
+<span class="sig-prename descclassname"><span class="pre">pylhc.forced_da_analysis.</span></span><span class="sig-name descname"><span class="pre">get_params</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/forced_da_analysis.html#get_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.forced_da_analysis.get_params" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pylhc.forced_da_analysis.main">
+<span class="sig-prename descclassname"><span class="pre">pylhc.forced_da_analysis.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">opt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/forced_da_analysis.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.forced_da_analysis.main" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pylhc.forced_da_analysis.swap_fun_parameters">
+<span class="sig-prename descclassname"><span class="pre">pylhc.forced_da_analysis.</span></span><span class="sig-name descname"><span class="pre">swap_fun_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fun</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/forced_da_analysis.html#swap_fun_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.forced_da_analysis.swap_fun_parameters" title="Link to this definition"></a></dt>
 <dd><p>Parameter swapped for Curvefit.</p>
 </dd></dl>
 

@@ -1,0 +1,356 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pylhc.constants.forced_da_analysis &mdash; pylhc 0.8.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=0db14186" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=7f96dc5e"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/omc_logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Entrypoints</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../entrypoints/analysis.html">Analysis Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/analysis.html#bsrt-analysis">BSRT Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/analysis.html#forced-da-analysis">Forced DA Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../entrypoints/bpm_calibration.html">BPM Calibration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/bpm_calibration.html#id1">BPM Calibration</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../entrypoints/kickgroups.html">KickGroup Informations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/kickgroups.html#kickgroups">Kickgroups</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../entrypoints/lsa_to_madx.html">LSA Knobs to MAD-X Expressions Converter</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/lsa_to_madx.html#lsa-to-mad-x">LSA to MAD-X</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../entrypoints/machine_info.html">Machine Information Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/machine_info.html#print-machine-settings-overview">Print Machine Settings Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../entrypoints/machine_info.html#bsrt-logger">BSRT logger</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/calibration.html">BPM Calibration Utilities</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/calibration.html#beta">Beta</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/calibration.html#dispersion">Dispersion</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/constants.html">Constants Definitions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/constants.html#constants-general">Constants: General</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/constants.html#constants-forced-da-analysis">Constants: Forced DA Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/constants.html#constants-kickgroups">Constants: KickGroups</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/constants.html#constants-machine-settings-info">Constants: Machine Settings Info</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/constants.html#constants-bpm-calibration">Constants: BPM Calibration</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/data_extract.html">Data Extraction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/data_extract.html#pylsa">PyLSA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/data_extract.html#timber">Timber</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pylhc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pylhc.constants.forced_da_analysis</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pylhc.constants.forced_da_analysis</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Constants: Forced DA Analysis</span>
+<span class="sd">-----------------------------</span>
+
+<span class="sd">Specific constants relating to the forced DA analysis to be used in ``PyLHC``, to help with</span>
+<span class="sd">consistency.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pylhc.constants.general</span><span class="w"> </span><span class="kn">import</span> <span class="n">PLANE_TO_HV</span><span class="p">,</span> <span class="n">TFS_SUFFIX</span>
+
+<span class="n">RESULTS_DIR</span> <span class="o">=</span> <span class="s2">&quot;forced_da_analysis&quot;</span>
+
+<span class="n">ROLLING_AVERAGE_WINDOW</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">OUTLIER_LIMIT</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="mf">1e-6</span>
+<span class="n">TIME_AROUND_KICKS_MIN</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">TIME_BEFORE_KICK_S</span> <span class="o">=</span> <span class="p">[</span><span class="mi">30</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span>
+<span class="n">TIME_AFTER_KICK_S</span> <span class="o">=</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">30</span><span class="p">]</span>
+<span class="n">YPAD</span> <span class="o">=</span> <span class="mf">0.05</span>  <span class="c1"># additional padding of the y axis for DA plots</span>
+
+<span class="n">INITIAL_DA_FIT</span> <span class="o">=</span> <span class="mi">12</span>  <span class="c1"># initial DA for fitting in values of nominal emittance</span>
+<span class="n">MAX_CURVEFIT_FEV</span> <span class="o">=</span> <span class="mi">10000</span>  <span class="c1"># Max number of curve_fit iterations</span>
+
+
+<span class="n">BWS_DIRECTIONS</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;IN&quot;</span><span class="p">,</span> <span class="s2">&quot;OUT&quot;</span><span class="p">)</span>
+
+
+<span class="c1"># Kick File Definitions --------------------------------------------------------</span>
+
+<span class="n">KICKFILE</span> <span class="o">=</span> <span class="s2">&quot;kick&quot;</span>
+
+
+<div class="viewcode-block" id="outfile_kick">
+<a class="viewcode-back" href="../../../modules/constants.html#pylhc.constants.forced_da_analysis.outfile_kick">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">outfile_kick</span><span class="p">(</span><span class="n">plane</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">KICKFILE</span><span class="si">}</span><span class="s2">_fda_</span><span class="si">{</span><span class="n">plane</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}{</span><span class="n">TFS_SUFFIX</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="outfile_emittance">
+<a class="viewcode-back" href="../../../modules/constants.html#pylhc.constants.forced_da_analysis.outfile_emittance">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">outfile_emittance</span><span class="p">(</span><span class="n">plane</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;emittance_</span><span class="si">{</span><span class="n">plane</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}{</span><span class="n">TFS_SUFFIX</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="outfile_emittance_bws">
+<a class="viewcode-back" href="../../../modules/constants.html#pylhc.constants.forced_da_analysis.outfile_emittance_bws">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">outfile_emittance_bws</span><span class="p">(</span><span class="n">plane</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;emittance_bws_</span><span class="si">{</span><span class="n">plane</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}{</span><span class="n">TFS_SUFFIX</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+
+<span class="n">OUTFILE_INTENSITY</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;intensity</span><span class="si">{</span><span class="n">TFS_SUFFIX</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<span class="c1"># Plotting ---------------------------------------------------------------------</span>
+
+<span class="n">PLOT_FILETYPES</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;.pdf&quot;</span><span class="p">,</span> <span class="s2">&quot;.png&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="outfile_plot">
+<a class="viewcode-back" href="../../../modules/constants.html#pylhc.constants.forced_da_analysis.outfile_plot">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">outfile_plot</span><span class="p">(</span><span class="n">ptype</span><span class="p">,</span> <span class="n">plane</span><span class="p">,</span> <span class="n">ftype</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ptype</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">plane</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}{</span><span class="n">ftype</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+
+<span class="c1"># Timber Keys ------------------------------------------------------------------</span>
+
+<span class="n">INTENSITY_KEY</span> <span class="o">=</span> <span class="s2">&quot;LHC.BCTFR.A6R4.B</span><span class="si">{beam:d}</span><span class="s2">:BEAM_INTENSITY&quot;</span>
+
+<span class="n">BSRT_EMITTANCE_SIGMA_FIT_KEY</span> <span class="o">=</span> <span class="s2">&quot;LHC.BSRT.5</span><span class="si">{side:s}</span><span class="s2">4.B</span><span class="si">{beam:d}</span><span class="s2">:FIT_SIGMA_</span><span class="si">{plane:s}</span><span class="s2">&quot;</span>
+<span class="n">BSRT_EMITTANCE_AVERAGE_KEY</span> <span class="o">=</span> <span class="s2">&quot;LHC.BSRT.5</span><span class="si">{side:s}</span><span class="s2">4.B</span><span class="si">{beam:d}</span><span class="s2">:AVERAGE_EMITTANCE_</span><span class="si">{plane:s}</span><span class="s2">&quot;</span>
+<span class="n">BSRT_EMITTANCE_TO_METER</span> <span class="o">=</span> <span class="mf">1e-6</span>  <span class="c1"># Emittance is normalized and in um</span>
+
+<span class="n">BWS_EMITTANCE_KEY</span> <span class="o">=</span> <span class="s2">&quot;LHC.BWS.5</span><span class="si">{side:s}</span><span class="s2">4.B</span><span class="si">{beam:d}{plane:s}</span><span class="s2">.APP.</span><span class="si">{direction:s}</span><span class="s2">:EMITTANCE_NORM&quot;</span>
+<span class="n">BWS_EMITTANCE_TO_METER</span> <span class="o">=</span> <span class="mf">1e-6</span>  <span class="c1"># Emittance is normalized and in um</span>
+
+
+<span class="n">LR_MAP</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="s2">&quot;R&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="s2">&quot;L&quot;</span><span class="p">}</span>
+
+
+<div class="viewcode-block" id="bsrt_emittance_key">
+<a class="viewcode-back" href="../../../modules/constants.html#pylhc.constants.forced_da_analysis.bsrt_emittance_key">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">bsrt_emittance_key</span><span class="p">(</span><span class="n">beam</span><span class="p">,</span> <span class="n">plane</span><span class="p">,</span> <span class="n">type_</span><span class="p">):</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;fit_sigma&quot;</span><span class="p">:</span> <span class="n">BSRT_EMITTANCE_SIGMA_FIT_KEY</span><span class="p">,</span> <span class="s2">&quot;average&quot;</span><span class="p">:</span> <span class="n">BSRT_EMITTANCE_AVERAGE_KEY</span><span class="p">}[</span><span class="n">type_</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">key</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="n">LR_MAP</span><span class="p">[</span><span class="n">beam</span><span class="p">],</span> <span class="n">beam</span><span class="o">=</span><span class="n">beam</span><span class="p">,</span> <span class="n">plane</span><span class="o">=</span><span class="n">PLANE_TO_HV</span><span class="p">[</span><span class="n">plane</span><span class="p">])</span></div>
+
+
+
+<div class="viewcode-block" id="bws_emittance_key">
+<a class="viewcode-back" href="../../../modules/constants.html#pylhc.constants.forced_da_analysis.bws_emittance_key">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">bws_emittance_key</span><span class="p">(</span><span class="n">beam</span><span class="p">,</span> <span class="n">plane</span><span class="p">,</span> <span class="n">direction</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">BWS_EMITTANCE_KEY</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">side</span><span class="o">=</span><span class="n">LR_MAP</span><span class="p">[</span><span class="n">beam</span><span class="p">],</span> <span class="n">beam</span><span class="o">=</span><span class="n">beam</span><span class="p">,</span> <span class="n">plane</span><span class="o">=</span><span class="n">PLANE_TO_HV</span><span class="p">[</span><span class="n">plane</span><span class="p">],</span> <span class="n">direction</span><span class="o">=</span><span class="n">direction</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="c1"># Headers ----------------------------------------------------------------------</span>
+<span class="n">HEADER_TIME_BEFORE</span> <span class="o">=</span> <span class="s2">&quot;Timespan_before_kick[s]&quot;</span>
+<span class="n">HEADER_TIME_AFTER</span> <span class="o">=</span> <span class="s2">&quot;Timespan_after_kick[s]&quot;</span>
+<span class="n">HEADER_BSRT_ROLLING_WINDOW</span> <span class="o">=</span> <span class="s2">&quot;Emittance_rolling_window_length&quot;</span>
+<span class="n">HEADER_BSRT_OUTLIER_LIMIT</span> <span class="o">=</span> <span class="s2">&quot;Emittance_outlier_limit&quot;</span>
+<span class="n">HEADER_DA</span> <span class="o">=</span> <span class="s2">&quot;Forced_DA_J_Fit_</span><span class="si">{plane:}</span><span class="s2">[</span><span class="si">{unit:}</span><span class="s2">]&quot;</span>
+<span class="n">HEADER_DA_ERROR</span> <span class="o">=</span> <span class="s2">&quot;Forced_DA_J_Fit_Error_</span><span class="si">{plane:}</span><span class="s2">[</span><span class="si">{unit:}</span><span class="s2">]&quot;</span>
+<span class="n">HEADER_ENERGY</span> <span class="o">=</span> <span class="s2">&quot;Beam_Energy[GeV]&quot;</span>
+<span class="n">HEADER_NOMINAL_EMITTANCE</span> <span class="o">=</span> <span class="s2">&quot;Nominal_Emittance_</span><span class="si">{plane:}</span><span class="s2">[m]&quot;</span>
+
+
+<div class="viewcode-block" id="header_da">
+<a class="viewcode-back" href="../../../modules/constants.html#pylhc.constants.forced_da_analysis.header_da">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">header_da</span><span class="p">(</span><span class="n">plane</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;m&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">HEADER_DA</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">plane</span><span class="o">=</span><span class="n">plane</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span> <span class="n">unit</span><span class="o">=</span><span class="n">unit</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="header_da_error">
+<a class="viewcode-back" href="../../../modules/constants.html#pylhc.constants.forced_da_analysis.header_da_error">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">header_da_error</span><span class="p">(</span><span class="n">plane</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;m&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">HEADER_DA_ERROR</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">plane</span><span class="o">=</span><span class="n">plane</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span> <span class="n">unit</span><span class="o">=</span><span class="n">unit</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="header_nominal_emittance">
+<a class="viewcode-back" href="../../../modules/constants.html#pylhc.constants.forced_da_analysis.header_nominal_emittance">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">header_nominal_emittance</span><span class="p">(</span><span class="n">plane</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">HEADER_NOMINAL_EMITTANCE</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">plane</span><span class="o">=</span><span class="n">plane</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span></div>
+
+
+
+<div class="viewcode-block" id="header_norm_nominal_emittance">
+<a class="viewcode-back" href="../../../modules/constants.html#pylhc.constants.forced_da_analysis.header_norm_nominal_emittance">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">header_norm_nominal_emittance</span><span class="p">(</span><span class="n">plane</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Normalized_</span><span class="si">{</span><span class="n">HEADER_NOMINAL_EMITTANCE</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">plane</span><span class="o">=</span><span class="n">plane</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+
+<span class="c1"># Columns ----------------------------------------------------------------------</span>
+
+<span class="n">INTENSITY</span> <span class="o">=</span> <span class="s2">&quot;INTENSITY&quot;</span>
+<span class="n">INTENSITY_BEFORE</span> <span class="o">=</span> <span class="s2">&quot;I_BEFORE&quot;</span>
+<span class="n">INTENSITY_AFTER</span> <span class="o">=</span> <span class="s2">&quot;I_AFTER&quot;</span>
+<span class="n">INTENSITY_LOSSES</span> <span class="o">=</span> <span class="s2">&quot;I_LOSSES&quot;</span>
+
+<span class="c1"># Column Modifiers ---</span>
+<span class="n">CLEAN</span> <span class="o">=</span> <span class="s2">&quot;CLEAN&quot;</span>
+<span class="n">MEAN</span> <span class="o">=</span> <span class="s2">&quot;MEAN&quot;</span>
+<span class="n">ERR</span> <span class="o">=</span> <span class="s2">&quot;ERR&quot;</span>
+<span class="n">RELATIVE</span> <span class="o">=</span> <span class="s2">&quot;REL&quot;</span>
+<span class="n">SIGMA</span> <span class="o">=</span> <span class="s2">&quot;SIGMA&quot;</span>
+
+
+<div class="viewcode-block" id="err_col">
+<a class="viewcode-back" href="../../../modules/constants.html#pylhc.constants.forced_da_analysis.err_col">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">err_col</span><span class="p">(</span><span class="n">column</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ERR</span><span class="si">}{</span><span class="n">column</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="mean_col">
+<a class="viewcode-back" href="../../../modules/constants.html#pylhc.constants.forced_da_analysis.mean_col">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">mean_col</span><span class="p">(</span><span class="n">column</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">MEAN</span><span class="si">}{</span><span class="n">column</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="rel_col">
+<a class="viewcode-back" href="../../../modules/constants.html#pylhc.constants.forced_da_analysis.rel_col">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">rel_col</span><span class="p">(</span><span class="n">column</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">column</span><span class="si">}{</span><span class="n">RELATIVE</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="sigma_col">
+<a class="viewcode-back" href="../../../modules/constants.html#pylhc.constants.forced_da_analysis.sigma_col">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">sigma_col</span><span class="p">(</span><span class="n">column</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">SIGMA</span><span class="si">}{</span><span class="n">column</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+
+<span class="c1"># Planed columns ---</span>
+<span class="n">EMITTANCE</span> <span class="o">=</span> <span class="s2">&quot;EMITTANCE&quot;</span>
+<span class="n">NORM_EMITTANCE</span> <span class="o">=</span> <span class="s2">&quot;NORMEMITTANCE&quot;</span>
+
+
+<div class="viewcode-block" id="column_action">
+<a class="viewcode-back" href="../../../modules/constants.html#pylhc.constants.forced_da_analysis.column_action">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">column_action</span><span class="p">(</span><span class="n">plane</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;2J</span><span class="si">{</span><span class="n">plane</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s2">RES&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="column_emittance">
+<a class="viewcode-back" href="../../../modules/constants.html#pylhc.constants.forced_da_analysis.column_emittance">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">column_emittance</span><span class="p">(</span><span class="n">plane</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">EMITTANCE</span><span class="si">}{</span><span class="n">plane</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="column_norm_emittance">
+<a class="viewcode-back" href="../../../modules/constants.html#pylhc.constants.forced_da_analysis.column_norm_emittance">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">column_norm_emittance</span><span class="p">(</span><span class="n">plane</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">NORM_EMITTANCE</span><span class="si">}{</span><span class="n">plane</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="column_bws_norm_emittance">
+<a class="viewcode-back" href="../../../modules/constants.html#pylhc.constants.forced_da_analysis.column_bws_norm_emittance">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">column_bws_norm_emittance</span><span class="p">(</span><span class="n">plane</span><span class="p">,</span> <span class="n">direction</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">column_norm_emittance</span><span class="p">(</span><span class="n">plane</span><span class="p">)</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">direction</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -6,17 +6,17 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Constants Definitions &mdash; pylhc 0.8.2 documentation</title>
+  <title>Constants Definitions &mdash; pylhc 0.8.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=0db14186" />
 
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=dbee5847"></script>
-      <script src="../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/documentation_options.js?v=7f96dc5e"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -32,8 +32,8 @@
 
           
           
-          <a href="../index.html" class="icon icon-home">
-            pylhc
+          <a href="../index.html">
+            
               <img src="../_static/omc_logo.svg" class="logo" alt="Logo"/>
           </a>
 <div role="search">
@@ -116,40 +116,130 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="constants-definitions">
-<h1>Constants Definitions<a class="headerlink" href="#constants-definitions" title="Link to this heading"></a></h1>
+  <section id="module-pylhc.constants.general">
+<span id="constants-definitions"></span><h1>Constants Definitions<a class="headerlink" href="#module-pylhc.constants.general" title="Link to this heading"></a></h1>
 <section id="constants-general">
 <h2>Constants: General<a class="headerlink" href="#constants-general" title="Link to this heading"></a></h2>
 <p>General constants to be used in <code class="docutils literal notranslate"><span class="pre">PyLHC</span></code>, to help with consistency.</p>
 </section>
 <dl class="py function">
-<dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">pylhc.constants.general.</span></span><span class="sig-name descname"><span class="pre">get_proton_beta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/constants/general.html#get_proton_beta"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dt class="sig sig-object py" id="pylhc.constants.general.get_proton_beta">
+<span class="sig-prename descclassname"><span class="pre">pylhc.constants.general.</span></span><span class="sig-name descname"><span class="pre">get_proton_beta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/constants/general.html#get_proton_beta"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.constants.general.get_proton_beta" title="Link to this definition"></a></dt>
 <dd><p>Returns relativistic beta for protons</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">pylhc.constants.general.</span></span><span class="sig-name descname"><span class="pre">get_proton_gamma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/constants/general.html#get_proton_gamma"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dt class="sig sig-object py" id="pylhc.constants.general.get_proton_gamma">
+<span class="sig-prename descclassname"><span class="pre">pylhc.constants.general.</span></span><span class="sig-name descname"><span class="pre">get_proton_gamma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/constants/general.html#get_proton_gamma"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.constants.general.get_proton_gamma" title="Link to this definition"></a></dt>
 <dd><p>Returns relativistic gamma for protons.</p>
 </dd></dl>
 
 <section id="constants-forced-da-analysis">
-<h2>Constants: Forced DA Analysis<a class="headerlink" href="#constants-forced-da-analysis" title="Link to this heading"></a></h2>
+<span id="module-pylhc.constants.forced_da_analysis"></span><h2>Constants: Forced DA Analysis<a class="headerlink" href="#constants-forced-da-analysis" title="Link to this heading"></a></h2>
 <p>Specific constants relating to the forced DA analysis to be used in <code class="docutils literal notranslate"><span class="pre">PyLHC</span></code>, to help with
 consistency.</p>
 </section>
+<dl class="py function">
+<dt class="sig sig-object py" id="pylhc.constants.forced_da_analysis.bsrt_emittance_key">
+<span class="sig-prename descclassname"><span class="pre">pylhc.constants.forced_da_analysis.</span></span><span class="sig-name descname"><span class="pre">bsrt_emittance_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">beam</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plane</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type_</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pylhc/constants/forced_da_analysis.html#bsrt_emittance_key"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.constants.forced_da_analysis.bsrt_emittance_key" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pylhc.constants.forced_da_analysis.bws_emittance_key">
+<span class="sig-prename descclassname"><span class="pre">pylhc.constants.forced_da_analysis.</span></span><span class="sig-name descname"><span class="pre">bws_emittance_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">beam</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plane</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/pylhc/constants/forced_da_analysis.html#bws_emittance_key"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.constants.forced_da_analysis.bws_emittance_key" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pylhc.constants.forced_da_analysis.column_action">
+<span class="sig-prename descclassname"><span class="pre">pylhc.constants.forced_da_analysis.</span></span><span class="sig-name descname"><span class="pre">column_action</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plane</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/pylhc/constants/forced_da_analysis.html#column_action"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.constants.forced_da_analysis.column_action" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pylhc.constants.forced_da_analysis.column_bws_norm_emittance">
+<span class="sig-prename descclassname"><span class="pre">pylhc.constants.forced_da_analysis.</span></span><span class="sig-name descname"><span class="pre">column_bws_norm_emittance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plane</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/pylhc/constants/forced_da_analysis.html#column_bws_norm_emittance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.constants.forced_da_analysis.column_bws_norm_emittance" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pylhc.constants.forced_da_analysis.column_emittance">
+<span class="sig-prename descclassname"><span class="pre">pylhc.constants.forced_da_analysis.</span></span><span class="sig-name descname"><span class="pre">column_emittance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plane</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/pylhc/constants/forced_da_analysis.html#column_emittance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.constants.forced_da_analysis.column_emittance" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pylhc.constants.forced_da_analysis.column_norm_emittance">
+<span class="sig-prename descclassname"><span class="pre">pylhc.constants.forced_da_analysis.</span></span><span class="sig-name descname"><span class="pre">column_norm_emittance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plane</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/pylhc/constants/forced_da_analysis.html#column_norm_emittance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.constants.forced_da_analysis.column_norm_emittance" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pylhc.constants.forced_da_analysis.err_col">
+<span class="sig-prename descclassname"><span class="pre">pylhc.constants.forced_da_analysis.</span></span><span class="sig-name descname"><span class="pre">err_col</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/pylhc/constants/forced_da_analysis.html#err_col"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.constants.forced_da_analysis.err_col" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pylhc.constants.forced_da_analysis.header_da">
+<span class="sig-prename descclassname"><span class="pre">pylhc.constants.forced_da_analysis.</span></span><span class="sig-name descname"><span class="pre">header_da</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plane</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'m'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/pylhc/constants/forced_da_analysis.html#header_da"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.constants.forced_da_analysis.header_da" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pylhc.constants.forced_da_analysis.header_da_error">
+<span class="sig-prename descclassname"><span class="pre">pylhc.constants.forced_da_analysis.</span></span><span class="sig-name descname"><span class="pre">header_da_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plane</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'m'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/pylhc/constants/forced_da_analysis.html#header_da_error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.constants.forced_da_analysis.header_da_error" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pylhc.constants.forced_da_analysis.header_nominal_emittance">
+<span class="sig-prename descclassname"><span class="pre">pylhc.constants.forced_da_analysis.</span></span><span class="sig-name descname"><span class="pre">header_nominal_emittance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plane</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/pylhc/constants/forced_da_analysis.html#header_nominal_emittance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.constants.forced_da_analysis.header_nominal_emittance" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pylhc.constants.forced_da_analysis.header_norm_nominal_emittance">
+<span class="sig-prename descclassname"><span class="pre">pylhc.constants.forced_da_analysis.</span></span><span class="sig-name descname"><span class="pre">header_norm_nominal_emittance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plane</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/pylhc/constants/forced_da_analysis.html#header_norm_nominal_emittance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.constants.forced_da_analysis.header_norm_nominal_emittance" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pylhc.constants.forced_da_analysis.mean_col">
+<span class="sig-prename descclassname"><span class="pre">pylhc.constants.forced_da_analysis.</span></span><span class="sig-name descname"><span class="pre">mean_col</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/pylhc/constants/forced_da_analysis.html#mean_col"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.constants.forced_da_analysis.mean_col" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pylhc.constants.forced_da_analysis.outfile_emittance">
+<span class="sig-prename descclassname"><span class="pre">pylhc.constants.forced_da_analysis.</span></span><span class="sig-name descname"><span class="pre">outfile_emittance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plane</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/pylhc/constants/forced_da_analysis.html#outfile_emittance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.constants.forced_da_analysis.outfile_emittance" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pylhc.constants.forced_da_analysis.outfile_emittance_bws">
+<span class="sig-prename descclassname"><span class="pre">pylhc.constants.forced_da_analysis.</span></span><span class="sig-name descname"><span class="pre">outfile_emittance_bws</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plane</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/pylhc/constants/forced_da_analysis.html#outfile_emittance_bws"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.constants.forced_da_analysis.outfile_emittance_bws" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pylhc.constants.forced_da_analysis.outfile_kick">
+<span class="sig-prename descclassname"><span class="pre">pylhc.constants.forced_da_analysis.</span></span><span class="sig-name descname"><span class="pre">outfile_kick</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plane</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/pylhc/constants/forced_da_analysis.html#outfile_kick"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.constants.forced_da_analysis.outfile_kick" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pylhc.constants.forced_da_analysis.outfile_plot">
+<span class="sig-prename descclassname"><span class="pre">pylhc.constants.forced_da_analysis.</span></span><span class="sig-name descname"><span class="pre">outfile_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ptype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plane</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ftype</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/pylhc/constants/forced_da_analysis.html#outfile_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.constants.forced_da_analysis.outfile_plot" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pylhc.constants.forced_da_analysis.rel_col">
+<span class="sig-prename descclassname"><span class="pre">pylhc.constants.forced_da_analysis.</span></span><span class="sig-name descname"><span class="pre">rel_col</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/pylhc/constants/forced_da_analysis.html#rel_col"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.constants.forced_da_analysis.rel_col" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pylhc.constants.forced_da_analysis.sigma_col">
+<span class="sig-prename descclassname"><span class="pre">pylhc.constants.forced_da_analysis.</span></span><span class="sig-name descname"><span class="pre">sigma_col</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/pylhc/constants/forced_da_analysis.html#sigma_col"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pylhc.constants.forced_da_analysis.sigma_col" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
 <section id="constants-kickgroups">
-<h2>Constants: KickGroups<a class="headerlink" href="#constants-kickgroups" title="Link to this heading"></a></h2>
+<span id="module-pylhc.constants.kickgroups"></span><h2>Constants: KickGroups<a class="headerlink" href="#constants-kickgroups" title="Link to this heading"></a></h2>
 <p>Constants used in the KickGroups</p>
 </section>
 <section id="constants-machine-settings-info">
-<h2>Constants: Machine Settings Info<a class="headerlink" href="#constants-machine-settings-info" title="Link to this heading"></a></h2>
+<span id="module-pylhc.constants.machine_settings_info"></span><h2>Constants: Machine Settings Info<a class="headerlink" href="#constants-machine-settings-info" title="Link to this heading"></a></h2>
 <p>Specific constants relating to the retrieval of machine settings information to be used in
 <code class="docutils literal notranslate"><span class="pre">PyLHC</span></code>, to help with consistency.</p>
 </section>
 <section id="constants-bpm-calibration">
-<h2>Constants: BPM Calibration<a class="headerlink" href="#constants-bpm-calibration" title="Link to this heading"></a></h2>
+<span id="module-pylhc.constants.calibration"></span><h2>Constants: BPM Calibration<a class="headerlink" href="#constants-bpm-calibration" title="Link to this heading"></a></h2>
 <p>Specific constants related to the BPM calibration script in <code class="docutils literal notranslate"><span class="pre">PyLHC</span></code>.</p>
 </section>
 </section>

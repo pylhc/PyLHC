@@ -5,17 +5,17 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pylhc.forced_da_analysis &mdash; pylhc 0.8.2 documentation</title>
+  <title>pylhc.forced_da_analysis &mdash; pylhc 0.8.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=0db14186" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=dbee5847"></script>
-      <script src="../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=7f96dc5e"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -29,8 +29,8 @@
 
           
           
-          <a href="../../index.html" class="icon icon-home">
-            pylhc
+          <a href="../../index.html">
+            
               <img src="../../_static/omc_logo.svg" class="logo" alt="Logo"/>
           </a>
 <div role="search">
@@ -347,6 +347,8 @@
 <span class="n">PathOrString</span> <span class="o">=</span> <span class="n">_get_pathclass</span><span class="p">()</span>
 
 
+<div class="viewcode-block" id="get_params">
+<a class="viewcode-back" href="../../entrypoints/analysis.html#pylhc.forced_da_analysis.get_params">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_params</span><span class="p">():</span>
     <span class="k">return</span> <span class="n">EntryPointParameters</span><span class="p">(</span>
         <span class="n">kick_directory</span><span class="o">=</span><span class="p">{</span>
@@ -479,9 +481,12 @@
             <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="p">{},</span>
             <span class="s2">&quot;help&quot;</span><span class="p">:</span> <span class="s2">&quot;Additional style rcParameters which update the set of predefined ones.&quot;</span><span class="p">,</span>
         <span class="p">},</span>
-    <span class="p">)</span>
+    <span class="p">)</span></div>
 
 
+
+<div class="viewcode-block" id="main">
+<a class="viewcode-back" href="../../entrypoints/analysis.html#pylhc.forced_da_analysis.main">[docs]</a>
 <span class="nd">@entrypoint</span><span class="p">(</span><span class="n">get_params</span><span class="p">(),</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">opt</span><span class="p">):</span>
     <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Starting Forced DA analysis.&quot;</span><span class="p">)</span>
@@ -542,7 +547,8 @@
     <span class="k">if</span> <span class="n">opt</span><span class="o">.</span><span class="n">show</span><span class="p">:</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
     <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Forced DA analysis finished.&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">figs</span>
+    <span class="k">return</span> <span class="n">figs</span></div>
+
 
 
 <span class="c1"># Helper ---</span>
