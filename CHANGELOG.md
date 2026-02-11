@@ -1,8 +1,15 @@
 # pylhc Changelog
 
+## Version 0.9.0
+
+Added:
+
+- `bpm_resync`: script to synchronize BPM data from SuperKEKB rings.
+
+
 ## Version 0.8.3
 
-Explicitely require the `pytz` package as a dependency since it is no longer a hard dependency of `pandas 3.x`, which we relied on.g
+Explicitely require the `pytz` package as a dependency since it is no longer a hard dependency of `pandas 3.x`, which we relied on.
 
 ## Version 0.8.2
 
