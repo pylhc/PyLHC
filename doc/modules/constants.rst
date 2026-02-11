@@ -11,3 +11,5 @@ Constants Definitions
 .. automodule:: pylhc.constants.machine_settings_info
 
 .. automodule:: pylhc.constants.calibration
+
+.. automodule:: pylhc.constants.bpm_resync

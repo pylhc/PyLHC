@@ -41,6 +41,7 @@ To use those, you should make sure to install the relevant extra dependencies wi
 - `KickGroup Information` - Get information about KickGroups. ([**kickgroups.py**](pylhc/kickgroups.py))
 - `BSRT Logger` and `BSRT Analysis` - Saves data coming straight from LHC BSRT FESA class and allows subsequent analysis. ([**bsrt_logger.py**](pylhc/bsrt_logger.py) & [**bsrt_analysis.py**](pylhc/bsrt_analysis.py) )
 - `BPM Calibration Factors` - Compute the BPM calibration factors using ballistic optics. Two methods are available: using the beta function and using the dispersion. ([**bpm_calibration.py**](pylhc/bpm_calibration.py))
+- `BPM Resynchronization` - Compute the turn offset of SuperKEKB BPMs and resyncs them to a new turn by turn file. ([**bpm_resync.py**](pylhc/bpm_resync.py))
 
 ## License
 
