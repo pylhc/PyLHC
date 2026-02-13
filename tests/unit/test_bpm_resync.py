@@ -64,3 +64,38 @@ def test_resync(tmp_path):
 
     assert np.all(synced_tbt.matrices[0].X == output_tbt.matrices[0].X)
     assert np.all(synced_tbt.matrices[0].Y == output_tbt.matrices[0].Y)
+
+
+def test_overwrite_ok(tmp_path):
+    # Write an output file to create a conflict
+    (tmp_path / "output.sdds").write_text("This file already exists.")
+
+    # Synchronize the BPMs and check against the control
+    resync.main(input=INPUTS_DIR / "unsynced.sdds",
+                optics_dir=OPTICS_DIR,
+                output_file=tmp_path / "output.sdds",
+                ring="HER",
+                overwrite=True)  # type: ignore
+
+    assert Path(tmp_path / "output.sdds").exists()
+
+    synced_tbt = tbt.read(INPUTS_DIR / "synced.sdds")
+    output_tbt = tbt.read(tmp_path / "output.sdds")
+
+    assert np.all(synced_tbt.matrices[0].X == output_tbt.matrices[0].X)
+    assert np.all(synced_tbt.matrices[0].Y == output_tbt.matrices[0].Y)
+
+
+def test_overwrite_raise(tmp_path):
+    # Write an output file to create a conflict
+    (tmp_path / "output.sdds").write_text("This file already exists.")
+
+    # Synchronize the BPMs and check against the control
+    with pytest.raises(FileExistsError) as e:
+        resync.main(input=INPUTS_DIR / "unsynced.sdds",
+                    optics_dir=OPTICS_DIR,
+                    output_file=tmp_path / "output.sdds",
+                    ring="HER",
+                    overwrite=False)  # type: ignore
+
+    assert "output.sdds already exists, aborting." in str(e.value)

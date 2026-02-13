@@ -5,10 +5,12 @@ Constants: BPM Resynchronization
 Specific constants related to the BPM resynchronization script in ``PyLHC``.
 """
 
+from typing import Final, Literal
+
 # Available rings
-RINGS = ['LER', 'HER']
+RINGS: Final[set[Literal['LER', 'HER']]] = {'LER', 'HER'}
 
 # Phase file containing the phase advance of the BPMs
-PHASE_FILE = "total_phase_{axis}.tfs"
+PHASE_FILE: Final[str] = "total_phase_{plane}.tfs"
 
-DEFAULT_DATATYPE = "lhc"
+DEFAULT_DATATYPE: Final[Literal['lhc']] = "lhc"
