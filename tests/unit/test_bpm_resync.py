@@ -17,8 +17,8 @@ OPTICS_DIR = Path(__file__).parent.parent / "inputs" / "bpm_resync"
 def test_bad_arg_optics_type():
     with pytest.raises(ArgumentError) as e:
         resync.main(input=Path("yeah ok"),
-                    optics_dir="wat",
-                    output_file=Path("yay"),
+                    optics_dir=42,
+                    output_file="yay",
                     ring="HER")  # type: ignore
     assert "optics_dir' is not of type Path" in str(e.value)
 
@@ -27,7 +27,7 @@ def test_bad_arg_output_file_type():
     with pytest.raises(ArgumentError) as e:
         resync.main(input=Path("yeah ok"),
                     optics_dir=Path("yay"),
-                    output_file="wat",
+                    output_file=42,
                     ring="HER")  # type: ignore
     assert "output_file' is not of type Path" in str(e.value)
 

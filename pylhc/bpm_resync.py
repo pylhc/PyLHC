@@ -17,20 +17,20 @@ Arguments:
 
 *--Required--*
 
-- **input** *(Path,TbtData)*:
+- **input** *(Path,str,TbtData)*:
 
     Input turn by turn data to be resynchronized.
     Can take the form of a `Path` to a file or directly a `TbtData` object.
 
     flags: **['--input']**
 
-- **optics_dir** *(Path)*:
+- **optics_dir** *(Path,str)*:
 
     Optics analysis path of the unsynchronized data, must contain the `total_phase_{x,y}.tfs` files.
 
     flags: **['--optics_dir']**
 
-- **output_file** *(Path)*:
+- **output_file** *(Path,str)*:
 
     Output file path where to write the synchronized turn by turn data.
     The directory will be created if necessary.
@@ -73,8 +73,9 @@ import tfs
 import turn_by_turn as tbt
 from generic_parser import EntryPointParameters, entrypoint
 from generic_parser.dict_parser import ArgumentError
-from omc3.optics_measurements.constants import DELTA, PHASE, NAME, TUNE
+from omc3.optics_measurements.constants import DELTA, NAME, PHASE, TUNE
 from omc3.utils import logging_tools
+from omc3.utils.iotools import OptionalFloat, PathOrStr
 
 from pylhc.constants.bpm_resync import DEFAULT_DATATYPE, PHASE_FILE, RINGS
 
@@ -96,13 +97,13 @@ def _get_params() -> dict:
             "a file or directly a `TbtData` object.",
         },
         optics_dir={
-            "type": Path,
-            "required": False,
+            "type": PathOrStr,
+            "required": True,
             "help": "Optics path, must contain the `total_phase_{x,y}.tfs` files.",
         },
         output_file={
-            "type": Path,
-            "required": False,
+            "type": PathOrStr,
+            "required": True,
             "help": "Output file path where to write the turn by turn data. The directory will be"
             "created if necessary.",
         },
@@ -187,12 +188,15 @@ def sync_tbt(original_tbt: tbt.TbtData, optics_dir: Path, ring: str) -> tbt.TbtD
 @entrypoint(_get_params(), strict=True)
 def main(opt):
     # Open the TbT file if needed
-    if isinstance(opt.input, Path):
+    if isinstance(opt.input, (Path, str)):
         original_tbt = tbt.read(opt.input, datatype=opt.tbt_datatype)
     elif isinstance(opt.input, tbt.TbtData):
         original_tbt = opt.input
     else:
-        raise ArgumentError("input must be either a Path or a TbtData object")
+        raise ArgumentError("input must be either a Path, str or a TbtData object")
+
+    opt.optics_dir = Path(opt.optics_dir)
+    opt.output_file = Path(opt.output_file)
 
     # Synchronise TbT
     LOGGER.info(f"Resynchronizing {opt.optics_dir.name}...")
