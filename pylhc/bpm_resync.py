@@ -75,7 +75,7 @@ from generic_parser import EntryPointParameters, entrypoint
 from generic_parser.dict_parser import ArgumentError
 from omc3.optics_measurements.constants import DELTA, NAME, PHASE, TUNE
 from omc3.utils import logging_tools
-from omc3.utils.iotools import OptionalFloat, PathOrStr
+from omc3.utils.iotools import PathOrStr
 
 from pylhc.constants.bpm_resync import DEFAULT_DATATYPE, PHASE_FILE, RINGS
 
