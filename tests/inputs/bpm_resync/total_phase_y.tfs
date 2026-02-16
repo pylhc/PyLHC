@@ -1,8 +1,5 @@
 @ Measure_optics:version %s             "0.27.0"
-@ Command              %s "/home/legarrec/git/.venv/bin/python /home/legarrec/git/.venv/lib/python3.13/site-packages/omc3/hole_in_one.py --optics --files /home/legarrec/git/KEK/beta_beat_output/2026-02-11/SUPERKEKBHER/Measurements/HER_2025_11_17_22_45_56.data/HER_2025_11_17_22_45_56.data.sdds --outputdir /home/legarrec/git/KEK/beta_beat_output/2026-02-11/SUPERKEKBHER/Results/HER_2025_11_17_22_45_56.data.sdds --compensation none --accel skekb --model_dir /home/legarrec/git/KEK/beta_beat_output/2026-02-11/SUPERKEKBHER/Models/model_lattice_HER_2025_11_17_22_20_17.plain --ring her"
-@ CWD                  %s "/home/legarrec/git/lhc-app-beta-beating"
 @ Date                 %s "11. February 2026, 18:56:48"
-@ Model_directory      %s "/home/legarrec/git/KEK/beta_beat_output/2026-02-11/SUPERKEKBHER/Models/model_lattice_HER_2025_11_17_22_20_17.plain"
 @ Compensation         %s               "none"
 @ Q1                   %le       0.545561396557
 @ Q2                   %le       0.590880577381
