@@ -60,7 +60,7 @@ cern = [
   "omc3[cern] >= 0.15",
   "pjlsa >= 0.2",
   "pytimber >= 3.0",  # NXCALS support
-  "pyjapc",
+  "pyjapc; python_version < '3.12'",
 ]
 test = [
   "pytest>=7.0",
