@@ -7,7 +7,7 @@
 | pylhc/\_\_init\_\_.py                      |        8 |        0 |    100% |           |
 | pylhc/bpm\_calibration.py                  |       26 |        1 |     96% |       130 |
 | pylhc/bsrt\_analysis.py                    |      191 |       26 |     86% |106-118, 133, 137, 141, 145, 218, 256, 258, 342, 344, 406, 408, 452, 454, 461 |
-| pylhc/bsrt\_logger.py                      |       59 |       59 |      0% |    13-103 |
+| pylhc/bsrt\_logger.py                      |       61 |       61 |      0% |    13-110 |
 | pylhc/calibration/\_\_init\_\_.py          |        0 |        0 |    100% |           |
 | pylhc/calibration/beta.py                  |       79 |        0 |    100% |           |
 | pylhc/calibration/dispersion.py            |       61 |        0 |    100% |           |
@@ -24,7 +24,7 @@
 | pylhc/kickgroups.py                        |      190 |      190 |      0% |    60-552 |
 | pylhc/lsa\_to\_madx.py                     |      126 |       51 |     60% |137-139, 157-158, 162-163, 205-206, 229, 248, 287-288, 299-330, 334-383, 390 |
 | pylhc/machine\_settings\_info.py           |      172 |      172 |      0% |    51-578 |
-| **TOTAL**                                  | **1873** | **1247** | **33%** |           |
+| **TOTAL**                                  | **1875** | **1249** | **33%** |           |
 
 
 ## Setup coverage badge
