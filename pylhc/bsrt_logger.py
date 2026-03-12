@@ -15,10 +15,17 @@ import os
 import pickle
 import sys
 import time
+import warnings
 from pathlib import Path
 
 from omc3.definitions import formats
 from omc3.utils.mock import cern_network_import
+
+warnings.warn(
+    "The pyjapc package has reached end-of-life and is not supported on Python 3.12+. "
+    "On higher Python versions this script will not run.",
+    stacklevel=2
+)
 
 pyjapc = cern_network_import("pyjapc")
 
